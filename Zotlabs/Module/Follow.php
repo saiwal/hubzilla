@@ -70,12 +70,12 @@ class Follow extends Controller {
 		}
 
 		$uid = local_channel();
-		$url = notags(trim(punify($_REQUEST['url'])));
+		$url = notags(punify(trim($_REQUEST['url'])));
 		$return_url = $_SESSION['return_url'];
 		$interactive = $_REQUEST['interactive'] ?? 1;
 		$channel = App::get_channel();
 
-		$result = Connect::connect($channel,$url);
+		$result = Connect::connect($channel, $url);
 
 		if ($result['success'] == false) {
 			if ($result['message']) {
