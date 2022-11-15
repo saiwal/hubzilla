@@ -306,12 +306,18 @@
 			if(typeof obj[type] === typeof undefined)
 				return true;
 
+			var count = Number(obj[type].count);
+
+
 			if(obj[type].count) {
 				$('.' + type + '-button').fadeIn();
-				if(replace || followup)
-					$('.' + type + '-update').html(Number(obj[type].count));
-				else
-					$('.' + type + '-update').html(Number(obj[type].count) + Number($('.' + type + '-update').html()));
+				if(replace || followup) {
+					$('.' + type + '-update').html(count >= 100 ? '99+' : count);
+				}
+				else {
+					count = count + Number($('.' + type + '-update').html().replace(/\++$/, ''));
+					$('.' + type + '-update').html(count >= 100 ? '99+' : count);
+				}
 			}
 			else {
 				$('.' + type + '-update').html('0');

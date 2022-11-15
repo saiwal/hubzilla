@@ -205,18 +205,18 @@ class Sse_bs extends Controller {
 
 		}
 
-		$r = q("SELECT count(id) as total FROM item
+		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_wall = 0 AND item_private IN (0, 1)
 			AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 			AND author_xchan != '%s'
 			$item_normal
-			$sql_extra",
+			$sql_extra LIMIT 100",
 			intval(self::$uid),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['network']['count'] = intval($r[0]['total']);
+			$result['network']['count'] = count($r);
 
 		return $result;
 	}
@@ -285,17 +285,17 @@ class Sse_bs extends Controller {
 
 		}
 
-		$r = q("SELECT count(id) as total FROM item
+		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_private = 2
 			$item_normal
 			$sql_extra
-			AND author_xchan != '%s'",
+			AND author_xchan != '%s' LIMIT 100",
 			intval(self::$uid),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['dm']['count'] = intval($r[0]['total']);
+			$result['dm']['count'] = count($r);
 
 		return $result;
 	}
@@ -365,17 +365,17 @@ class Sse_bs extends Controller {
 
 		}
 
-		$r = q("SELECT count(id) as total FROM item
+		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_wall = 1 AND item_private IN (0, 1)
 			$item_normal
 			$sql_extra
-			AND author_xchan != '%s'",
+			AND author_xchan != '%s' LIMIT 100",
 			intval(self::$uid),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['home']['count'] = intval($r[0]['total']);
+			$result['home']['count'] = count($r);
 
 		return $result;
 	}
@@ -458,19 +458,19 @@ class Sse_bs extends Controller {
 
 		}
 
-		$r = q("SELECT count(id) as total FROM item
+		$r = q("SELECT id FROM item
 			WHERE uid = %d AND item_unseen = 1
 			AND created > '%s'
 			$item_normal
 			$sql_extra
-			AND author_xchan != '%s'",
+			AND author_xchan != '%s' LIMIT 100",
 			intval($sys['channel_id']),
 			dbescdate($_SESSION['static_loadtime']),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['pubs']['count'] = intval($r[0]['total']);
+			$result['pubs']['count'] = count($r);
 
 		return $result;
 	}
