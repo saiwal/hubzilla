@@ -19,6 +19,7 @@ class Externals {
 		$importer = get_sys_channel();
 		$total    = 0;
 		$attempts = 0;
+		$url = '';
 
 		logger('externals: startup', LOGGER_DEBUG);
 
@@ -67,9 +68,8 @@ class Externals {
 					datetime_convert('UTC', 'UTC', 'now - 30 days')
 				);
 
-				$contact = $r[0];
-
-				if ($contact) {
+				if ($r) {
+					$contact = $r[0];
 					$url = $contact['hubloc_id_url'];
 				}
 			}
