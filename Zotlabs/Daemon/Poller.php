@@ -93,7 +93,14 @@ class Poller {
 						$min = intval(get_config('system', 'minimum_feedcheck_minutes'));
 					if (!$min)
 						$min = 60;
+
+					if ($t !== $c) {
+						// if the last fetch failed only attempt fetch once a day
+						$min = 60 * 24;
+					}
+
 					$x = datetime_convert('UTC', 'UTC', "now - $min minutes");
+
 					if ($c < $x) {
 						Master::Summon(['Onepoll', $contact['abook_id']]);
 						if ($interval)
