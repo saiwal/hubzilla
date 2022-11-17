@@ -184,8 +184,6 @@ class Libsync {
 
 		require_once('include/import.php');
 
-hz_syslog(print_r($arr, true));
-
 		$result = [];
 		$keychange = ((array_key_exists('keychange', $arr)) ? true : false);
 
