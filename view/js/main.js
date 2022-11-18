@@ -197,8 +197,7 @@ $(document).ready(function() {
 
 			if (singlethread_modules.indexOf(module) !== -1) {
 				history.pushState(stateObj, '', module + '/' + b64mid);
-				$('.message').removeClass('active');
-				$('[data-b64mid="' + b64mid + '"].message').addClass('active');
+
 			}
 
 			if (b64mid) {
@@ -207,6 +206,9 @@ $(document).ready(function() {
 
 				if(! page_load) {
 					prepareLiveUpdate(b64mid, notify_id);
+					$('.message').removeClass('active');
+					$('[data-b64mid="' + b64mid + '"].message').addClass('active');
+					$('[data-b64mid="' + b64mid + '"].message .badge').remove();
 				}
 			}
 		}

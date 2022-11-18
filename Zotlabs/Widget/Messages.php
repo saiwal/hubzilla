@@ -34,7 +34,8 @@ class Messages {
 				'starred_messages_title' => t('Starred messages'),
 				'notice_messages_title' => t('Notices'),
 				'loading' => t('Loading'),
-				'empty' => t('No messages')
+				'empty' => t('No messages'),
+				'unseen' => t('Unseen')
 			]
 		]);
 
@@ -147,14 +148,23 @@ class Messages {
 					$icon = '';
 			}
 
+			$unseen = q("SELECT count(id) AS total FROM item WHERE uid = %d
+				AND parent = %d
+				AND item_thread_top = 0
+				AND item_unseen = 1",
+				intval(local_channel()),
+				intval($item['id'])
+			);
+
 			$entries[$i]['author_name'] = $item['author']['xchan_name'];
-			$entries[$i]['author_addr'] = $item['author']['xchan_addr'] ?? $item['author']['xchan_url'];
+			$entries[$i]['author_addr'] = (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']);
 			$entries[$i]['info'] = $info;
 			$entries[$i]['created'] = datetime_convert('UTC', date_default_timezone_get(), $item['created']);
 			$entries[$i]['summary'] = $summary;
 			$entries[$i]['b64mid'] = gen_link_id($item['mid']);
 			$entries[$i]['href'] = z_root() . '/hq/' . gen_link_id($item['mid']);
 			$entries[$i]['icon'] = $icon;
+			$entries[$i]['unseen'] = (($unseen[0]['total']) ? $unseen[0]['total'] : (($item['item_unseen']) ? '&#8192;' : ''));
 
 			$i++;
 		}

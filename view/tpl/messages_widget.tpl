@@ -36,6 +36,7 @@
 				<div class="text-break">{2}</div>
 			</div>
 			<small>{3}</small>
+			{8}
 		</a>
 	</div>
 	<div id="dm-container" class="list-group list-group-flush" data-offset="10">
@@ -52,6 +53,9 @@
 				<div class="text-break">{{$e.summary}}</div>
 			</div>
 			<small>{{$e.info}}</small>
+			{{if $e.unseen}}
+			<span class="badge bg-primary rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen}}">{{$e.unseen}}</span>
+			{{/if}}
 		</a>
 		{{/foreach}}
 		<div id="messages-empty" class="list-group-item border-0"{{if $entries}} style="display: none;"{{/if}}>
@@ -124,7 +128,8 @@
 						e.author_name,
 						e.author_addr,
 						e.href,
-						e.icon
+						e.icon,
+						e.unseen ? '<span class="badge bg-primary rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen}}">' + e.unseen + '</span>' : ''
 					);
 					$('#messages-loading').before(html);
 				});
