@@ -63,6 +63,16 @@ class Messages {
 		$limit = 30;
 		$dummy_order_sql = '';
 		$loadtime = (($offset) ? $_SESSION['messages_loadtime'] : datetime_convert());
+		$vnotify = get_pconfig(local_channel(), 'system', 'vnotify', -1);
+
+		$vnotify_sql = '';
+
+		if (!($vnotify & VNOTIFY_LIKE)) {
+			$vnotify_sql = " AND verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
+		}
+		elseif (!feature_enabled(local_channel(), 'dislike')) {
+			$vnotify_sql = " AND verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
+		}
 
 		switch($type) {
 			case 'direct':
@@ -151,7 +161,8 @@ class Messages {
 			$unseen = q("SELECT count(id) AS total FROM item WHERE uid = %d
 				AND parent = %d
 				AND item_thread_top = 0
-				AND item_unseen = 1",
+				AND item_unseen = 1
+				$vnotify_sql",
 				intval(local_channel()),
 				intval($item['id'])
 			);
@@ -165,6 +176,7 @@ class Messages {
 			$entries[$i]['href'] = z_root() . '/hq/' . gen_link_id($item['mid']);
 			$entries[$i]['icon'] = $icon;
 			$entries[$i]['unseen'] = (($unseen[0]['total']) ? $unseen[0]['total'] : (($item['item_unseen']) ? '&#8192;' : ''));
+			$entries[$i]['unseen_class'] = (($item['item_unseen']) ? 'bg-primary' : 'bg-secondary');
 
 			$i++;
 		}
