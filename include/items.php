@@ -2659,9 +2659,10 @@ function tag_deliver($uid, $item_id) {
 
 			if ($is_group && intval($x[0]['item_wall'])) {
 				// don't let the forked delivery chain recurse
-				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u['channel_hash']) {
+				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u[0]['channel_hash']) {
 					return;
 				}
+
 				// don't announce moderated content until it has been approved
 				if (intval($item['item_blocked']) === ITEM_MODERATED) {
 					return;
@@ -2678,7 +2679,7 @@ function tag_deliver($uid, $item_id) {
 
 			}
 			elseif (intval($x[0]['item_uplink'])) {
-				start_delivery_chain($u,$item,$item_id,$x[0]);
+				start_delivery_chain($u[0], $item, $item_id, $x[0]);
 			}
 		}
 
