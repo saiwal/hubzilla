@@ -176,7 +176,7 @@ class Messages {
 			$entries[$i]['href'] = z_root() . '/hq/' . gen_link_id($item['mid']);
 			$entries[$i]['icon'] = $icon;
 			$entries[$i]['unseen'] = (($unseen[0]['total']) ? $unseen[0]['total'] : (($item['item_unseen']) ? '&#8192;' : ''));
-			$entries[$i]['unseen_class'] = (($item['item_unseen']) ? 'bg-primary' : 'bg-secondary');
+			$entries[$i]['unseen_class'] = (($item['item_unseen']) ? 'primary' : 'secondary');
 
 			$i++;
 		}
