@@ -45,3 +45,7 @@ a,
 #jot-customjotheaders-wrap {
 	border-bottom: 1px solid var(--bs-border-color);
 }
+#adminpage table tr:hover {
+	background-color: #2E3136;
+}
+
