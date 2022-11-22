@@ -32,3 +32,16 @@ a,
 .fakelink {
 	color: var(--bs-link-color);
 }
+.item-category {
+	background-color: #293a4f !important;
+}
+#cboxContent {
+	background-color: #273039;
+}
+#jot-title-wrap,
+#jot-summary-wrap,
+#jot-pagetitle-wrap,
+#jot-category-wrap,
+#jot-customjotheaders-wrap {
+	border-bottom: 1px solid var(--bs-border-color);
+}
