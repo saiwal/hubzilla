@@ -52,15 +52,21 @@ class Webfinger {
 
 		if(strpos($resource,'http') === 0) {
 			$m = parse_url($resource);
-			if($m) {
-				if(isset($m['scheme']) && $m['scheme'] !== 'https') {
-					return false;
-				}
-				self::$server = $m['host'] . ((isset($m['port'])) ? ':' . $m['port'] : '');
-			}
-			else {
+
+			if (!$m) {
 				return false;
 			}
+
+			if(isset($m['scheme']) && $m['scheme'] !== 'https') {
+				return false;
+			}
+
+			if(!isset($m['host'])) {
+				return false;
+			}
+
+			self::$server = $m['host'] . ((isset($m['port'])) ? ':' . $m['port'] : '');
+
 		}
 		elseif(strpos($resource,'tag:') === 0) {
 			$arr = explode(':',$resource); // split the tag
