@@ -100,9 +100,9 @@ class Sse extends Controller {
 				// We do not have the local_channel in the addon.
 				// Reset pubs here if the app is not installed.
 				if (self::$uid && (!(self::$vnotify & VNOTIFY_PUBS) || !Apps::system_app_installed(self::$uid, 'Public Stream'))) {
-					$result['pubs']['count'] = 0;
-					$result['pubs']['notifications'] = [];
-					$result['pubs']['offset'] = -1;
+					if (isset($result['pubs'])) {
+						unset($result['pubs']);
+					}
 				}
 
 				if($result && !$lock) {
