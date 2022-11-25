@@ -1848,8 +1848,8 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	if($parent_deleted)
 		$arr['item_deleted'] = 1;
 
-	$r = q("SELECT id FROM item WHERE mid = '%s' AND uid = %d and revision = %d LIMIT 1",
-		dbesc($arr['mid']),
+	$r = q("SELECT id FROM item WHERE uuid = '%s' AND uid = %d and revision = %d LIMIT 1",
+		dbesc($arr['uuid']),
 		intval($arr['uid']),
 		intval($arr['revision'])
 	);
