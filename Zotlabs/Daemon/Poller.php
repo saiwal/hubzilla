@@ -101,12 +101,14 @@ class Poller {
 
 					$x = datetime_convert('UTC', 'UTC', "now - $min minutes");
 
-					if ($c < $x) {
+					if ($t < $x) {
 						Master::Summon(['Onepoll', $contact['abook_id']]);
 						if ($interval)
 							@time_sleep_until(microtime(true) + (float)$interval);
 					}
+
 					continue;
+
 				}
 
 				if ($contact['xchan_network'] !== 'zot6')
