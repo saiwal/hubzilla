@@ -17,6 +17,7 @@ function nav($template = 'default') {
 	App::$page['nav'] = App::$page['nav'] ?? '';
 	App::$page['htmlhead'] = App::$page['htmlhead'] ?? '';
 	App::$page['htmlhead'] .= '<script>$(document).ready(function() { $("#nav-search-text").search_autocomplete(\'' . z_root() . '/acl' . '\');});</script>';
+
 	$is_owner = (((local_channel()) && ((App::$profile_uid == local_channel()) || (App::$profile_uid == 0))) ? true : false);
 	$observer = App::get_observer();
 	$chans = [];
@@ -166,7 +167,8 @@ function nav($template = 'default') {
 		$nav['register'] = ['register', t('Register'), "", t('Create an account'), 'register_nav_btn'];
 	}
 
-	if (!get_config('system', 'hide_help')) {
+	// TODO: update help content for various modules
+	if (false /* !get_config('system', 'hide_help') */) {
 		$help_url            = z_root() . '/help?f=&cmd=' . App::$cmd;
 		$context_help        = '';
 		$enable_context_help = ((intval(get_config('system', 'enable_context_help')) === 1 || get_config('system', 'enable_context_help') === false) ? true : false);
