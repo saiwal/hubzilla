@@ -102,13 +102,13 @@ function api_login(&$a) {
 			if ($sigblock) {
 				$keyId = str_replace('acct:', '', $sigblock['keyId']);
 				if ($keyId) {
-					$r = q("select * from hubloc where hubloc_addr = '%s' or hubloc_id_url = '%s'",
+					$r = q("select * from hubloc where hubloc_addr = '%s' or hubloc_id_url = '%s' order by hubloc_id desc",
 						dbesc($keyId),
 						dbesc($keyId)
 					);
 					if (!$r) {
 						HTTPSig::get_zotfinger_key($keyId);
-						$r = q("select * from hubloc where hubloc_addr = '%s' or hubloc_id_url = '%s'",
+						$r = q("select * from hubloc where hubloc_addr = '%s' or hubloc_id_url = '%s' order by hubloc_id desc",
 							dbesc($keyId),
 							dbesc($keyId)
 						);
