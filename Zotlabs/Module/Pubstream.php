@@ -12,6 +12,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 	function get($update = 0, $load = false) {
 
+
 		if(local_channel()) {
 			if(! Apps::system_app_installed(local_channel(), 'Public Stream')) {
 				//Do not display any associated widgets at this point
@@ -31,16 +32,13 @@ class Pubstream extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
 		$net_firehose  = ((get_config('system','disable_discover_tab',1)) ? false : true);
 
-		if(! ($site_firehose || $net_firehose)) {
+		if(!$net_firehose) {
 			return '';
 		}
 
-		if($net_firehose) {
-			$site_firehose = false;
-		}
+		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
 
 		$mid = ((x($_REQUEST, 'mid')) ? unpack_link_id($_REQUEST['mid']) : '');
 		if ($mid === false) {
@@ -161,13 +159,14 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 		$sys = get_sys_channel();
 		$abook_uids = " and abook.abook_channel = " . intval($sys['channel_id']) . " ";
+		$sql_extra = '';
 
 		if($site_firehose) {
 			$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
 		}
 		else {
 			$uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
-			$sql_extra = item_permissions_sql($sys['channel_id']);
+			$sql_extra .= item_permissions_sql($sys['channel_id']);
 			\App::$data['firehose'] = intval($sys['channel_id']);
 		}
 
