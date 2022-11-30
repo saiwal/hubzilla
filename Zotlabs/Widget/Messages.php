@@ -58,7 +58,7 @@ class Messages {
 		}
 
 		$channel = App::get_channel();
-		$item_normal = item_normal();
+		$item_normal = str_replace('item.', 'i.', item_normal());
 		$entries = [];
 		$limit = 30;
 		$dummy_order_sql = '';
@@ -68,34 +68,34 @@ class Messages {
 		$vnotify_sql = '';
 
 		if (!($vnotify & VNOTIFY_LIKE)) {
-			$vnotify_sql = " AND verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
 		}
 		elseif (!feature_enabled(local_channel(), 'dislike')) {
-			$vnotify_sql = " AND verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
 		}
 
 		switch($type) {
 			case 'direct':
-				$type_sql = ' AND item_private = 2 ';
+				$type_sql = ' AND i.item_private = 2 ';
 				// $dummy_order_sql has no other meaning but to trick
 				// some mysql backends into using the right index.
-				$dummy_order_sql = ', received DESC ';
+				$dummy_order_sql = ', i.received DESC ';
 				break;
 			case 'starred':
-				$type_sql = ' AND item_starred = 1 ';
+				$type_sql = ' AND i.item_starred = 1 ';
 				break;
 			default:
-				$type_sql = ' AND item_private IN (0, 1) ';
+				$type_sql = ' AND i.item_private IN (0, 1) ';
 		}
 
-		$items = q("SELECT item.*, parent AS this_parent,
-			(SELECT count(*) FROM item WHERE uid = %d AND parent = this_parent AND item_unseen = 1 AND item_thread_top = 0 $vnotify_sql) AS unseen_count
-			FROM item WHERE uid = %d
-			AND created <= '%s'
+		$items = q("SELECT *,
+			(SELECT count(*) FROM item c WHERE c.uid = %d AND c.parent = i.parent AND c.item_unseen = 1 AND c.item_thread_top = 0 $vnotify_sql) AS unseen_count
+			FROM item i WHERE i.uid = %d
+			AND i.created <= '%s'
 			$type_sql
-			AND item_thread_top = 1
+			AND i.item_thread_top = 1
 			$item_normal
-			ORDER BY created DESC $dummy_order_sql
+			ORDER BY i.created DESC $dummy_order_sql
 			LIMIT $limit OFFSET $offset",
 			intval(local_channel()),
 			intval(local_channel()),
