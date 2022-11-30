@@ -35,7 +35,7 @@ class Messages {
 				'notice_messages_title' => t('Notices'),
 				'loading' => t('Loading'),
 				'empty' => t('No messages'),
-				'unseen' => t('Unseen')
+				'unseen_count' => t('Unseen')
 			]
 		]);
 
@@ -88,13 +88,16 @@ class Messages {
 				$type_sql = ' AND item_private IN (0, 1) ';
 		}
 
-		$items = q("SELECT * FROM item WHERE uid = %d
+		$items = q("SELECT item.*, parent AS this_parent,
+			(SELECT count(*) FROM item WHERE uid = %d AND parent = this_parent AND item_unseen = 1 AND item_thread_top = 0 $vnotify_sql) AS unseen_count
+			FROM item WHERE uid = %d
 			AND created <= '%s'
 			$type_sql
 			AND item_thread_top = 1
 			$item_normal
 			ORDER BY created DESC $dummy_order_sql
 			LIMIT $limit OFFSET $offset",
+			intval(local_channel()),
 			intval(local_channel()),
 			dbescdate($loadtime)
 		);
@@ -158,15 +161,6 @@ class Messages {
 					$icon = '';
 			}
 
-			$unseen = q("SELECT count(id) AS total FROM item WHERE uid = %d
-				AND parent = %d
-				AND item_thread_top = 0
-				AND item_unseen = 1
-				$vnotify_sql",
-				intval(local_channel()),
-				intval($item['id'])
-			);
-
 			$entries[$i]['author_name'] = $item['author']['xchan_name'];
 			$entries[$i]['author_addr'] = (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']);
 			$entries[$i]['info'] = $info;
@@ -175,7 +169,7 @@ class Messages {
 			$entries[$i]['b64mid'] = gen_link_id($item['mid']);
 			$entries[$i]['href'] = z_root() . '/hq/' . gen_link_id($item['mid']);
 			$entries[$i]['icon'] = $icon;
-			$entries[$i]['unseen'] = (($unseen[0]['total']) ? $unseen[0]['total'] : (($item['item_unseen']) ? '&#8192;' : ''));
+			$entries[$i]['unseen_count'] = (($item['unseen_count']) ? $item['unseen_count'] : (($item['item_unseen']) ? '&#8192;' : ''));
 			$entries[$i]['unseen_class'] = (($item['item_unseen']) ? 'primary' : 'secondary');
 
 			$i++;

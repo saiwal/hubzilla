@@ -53,8 +53,8 @@
 				<div class="text-break">{{$e.summary}}</div>
 			</div>
 			<small>{{$e.info}}</small>
-			{{if $e.unseen}}
-			<span class="badge bg-transparent border border-{{$e.unseen_class}} text-{{$e.unseen_class}} rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen}}">{{$e.unseen}}</span>
+			{{if $e.unseen_count}}
+			<span class="badge bg-transparent border border-{{$e.unseen_class}} text-{{$e.unseen_class}} rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen_count}}">{{$e.unseen_count}}</span>
 			{{/if}}
 		</a>
 		{{/foreach}}
@@ -129,7 +129,7 @@
 						e.author_addr,
 						e.href,
 						e.icon,
-						e.unseen ? '<span class="badge bg-transparent border border-' + e.unseen_class + ' text-' + e.unseen_class + ' rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen}}">' + e.unseen + '</span>' : ''
+						e.unseen_count ? '<span class="badge bg-transparent border border-' + e.unseen_class + ' text-' + e.unseen_class + ' rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen_count}}">' + e.unseen_count + '</span>' : ''
 					);
 					$('#messages-loading').before(html);
 				});
