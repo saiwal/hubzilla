@@ -22,7 +22,7 @@ class _1254 {
 			$r2 = dbq("CREATE INDEX idx_workerq_priority ON workerq (workerq_priority)");
 			$r3 = dbq("CREATE INDEX idx_workerq_reservationid ON workerq (workerq_reservationid)");
 			$r4 = dbq("CREATE INDEX idx_workerq_processtimeout ON workerq (workerq_processtimeout)");
-			$r5 = dbq("CREATE INDEX idx_workerq_uuid ON workerq (workerq_uuid)")
+			$r5 = dbq("CREATE INDEX idx_workerq_uuid ON workerq (workerq_uuid)");
 
 			$r = ($r1 && $r2 && $r3 && $r4 && $r5);
 		}
@@ -33,11 +33,11 @@ class _1254 {
 				workerq_reservationid varchar(25) DEFAULT NULL,
 				workerq_processtimeout datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 				workerq_data text,
-				workerq_uuid char(36) NOT NULL DEFAULT ''
+				workerq_uuid char(36) NOT NULL DEFAULT '',
 				KEY workerq_priority (workerq_priority),
 				KEY workerq_reservationid (workerq_reservationid),
-				KEY workerq_processtimeout (workerq_uuid)
-				KEY workerq_uuid` (workerq_processtimeout)
+				KEY workerq_processtimeout (workerq_uuid),
+				KEY workerq_uuid (workerq_processtimeout)
 				) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4"
 			);
 		}
