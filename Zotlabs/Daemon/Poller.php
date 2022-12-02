@@ -17,9 +17,11 @@ class Poller {
 			}
 		}
 
+/*
 		$interval = intval(get_config('system', 'poll_interval'));
 		if (!$interval)
 			$interval = ((get_config('system', 'delivery_interval') === false) ? 3 : intval(get_config('system', 'delivery_interval')));
+
 
 		// Check for a lockfile.  If it exists, but is over an hour old, it's stale.  Ignore it.
 		$lockfile = 'store/[data]/poller';
@@ -32,6 +34,7 @@ class Poller {
 		// Create a lockfile.  Needs two vars, but $x doesn't need to contain anything.
 		$x = '';
 		file_put_contents($lockfile, $x);
+*/
 
 		logger('poller: start');
 
@@ -103,8 +106,10 @@ class Poller {
 
 					if ($t < $x) {
 						Master::Summon(['Onepoll', $contact['abook_id']]);
+						/*
 						if ($interval)
 							@time_sleep_until(microtime(true) + (float)$interval);
+						*/
 					}
 
 					continue;
@@ -167,8 +172,11 @@ class Poller {
 					continue;
 
 				Master::Summon(['Onepoll', $contact['abook_id']]);
+
+				/*
 				if ($interval)
 					@time_sleep_until(microtime(true) + (float)$interval);
+				*/
 
 			}
 		}
@@ -190,9 +198,13 @@ class Poller {
 					if ($rr['ud_last'] > NULL_DATE)
 						if ($rr['ud_last'] > datetime_convert('UTC', 'UTC', 'now - 1 day'))
 							continue;
+
 					Master::Summon(['Onedirsync', $rr['ud_id']]);
+
+					/*
 					if ($interval)
 						@time_sleep_until(microtime(true) + (float)$interval);
+					*/
 				}
 			}
 		}
@@ -200,9 +212,9 @@ class Poller {
 		set_config('system', 'lastpoll', datetime_convert());
 
 		//All done - clear the lockfile
-
+/*
 		@unlink($lockfile);
-
+*/
 		return;
 	}
 }

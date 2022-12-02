@@ -4124,21 +4124,24 @@ function posted_dates($uid,$wall) {
  */
 function fetch_post_tags($items, $link = false) {
 
-	$tag_finder = array();
-	if($items) {
-		foreach($items as $item) {
-			if(is_array($item)) {
-				if(array_key_exists('item_id',$item)) {
-					if(! in_array($item['item_id'],$tag_finder))
-						$tag_finder[] = $item['item_id'];
-				}
-				else {
-					if(! in_array($item['id'],$tag_finder))
-						$tag_finder[] = $item['id'];
-				}
+	if (!is_array($items) || !$items) {
+		return $items;
+	}
+
+	$tag_finder = [];
+	foreach($items as $item) {
+		if(is_array($item)) {
+			if(array_key_exists('item_id',$item)) {
+				if(! in_array($item['item_id'],$tag_finder))
+					$tag_finder[] = $item['item_id'];
+			}
+			else {
+				if(! in_array($item['id'],$tag_finder))
+					$tag_finder[] = $item['id'];
 			}
 		}
 	}
+
 	$tag_finder_str = implode(', ', $tag_finder);
 
 	if(strlen($tag_finder_str)) {

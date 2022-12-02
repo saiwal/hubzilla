@@ -1467,7 +1467,7 @@ function do_delivery($deliveries, $force = false) {
 	if(! (is_array($deliveries) && count($deliveries)))
 		return;
 
-
+	/*
 	$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
 	if(intval($x[0]['total']) > intval(get_config('system','force_queue_threshold',3000)) && (! $force)) {
 		logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
@@ -1478,8 +1478,10 @@ function do_delivery($deliveries, $force = false) {
 	}
 
 
+
 	$interval = ((get_config('system','delivery_interval') !== false)
 			? intval(get_config('system','delivery_interval')) : 2 );
+	*/
 
 	$deliveries_per_process = intval(get_config('system','delivery_batch_count'));
 
@@ -1487,7 +1489,7 @@ function do_delivery($deliveries, $force = false) {
 		$deliveries_per_process = 1;
 
 
-	$deliver = array();
+	$deliver = [];
 	foreach($deliveries as $d) {
 
 		if(! $d)
@@ -1496,17 +1498,20 @@ function do_delivery($deliveries, $force = false) {
 		$deliver[] = $d;
 
 		if(count($deliver) >= $deliveries_per_process) {
-			Zotlabs\Daemon\Master::Summon(array('Deliver',$deliver));
-			$deliver = array();
+			Zotlabs\Daemon\Master::Summon(['Deliver', $deliver]);
+			$deliver = [];
+			/*
 			if($interval)
 				@time_sleep_until(microtime(true) + (float) $interval);
+			*/
 		}
 	}
 
 	// catch any stragglers
 
-	if($deliver)
-		Zotlabs\Daemon\Master::Summon(array('Deliver',$deliver));
+	if($deliver) {
+		Zotlabs\Daemon\Master::Summon(['Deliver', $deliver]);
+	}
 }
 
 

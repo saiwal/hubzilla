@@ -135,8 +135,10 @@ class Libsync {
 				$info['collection_members'] = $r;
 		}
 
+		/*
 		$interval = ((get_config('system', 'delivery_interval') !== false)
 			? intval(get_config('system', 'delivery_interval')) : 2);
+		*/
 
 		logger('Packet: ' . print_r($info, true), LOGGER_DATA, LOG_DEBUG);
 
@@ -155,19 +157,24 @@ class Libsync {
 			]);
 
 
+			/*
 			$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
+
 			if (intval($x[0]['total']) > intval(get_config('system', 'force_queue_threshold', 3000))) {
 				logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
 				Queue::update($hash);
 				continue;
 			}
-
+			*/
 
 			Master::Summon(['Deliver', $hash]);
+
+			/*
 			$total = $total - 1;
 
 			if ($interval && $total)
 				@time_sleep_until(microtime(true) + (float)$interval);
+			*/
 		}
 	}
 

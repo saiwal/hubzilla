@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\QueueWorker;
+
 if (array_search(__file__, get_included_files()) === 0) {
 	require_once('include/cli_startup.php');
 	array_shift($argv);
@@ -16,6 +18,10 @@ if (array_search(__file__, get_included_files()) === 0) {
 class Master {
 
 	static public function Summon($arr) {
+
+		QueueWorker::Summon($arr);
+		return;
+/*
 		$hookinfo = [
 			'argv' => $arr
 		];
@@ -32,11 +38,15 @@ class Master {
 
 		$phpbin = get_config('system', 'phpbin', 'php');
 		proc_run($phpbin, 'Zotlabs/Daemon/Master.php', $arr);
+*/
 	}
 
 	static public function Release($argc, $argv) {
 		cli_startup();
 
+		QueueWorker::Release($argv);
+		return;
+/*
 		$hookinfo = [
 			'argv' => $argv
 		];
@@ -54,5 +64,6 @@ class Master {
 		logger('Master: release: ' . json_encode($argv), LOGGER_ALL, LOG_DEBUG);
 		$cls = '\\Zotlabs\\Daemon\\' . $argv[0];
 		$cls::run($argc, $argv);
+*/
 	}
 }
