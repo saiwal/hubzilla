@@ -19,13 +19,13 @@ class Sharedwithme extends Controller {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
-		
+
 		$channel = \App::get_channel();
-	
+
 		$is_owner = (local_channel() && (local_channel() == $channel['channel_id']));
 
 		$item_normal = item_normal();
-	
+
 		//drop single file - localuser
 		if((argc() > 2) && (argv(2) === 'drop')) {
 
@@ -36,7 +36,7 @@ class Sharedwithme extends Controller {
 			goaway(z_root() . '/sharedwithme');
 
 		}
-	
+
 		//drop all files - localuser
 		if((argc() > 1) && (argv(1) === 'dropall')) {
 
@@ -62,33 +62,34 @@ class Sharedwithme extends Controller {
 			dbesc($channel['channel_hash'])
 		);
 
+		$r = fetch_post_tags($r, true);
+
 		$items = [];
 		$ids = [];
 
 		if($r) {
-	
+
 			foreach($r as $rr) {
-				$object = json_decode($rr['obj'],true);
-				$meta = self::get_meta($object);
+				$meta = get_iconfig($rr, 'attach', 'meta');
 
 				$item = [];
 				$item['id'] = $rr['id'];
 				$item['objfiletype'] = $meta['type'];
 				$item['objfiletypeclass'] = getIconFromType($meta['type']);
 				$item['objurl'] = $meta['path'] . '?f=&zid=' . $channel['xchan_addr'];
-				$item['objfilename'] = $object['name'];
+				$item['objfilename'] = $meta['name'];
 				$item['objfilesize'] = userReadableSize($meta['size']);
 				$item['objedited'] = $meta['edited'];
 				$item['unseen'] = $rr['item_unseen'];
-	
+
 				$items[] = $item;
-	
+
 				if($item['unseen']) {
 					$ids[] = $rr['id'];
 				}
-	
+
 			}
-	
+
 		}
 
 		$ids = implode(',', $ids);
@@ -98,9 +99,9 @@ class Sharedwithme extends Controller {
 				intval(local_channel())
 			);
 		}
-	
+
 		$o = '';
-	
+
 		$o .= replace_macros(get_markup_template('sharedwithme.tpl'), array(
 			'$header' => t('Files: shared with me'),
 			'$name' => t('Name'),
@@ -111,27 +112,9 @@ class Sharedwithme extends Controller {
 			'$drop' => t('Remove this file'),
 			'$items' => $items
 		));
-	
+
 		return $o;
-	
-	}
-	
-	function get_meta($object) {
-
-		$ret = [];
-
-		if(! is_array($object['attachment']))
-			return;
-
-		foreach($object['attachment'] as $a) {
-			if($a['name'] === 'zot.attach.meta') {
-				$ret = $a['value'];
-				break;
-			}
-		}
-
-		return $ret;
 
 	}
-	
+
 }

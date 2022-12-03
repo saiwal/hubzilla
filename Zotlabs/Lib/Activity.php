@@ -672,6 +672,7 @@ class Activity {
 				}
 			}
 		}
+
 		return $ret;
 	}
 
@@ -2456,7 +2457,7 @@ class Activity {
 				$s['attach'] = $a;
 			}
 
-			$a = self::decode_iconfig($act->obj);
+			$a = self::decode_iconfig($act->data);
 			if ($a) {
 				$s['iconfig'] = $a;
 			}
@@ -2786,8 +2787,9 @@ class Activity {
 			set_iconfig($s, 'diaspora', 'fields', $diaspora_rawmsg, 1);
 		}
 
-		set_iconfig($s, 'activitypub', 'recips', $act->raw_recips);
-
+		if ($act->raw_recips) {
+			set_iconfig($s, 'activitypub', 'recips', $act->raw_recips);
+		}
 
 		$hookinfo = [
 			'act' => $act,
