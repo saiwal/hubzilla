@@ -19,6 +19,7 @@ class Cron {
 			}
 		}
 
+/*
 		// Check for a lockfile.  If it exists, but is over an hour old, it's stale.  Ignore it.
 		$lockfile = 'store/[data]/cron';
 		if ((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 3600))
@@ -30,6 +31,7 @@ class Cron {
 		// Create a lockfile.  Needs two vars, but $x doesn't need to contain anything.
 		$x = '';
 		file_put_contents($lockfile, $x);
+*/
 
 		logger('cron: start');
 
@@ -209,10 +211,10 @@ class Cron {
 		}
 
 
-		// pull in some public posts
+		// pull in some public posts if allowed
 
-		$disable_discover_tab = get_config('system', 'disable_discover_tab') || get_config('system', 'disable_discover_tab') === false;
-		if (!$disable_discover_tab)
+		$disable_externals = get_config('system', 'disable_discover_tab') || get_config('system', 'disable_discover_tab') === false || get_config('system', 'site_firehose');
+		if (!$disable_externals)
 			Master::Summon(['Externals']);
 
 		$restart = false;
@@ -234,7 +236,7 @@ class Cron {
 		set_config('system', 'lastcron', datetime_convert());
 
 		//All done - clear the lockfile
-		@unlink($lockfile);
+		//@unlink($lockfile);
 
 		return;
 	}
