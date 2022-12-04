@@ -510,7 +510,7 @@ class Site {
 			'$allowed_sites'	=> array('allowed_sites', t("Allowed friend domains"), get_config('system','allowed_sites'), t("Comma separated list of domains which are allowed to establish friendships with this site. Wildcards are accepted. Empty to allow any domains")),
 			'$force_publish'	=> array('publish_all', t("Force publish"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory")),
 			'$disable_discover_tab'	=> array('disable_discover_tab', t('Enable public stream'), $discover_tab, t('Enable the public stream. Warning: this content is unmoderated')),
-			'$site_firehose'	=> array('site_firehose', t('Site only public stream'), get_config('system','site_firehose'), t('Restrict the public stream to content origianting from this site')),
+			'$site_firehose'	=> array('site_firehose', t('Site only public stream'), get_config('system','site_firehose'), t('Restrict the public stream to content originating at this site')),
 			'$open_pubstream'	=> array('open_pubstream', t('Allow anybody on the internet to access the public streams'), get_config('system','open_pubstream',1), t('Disable to require authentication before viewing')),
 			'$incl'           => array('pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
 			'$excl'           => array('pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
