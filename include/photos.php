@@ -64,7 +64,7 @@ function photo_upload($channel, $observer, $args) {
 	}
 
 	$ac = $acl->get();
-
+hz_syslog(print_r($ac,true));
 	$width = $height = 0;
 
 	if ($args['getimagesize']) {
@@ -405,7 +405,7 @@ function photo_upload($channel, $observer, $args) {
 		}
 	}
 
-	$attribution = (($visitor) ? $visitor['xchan_url'] : $channel['xchan_url']);
+	$attribution = (($visitor) ? $visitor : $channel['xchan_url']);
 
 	//// Create item object
 	$object = [
