@@ -2105,8 +2105,22 @@ function attach_store_item($channel, $observer, $file) {
 	$arr['verb'] = ACTIVITY_CREATE;
 	$arr['obj_type'] = $type;
 	$arr['title'] = $file['filename'];
-	$body_str = sprintf(t('%s shared a %s with you'), '[zrl=' . $observer['xchan_url'] . ']' . $observer['xchan_name'] . '[/zrl]', '[zrl=' . $path . ']' . t('file') . '[/zrl]');
-	$arr['body'] = $body_str;
+
+	if ($type === 'Image') {
+		$arr['body'] = '[zrl=' . $path . '][zmg=' . $path . ']' . $file['display_path'] . '[/zmg][/zrl]';
+	}
+	else {
+		$arr['attach'][] = [
+			'href'     => z_root() . '/attach/' . $resource_id,
+			'length'   => $file['filesize'],
+			'type'     => $file['filetype'],
+			'title'    => urlencode($file['filename']),
+			'revision' => $file['revision']
+		];
+	}
+
+	$body_str = sprintf((($type === 'Image') ? t('%s shared an %s with you') : t('%s shared a %s with you')), '[zrl=' . $observer['xchan_url'] . ']' . $observer['xchan_name'] . '[/zrl]', '[zrl=' . $path . ']' . (($type === 'Image') ? t('image') : t('file')) . '[/zrl]');
+	$arr['body'] .= $body_str;
 
 	$meta = [
 		'name' => $file['filename'],
