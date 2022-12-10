@@ -231,9 +231,6 @@ class QueueWorker {
 	}
 
 	public static function Process() {
-		self::$workersleep = get_config('queueworker', 'queue_worker_sleep');
-		self::$workersleep = intval(self::$workersleep) > 100 ? intval(self::$workersleep) : 100;
-
 		if (!self::GetWorkerID()) {
 			logger('Unable to get worker ID. Exiting.', LOGGER_DEBUG);
 			killme();
@@ -241,11 +238,26 @@ class QueueWorker {
 
 		$jobs   = 0;
 		$workid = self::getWorkId();
+		$load_average_sleep = false;
+		self::$workersleep = get_config('queueworker', 'queue_worker_sleep');
+		self::$workersleep = ((intval(self::$workersleep) > 100) ? intval(self::$workersleep) : 100);
+
+		if (function_exists('sys_getloadavg') && get_config('queueworker', 'load_average_sleep')) {
+			$load_average_sleep = true;
+		}
+
 		while ($workid) {
+
+			if ($load_average_sleep) {
+				$load_average = sys_getloadavg();
+				self::$workersleep = intval($load_average[0]) * 100000;
+
+				if (!self::$workersleep) {
+					self::$workersleep = 100;
+				}
+			}
+
 			usleep(self::$workersleep);
-			// @FIXME:  Currently $workersleep is a fixed value.  It may be a good idea
-			// to implement a "backoff" instead - based on load average or some
-			// other metric.
 
 			self::qbegin('workerq');
 
@@ -276,7 +288,7 @@ class QueueWorker {
 
 				$workinfo = json_decode($workitem[0]['workerq_data'], true);
 				$argv     = $workinfo['argv'];
-				logger('Master: process: ' . json_encode($argv), LOGGER_DEBUG);
+				hz_syslog('Master: process: ' . json_encode($argv), LOGGER_DEBUG);
 
 				$cls  = '\\Zotlabs\\Daemon\\' . $argv[0];
 				$argv = flatten_array_recursive($argv);

@@ -119,5 +119,7 @@ class Cron_daily {
 		/**
 		 * End Cron Daily
 		 */
+
+		 return;
 	}
 }

@@ -97,5 +97,7 @@ class Directory {
 		if ($pushall) {
 			Master::Summon(array('Notifier', 'refresh_all', $channel['channel_id']));
 		}
+
+		return;
 	}
 }

@@ -2045,24 +2045,8 @@ function proc_run() {
 	if (!$arr['run_cmd'])
 		return;
 
-	if (count($args) && $args[0] === 'php')
+	if (count($args) && $args[0] === 'php') {
 		$args[0] = ((x(App::$config, 'system')) && (x(App::$config['system'], 'php_path')) && (strlen(App::$config['system']['php_path'])) ? App::$config['system']['php_path'] : 'php');
-
-
-	// redirect proc_run statements of legacy daemon processes to the newer Daemon Master object class
-	// We will keep this interface until everybody has transitioned. (2016-05-20)
-
-	if (strstr($args[1], 'include/')) {
-		// convert 'include/foo.php' to 'Foo'
-		$orig = substr(ucfirst(substr($args[1], 8)), 0, -4);
-		logger('proc_run_redirect: ' . $orig);
-		if (file_exists('Zotlabs/Daemon/' . $orig . '.php')) {
-			array_shift($args); // daemons are all run by php, pop it off the top of the array
-			$args[0] = $orig;   // replace with the new daemon name
-			logger('Redirecting old proc_run interface: ' . print_r($args, true), LOGGER_DEBUG, LOG_DEBUG);
-			Master::Summon($args); // summon the daemon
-			return;
-		}
 	}
 
 	$args    = array_map('escapeshellarg', $args);
