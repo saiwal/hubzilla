@@ -288,7 +288,7 @@ class QueueWorker {
 
 				$workinfo = json_decode($workitem[0]['workerq_data'], true);
 				$argv     = $workinfo['argv'];
-				hz_syslog('Master: process: ' . json_encode($argv), LOGGER_DEBUG);
+				logger('Master: process: ' . json_encode($argv), LOGGER_DEBUG);
 
 				$cls  = '\\Zotlabs\\Daemon\\' . $argv[0];
 				$argv = flatten_array_recursive($argv);
