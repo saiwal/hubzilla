@@ -68,8 +68,6 @@ class QueueWorker {
 
 	public static function Summon(&$argv) {
 
-		$argc = count($argv);
-
 		if ($argv[0] !== 'Queueworker') {
 
 			$priority = 0; // @TODO allow reprioritization
@@ -78,7 +76,7 @@ class QueueWorker {
 				$priority = self::$default_priorities[$argv[0]];
 			}
 
-			$workinfo      = ['argc' => $argc, 'argv' => $argv];
+			$workinfo      = ['argc' => count($argv), 'argv' => $argv];
 			$workinfo_json = json_encode($workinfo);
 			$uuid          = self::getUuid($workinfo_json);
 
@@ -118,8 +116,6 @@ class QueueWorker {
 
 	public static function Release(&$argv) {
 
-		$argc = count($argv);
-
 		if ($argv[0] !== 'Queueworker') {
 
 			$priority = 0; // @TODO allow reprioritization
@@ -127,7 +123,7 @@ class QueueWorker {
 				$priority = self::$default_priorities[$argv[0]];
 			}
 
-			$workinfo      = ['argc' => $argc, 'argv' => $argv];
+			$workinfo      = ['argc' => count($argv), 'argv' => $argv];
 			$workinfo_json = json_encode($workinfo);
 			$uuid          = self::getUuid($workinfo_json);
 
@@ -250,7 +246,7 @@ class QueueWorker {
 
 			if ($load_average_sleep) {
 				$load_average = sys_getloadavg();
-				self::$workersleep = intval($load_average[0]) * 100000;
+				self::$workersleep = intval($load_average[0]) * 10000;
 
 				if (!self::$workersleep) {
 					self::$workersleep = 100;
@@ -288,7 +284,6 @@ class QueueWorker {
 
 				$workinfo = json_decode($workitem[0]['workerq_data'], true);
 				$argv     = $workinfo['argv'];
-				logger('Master: process: ' . json_encode($argv), LOGGER_DEBUG);
 
 				$cls  = '\\Zotlabs\\Daemon\\' . $argv[0];
 				$argv = flatten_array_recursive($argv);

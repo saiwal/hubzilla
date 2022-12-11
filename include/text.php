@@ -303,6 +303,7 @@ function purify_html($s, $allow_position = false) {
 	$def->addElement('footer',  'Block', 'Flow', 'Common');
 	//Inline
 	$def->addElement('button',  'Inline', 'Inline', 'Common');
+	$def->addElement('mark',  'Inline', 'Inline', 'Common');
 
 
 	if($allow_position) {
