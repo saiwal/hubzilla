@@ -9,7 +9,7 @@ class Cli_suggest {
 	static public function run($argc,$argv) {
 
 		update_suggestions();
-		return:
+		return;
 
 	}
 }
