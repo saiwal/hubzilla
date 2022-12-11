@@ -216,15 +216,6 @@ a.wall-item-name-link {
 	color: #007bff;
 }
 
-.item-highlight {
-	border-left: 0.2rem solid #007bff;
-}
-
-.item-highlight .wall-item-head,
-.item-highlight .wall-item-content,
-.item-highlight .wall-item-tools {
-	padding-left: 0.3rem;
-}
 
 /* comment_item */
 

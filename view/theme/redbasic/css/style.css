@@ -13,6 +13,7 @@
 	--bs-link-color: $link_colour;
 	--bs-link-hover-color: $link_hover_colour;
 	--bs-body-bg: $bgcolour;
+	--bs-highlight-bg: yellow;
 }
 
 .nav-tabs {
@@ -1788,11 +1789,6 @@ dl.bb-dl > dd > li {
 
 .hover-fx-show:hover .hover-fx-hide {
 	opacity: 1;
-}
-
-/* default highlighted text if not specified by schema: */
-span.default-highlight {
-	background-color: yellow;
 }
 
 .bootstrap-tagsinput {
