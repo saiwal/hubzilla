@@ -291,6 +291,12 @@ class Libzot {
 		}
 
 		$m = parse_url($url);
+
+		if (!$m) {
+			logger('zot_refresh: could not parse url');
+			return false;
+		}
+
 		$site_url = unparse_url([ 'scheme' => $m['scheme'], 'host' => $m['host'] ]);
 
 		$s = q("select site_dead from site where site_url = '%s' limit 1",

@@ -94,7 +94,7 @@ function account_verify_password($login, $pass) {
 			$where = " where account_email = '" . dbesc($login) . "' ";
 		}
 
-		$a = q("select * from account $where");
+		$a = dbq("select * from account $where");
 		if(! $a) {
 			return null;
 		}
