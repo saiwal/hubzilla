@@ -17,13 +17,13 @@ class Poller {
 			}
 		}
 
+		$interval = get_config('queueworker', 'queue_interval', 500000);
 
-		$interval = intval(get_config('system', 'poll_interval'));
+/*
 		if (!$interval) {
 			$interval = ((get_config('system', 'delivery_interval') === false) ? 3 : intval(get_config('system', 'delivery_interval')));
 		}
 
-/*
 		// Check for a lockfile.  If it exists, but is over an hour old, it's stale.  Ignore it.
 		$lockfile = 'store/[data]/poller';
 		if ((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 3600))
@@ -109,7 +109,7 @@ class Poller {
 						Master::Summon(['Onepoll', $contact['abook_id']]);
 
 						if ($interval) {
-							@time_sleep_until(microtime(true) + (float)$interval);
+							usleep($interval);
 						}
 					}
 
@@ -175,7 +175,7 @@ class Poller {
 				Master::Summon(['Onepoll', $contact['abook_id']]);
 
 				if ($interval) {
-					@time_sleep_until(microtime(true) + (float)$interval);
+					usleep($interval);
 				}
 			}
 		}
@@ -201,7 +201,7 @@ class Poller {
 					Master::Summon(['Onedirsync', $rr['ud_id']]);
 
 					if ($interval) {
-						@time_sleep_until(microtime(true) + (float)$interval);
+						usleep($interval);
 					}
 				}
 			}

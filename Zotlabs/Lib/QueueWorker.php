@@ -66,7 +66,7 @@ class QueueWorker {
 		return;
 	}
 
-	public static function Summon(&$argv) {
+	public static function Summon($argv) {
 
 		if ($argv[0] !== 'Queueworker') {
 
@@ -102,19 +102,18 @@ class QueueWorker {
 				return;
 			}
 			self::qcommit();
-			logger('INSERTED: ' . $workinfo_json, LOGGER_DEBUG);
+			hz_syslog('INSERTED: ' . $workinfo_json, LOGGER_DEBUG);
 		}
-		$argv = [];
 
 		$workers = self::GetWorkerCount();
 		if ($workers < self::$maxworkers) {
-			logger("Less than max active workers ($workers) max = " . self::$maxworkers . ".", LOGGER_DEBUG);
+			hz_syslog("Less than max active workers ($workers) max = " . self::$maxworkers . ".", LOGGER_DEBUG);
 			$phpbin = get_config('system', 'phpbin', 'php');
 			proc_run($phpbin, 'Zotlabs/Daemon/Master.php', ['Queueworker']);
 		}
 	}
 
-	public static function Release(&$argv) {
+	public static function Release($argv) {
 
 		if ($argv[0] !== 'Queueworker') {
 
@@ -152,7 +151,7 @@ class QueueWorker {
 			self::qcommit();
 			logger('INSERTED: ' . $workinfo_json, LOGGER_DEBUG);
 		}
-		$argv = [];
+
 		self::Process();
 	}
 
@@ -228,7 +227,7 @@ class QueueWorker {
 
 	public static function Process() {
 		if (!self::GetWorkerID()) {
-			logger('Unable to get worker ID. Exiting.', LOGGER_DEBUG);
+			hz_syslog('Unable to get worker ID. Exiting.', LOGGER_DEBUG);
 			killme();
 		}
 

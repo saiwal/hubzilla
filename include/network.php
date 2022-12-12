@@ -1479,9 +1479,7 @@ function do_delivery($deliveries, $force = false) {
 	*/
 
 
-	$interval = ((get_config('system','delivery_interval') !== false)
-			? intval(get_config('system','delivery_interval')) : 2 );
-
+	$interval = get_config('queueworker', 'queue_interval', 500000);
 
 	$deliveries_per_process = intval(get_config('system','delivery_batch_count'));
 
@@ -1502,7 +1500,7 @@ function do_delivery($deliveries, $force = false) {
 			$deliver = [];
 
 			if($interval) {
-				@time_sleep_until(microtime(true) + (float) $interval);
+				usleep($interval);
 			}
 		}
 	}

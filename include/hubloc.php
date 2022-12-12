@@ -155,8 +155,7 @@ function remove_obsolete_hublocs() {
 
 	logger('remove_obsolete_hublocs: removing ' . count($r) . ' hublocs.');
 
-	$interval = ((get_config('system', 'delivery_interval') !== false)
-			? intval(get_config('system', 'delivery_interval')) : 2 );
+	$interval = get_config('queueworker', 'queue_interval', 500000);
 
 	foreach($r as $rr) {
 		q("update hubloc set hubloc_deleted = 1 where hubloc_id = %d",
@@ -170,7 +169,7 @@ function remove_obsolete_hublocs() {
 			Master::Summon(array('Notifier', 'refresh_all', $x[0]['channel_id']));
 
 			if($interval) {
-				@time_sleep_until(microtime(true) + (float) $interval);
+				usleep($interval);
 			}
 		}
 	}

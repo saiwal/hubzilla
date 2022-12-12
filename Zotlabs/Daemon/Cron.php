@@ -52,7 +52,7 @@ class Cron {
 		require_once('include/account.php');
 		remove_expired_registrations();
 
-		$interval = get_config('system', 'delivery_interval', 3);
+		$interval = get_config('queueworker', 'queue_interval', 500000);
 
 		// expire any expired items
 
@@ -69,7 +69,7 @@ class Cron {
 					Master::Summon(['Notifier', 'drop', $rr['id']]);
 
 					if ($interval) {
-						@time_sleep_until(microtime(true) + (float)$interval);
+						usleep($interval);
 					}
 				}
 			}
@@ -102,7 +102,7 @@ class Cron {
 				Master::Summon(array('Directory', $rr['channel_id'], 'force'));
 
 				if ($interval) {
-					@time_sleep_until(microtime(true) + (float)$interval);
+					usleep($interval);
 				}
 			}
 		}
@@ -159,7 +159,7 @@ class Cron {
 					Master::Summon(array('Notifier', 'wall-new', $rr['id']));
 
 					if ($interval) {
-						@time_sleep_until(microtime(true) + (float)$interval);
+						usleep($interval);
 					}
 				}
 			}

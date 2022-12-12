@@ -135,9 +135,7 @@ class Libsync {
 				$info['collection_members'] = $r;
 		}
 
-
-		$interval = ((get_config('system', 'delivery_interval') !== false)
-			? intval(get_config('system', 'delivery_interval')) : 2);
+		$interval = get_config('queueworker', 'queue_interval', 500000);
 
 		logger('Packet: ' . print_r($info, true), LOGGER_DATA, LOG_DEBUG);
 
@@ -173,7 +171,7 @@ class Libsync {
 			*/
 
 			if ($interval) {
-				@time_sleep_until(microtime(true) + (float)$interval);
+				usleep($interval);
 			}
 
 		}
