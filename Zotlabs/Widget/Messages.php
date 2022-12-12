@@ -58,7 +58,8 @@ class Messages {
 		}
 
 		$channel = App::get_channel();
-		$item_normal = str_replace('item.', 'i.', item_normal());
+		$item_normal_i = str_replace('item.', 'i.', item_normal());
+		$item_normal_c = str_replace('item.', 'c.', item_normal());
 		$entries = [];
 		$limit = 30;
 		$dummy_order_sql = '';
@@ -89,12 +90,12 @@ class Messages {
 		}
 
 		$items = q("SELECT *,
-			(SELECT count(*) FROM item c WHERE c.uid = %d AND c.parent = i.parent AND c.item_unseen = 1 AND c.item_thread_top = 0 $vnotify_sql) AS unseen_count
+			(SELECT count(*) FROM item c WHERE c.uid = %d AND c.parent = i.parent AND c.item_unseen = 1 AND c.item_thread_top = 0 $item_normal_c $vnotify_sql) AS unseen_count
 			FROM item i WHERE i.uid = %d
 			AND i.created <= '%s'
 			$type_sql
 			AND i.item_thread_top = 1
-			$item_normal
+			$item_normal_i
 			ORDER BY i.created DESC $dummy_order_sql
 			LIMIT $limit OFFSET $offset",
 			intval(local_channel()),

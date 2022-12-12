@@ -1476,12 +1476,12 @@ function do_delivery($deliveries, $force = false) {
 		}
 		return;
 	}
-
+	*/
 
 
 	$interval = ((get_config('system','delivery_interval') !== false)
 			? intval(get_config('system','delivery_interval')) : 2 );
-	*/
+
 
 	$deliveries_per_process = intval(get_config('system','delivery_batch_count'));
 
@@ -1500,10 +1500,10 @@ function do_delivery($deliveries, $force = false) {
 		if(count($deliver) >= $deliveries_per_process) {
 			Zotlabs\Daemon\Master::Summon(['Deliver', $deliver]);
 			$deliver = [];
-			/*
-			if($interval)
+
+			if($interval) {
 				@time_sleep_until(microtime(true) + (float) $interval);
-			*/
+			}
 		}
 	}
 
