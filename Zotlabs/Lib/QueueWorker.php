@@ -27,7 +27,7 @@ class QueueWorker {
 		switch (ACTIVE_DBTYPE) {
 			case DBTYPE_MYSQL:
 				q('BEGIN');
-				q('LOCK TABLE ' . $tablename . ' WRITE');
+				//q('LOCK TABLE ' . $tablename . ' WRITE');
 				break;
 
 			case DBTYPE_POSTGRES:
@@ -41,7 +41,7 @@ class QueueWorker {
 	private static function qcommit() {
 		switch (ACTIVE_DBTYPE) {
 			case DBTYPE_MYSQL:
-				q("UNLOCK TABLES");
+				//q("UNLOCK TABLES");
 				q("COMMIT");
 				break;
 
@@ -56,7 +56,7 @@ class QueueWorker {
 		switch (ACTIVE_DBTYPE) {
 			case DBTYPE_MYSQL:
 				q("ROLLBACK");
-				q("UNLOCK TABLES");
+				//q("UNLOCK TABLES");
 				break;
 
 			case DBTYPE_POSTGRES:
@@ -199,7 +199,7 @@ class QueueWorker {
 			$work = dbq("SELECT workerq_id FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE SKIP LOCKED;");
 		}
 		else {
-			$work = dbq("SELECT workerq_id FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1;");
+			$work = dbq("SELECT workerq_id FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE SKIP LOCKED;");
 		}
 
 		if (!$work) {
@@ -256,16 +256,18 @@ class QueueWorker {
 
 			self::qbegin('workerq');
 
-			if (ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
-				$workitem = q("SELECT * FROM workerq WHERE workerq_id = %d FOR UPDATE SKIP LOCKED",
-					$workid
-				);
-			}
-			else {
-				$workitem = q("SELECT * FROM workerq WHERE workerq_id = %d",
-					$workid
-				);
-			}
+			//if (ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
+				//$workitem = q("SELECT * FROM workerq WHERE workerq_id = %d FOR UPDATE SKIP LOCKED",
+					//$workid
+				//);
+			//}
+			//else {
+				//$workitem = q("SELECT * FROM workerq WHERE workerq_id = %d FOR UPDATE SKIP LOCKED",
+					//$workid
+				//);
+			//}
+
+			$workitem = dbq("SELECT * FROM workerq WHERE workerq_id = $workid");
 
 			self::qcommit();
 
@@ -287,7 +289,12 @@ class QueueWorker {
 				$cls  = '\\Zotlabs\\Daemon\\' . $argv[0];
 				$argv = flatten_array_recursive($argv);
 				$argc = count($argv);
+
+				$rnd = random_string();
+
+				hz_syslog('PROCESSING: ' . $rnd . ' ' . print_r($argv,true));
 				$cls::run($argc, $argv);
+				hz_syslog('COMPLETED: ' . $rnd);
 
 				// @FIXME: Right now we assume that if we get a return, everything is OK.
 				// At some point we may want to test whether the run returns true/false
@@ -295,7 +302,7 @@ class QueueWorker {
 				// to implement some sort of "retry interval" first.
 
 				self::qbegin('workerq');
-				q("delete from workerq where workerq_id = %d", $workid);
+				dbq("delete from workerq where workerq_id = $workid");
 				self::qcommit();
 			}
 			else {

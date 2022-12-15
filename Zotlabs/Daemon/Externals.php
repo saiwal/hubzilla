@@ -143,7 +143,7 @@ class Externals {
 						$AS = new ActivityStreams($message);
 						if ($AS->is_valid() && is_array($AS->obj)) {
 							$item = Activity::decode_note($AS);
-							Activity::store($importer, $contact['abook_xchan'], $AS, $item);
+							Activity::store($importer, $contact['hubloc_hash'], $AS, $item);
 							$total++;
 						}
 					}
