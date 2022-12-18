@@ -66,7 +66,7 @@ class Queueworker extends Controller {
 
 		$maxqueueworkers = get_config('queueworker', 'max_queueworkers', 4);
 		$maxqueueworkers = ($maxqueueworkers > 3) ? $maxqueueworkers : 4;
-		set_config('queueworker', 'max_queueworkers', $maxqueueworkers);
+		//set_config('queueworker', 'max_queueworkers', $maxqueueworkers);
 
 		$sc = '';
 
@@ -81,7 +81,7 @@ class Queueworker extends Controller {
 
 		$workermaxage = get_config('queueworker', 'queueworker_max_age');
 		$workermaxage = ($workermaxage >= 120) ? $workermaxage : 300;
-		set_config('queueworker', 'max_queueworker_age', $workermaxage);
+		//set_config('queueworker', 'max_queueworker_age', $workermaxage);
 
 		$sc .= replace_macros(get_markup_template('field_input.tpl'), [
 			'$field' => [
@@ -94,7 +94,7 @@ class Queueworker extends Controller {
 
 		$queueworkersleep = get_config('queueworker', 'queue_worker_sleep');
 		$queueworkersleep = ($queueworkersleep > 100) ? $queueworkersleep : 100;
-		set_config('queueworker', 'queue_worker_sleep', $queueworkersleep);
+		//set_config('queueworker', 'queue_worker_sleep', $queueworkersleep);
 
 		$sc .= replace_macros(get_markup_template('field_input.tpl'), [
 			'$field' => [
