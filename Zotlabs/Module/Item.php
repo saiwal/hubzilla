@@ -1518,8 +1518,9 @@ class Item extends Controller {
 
 		if (preg_match_all('/\[answer\](.*?)\[\/answer\]/ism', $body, $matches, PREG_SET_ORDER)) {
 			foreach ($matches as $match) {
-				$ptr[] = ['name' => $match[1], 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
-				$body  = str_replace('[answer]' . $match[1] . '[/answer]', EMPTY_STR, $body);
+				$answer = escape_tags(trim($match[1]));
+				$ptr[] = ['name' => $answer, 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
+				$body  = str_replace('[answer]' . $answer . '[/answer]', EMPTY_STR, $body);
 			}
 		}
 
@@ -1573,8 +1574,10 @@ class Item extends Controller {
 		$obj['content'] = bbcode($question);
 
 		foreach ($answers as $answer) {
-			if (trim($answer))
-				$ptr[] = ['name' => escape_tags($answer), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
+			$answer = escape_tags(trim($answer));
+			if ($answer) {
+				$ptr[] = ['name' => $answer, 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
+			}
 		}
 
 		if ($multiple) {
