@@ -4602,10 +4602,11 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 			$items = array();
 		}
 
+		/** @FIXME finish mark unseen sql
 		if ($parents_str && (isset($arr['mark_seen']) && $arr['mark_seen'])) {
 			$update_unseen = ' AND parent IN ( ' . dbesc($parents_str) . ' )';
-			/** @FIXME finish mark unseen sql */
 		}
+		*/
 	}
 
 	return $items;
