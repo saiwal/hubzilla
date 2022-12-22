@@ -51,22 +51,24 @@ class Queueworker extends Controller {
 
 		$content = "<H1>Queue Status</H1>\n";
 
-		$r = q('select count(*) as qentries from workerq');
+		$r = q('select count(*) as total from workerq');
 
-		if (!$r) {
-			$content = "<H4>There was an error querying the database.</H4>";
-			return $content;
-		}
-
-		$content .= "<H4>There are " . $r[0]['qentries'] . " queue items to be processed.</H4>";
+		$content .= "<H4>There are " . $r[0]['total'] . " queue items to be processed.</H4>";
 
 		$r = dbq("select count(distinct workerq_reservationid) as qworkers from workerq where workerq_reservationid is not null");
 
 		$content .= "<H4>Active workers: " . $r[0]['qworkers'] . "</H4>";
 
+		$r = dbq("select workerq_cmd, count(*) as total from workerq where true group by workerq_cmd");
+
+		$content .= "<H4>Work items</H4>";
+
+		foreach($r as $rr) {
+			$content .= $rr['workerq_cmd'] . ': ' . $rr['total'] . '<br>';
+		}
+
 		$maxqueueworkers = get_config('queueworker', 'max_queueworkers', 4);
 		$maxqueueworkers = ($maxqueueworkers > 3) ? $maxqueueworkers : 4;
-		//set_config('queueworker', 'max_queueworkers', $maxqueueworkers);
 
 		$sc = '';
 
@@ -81,7 +83,6 @@ class Queueworker extends Controller {
 
 		$workermaxage = get_config('queueworker', 'queueworker_max_age');
 		$workermaxage = ($workermaxage >= 120) ? $workermaxage : 300;
-		//set_config('queueworker', 'max_queueworker_age', $workermaxage);
 
 		$sc .= replace_macros(get_markup_template('field_input.tpl'), [
 			'$field' => [
@@ -94,7 +95,6 @@ class Queueworker extends Controller {
 
 		$queueworkersleep = get_config('queueworker', 'queue_worker_sleep');
 		$queueworkersleep = ($queueworkersleep > 100) ? $queueworkersleep : 100;
-		//set_config('queueworker', 'queue_worker_sleep', $queueworkersleep);
 
 		$sc .= replace_macros(get_markup_template('field_input.tpl'), [
 			'$field' => [
