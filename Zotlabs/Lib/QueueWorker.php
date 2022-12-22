@@ -258,9 +258,10 @@ class QueueWorker {
 
 			$workitem = dbq("SELECT * FROM workerq WHERE workerq_id = $workid");
 
-			if (isset($workitem[0])) {
+			if ($workitem) {
 				// At least SOME work to do.... in case there's more, let's ramp up workers.
 				$workers = self::GetWorkerCount();
+
 				if ($workers < self::$maxworkers) {
 					logger($workers . '/' . self::$maxworkers . ' workers active', LOGGER_DEBUG);
 					$phpbin = get_config('system', 'phpbin', 'php');
@@ -268,6 +269,7 @@ class QueueWorker {
 				}
 
 				$jobs++;
+
 				logger("Workinfo: " . $workitem[0]['workerq_data'], LOGGER_DEBUG);
 
 				$workinfo = json_decode($workitem[0]['workerq_data'], true);
@@ -276,10 +278,9 @@ class QueueWorker {
 				$cls  = '\\Zotlabs\\Daemon\\' . $argv[0];
 				$argv = flatten_array_recursive($argv);
 				$argc = count($argv);
-
 				$rnd = random_string();
 
-				logger('PROCESSING: ' . $rnd . ' ' . print_r($argv, true));
+				logger('PROCESSING: ' . $rnd . ' ' . print_r($argv[0], true));
 
 				$cls::run($argc, $argv);
 
@@ -307,24 +308,30 @@ class QueueWorker {
 				$workinfo = json_decode($workitem['v'], true);
 				$argc     = $workinfo['argc'];
 				$argv     = $workinfo['argv'];
+
 				logger('Master: process: ' . print_r($argv, true), LOGGER_ALL, LOG_DEBUG);
+
 				if (!isset($argv[0])) {
 					q("delete from workerq where workerq_id = %d",
 						$work[0]['workerq_id']
 					);
 					continue;
 				}
+
 				$cls = '\\Zotlabs\\Daemon\\' . $argv[0];
 				$cls::run($argc, $argv);
+
 				q("delete from workerq where workerq_id = %d",
 					$work[0]['workerq_id']
 				);
-				usleep(300000);
+
 				//Give the server .3 seconds to catch its breath between tasks.
 				//This will hopefully keep it from crashing to it's knees entirely
 				//if the last task ended up initiating other parallel processes
 				//(eg. polling remotes)
+				usleep(300000);
 			}
+
 			//Make sure nothing new came in
 			$work = q("select * from workerq");
 		}
