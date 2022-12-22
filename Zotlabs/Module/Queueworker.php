@@ -61,10 +61,11 @@ class Queueworker extends Controller {
 
 		$r = dbq("select workerq_cmd, count(*) as total from workerq where true group by workerq_cmd");
 
-		$content .= "<H4>Work items</H4>";
-
-		foreach($r as $rr) {
-			$content .= $rr['workerq_cmd'] . ': ' . $rr['total'] . '<br>';
+		if ($r) {
+			$content .= "<H4>Work items</H4>";
+			foreach($r as $rr) {
+				$content .= $rr['workerq_cmd'] . ': ' . $rr['total'] . '<br>';
+			}
 		}
 
 		$maxqueueworkers = get_config('queueworker', 'max_queueworkers', 4);
