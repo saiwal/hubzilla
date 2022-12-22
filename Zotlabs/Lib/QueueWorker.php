@@ -21,7 +21,7 @@ class QueueWorker {
 		'Directory'        => 1
 	];
 
-	// Exceptions for processtimeout value.
+	// Exceptions for processtimeout ($workermaxage) value.
 	// Currently the value is overriden with 3600 seconds (1h).
 	public static $long_running_cmd = [
 		'Queue'
@@ -145,6 +145,7 @@ class QueueWorker {
 
 		$workers = dbq("select count(distinct workerq_reservationid) as total from workerq where workerq_reservationid is not null");
 		logger("WORKERCOUNT: " . $workers[0]['total'], LOGGER_DEBUG);
+
 		return intval($workers[0]['total']);
 	}
 
@@ -174,7 +175,7 @@ class QueueWorker {
 
 		self::qstart();
 
-		// This is probably the better solution but is not supported by mariadb < 10.6
+		// This is probably the better solution but is not supported by mariadb < 10.6 which is still used a lot.
 		// $work = dbq("SELECT workerq_id FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE SKIP LOCKED;");
 
 		$work = dbq("SELECT workerq_id, workerq_cmd FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE;");
@@ -255,9 +256,7 @@ class QueueWorker {
 
 			usleep(self::$workersleep);
 
-			self::qstart();
 			$workitem = dbq("SELECT * FROM workerq WHERE workerq_id = $workid");
-			self::qcommit();
 
 			if (isset($workitem[0])) {
 				// At least SOME work to do.... in case there's more, let's ramp up workers.
@@ -291,9 +290,7 @@ class QueueWorker {
 				// and requeue the work to be tried again if needed.  But we probably want
 				// to implement some sort of "retry interval" first.
 
-				self::qstart();
 				dbq("delete from workerq where workerq_id = $workid");
-				self::qcommit();
 			}
 			else {
 				logger("NO WORKITEM!", LOGGER_DEBUG);
