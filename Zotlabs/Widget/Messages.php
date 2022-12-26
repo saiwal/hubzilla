@@ -69,10 +69,12 @@ class Messages {
 		$vnotify_sql = '';
 
 		if (!($vnotify & VNOTIFY_LIKE)) {
-			$vnotify_sql = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql_c = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql_i = " AND i.verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
 		}
 		elseif (!feature_enabled(local_channel(), 'dislike')) {
-			$vnotify_sql = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql_c = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql_i = " AND i.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
 		}
 
 		switch($type) {
@@ -90,7 +92,7 @@ class Messages {
 		}
 
 		$items = q("SELECT *,
-			(SELECT count(*) FROM item c WHERE c.uid = %d AND c.parent = i.parent AND c.item_unseen = 1 AND c.item_thread_top = 0 $item_normal_c $vnotify_sql) AS unseen_count
+			(SELECT count(*) FROM item c WHERE c.uid = %d AND c.parent = i.parent AND c.item_unseen = 1 AND c.item_thread_top = 0 $item_normal_c $vnotify_sql_c) AS unseen_count
 			FROM item i WHERE i.uid = %d
 			AND i.created <= '%s'
 			$type_sql
