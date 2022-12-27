@@ -1,6 +1,6 @@
 <?php
 
-namespace Zotlabs\Module;
+namespace Zotlabs\Module\Admin;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -12,10 +12,6 @@ class Queueworker extends Controller {
 	}
 
 	function post() {
-
-		if ((!local_channel()) || (!is_site_admin())) {
-			goaway(z_root() . '/queueworker');
-		}
 
 		check_form_security_token('form_security_token', 'queueworker');
 
@@ -31,23 +27,10 @@ class Queueworker extends Controller {
 		$queueworkersleep = ($queueworkersleep > 100) ? $queueworkersleep : 100;
 		set_config('queueworker', 'queue_worker_sleep', $queueworkersleep);
 
-		goaway(z_root() . '/queueworker');
+		goaway(z_root() . '/admin/queueworker');
 	}
 
 	function get() {
-
-		$content = "<H1>ERROR: Page not found</H1>";
-		App::$error = 404;
-
-		if (!local_channel()) {
-			return $content;
-		}
-
-		if (!(is_site_admin())) {
-			return $content;
-		}
-
-		load_config("queueworker");
 
 		$content = "<H1>Queue Status</H1>\n";
 
