@@ -158,16 +158,13 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		require_once('include/security.php');
 
 		$sys = get_sys_channel();
+		$uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
 		$abook_uids = " and abook.abook_channel = " . intval($sys['channel_id']) . " ";
-		$sql_extra = '';
+		$sql_extra = item_permissions_sql($sys['channel_id']);
+		$site_firehose_sql = '';
 
 		if($site_firehose) {
-			$uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
-		}
-		else {
-			$uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
-			$sql_extra .= item_permissions_sql($sys['channel_id']);
-			\App::$data['firehose'] = intval($sys['channel_id']);
+			$site_firehose_sql = " and author_xchan in (select channel_hash from channel where channel_system = 0 and channel_removed = 0) ";
 		}
 
 		if(get_config('system','public_list_mode'))
@@ -199,7 +196,9 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
-						WHERE mid = '%s' $uids $item_normal
+						WHERE item.mid = '%s' and item.item_private = 0
+						$uids $site_firehose_sql
+						$item_normal
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra $net_query2",
 						dbesc($mid)
@@ -207,10 +206,12 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				}
 				else {
 					// Fetch a page full of parent items for this page
-					$r = dbq("SELECT item.id AS item_id FROM item
+					$r = dbq("SELECT parent AS item_id FROM item
 						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
 						$net_query
-						WHERE true $uids and item.item_thread_top = 1 $item_normal
+						WHERE item.item_private = 0 and item.item_thread_top = 1
+						$uids $site_firehose_sql
+						$item_normal
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra $net_query2
 						ORDER BY $ordering DESC $pager_sql "
@@ -222,7 +223,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					$r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
-						WHERE mid = '%s' $uids $item_normal_update $simple_update
+						WHERE item.mid = '%s' and item.item_private = 0
+						$uids $site_firehose_sql $item_normal_update $simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra $net_query2",
 						dbesc($mid)
@@ -232,7 +234,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					$r = dbq("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
-						WHERE true $uids $item_normal_update
+						WHERE item.item_private = 0 and item.item_thread_top = 1
+						$uids $site_firehose_sql $item_normal_update
 						$simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra $net_query2"
@@ -256,7 +259,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				// use effective_uid param of xchan_query to help sort out comment permission
 				// for sys_channel owned items.
 
-				xchan_query($items,true,(($sys) ? local_channel() : 0));
+				xchan_query($items, true, local_channel());
 				$items = fetch_post_tags($items,true);
 				$items = conv_sort($items,$ordering);
 			}
