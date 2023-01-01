@@ -1,6 +1,6 @@
 {{* tpl FR formel, pour inviter de manière plus polie des personnes comme des membres d'entreprise ou des partenaires professionnels *}}.
 
-Veuillez rejoindre le réseau social {{$nom du projet}}. Ce message contient les données essentielles pour la première connexion.
+Veuillez rejoindre le réseau social {{$projectname}}. Ce message contient les données essentielles pour la première connexion.
 
 Le site est à rejoindre se trouve ici :
 {{$invite_whereami}}
