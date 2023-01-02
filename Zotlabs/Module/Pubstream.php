@@ -161,10 +161,12 @@ class Pubstream extends \Zotlabs\Web\Controller {
 		$uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
 		$abook_uids = " and abook.abook_channel = " . intval($sys['channel_id']) . " ";
 		$sql_extra = item_permissions_sql($sys['channel_id']);
+		$sql_extra_order = '';
 		$site_firehose_sql = '';
+		$thread_top =  " and item.item_thread_top = 1 ";
 
 		if($site_firehose) {
-			$site_firehose_sql = " and author_xchan in (select channel_hash from channel where channel_system = 0 and channel_removed = 0) ";
+			$site_firehose_sql = " and owner_xchan in (select channel_hash from channel where channel_system = 0 and channel_removed = 0) ";
 		}
 
 		if(get_config('system','public_list_mode'))
@@ -175,6 +177,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 		if(x($hashtags)) {
 			$sql_extra .= protect_sprintf(term_query('item', $hashtags, TERM_HASHTAG, TERM_COMMUNITYTAG));
+			$sql_extra_order = " ORDER BY item.created DESC ";
+			$thread_top = '';
 		}
 
 		$net_query = (($net) ? " left join xchan on xchan_hash = author_xchan " : '');
@@ -209,7 +213,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					$r = dbq("SELECT parent AS item_id FROM item
 						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
 						$net_query
-						WHERE item.item_private = 0 and item.item_thread_top = 1
+						WHERE item.item_private = 0 $thread_top
 						$uids $site_firehose_sql
 						$item_normal
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
@@ -234,7 +238,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 					$r = dbq("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
-						WHERE item.item_private = 0 and item.item_thread_top = 1
+						WHERE item.item_private = 0 $thread_top
 						$uids $site_firehose_sql $item_normal_update
 						$simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
@@ -253,15 +257,22 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				$items = dbq("SELECT item.*, item.id AS item_id FROM item
 					WHERE true $uids $item_normal
 					AND item.parent IN ( $parents_str )
-					$sql_extra"
+					$sql_extra $sql_extra_order"
 				);
+
+
 
 				// use effective_uid param of xchan_query to help sort out comment permission
 				// for sys_channel owned items.
 
 				xchan_query($items, true, local_channel());
 				$items = fetch_post_tags($items,true);
-				$items = conv_sort($items,$ordering);
+
+				if (!$hashtags) {
+					$items = conv_sort($items, $ordering);
+				}
+
+
 			}
 
 		}

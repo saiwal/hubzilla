@@ -322,7 +322,7 @@ function pubtagblock($net,$site,$limit,$recent = 0,$safemode = 1, $type = TERM_H
 	if($r) {
 		$o = '<div class="tagblock widget"><h3>' . (($recent) ? t('Trending') : t('Tags')) . '</h3><div class="tags" align="center">';
 		foreach($r as $rr) {
-		  $o .= '<span class="tag'.$rr[2].'">#</span><a href="'.$link .'/' . '?f=&tag=' . urlencode($rr[0]).'" class="tag'.$rr[2].'">'.$rr[0].'</a> ' . "\r\n";
+		  $o .= '<span class="tag'.$rr[2].'">#</span><a href="'.$link . '?tag=' . urlencode($rr[0]).'" class="tag'.$rr[2].'">'.$rr[0].'</a> ' . "\r\n";
 		}
 		$o .= '</div></div>';
 	}
@@ -335,53 +335,55 @@ function pub_tagadelic($net, $site, $limit, $recent, $safemode, $type) {
 
 	$item_normal = item_normal();
 	$count = intval($limit);
-	$sql_extra = "";
-        if($site)
-                $uids = " and item.uid in ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) and item_private = 0  and item_wall = 1 ";
-        else {
-                $sys = get_sys_channel();
-                $uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
-                $sql_extra = " and item_private = 0 ";
-        }
+	$sys = get_sys_channel();
+	$uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
+	$sql_extra = item_permissions_sql($sys['channel_id']);
 
-        if($recent)
-                $sql_extra .= " and item.created > NOW() - INTERVAL " . db_quoteinterval(intval($recent) . ' DAY') . " ";
+	$site_firehose_sql = '';
 
+	if ($site) {
+		$site_firehose_sql = " and author_xchan in (select channel_hash from channel where channel_system = 0 and channel_removed = 0) ";
+	}
 
-        if($safemode) {
-                $unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'rss', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
-                if($unsafetags) {
-                        $sql_extra .= " and not term.term in ( " . stringify_array($unsafetags,true) . ") ";
-                }
-        }
+	if($recent) {
+		$sql_extra .= " and item.created > NOW() - INTERVAL " . db_quoteinterval(intval($recent) . ' DAY') . " ";
+	}
 
-		$key = __FUNCTION__ . "-" . md5($site . $recent . $safemode . $limit . $type);
-
-		$content = Cache::get($key, '5 MINUTE');
-		if(! $content) {
-
-			$content = Cache::get($key, '1 MONTH');
-			$arr = [
-				"SELECT term, count(term) AS total FROM term LEFT JOIN item ON term.oid = item.id
-				WHERE term.ttype = %d
-				AND otype = %d
-				AND item_type = %d
-				$sql_extra $uids $item_normal
-				GROUP BY term ORDER BY total DESC %s",
-				intval($type),
-				intval(TERM_OBJ_POST),
-				intval(ITEM_TYPE_POST),
-				(intval($count) ? "LIMIT $count" : '')
-			];
-
-			\Zotlabs\Daemon\Master::Summon([ 'Cache_query', $key, base64_encode(json_encode($arr)) ]);
+	if($safemode) {
+		$unsafetags = get_config('system','unsafepubtags', [ 'boobs', 'bot', 'rss', 'girl','girls', 'nsfw', 'sexy', 'nude' ]);
+		if($unsafetags) {
+			$sql_extra .= " and not term.term in ( " . stringify_array($unsafetags,true) . ") ";
 		}
+	}
 
-		$r = unserialize($content);
-		if(! $r)
-			return [];
+	$key = __FUNCTION__ . "-" . md5($site . $recent . $safemode . $limit . $type);
 
-        return Zotlabs\Text\Tagadelic::calc($r);
+	$content = Cache::get($key, '5 MINUTE');
+	if(! $content) {
+
+		$content = Cache::get($key, '1 MONTH');
+		$arr = [
+			"SELECT term, count(term) AS total FROM term LEFT JOIN item ON term.oid = item.id
+			WHERE term.ttype = %d
+			AND otype = %d
+			AND item_type = %d
+			AND item_private = 0
+			$uids $item_normal $site_firehose_sql $sql_extra
+			GROUP BY term ORDER BY total DESC %s",
+			intval($type),
+			intval(TERM_OBJ_POST),
+			intval(ITEM_TYPE_POST),
+			(intval($count) ? "LIMIT $count" : '')
+		];
+
+		\Zotlabs\Daemon\Master::Summon([ 'Cache_query', $key, base64_encode(json_encode($arr)) ]);
+	}
+
+	$r = unserialize($content);
+	if(! $r)
+		return [];
+
+	return Zotlabs\Text\Tagadelic::calc($r);
 }
 
 
