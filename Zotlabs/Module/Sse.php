@@ -50,7 +50,7 @@ class Sse extends Controller {
 			self::$vnotify = get_pconfig(self::$uid, 'system', 'vnotify');
 		}
 
-		$sleep_seconds = 3;
+		$sleep = 1000000; // microseconds
 
 		self::$sse_enabled = get_config('system', 'sse_enabled', 0);
 
@@ -63,17 +63,24 @@ class Sse extends Controller {
 			header("Connection: keep-alive");
 			header("X-Accel-Buffering: no");
 
+			$i = 0;
+
 			while(true) {
 
-				if(! self::$sse_id) {
+				// reset counter for updating chatpresence about every minute
+				if (($i * $sleep)/60 > 1000000) {
+					$i = 0;
+				}
 
-					// Update chat presence indication
-
+				if(!self::$sse_id && $i === 0) {
+					// Update chat presence indication about once per minute
 					$r = q("select cp_id, cp_room from chatpresence where cp_xchan = '%s' and cp_client = '%s' and cp_room = 0 limit 1",
 						dbesc(self::$ob_hash),
 						dbesc($_SERVER['REMOTE_ADDR'])
 					);
+
 					$basic_presence = false;
+
 					if($r) {
 						$basic_presence = true;
 						q("update chatpresence set cp_last = '%s' where cp_id = %d",
@@ -81,7 +88,8 @@ class Sse extends Controller {
 							intval($r[0]['cp_id'])
 						);
 					}
-					if(! $basic_presence) {
+
+					if(!$basic_presence) {
 						q("insert into chatpresence ( cp_xchan, cp_last, cp_status, cp_client)
 							values( '%s', '%s', '%s', '%s' ) ",
 							dbesc(self::$ob_hash),
@@ -94,8 +102,13 @@ class Sse extends Controller {
 
 				XConfig::Load(self::$ob_hash);
 
-				$result = XConfig::Get(self::$ob_hash, 'sse', 'notifications', []);
+				$result = [];
 				$lock = XConfig::Get(self::$ob_hash, 'sse', 'lock');
+
+				if (!$lock) {
+					$result = XConfig::Get(self::$ob_hash, 'sse', 'notifications', []);
+				}
+
 
 				// We do not have the local_channel in the addon.
 				// Reset pubs here if the app is not installed.
@@ -105,7 +118,7 @@ class Sse extends Controller {
 					}
 				}
 
-				if($result && !$lock) {
+				if($result) {
 					echo "event: notifications\n";
 					echo 'data: ' . json_encode($result);
 					echo "\n\n";
@@ -121,6 +134,7 @@ class Sse extends Controller {
 
 				if(ob_get_length() > 0)
 					ob_end_flush();
+
 				flush();
 
 				if(connection_status() != CONNECTION_NORMAL || connection_aborted()) {
@@ -129,7 +143,9 @@ class Sse extends Controller {
 					break;
 				}
 
-				sleep($sleep_seconds);
+				$i++;
+
+				usleep($sleep);
 
 			}
 
