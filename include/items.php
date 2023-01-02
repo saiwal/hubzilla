@@ -97,7 +97,6 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 		$private_envelope = false;
 		require_once('include/channel.php');
-		//$sys = get_sys_channel();
 
 		if(array_key_exists('public_policy',$item) && $item['public_policy'] !== 'self') {
 
@@ -114,7 +113,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 				$r = $hookinfo['recipients'];
 			} else {
 				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
-				intval($item['uid'])
+					intval($item['uid'])
 				);
 			}
 
@@ -141,18 +140,19 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 					}
 				}
 			}
-// we probably want to check that discovery channel delivery is allowed before uncommenting this.
-//			if($policy === 'pub')
-//				$recipients[] = $sys['xchan_hash'];
 		}
 
 
-		// Forward to thread listeners, *unless* there is even a remote hint that the item
-		// might have some privacy attached. This could be (for instance) an ActivityPub DM
+		// Forward to thread listeners and pubstream (sys channel), *unless* there is even
+		// a remote hint that the item might have some privacy attached.
+		// This could be (for instance) an ActivityPub DM
 		// in the middle of a public thread. Unless we can guarantee beyond all doubt that
 		// this is public, don't allow it to go to thread listeners.
 
 		if(! intval($item['item_private'])) {
+			$sys = get_sys_channel();
+			$recipients[] = $sys['xchan_hash'];
+
 			$r = ThreadListener::fetch_by_target($item['parent_mid']);
 			if($r) {
 				foreach($r as $rv) {

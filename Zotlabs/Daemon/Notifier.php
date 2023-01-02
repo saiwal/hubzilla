@@ -509,6 +509,7 @@ class Notifier {
 		// public posts won't make it to the local public stream unless there's a recipient on this site.
 		// This code block sees if it's a public post and localhost is missing, and if so adds an entry for the local sys channel to the $hubs list
 
+		/* sys channel is now added in collect recipients
 		if (!self::$private) {
 			$found_localhost = false;
 			if ($hubs) {
@@ -529,6 +530,7 @@ class Notifier {
 				}
 			}
 		}
+		*/
 
 		if (!$hubs) {
 			logger('notifier: no hubs', LOGGER_NORMAL, LOG_NOTICE);
