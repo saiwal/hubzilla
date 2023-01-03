@@ -237,7 +237,7 @@ class QueueWorker {
 		self::$workersleep  = ((intval(self::$workersleep) > 100) ? intval(self::$workersleep) : 100);
 
 		if (function_exists('sys_getloadavg') && get_config('queueworker', 'load_average_sleep')) {
-			// experimental!
+			// very experimental!
 			$load_average_sleep = true;
 		}
 

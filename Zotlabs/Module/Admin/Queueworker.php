@@ -27,6 +27,9 @@ class Queueworker extends Controller {
 		$queueworkersleep = ($queueworkersleep > 100) ? $queueworkersleep : 100;
 		set_config('queueworker', 'queue_worker_sleep', $queueworkersleep);
 
+		$auto_queue_worker_sleep = intval($_POST['auto_queue_worker_sleep']);
+		set_config('queueworker', 'auto_queue_worker_sleep', $auto_queue_worker_sleep);
+
 		goaway(z_root() . '/admin/queueworker');
 	}
 
@@ -80,18 +83,30 @@ class Queueworker extends Controller {
 		$queueworkersleep = get_config('queueworker', 'queue_worker_sleep');
 		$queueworkersleep = ($queueworkersleep > 100) ? $queueworkersleep : 100;
 
+		$auto_queue_worker_sleep = get_config('queueworker', 'auto_queue_worker_sleep', 0);
+
 		$sc .= replace_macros(get_markup_template('field_input.tpl'), [
 			'$field' => [
 				'queue_worker_sleep',
 				t('Pause before starting next task'),
 				$queueworkersleep,
-				t('Minimum 100, default 100 microseconds')
+				t('Minimum 100, default 100 microseconds'),
+				'',
+				(($auto_queue_worker_sleep) ? 'disabled' : '')
+			]
+		]);
+
+		$sc .= replace_macros(get_markup_template('field_checkbox.tpl'), [
+			'$field' => [
+				'auto_queue_worker_sleep',
+				t('Automatically adjust pause before starting next task'),
+				$auto_queue_worker_sleep,
 			]
 		]);
 
 		$tpl = get_markup_template('settings_addon.tpl');
 		$content .= replace_macros($tpl, [
-				'$action_url' => 'queueworker',
+				'$action_url' => 'admin/queueworker',
 				'$form_security_token' => get_form_security_token('queueworker'),
 				'$title' => t('Queueworker Settings'),
 				'$content' => $sc,
