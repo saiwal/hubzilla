@@ -122,10 +122,10 @@ class Cloud extends Controller {
 			\App::$page['content'] = '<h2>403 Forbidden</h2>';
 		}
 		elseif($err instanceof \Sabre\DAV\Exception\NotImplemented) {
-			\App::$page['content'] = '<h2>501 Not implemented</h2>';
+			goaway(z_root() . '/' . \App::$query_string);
 		}
 		else {
-			\App::$page['content'] = '<h2>500 Unknown error</h2>';
+			\App::$page['content'] = '<h2>Unknown error</h2>';
 		}
 
 		construct_page();
