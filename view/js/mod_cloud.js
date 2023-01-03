@@ -411,6 +411,9 @@ function UploadInit() {
 	var filedrag = $(".cloud-index.attach-drop");
 	var reload = false;
 
+	if (!$('#invisible-cloud-file-upload').length)
+		return;
+
 	$('#invisible-cloud-file-upload').fileupload({
 		url: 'file_upload',
 		dataType: 'json',
