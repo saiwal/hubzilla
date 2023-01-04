@@ -304,8 +304,6 @@ class Pdledit_gui extends Controller {
 			}
 		}
 
-hz_syslog(print_r($ret,true));
-
 		return $ret;
 	}
 
