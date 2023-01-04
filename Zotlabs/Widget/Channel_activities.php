@@ -26,7 +26,7 @@ class Channel_activities {
 		self::$channel = App::get_channel();
 
 		$o = '<div id="channel-activities" class="d-none overflow-hidden">';
-		$o .= '<h2 class="mb-4">Welcome ' . self::$channel['channel_name'] . '!</h2>';
+		$o .= '<h2 class="mb-4">' . t('Welcome') . ' ' . self::$channel['channel_name'] . '!</h2>';
 		//$o .= 'Last login date: ' . get_pconfig(self::$uid, 'system', 'stored_login_date') . ' from ' . get_pconfig(self::$uid, 'system', 'stored_login_addr');
 
 		self::get_photos_activity();
@@ -43,7 +43,7 @@ class Channel_activities {
 		call_hooks('channel_activities_widget', $hookdata);
 
 		if (!$hookdata['activities']) {
-			$o .= '<h3>No recent activity to display</h3>';
+			$o .= '<h3>' . t('No recent activities') . '</h3>';
 			$o .= '</div>';
 			return $o;
 		}
