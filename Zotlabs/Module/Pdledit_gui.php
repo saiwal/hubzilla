@@ -220,6 +220,7 @@ class Pdledit_gui extends Controller {
 
 	function get_modules() {
 		$ret = '';
+		$arr = [];
 
 		$files = glob('Zotlabs/Module/*.php');
 		if($files) {
@@ -232,7 +233,7 @@ class Pdledit_gui extends Controller {
 
 				$x = theme_include('mod_' . $name . '.pdl');
 				if($x) {
-					$ret .= '<div class="mb-2"><a href="pdledit_gui/' . $name . '">' . $name . '</a></div>';
+					$arr[] = $name;
 				}
 			}
 		}
@@ -240,17 +241,21 @@ class Pdledit_gui extends Controller {
 		$addons = plugins_installed_list();
 		if ($addons) {
 			foreach ($addons as $name) {
-				$path = 'addon/' . $name . '/Mod_' . ucfirst($name) . '.php';
-
-				if (!file_exists($path)) {
-					continue;
+				$path = 'addon/' . $name . '/mod_' . $name . '.pdl';
+				if (file_exists($path)) {
+					$arr[] = $name;
 				}
-
-				$ret .= '<div class="mb-2"><a href="pdledit_gui/' . $name . '">' . $name . '</a></div>';
 			}
 		}
 
+		sort($arr);
+
+		foreach ($arr as $name) {
+			$ret .= '<div class="mb-2"><a href="pdledit_gui/' . $name . '">' . $name . '</a></div>';
+		}
+
 		return $ret;
+
 	}
 
 	function get_widgets($module) {
