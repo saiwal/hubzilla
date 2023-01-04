@@ -237,18 +237,45 @@ class Pdledit_gui extends Controller {
 			}
 		}
 
+		$addons = plugins_installed_list();
+		if ($addons) {
+			foreach ($addons as $name) {
+				$path = 'addon/' . $name . '/Mod_' . ucfirst($name) . '.php';
+
+				if (!file_exists($path)) {
+					continue;
+				}
+
+				$ret .= '<div class="mb-2"><a href="pdledit_gui/' . $name . '">' . $name . '</a></div>';
+			}
+		}
+
 		return $ret;
 	}
 
 	function get_widgets($module) {
 		$ret = [];
 
+
 		$checkpaths = [
 			'Zotlabs/Widget/*.php'
 		];
 
+		$addons = plugins_installed_list();
+
+		if ($addons) {
+			foreach ($addons as $name) {
+				$path = 'addon/' . $name . '/Widget';
+
+				if (is_dir($path)) {
+					$checkpaths[] = $path . '/*.php';
+				}
+			}
+		}
+
 		foreach ($checkpaths as $path) {
 			$files = glob($path);
+
 			if($files) {
 				foreach($files as $f) {
 					$name = lcfirst(basename($f, '.php'));
@@ -536,12 +563,21 @@ class Pdledit_gui extends Controller {
 			'modified' => true
 		];
 
-		$pdl_path = 'mod_' . $module . '.pdl';
+		$pdl = 'mod_' . $module . '.pdl';
+		$pdl_path = '';
 
-		$ret['pdl'] = get_pconfig(local_channel(), 'system', $pdl_path);
+		$ret['pdl'] = get_pconfig(local_channel(), 'system', $pdl);
 
 		if(!$ret['pdl']) {
-			$pdl_path = theme_include($pdl_path);
+			$pdl_path = theme_include($pdl);
+
+			if (!$pdl_path) {
+				$addon_path = 'addon/' . $module . '/' . $pdl;
+				if (file_exists($addon_path)) {
+					$pdl_path = $addon_path;
+				}
+			}
+
 			if ($pdl_path) {
 				$ret['pdl'] = file_get_contents($pdl_path);
 				$ret['modified'] = false;

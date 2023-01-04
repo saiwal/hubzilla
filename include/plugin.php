@@ -189,7 +189,7 @@ function plugin_is_installed($name) {
 function reload_plugins() {
 	$plugins = get_config('system', 'addon');
 	if(strlen($plugins)) {
-		$r = q("SELECT * FROM addon WHERE installed = 1");
+		$r = dbq("SELECT * FROM addon WHERE installed = 1");
 		if(count($r))
 			$installed = $r;
 		else
@@ -243,7 +243,7 @@ function reload_plugins() {
 
 function plugins_installed_list() {
 
-	$r = q("select * from addon where installed = 1 order by aname asc");
+	$r = dbq("select * from addon where installed = 1 order by aname asc");
 	return(($r) ? ids_to_array($r,'aname') : []);
 }
 
@@ -313,7 +313,7 @@ function plugins_sync() {
  */
 function visible_plugin_list() {
 
-	$r = q("select * from addon where hidden = 0 order by aname asc");
+	$r = dbq("select * from addon where hidden = 0 order by aname asc");
 	$x = (($r) ? ids_to_array($r,'aname') : array());
 	$y = [];
 	if($x) {
@@ -392,7 +392,7 @@ function load_hooks() {
 
 	App::$hooks = [];
 
-	$r = q("SELECT * FROM hook WHERE true ORDER BY priority DESC");
+	$r = dbq("SELECT * FROM hook WHERE true ORDER BY priority DESC");
 	if($r) {
 
 		foreach($r as $rv) {
@@ -612,6 +612,17 @@ function get_widget_info($widget){
 		"addon/$ucwidget/$ucwidget.php",
 		"addon/$widget.php"
 	];
+
+	$addons = plugins_installed_list();
+
+	if ($addons) {
+		foreach ($addons as $name) {
+			$path = 'addon/' . $name . '/Widget/' . $ucwidget . '.php';
+			if (is_file($path)) {
+				$checkpaths[] = $path ;
+			}
+		}
+	}
 
 	$widget_found = false;
 

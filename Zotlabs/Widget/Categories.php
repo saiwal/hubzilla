@@ -3,7 +3,7 @@
 /**
  *   * Name: Categories
  *   * Description: Display a menu with links to categories
- *   * Requires: channel, articles, cards, cloud
+ *   * Requires: channel, cloud
  */
 
 namespace Zotlabs\Widget;

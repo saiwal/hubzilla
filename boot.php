@@ -2268,6 +2268,7 @@ function load_pdl() {
 			'module' => App::$module,
 			'layout' => ''
 		];
+
 		/**
 		 * @hooks load_pdl
 		 *   Called when we load a PDL file or description.
@@ -2281,20 +2282,26 @@ function load_pdl() {
 		$u = App::$comanche->get_channel_id();
 		$s = '';
 
-		if ($u)
+		if ($u) {
 			$s = get_pconfig($u, 'system', $n);
-		if (!$s)
-			$s = $layout;
+		}
 
-		if ((!$s) && (($p = theme_include($n)) != ''))
+		if (!$s) {
+			$s = $layout;
+		}
+
+		if ((!$s) && (($p = theme_include($n)) != '')) {
 			$s = @file_get_contents($p);
-		elseif (file_exists('addon/' . App::$module . '/' . $n))
+		}
+		elseif ((!$s) && file_exists('addon/' . App::$module . '/' . $n)) {
 			$s = @file_get_contents('addon/' . App::$module . '/' . $n);
+		}
 
 		$arr = [
 			'module' => App::$module,
 			'layout' => $s
 		];
+
 		call_hooks('alter_pdl', $arr);
 		$s = $arr['layout'];
 

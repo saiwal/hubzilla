@@ -78,6 +78,23 @@ class Pdledit extends Controller {
 				}
 			}
 
+			// addons
+			$o .= '<h2>Addons</h2>';
+
+			$addons = plugins_installed_list();
+
+			foreach ($addons as $addon) {
+
+				$path = 'addon/' . $addon . '/Mod_' . ucfirst($addon) . '.php';
+
+				if (!file_exists($path))
+					continue;
+
+				$o .= '<a href="pdledit/' . $addon . '" >' . $addon . '</a>' . ((in_array($addon, $edited)) ? ' ' . t('(modified)') . ' <a href="pdledit/' . $addon . '/reset" >' . t('Reset') . '</a>': '' ) . '<br />';
+
+			}
+
+
 			$o .= '</div>';
 
 			// list module pdl files
@@ -85,11 +102,25 @@ class Pdledit extends Controller {
 		}
 
 		$t = get_pconfig(local_channel(),'system',$module);
-		$s = file_get_contents(theme_include($module));
-		if(! $t) {
+		$s = '';
+
+		if(!$t) {
+			$sys_path = theme_include($module);
+
+			if ($sys_path) {
+				$s = file_get_contents($sys_path);
+			}
+			else {
+				$addon_path = 'addon/' . argv(1) . '/' . $module;
+				if (file_exists($addon_path)) {
+					$s = file_get_contents($addon_path);
+				}
+			}
+
 			$t = $s;
 		}
-		if(! $t) {
+
+		if(!$t) {
 			notice( t('Layout not found.') . EOL);
 			return '';
 		}
