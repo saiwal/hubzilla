@@ -336,13 +336,13 @@ function pub_tagadelic($net, $site, $limit, $recent, $safemode, $type) {
 	$item_normal = item_normal();
 	$count = intval($limit);
 	$sys = get_sys_channel();
-	$uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
+	$uids = " and item.uid = " . intval($sys['channel_id']) . " ";
 	$sql_extra = item_permissions_sql($sys['channel_id']);
 
 	$site_firehose_sql = '';
 
 	if ($site) {
-		$site_firehose_sql = " and author_xchan in (select channel_hash from channel where channel_system = 0 and channel_removed = 0) ";
+		$site_firehose_sql = " and owner_xchan in (select channel_hash from channel where channel_system = 0 and channel_removed = 0) ";
 	}
 
 	if($recent) {
