@@ -304,6 +304,8 @@ class Pdledit_gui extends Controller {
 			}
 		}
 
+		usort($ret, fn($a, $b) => $a['name'] <=> $b['name']);
+
 		return $ret;
 	}
 
