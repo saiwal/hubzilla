@@ -112,6 +112,7 @@ function account_verify_password($login, $pass) {
 		}
 
 		if($channel) {
+
 			// Try the authentication plugin again since weve determined we are using the channel login instead of account login
 			$addon_auth = [
 				'username'      => $account['account_email'],
