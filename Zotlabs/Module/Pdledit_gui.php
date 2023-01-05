@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Render\Comanche;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Apps;
 
 class Pdledit_gui extends Controller {
 
@@ -241,6 +242,10 @@ class Pdledit_gui extends Controller {
 		$addons = plugins_installed_list();
 		if ($addons) {
 			foreach ($addons as $name) {
+				if (!Apps::addon_app_installed(local_channel(), $name)) {
+					continue;
+				}
+
 				$path = 'addon/' . $name . '/mod_' . $name . '.pdl';
 				if (file_exists($path)) {
 					$arr[] = $name;
@@ -270,8 +275,11 @@ class Pdledit_gui extends Controller {
 
 		if ($addons) {
 			foreach ($addons as $name) {
-				$path = 'addon/' . $name . '/Widget';
+				if (!Apps::addon_app_installed(local_channel(), $name)) {
+					continue;
+				}
 
+				$path = 'addon/' . $name . '/Widget';
 				if (is_dir($path)) {
 					$checkpaths[] = $path . '/*.php';
 				}
