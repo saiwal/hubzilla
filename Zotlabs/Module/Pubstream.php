@@ -40,7 +40,8 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
 
-		$mid = ((x($_REQUEST, 'mid')) ? unpack_link_id($_REQUEST['mid']) : '');
+		$mid = (($_REQUEST['mid']) ? unpack_link_id($_REQUEST['mid']) : '');
+
 		if ($mid === false) {
 			notice(t('Malformed message id.') . EOL);
 			return;
@@ -261,7 +262,6 @@ class Pubstream extends \Zotlabs\Web\Controller {
 				);
 
 
-
 				// use effective_uid param of xchan_query to help sort out comment permission
 				// for sys_channel owned items.
 
@@ -277,8 +277,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 		}
 
-		// fake it
-		$mode = (($hashtags) ? 'search' : 'pubstream');
+		$mode = (($hashtags) ? 'pubstream-new' : 'pubstream');
 
 		$o .= conversation($items,$mode,$update,$page_mode);
 
