@@ -81,7 +81,7 @@ class Session {
 			'lifetime' => ((isset($arr['lifetime'])) ? $arr['lifetime'] : 0),
 			'path' => ((isset($arr['path'])) ? $arr['path'] : '/'),
 			'domain' => (($arr['domain']) ? $arr['domain'] : false),
-			'secure' => true, //((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false),
+			'secure' => ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false),
 			'httponly' => ((isset($arr['httponly'])) ? $arr['httponly'] : true),
 			'samesite' => 'None'
 		]);
