@@ -646,7 +646,6 @@ function updatePageItems(mode, data) {
 
 
 function updateConvItems(mode,data) {
-
 	var scroll_position = $(window).scrollTop();
 
 	if(mode !== 'update')
@@ -657,10 +656,6 @@ function updateConvItems(mode,data) {
 	}
 	if(mode === 'append') {
 		next = 'threads-end';
-	}
-
-	if(mode === 'replace') {
-		$('.thread-parent').remove(); // clear existing content
 	}
 
 	$('.thread-wrapper', data).each(function() {
@@ -955,9 +950,13 @@ function liveUpdate(notify_id) {
 	console.log('displaying: ' + update_url);
 
 	if(page_load) {
+
 		$("#page-spinner").show();
-		if(bParam_page == 1)
+
+		if(bParam_page == 1) {
 			update_mode = 'replace';
+			$('.thread-wrapper').remove();
+		}
 		else
 			update_mode = 'append';
 	}

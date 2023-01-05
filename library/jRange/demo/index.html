@@ -38,17 +38,18 @@
             	<div class="demo-section">
             		<div class="demo-code">
             			<pre><code class="language-javascript">$('.single-slider').jRange({
-    from: 0,
-    to: 100,
-    step: 1,
-    scale: [0,25,50,75,100],
+    from: -2.0,
+    to: 2.0,
+    step: 0.5,
+    scale: [-2.0,-1.0,0.0,1.0,2.0],
     format: '%s',
     width: 300,
-    showLabels: true
+    showLabels: true,
+    snap: true
 });</code></pre>
             		</div>
             		<div class="demo-output">
-            			<input class="single-slider" type="hidden" value="25"/>
+            			<input class="single-slider" type="hidden" value="0.0"/>
             		</div>
             	</div>
             	<div class="demo-section">
@@ -180,6 +181,15 @@
                             <p>True if this is a range selector. If its a range the value of hidden input will be set comma-seperated, e.g., "25,75"</p>
                         </td>
                     </tr>
+										<tr>
+                        <td>snap</td>
+                        <td>Optional</td>
+                        <td>Boolean</td>
+                        <td>
+                            <code>Default : false</code>
+                            <p>True to snap slider to step values</p>
+                        </td>
+                    </tr>
                     <tr>
                         <td>disable</td>
                         <td>Optional</td>
@@ -203,7 +213,61 @@
                            <p>For single slider value is without comma, however for a range selector value is comma-seperated.</p>
                         </td>
                     </tr>
+                    <tr>
+                        <td>ondragend</td>
+                        <td>Optional</td>
+                        <td>Function</td>
+                        <td>
+                           <p>ondragend callback. Useful if you want to fire event just once per slider drag.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>onbarclicked</td>
+                        <td>Optional</td>
+                        <td>Function</td>
+                        <td>
+                           <p>called when user clicks on the bar</p>
+                        </td>
+                    </tr>
                 </table>
+
+								<h2>Modification</h2>
+                <h3>Change values on runtime</h3>
+                <p>Methods which you can call to dynamically modify current values and range.
+                <table class="plugin-options" width='900'>
+										<tr>
+											<th width="150">Method</th>
+											<th></th>
+											<th></th>
+											<th>Description</th>
+										</tr>
+                    <tr>
+                        <td>setValue</td>
+												<td></td>
+												<td></td>
+                        <td>
+													<p>sets the current value of the slider without changing its range, if you want to update the range as well use <code>updateRange</code> instead.</p>
+													<code>
+														$('.slider').jRange('setValue', '10,20');<br>
+														$('.slider').jRange('setValue', '10');
+													</code>
+												</td>
+                    </tr>
+                    <tr>
+                        <td>updateRange</td>
+												<td></td>
+												<td></td>
+                        <td>
+													<p>'updateRange' to change (min, max) value and interval after initialized.</p>
+													<code>
+														$('.slider').jRange('updateRange', '0,100');<br>
+														$('.slider').jRange('updateRange', '0,100', '25,50');<br>
+														$('.slider').jRange('updateRange', '0,100', 25);
+													</code>
+													<p>passing second parameter also sets its current value</p>
+												</td>
+                    </tr>
+								</table>
 
                 <div class="footer">
                     <a href="https://github.com/nitinhayaran/jRange" class="large-github">Get it from Github</a>
@@ -235,13 +299,14 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('.single-slider').jRange({
-                from: 0,
-                to: 100,
-                step: 1,
-                scale: [0,25,50,75,100],
+                from: -2.0,
+                to: 2.0,
+                step: 0.5,
+                scale: [-2.0,-1.0,0.0,1.0,2.0],
                 format: '%s',
                 width: 300,
-                showLabels: true
+                showLabels: true,
+                snap: true
             });
             $('.range-slider').jRange({
                 from: 0,
