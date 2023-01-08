@@ -4,8 +4,8 @@
  *   * Name: Redbasic
  *   * Description: Hubzilla standard theme
  *   * Version: 2.2
- *   * MinVersion: 6.5.13
- *   * MaxVersion: 8.0
+ *   * MinVersion: 8.0
+ *   * MaxVersion: 9.0
  *   * Author: Fabrixxm
  *   * Maintainer: Mike Macgirvin
  *   * Maintainer: Mario Vavti
