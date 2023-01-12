@@ -862,7 +862,9 @@ class Libsync {
 						);
 					}
 
-					// update connection timestamp if this is the site we're talking to
+					// Update connection timestamp if this is the site we're talking to.
+					// Also mark all entries from the current site with different sitekeys
+					// deleted (the site has been re-installed)
 					// This only happens when called from import_xchan
 
 					$current_site = false;
@@ -876,6 +878,12 @@ class Libsync {
 							intval($r[0]['hubloc_id']),
 							dbesc($t)
 						);
+
+						q("update hubloc set hubloc_error = 1, hubloc_deleted = 1 where hubloc_url = '%s' and hubloc_sitekey != '%s'",
+							dbesc($r[0]['hubloc_url']),
+							dbesc($r[0]['hubloc_sitekey'])
+						);
+
 						$current_site = true;
 					}
 
