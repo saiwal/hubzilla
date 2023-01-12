@@ -1661,7 +1661,7 @@ CREATE TABLE IF NOT EXISTS workerq (
 	workerq_uuid UUID NOT NULL,
 	workerq_cmd text NOT NULL DEFAULT '',
 	PRIMARY KEY (workerq_id)
-)
+);
 CREATE INDEX idx_workerq_priority ON workerq (workerq_priority);
 CREATE INDEX idx_workerq_reservationid ON workerq (workerq_reservationid);
 CREATE INDEX idx_workerq_processtimeout ON workerq (workerq_processtimeout);
