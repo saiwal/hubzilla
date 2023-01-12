@@ -2183,7 +2183,14 @@ class Activity {
 
 			if ($u) {
 				dbq("COMMIT");
-				Master::Summon(['Notifier', 'wall-new', $item['id']/* , $post['mid'] trick queueworker de-duplication  */ ]);
+
+				if ($multi) {
+					// wait some seconds for possible multiple answers to be processed
+					// before calling the notifier
+					sleep(3);
+				}
+
+				Master::Summon(['Notifier', 'wall-new', $item['id']]);
 				return true;
 			}
 
