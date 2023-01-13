@@ -1,4 +1,4 @@
-Hubzilla 8.0 (2023-??-??)
+Hubzilla 8.0 (2023-01-13)
 	Updated ru strings
 	Implement ability to edit addon PDL with pdledit_gui and pdledit
 	Implement queueworker auto sleep time
