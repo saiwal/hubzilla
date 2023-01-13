@@ -672,6 +672,7 @@ class Activity {
 				}
 			}
 		}
+
 		return $ret;
 	}
 
@@ -2080,15 +2081,28 @@ class Activity {
 
 	}
 
-	static function update_poll($item, $post) {
+	static function update_poll($item_id, $post) {
 
 		$multi   = false;
 		$mid     = $post['mid'];
 		$content = $post['title'];
 
-		if (!$item) {
+		if (!$item_id) {
 			return false;
 		}
+
+		dbq("START TRANSACTION");
+
+		$item = q("SELECT * FROM item WHERE id = %d FOR UPDATE",
+			intval($item_id)
+		);
+
+		if (!$item) {
+			dbq("COMMIT");
+			return false;
+		}
+
+		$item = $item[0];
 
 		$o = json_decode($item['obj'], true);
 		if ($o && array_key_exists('anyOf', $o)) {
@@ -2161,16 +2175,30 @@ class Activity {
 		}
 		logger('updated_poll: ' . print_r($o, true), LOGGER_DATA);
 		if ($answer_found && !$found) {
-			q("update item set obj = '%s', edited = '%s' where id = %d",
+			$u = q("update item set obj = '%s', edited = '%s' where id = %d",
 				dbesc(json_encode($o)),
 				dbesc(datetime_convert()),
 				intval($item['id'])
 			);
 
-			Master::Summon(['Notifier', 'wall-new', $item['id'], $post['mid'] /* trick queueworker de-duplication  */ ]);
-			return true;
+			if ($u) {
+				dbq("COMMIT");
+
+				if ($multi) {
+					// wait some seconds for possible multiple answers to be processed
+					// before calling the notifier
+					sleep(3);
+				}
+
+				Master::Summon(['Notifier', 'wall-new', $item['id']]);
+				return true;
+			}
+
+			dbq("ROLLBACK");
+
 		}
 
+		dbq("COMMIT");
 		return false;
 	}
 
@@ -2456,7 +2484,7 @@ class Activity {
 				$s['attach'] = $a;
 			}
 
-			$a = self::decode_iconfig($act->obj);
+			$a = self::decode_iconfig($act->data);
 			if ($a) {
 				$s['iconfig'] = $a;
 			}
@@ -2786,8 +2814,9 @@ class Activity {
 			set_iconfig($s, 'diaspora', 'fields', $diaspora_rawmsg, 1);
 		}
 
-		set_iconfig($s, 'activitypub', 'recips', $act->raw_recips);
-
+		if ($act->raw_recips) {
+			set_iconfig($s, 'activitypub', 'recips', $act->raw_recips);
+		}
 
 		$hookinfo = [
 			'act' => $act,

@@ -11,6 +11,8 @@ class Importdoc {
 
 		self::update_docs_dir('doc/*');
 
+		return;
+
 	}
 
 	static public function update_docs_dir($s) {

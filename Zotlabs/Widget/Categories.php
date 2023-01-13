@@ -3,7 +3,7 @@
 /**
  *   * Name: Categories
  *   * Description: Display a menu with links to categories
- *   * Requires: channel, articles, cards, cloud
+ *   * Requires: channel, cloud
  */
 
 namespace Zotlabs\Widget;
@@ -24,15 +24,16 @@ class Categories {
 		}
 
 		$cat = ((x($_REQUEST, 'cat')) ? htmlspecialchars($_REQUEST['cat'], ENT_COMPAT, 'UTF-8') : '');
-		$srchurl = App::$query_string;
-		$srchurl = rtrim(preg_replace('/cat\=[^\&].*?(\&|$)/is', '', $srchurl), '&');
-		$srchurl = str_replace(['?f=','&f=', '/?'], ['', '', ''], $srchurl);
+
+		// Discard queries from the current URL, as the template expects a base
+		// URL without any queries.
+		$base = substr(App::$query_string, 0, strcspn(App::$query_string, '?'));
 
 		if($files) {
-			return filecategories_widget($srchurl, $cat);
+			return filecategories_widget($base, $cat);
 		}
 
-		return categories_widget($srchurl, $cat);
+		return categories_widget($base, $cat);
 
 	}
 }

@@ -675,7 +675,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
 	if($items) {
 
-		if(in_array($mode, [ 'network-new', 'search', 'community', 'moderate' ])) {
+		if(is_unthreaded($mode)) {
 
 			// "New Item View" on network page or search page results
 			// - just loop through the items and format them minimally for display
@@ -772,14 +772,17 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				if(strcmp(datetime_convert('UTC','UTC',$item['created']),datetime_convert('UTC','UTC','now - 12 hours')) > 0)
 					$is_new = true;
 
-				$conv_link_mid = (($mode == 'moderate') ? $item['parent_mid'] : $item['mid']);
+				$conv_link_mid = (($mode == 'moderate') ? gen_link_id($item['parent_mid']) : gen_link_id($item['mid']));
 
-				$conv_link_module = 'display';
+				$conv_link = z_root() . '/display/' . $conv_link_mid;
+
 				if(local_channel()) {
-					$conv_link_module = 'hq';
+					$conv_link = z_root() . '/hq/' . $conv_link_mid;
 				}
 
-				$conv_link = z_root() . '/' . $conv_link_module . '/' . gen_link_id($conv_link_mid);
+				if ($mode === 'pubstream-new') {
+					$conv_link = z_root() . '/pubstream?mid=' . $conv_link_mid;
+				}
 
 				$contact = [];
 
@@ -996,7 +999,7 @@ function thread_action_menu($item,$mode = '') {
 			'href' => '#'
 		];
 
-		if(! in_array($mode, [ 'network-new', 'search', 'community'])) {
+		if(!is_unthreaded($mode)) {
 			if($item['parent'] == $item['id'] && (get_observer_hash() != $item['author_xchan'])) {
 				$menu[] = [
 					'menu' => 'follow_thread',
@@ -1783,4 +1786,14 @@ function get_response_button_text($v,$count) {
 			return '';
 			break;
 	}
+}
+
+function is_unthreaded($mode) {
+	return in_array($mode, [
+		'network-new',
+		'pubstream-new',
+		'search',
+		'community',
+		'moderate'
+	]);
 }

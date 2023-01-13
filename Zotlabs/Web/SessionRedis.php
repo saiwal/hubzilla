@@ -42,7 +42,7 @@ class SessionRedis implements \SessionHandlerInterface {
                 }
         }
 
-
+        #[\ReturnTypeWillChange]
         function open($s, $n) {
 
                 return true;
@@ -53,6 +53,7 @@ class SessionRedis implements \SessionHandlerInterface {
         // some which call read explicitly and some that do not. So we call it explicitly
         // just after sid regeneration to force a record to exist.
 
+        #[\ReturnTypeWillChange]
         function read($id) {
 
                 if ($id) {
@@ -67,7 +68,7 @@ class SessionRedis implements \SessionHandlerInterface {
                 return '';
         }
 
-
+        #[\ReturnTypeWillChange]
         function write($id, $data) {
 
                 // Pretend everything is hunky-dory, even though it isn't.
@@ -100,13 +101,13 @@ class SessionRedis implements \SessionHandlerInterface {
                 return true;
         }
 
-
+        #[\ReturnTypeWillChange]
         function close() {
 
                 return true;
         }
 
-
+        #[\ReturnTypeWillChange]
         function destroy ($id) {
 
                 $this->redis->del($id);
@@ -114,7 +115,7 @@ class SessionRedis implements \SessionHandlerInterface {
                 return true;
         }
 
-
+        #[\ReturnTypeWillChange]
         function gc($expire) {
 
                 return true;

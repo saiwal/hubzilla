@@ -97,7 +97,6 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 		$private_envelope = false;
 		require_once('include/channel.php');
-		//$sys = get_sys_channel();
 
 		if(array_key_exists('public_policy',$item) && $item['public_policy'] !== 'self') {
 
@@ -114,7 +113,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 				$r = $hookinfo['recipients'];
 			} else {
 				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
-				intval($item['uid'])
+					intval($item['uid'])
 				);
 			}
 
@@ -141,18 +140,19 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 					}
 				}
 			}
-// we probably want to check that discovery channel delivery is allowed before uncommenting this.
-//			if($policy === 'pub')
-//				$recipients[] = $sys['xchan_hash'];
 		}
 
 
-		// Forward to thread listeners, *unless* there is even a remote hint that the item
-		// might have some privacy attached. This could be (for instance) an ActivityPub DM
+		// Forward to thread listeners and pubstream (sys channel), *unless* there is even
+		// a remote hint that the item might have some privacy attached.
+		// This could be (for instance) an ActivityPub DM
 		// in the middle of a public thread. Unless we can guarantee beyond all doubt that
 		// this is public, don't allow it to go to thread listeners.
 
 		if(! intval($item['item_private'])) {
+			$sys = get_sys_channel();
+			$recipients[] = $sys['xchan_hash'];
+
 			$r = ThreadListener::fetch_by_target($item['parent_mid']);
 			if($r) {
 				foreach($r as $rv) {
@@ -1834,7 +1834,7 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 				$arr['item_private'] = 0;
 
 			if(in_array($arr['obj_type'], ['Note','Answer']) && $r[0]['obj_type'] === 'Question' && intval($r[0]['item_wall'])) {
-				Activity::update_poll($r[0],$arr);
+				Activity::update_poll($r[0]['id'], $arr);
 			}
 
 		}
@@ -1848,21 +1848,11 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 	if($parent_deleted)
 		$arr['item_deleted'] = 1;
 
-	if($arr['uuid']) {
-		$r = q("SELECT id FROM item WHERE uuid = '%s' AND uid = %d and revision = %d LIMIT 1",
-			dbesc($arr['uuid']),
-			intval($arr['uid']),
-			intval($arr['revision'])
-		);
-	}
-	else {
-		$r = q("SELECT id FROM item WHERE (mid = '%s' OR mid = '%s') AND uid = %d and revision = %d LIMIT 1",
-			dbesc($arr['mid']),
-			dbesc(basename(rawurldecode($arr['mid']))), // de-duplicate relayed comments from hubzilla < 4.0
-			intval($arr['uid']),
-			intval($arr['revision'])
-		);
-	}
+	$r = q("SELECT id FROM item WHERE uuid = '%s' AND uid = %d and revision = %d LIMIT 1",
+		dbesc($arr['uuid']),
+		intval($arr['uid']),
+		intval($arr['revision'])
+	);
 
 	if($r) {
 		logger('duplicate item ignored. ' . print_r($arr,true));
@@ -2659,9 +2649,10 @@ function tag_deliver($uid, $item_id) {
 
 			if ($is_group && intval($x[0]['item_wall'])) {
 				// don't let the forked delivery chain recurse
-				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u['channel_hash']) {
+				if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u[0]['channel_hash']) {
 					return;
 				}
+
 				// don't announce moderated content until it has been approved
 				if (intval($item['item_blocked']) === ITEM_MODERATED) {
 					return;
@@ -2678,7 +2669,7 @@ function tag_deliver($uid, $item_id) {
 
 			}
 			elseif (intval($x[0]['item_uplink'])) {
-				start_delivery_chain($u,$item,$item_id,$x[0]);
+				start_delivery_chain($u[0], $item, $item_id, $x[0]);
 			}
 		}
 
@@ -4133,21 +4124,24 @@ function posted_dates($uid,$wall) {
  */
 function fetch_post_tags($items, $link = false) {
 
-	$tag_finder = array();
-	if($items) {
-		foreach($items as $item) {
-			if(is_array($item)) {
-				if(array_key_exists('item_id',$item)) {
-					if(! in_array($item['item_id'],$tag_finder))
-						$tag_finder[] = $item['item_id'];
-				}
-				else {
-					if(! in_array($item['id'],$tag_finder))
-						$tag_finder[] = $item['id'];
-				}
+	if (!is_array($items) || !$items) {
+		return $items;
+	}
+
+	$tag_finder = [];
+	foreach($items as $item) {
+		if(is_array($item)) {
+			if(array_key_exists('item_id',$item)) {
+				if(! in_array($item['item_id'],$tag_finder))
+					$tag_finder[] = $item['item_id'];
+			}
+			else {
+				if(! in_array($item['id'],$tag_finder))
+					$tag_finder[] = $item['id'];
 			}
 		}
 	}
+
 	$tag_finder_str = implode(', ', $tag_finder);
 
 	if(strlen($tag_finder_str)) {
@@ -4608,10 +4602,11 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 			$items = array();
 		}
 
+		/** @FIXME finish mark unseen sql
 		if ($parents_str && (isset($arr['mark_seen']) && $arr['mark_seen'])) {
 			$update_unseen = ' AND parent IN ( ' . dbesc($parents_str) . ' )';
-			/** @FIXME finish mark unseen sql */
 		}
+		*/
 	}
 
 	return $items;

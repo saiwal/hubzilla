@@ -1232,7 +1232,7 @@ CREATE TABLE IF NOT EXISTS `verify` (
 
 CREATE TABLE IF NOT EXISTS `vote` (
   `vote_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `vote_guid` varchar(191) NOT NULL, 
+  `vote_guid` varchar(191) NOT NULL,
   `vote_poll` int(11) NOT NULL DEFAULT 0 ,
   `vote_element` int(11) NOT NULL DEFAULT 0 ,
   `vote_result` text NOT NULL,
@@ -1616,3 +1616,17 @@ CREATE TABLE if not exists oauth_jwt (
   subject             VARCHAR(80),
   public_key          VARCHAR(2000)   NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS workerq (
+	workerq_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	workerq_priority smallint,
+	workerq_reservationid varchar(25) DEFAULT NULL,
+	workerq_processtimeout datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+	workerq_data text,
+	workerq_uuid char(36) NOT NULL DEFAULT '',
+	workerq_cmd varchar(191) NOT NULL DEFAULT '',
+	KEY workerq_priority (workerq_priority),
+	KEY workerq_reservationid (workerq_reservationid),
+	KEY workerq_processtimeout (workerq_uuid),
+	KEY workerq_uuid (workerq_processtimeout)
+) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4

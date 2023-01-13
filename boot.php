@@ -60,10 +60,10 @@ require_once('include/bbcode.php');
 require_once('include/items.php');
 
 define('PLATFORM_NAME', 'hubzilla');
-define('STD_VERSION', '7.8.7');
+define('STD_VERSION', '8.0');
 define('ZOT_REVISION', '6.0');
 
-define('DB_UPDATE_VERSION', 1253);
+define('DB_UPDATE_VERSION', 1255);
 
 define('PROJECT_BASE', __DIR__);
 
@@ -2045,24 +2045,8 @@ function proc_run() {
 	if (!$arr['run_cmd'])
 		return;
 
-	if (count($args) && $args[0] === 'php')
+	if (count($args) && $args[0] === 'php') {
 		$args[0] = ((x(App::$config, 'system')) && (x(App::$config['system'], 'php_path')) && (strlen(App::$config['system']['php_path'])) ? App::$config['system']['php_path'] : 'php');
-
-
-	// redirect proc_run statements of legacy daemon processes to the newer Daemon Master object class
-	// We will keep this interface until everybody has transitioned. (2016-05-20)
-
-	if (strstr($args[1], 'include/')) {
-		// convert 'include/foo.php' to 'Foo'
-		$orig = substr(ucfirst(substr($args[1], 8)), 0, -4);
-		logger('proc_run_redirect: ' . $orig);
-		if (file_exists('Zotlabs/Daemon/' . $orig . '.php')) {
-			array_shift($args); // daemons are all run by php, pop it off the top of the array
-			$args[0] = $orig;   // replace with the new daemon name
-			logger('Redirecting old proc_run interface: ' . print_r($args, true), LOGGER_DEBUG, LOG_DEBUG);
-			Master::Summon($args); // summon the daemon
-			return;
-		}
 	}
 
 	$args    = array_map('escapeshellarg', $args);
@@ -2284,6 +2268,7 @@ function load_pdl() {
 			'module' => App::$module,
 			'layout' => ''
 		];
+
 		/**
 		 * @hooks load_pdl
 		 *   Called when we load a PDL file or description.
@@ -2297,20 +2282,26 @@ function load_pdl() {
 		$u = App::$comanche->get_channel_id();
 		$s = '';
 
-		if ($u)
+		if ($u) {
 			$s = get_pconfig($u, 'system', $n);
-		if (!$s)
-			$s = $layout;
+		}
 
-		if ((!$s) && (($p = theme_include($n)) != ''))
+		if (!$s) {
+			$s = $layout;
+		}
+
+		if ((!$s) && (($p = theme_include($n)) != '')) {
 			$s = @file_get_contents($p);
-		elseif (file_exists('addon/' . App::$module . '/' . $n))
+		}
+		elseif ((!$s) && file_exists('addon/' . App::$module . '/' . $n)) {
 			$s = @file_get_contents('addon/' . App::$module . '/' . $n);
+		}
 
 		$arr = [
 			'module' => App::$module,
 			'layout' => $s
 		];
+
 		call_hooks('alter_pdl', $arr);
 		$s = $arr['layout'];
 

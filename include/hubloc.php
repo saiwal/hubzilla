@@ -79,9 +79,10 @@ function prune_hub_reinstalls() {
 	$r = q("select site_url from site where site_type = %d",
 		intval(SITE_TYPE_ZOT)
 	);
+
 	if($r) {
 		foreach($r as $rr) {
-			$x = q("select count(*) as t, hubloc_sitekey, max(hubloc_connected) as c from hubloc where hubloc_url = '%s' group by hubloc_sitekey order by c",
+			$x = q("select count(*) as t, hubloc_sitekey, max(hubloc_connected) as c from hubloc where hubloc_url = '%s' and hubloc_network = 'zot6' group by hubloc_sitekey order by c",
 				dbesc($rr['site_url'])
 			);
 
@@ -155,8 +156,7 @@ function remove_obsolete_hublocs() {
 
 	logger('remove_obsolete_hublocs: removing ' . count($r) . ' hublocs.');
 
-	$interval = ((get_config('system', 'delivery_interval') !== false)
-			? intval(get_config('system', 'delivery_interval')) : 2 );
+	$interval = get_config('queueworker', 'queue_interval', 500000);
 
 	foreach($r as $rr) {
 		q("update hubloc set hubloc_deleted = 1 where hubloc_id = %d",
@@ -168,8 +168,10 @@ function remove_obsolete_hublocs() {
 		);
 		if($x) {
 			Master::Summon(array('Notifier', 'refresh_all', $x[0]['channel_id']));
-			if($interval)
-				@time_sleep_until(microtime(true) + (float) $interval);
+
+			if($interval) {
+				usleep($interval);
+			}
 		}
 	}
 }

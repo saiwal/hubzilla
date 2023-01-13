@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Render\Comanche;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Apps;
 
 class Pdledit_gui extends Controller {
 
@@ -220,6 +221,7 @@ class Pdledit_gui extends Controller {
 
 	function get_modules() {
 		$ret = '';
+		$arr = [];
 
 		$files = glob('Zotlabs/Module/*.php');
 		if($files) {
@@ -232,23 +234,61 @@ class Pdledit_gui extends Controller {
 
 				$x = theme_include('mod_' . $name . '.pdl');
 				if($x) {
-					$ret .= '<div class="mb-2"><a href="pdledit_gui/' . $name . '">' . $name . '</a></div>';
+					$arr[] = $name;
 				}
 			}
 		}
 
+		$addons = plugins_installed_list();
+		if ($addons) {
+			foreach ($addons as $name) {
+				if (!Apps::addon_app_installed(local_channel(), $name)) {
+					continue;
+				}
+
+				$path = 'addon/' . $name . '/mod_' . $name . '.pdl';
+				if (file_exists($path)) {
+					$arr[] = $name;
+				}
+			}
+		}
+
+		sort($arr);
+
+		foreach ($arr as $name) {
+			$ret .= '<div class="mb-2"><a href="pdledit_gui/' . $name . '">' . $name . '</a></div>';
+		}
+
 		return $ret;
+
 	}
 
 	function get_widgets($module) {
 		$ret = [];
 
+
 		$checkpaths = [
 			'Zotlabs/Widget/*.php'
 		];
 
+		$addons = plugins_installed_list();
+
+		if ($addons) {
+			foreach ($addons as $name) {
+				if (!Apps::addon_app_installed(local_channel(), $name)) {
+					continue;
+				}
+
+				$path = 'addon/' . $name . '/Widget';
+				if (is_dir($path)) {
+					$checkpaths[] = $path . '/*.php';
+				}
+			}
+		}
+
 		foreach ($checkpaths as $path) {
 			$files = glob($path);
+
 			if($files) {
 				foreach($files as $f) {
 					$name = lcfirst(basename($f, '.php'));
@@ -271,6 +311,8 @@ class Pdledit_gui extends Controller {
 				}
 			}
 		}
+
+		usort($ret, fn($a, $b) => $a['name'] <=> $b['name']);
 
 		return $ret;
 	}
@@ -536,12 +578,21 @@ class Pdledit_gui extends Controller {
 			'modified' => true
 		];
 
-		$pdl_path = 'mod_' . $module . '.pdl';
+		$pdl = 'mod_' . $module . '.pdl';
+		$pdl_path = '';
 
-		$ret['pdl'] = get_pconfig(local_channel(), 'system', $pdl_path);
+		$ret['pdl'] = get_pconfig(local_channel(), 'system', $pdl);
 
 		if(!$ret['pdl']) {
-			$pdl_path = theme_include($pdl_path);
+			$pdl_path = theme_include($pdl);
+
+			if (!$pdl_path) {
+				$addon_path = 'addon/' . $module . '/' . $pdl;
+				if (file_exists($addon_path)) {
+					$pdl_path = $addon_path;
+				}
+			}
+
 			if ($pdl_path) {
 				$ret['pdl'] = file_get_contents($pdl_path);
 				$ret['modified'] = false;

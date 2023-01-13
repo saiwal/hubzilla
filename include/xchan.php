@@ -148,15 +148,15 @@ function xchan_store($arr) {
 function xchan_fetch($arr) {
 
 	$key = '';
-	if($arr['hash']) {
+	if(isset($arr['hash']) && $arr['hash']) {
 		$key = 'xchan_hash';
 		$v = $arr['hash'];
 	}
-	elseif($arr['guid']) {
+	elseif(isset($arr['guid']) && $arr['guid']) {
 		$key = 'xchan_guid';
 		$v = $arr['guid'];
 	}
-	elseif($arr['address']) {
+	elseif(isset($arr['address']) && $arr['address']) {
 		$key = 'xchan_addr';
 		$v = $arr['address'];
 	}

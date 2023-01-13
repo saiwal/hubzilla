@@ -43,6 +43,19 @@ class Invite extends Controller {
 	const MYP = 	'ZAI';
 	const VERSION =	'2.0.0';
 
+	function init() {
+
+		if (!local_channel()) {
+			return;
+		}
+
+		$channel = App::get_channel();
+		if ($channel) {
+			profile_load($channel['channel_address']);
+		}
+
+	}
+
 	function post() {
 
 		// zai02

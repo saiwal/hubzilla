@@ -303,6 +303,7 @@ function purify_html($s, $allow_position = false) {
 	$def->addElement('footer',  'Block', 'Flow', 'Common');
 	//Inline
 	$def->addElement('button',  'Inline', 'Inline', 'Common');
+	$def->addElement('mark',  'Inline', 'Inline', 'Common');
 
 
 	if($allow_position) {
@@ -2969,7 +2970,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 			$newname = substr($name,1);
 			$newname = substr($newname,0,-1);
 
-			$r = q("SELECT * FROM xchan WHERE ( xchan_addr = '%s' OR xchan_url = '%s' ) AND xchan_deleted = 0 AND NOT xchan_network  IN ('rss', 'anon', 'unknown')",
+			$r = q("SELECT * FROM xchan LEFT JOIN hubloc ON hubloc_hash = xchan_hash WHERE ( xchan_addr = '%s' OR xchan_url = '%s' ) AND xchan_deleted = 0 AND NOT xchan_network  IN ('rss', 'anon', 'unknown') ORDER BY hubloc_id DESC",
 				dbesc($newname),
 				dbesc($newname)
 			);
@@ -3004,7 +3005,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
 			if((! $r) && strpos($newname,'@')) {
 				$r = q("SELECT * FROM xchan LEFT JOIN hubloc ON xchan_hash = hubloc_hash
-					WHERE hubloc_addr = '%s' AND xchan_deleted = 0 AND NOT xchan_network  IN ('rss', 'anon', 'unknown')",
+					WHERE hubloc_addr = '%s' AND xchan_deleted = 0 AND NOT xchan_network  IN ('rss', 'anon', 'unknown') ORDER BY hubloc_id DESC",
 					dbesc($newname)
 				);
 			}

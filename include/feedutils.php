@@ -2007,9 +2007,9 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 		if($enclosures) {
 			foreach($enclosures as $enc) {
 				$o .= '<link rel="enclosure" '
-				. (($enc['href']) ? 'href="' . $enc['href'] . '" ' : '')
-				. (($enc['length']) ? 'length="' . $enc['length'] . '" ' : '')
-				. (($enc['type']) ? 'type="' . $enc['type'] . '" ' : '')
+				. ((isset($enc['href']) && $enc['href']) ? 'href="' . $enc['href'] . '" ' : '')
+				. ((isset($enc['length']) && $enc['length']) ? 'length="' . $enc['length'] . '" ' : '')
+				. ((isset($enc['type']) && $enc['type']) ? 'type="' . $enc['type'] . '" ' : '')
 				. ' />' . "\r\n";
 			}
 		}

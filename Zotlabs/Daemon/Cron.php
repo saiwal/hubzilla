@@ -19,6 +19,7 @@ class Cron {
 			}
 		}
 
+/*
 		// Check for a lockfile.  If it exists, but is over an hour old, it's stale.  Ignore it.
 		$lockfile = 'store/[data]/cron';
 		if ((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 3600))
@@ -30,6 +31,7 @@ class Cron {
 		// Create a lockfile.  Needs two vars, but $x doesn't need to contain anything.
 		$x = '';
 		file_put_contents($lockfile, $x);
+*/
 
 		logger('cron: start');
 
@@ -50,7 +52,7 @@ class Cron {
 		require_once('include/account.php');
 		remove_expired_registrations();
 
-		$interval = get_config('system', 'delivery_interval', 3);
+		$interval = get_config('queueworker', 'queue_interval', 500000);
 
 		// expire any expired items
 
@@ -65,8 +67,10 @@ class Cron {
 				if ($rr['item_wall']) {
 					// The notifier isn't normally invoked unless item_drop is interactive.
 					Master::Summon(['Notifier', 'drop', $rr['id']]);
-					if ($interval)
-						@time_sleep_until(microtime(true) + (float)$interval);
+
+					if ($interval) {
+						usleep($interval);
+					}
 				}
 			}
 		}
@@ -96,8 +100,10 @@ class Cron {
 		if ($r) {
 			foreach ($r as $rr) {
 				Master::Summon(array('Directory', $rr['channel_id'], 'force'));
-				if ($interval)
-					@time_sleep_until(microtime(true) + (float)$interval);
+
+				if ($interval) {
+					usleep($interval);
+				}
 			}
 		}
 
@@ -151,8 +157,10 @@ class Cron {
 						);
 					}
 					Master::Summon(array('Notifier', 'wall-new', $rr['id']));
-					if ($interval)
-						@time_sleep_until(microtime(true) + (float)$interval);
+
+					if ($interval) {
+						usleep($interval);
+					}
 				}
 			}
 		}
@@ -203,10 +211,10 @@ class Cron {
 		}
 
 
-		// pull in some public posts
+		// pull in some public posts if allowed
 
-		$disable_discover_tab = get_config('system', 'disable_discover_tab') || get_config('system', 'disable_discover_tab') === false;
-		if (!$disable_discover_tab)
+		$disable_externals = get_config('system', 'disable_discover_tab') || get_config('system', 'disable_discover_tab') === false || get_config('system', 'site_firehose');
+		if (!$disable_externals)
 			Master::Summon(['Externals']);
 
 		$restart = false;
@@ -228,7 +236,7 @@ class Cron {
 		set_config('system', 'lastcron', datetime_convert());
 
 		//All done - clear the lockfile
-		@unlink($lockfile);
+		//@unlink($lockfile);
 
 		return;
 	}

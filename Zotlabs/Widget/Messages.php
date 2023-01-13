@@ -34,7 +34,8 @@ class Messages {
 				'starred_messages_title' => t('Starred messages'),
 				'notice_messages_title' => t('Notices'),
 				'loading' => t('Loading'),
-				'empty' => t('No messages')
+				'empty' => t('No messages'),
+				'unseen_count' => t('Unseen')
 			]
 		]);
 
@@ -57,33 +58,52 @@ class Messages {
 		}
 
 		$channel = App::get_channel();
-		$item_normal = item_normal();
+		$item_normal_i = str_replace('item.', 'i.', item_normal());
+		$item_normal_c = str_replace('item.', 'c.', item_normal());
 		$entries = [];
 		$limit = 30;
 		$dummy_order_sql = '';
 		$loadtime = (($offset) ? $_SESSION['messages_loadtime'] : datetime_convert());
+		$vnotify = get_pconfig(local_channel(), 'system', 'vnotify', -1);
+
+		$vnotify_sql = '';
+
+		if (!($vnotify & VNOTIFY_LIKE)) {
+			$vnotify_sql_c = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql_i = " AND i.verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
+		}
+		elseif (!feature_enabled(local_channel(), 'dislike')) {
+			$vnotify_sql_c = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
+			$vnotify_sql_i = " AND i.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
+		}
 
 		switch($type) {
 			case 'direct':
-				$type_sql = ' AND item_private = 2 ';
+				$type_sql = ' AND i.item_private = 2 ';
 				// $dummy_order_sql has no other meaning but to trick
 				// some mysql backends into using the right index.
-				$dummy_order_sql = ', received DESC ';
+				$dummy_order_sql = ', i.received DESC ';
 				break;
 			case 'starred':
-				$type_sql = ' AND item_starred = 1 ';
+				$type_sql = ' AND i.item_starred = 1 ';
 				break;
 			default:
-				$type_sql = ' AND item_private IN (0, 1) ';
+				$type_sql = ' AND i.item_private IN (0, 1) ';
 		}
 
-		$items = q("SELECT * FROM item WHERE uid = %d
-			AND created <= '%s'
+		// FEP-5624 filter approvals for comments
+		$approvals_c = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+
+		$items = q("SELECT *,
+			(SELECT count(*) FROM item c WHERE c.uid = %d AND c.parent = i.parent AND c.item_unseen = 1 AND c.item_thread_top = 0 $item_normal_c $approvals_c $vnotify_sql_c) AS unseen_count
+			FROM item i WHERE i.uid = %d
+			AND i.created <= '%s'
 			$type_sql
-			AND item_thread_top = 1
-			$item_normal
-			ORDER BY created DESC $dummy_order_sql
+			AND i.item_thread_top = 1
+			$item_normal_i
+			ORDER BY i.created DESC $dummy_order_sql
 			LIMIT $limit OFFSET $offset",
+			intval(local_channel()),
 			intval(local_channel()),
 			dbescdate($loadtime)
 		);
@@ -148,13 +168,15 @@ class Messages {
 			}
 
 			$entries[$i]['author_name'] = $item['author']['xchan_name'];
-			$entries[$i]['author_addr'] = $item['author']['xchan_addr'] ?? $item['author']['xchan_url'];
+			$entries[$i]['author_addr'] = (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']);
 			$entries[$i]['info'] = $info;
 			$entries[$i]['created'] = datetime_convert('UTC', date_default_timezone_get(), $item['created']);
 			$entries[$i]['summary'] = $summary;
 			$entries[$i]['b64mid'] = gen_link_id($item['mid']);
 			$entries[$i]['href'] = z_root() . '/hq/' . gen_link_id($item['mid']);
 			$entries[$i]['icon'] = $icon;
+			$entries[$i]['unseen_count'] = (($item['unseen_count']) ? $item['unseen_count'] : (($item['item_unseen']) ? '&#8192;' : ''));
+			$entries[$i]['unseen_class'] = (($item['item_unseen']) ? 'primary' : 'secondary');
 
 			$i++;
 		}

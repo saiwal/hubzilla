@@ -49,6 +49,22 @@ class Cron_daily {
 			dbesc('sse_id.%')
 		);
 
+		// Mark items seen after X days (default 90)
+
+		$r = dbq("select channel_id from channel where channel_removed = 0");
+		if ($r) {
+			foreach ($r as $rr) {
+				$mark_seen_days = get_pconfig($rr['channel_id'], 'system', 'mark_seen_days', 90);
+				q("UPDATE item SET item_unseen = 0 WHERE
+					uid = %d AND item_unseen = 1
+					AND created < %s - INTERVAL %s",
+					intval($rr['channel_id']),
+					db_utcnow(),
+					db_quoteinterval($mark_seen_days . ' DAY')
+				);
+			}
+		}
+
 		// Clean up emdedded content cache
 		q("DELETE FROM cache WHERE updated < %s - INTERVAL %s",
 			db_utcnow(),
@@ -103,5 +119,7 @@ class Cron_daily {
 		/**
 		 * End Cron Daily
 		 */
+
+		 return;
 	}
 }

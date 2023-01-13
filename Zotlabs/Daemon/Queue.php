@@ -79,5 +79,7 @@ class Queue {
 		foreach ($r as $rv) {
 			LibQueue::deliver($rv);
 		}
+
+		return;
 	}
 }

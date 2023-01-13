@@ -100,7 +100,7 @@ class Site {
 		$reg_expire 	   = (preg_match('/^[a-z]{1,1}$/', $regexpireu) ? $regexpiren . $regexpireu : '');
 
 		$imagick_path      = ((x($_POST,'imagick_path'))     ? trim($_POST['imagick_path'])   : '');
-		$force_queue       = ((intval($_POST['force_queue']) > 0) ? intval($_POST['force_queue'])   : 3000);
+		//$force_queue       = ((intval($_POST['force_queue']) > 0) ? intval($_POST['force_queue'])   : 3000);
 		$pub_incl = escape_tags(trim($_POST['pub_incl']));
 		$pub_excl = escape_tags(trim($_POST['pub_excl']));
 
@@ -205,7 +205,7 @@ class Site {
 		set_config('system','disable_discover_tab', $disable_discover_tab);
 		set_config('system','site_firehose', $site_firehose);
 		set_config('system','open_pubstream', $open_pubstream);
-		set_config('system','force_queue_threshold', $force_queue);
+		//set_config('system','force_queue_threshold', $force_queue);
 		if ($global_directory == '') {
 			del_config('system', 'directory_submit_url');
 		} else {
@@ -508,10 +508,10 @@ class Site {
 			'$frontpage'	=> array('frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system','frontpage'), t("example: 'pubstream' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.")),
 			'$mirror_frontpage'	=> array('mirror_frontpage', t("Preserve site homepage URL"), get_config('system','mirror_frontpage'), t('Present the site homepage in a frame at the original location instead of redirecting')),
 			'$allowed_sites'	=> array('allowed_sites', t("Allowed friend domains"), get_config('system','allowed_sites'), t("Comma separated list of domains which are allowed to establish friendships with this site. Wildcards are accepted. Empty to allow any domains")),
-			'$force_publish'	=> array('publish_all', t("Force publish"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory.")),
-			'$disable_discover_tab'	=> array('disable_discover_tab', t('Import Public Streams'), $discover_tab, t('Import and allow access to public content pulled from other sites. Warning: this content is unmoderated.')),
-			'$site_firehose'	=> array('site_firehose', t('Site only Public Streams'), get_config('system','site_firehose'), t('Allow access to public content originating only from this site if Imported Public Streams are disabled.')),
-			'$open_pubstream'	=> array('open_pubstream', t('Allow anybody on the internet to access the Public streams'), get_config('system','open_pubstream',1), t('Disable to require authentication before viewing. Warning: this content is unmoderated.')),
+			'$force_publish'	=> array('publish_all', t("Force publish"), get_config('system','publish_all'), t("Check to force all profiles on this site to be listed in the site directory")),
+			'$disable_discover_tab'	=> array('disable_discover_tab', t('Enable public stream'), $discover_tab, t('Enable the public stream. Warning: this content is unmoderated')),
+			'$site_firehose'	=> array('site_firehose', t('Site only public stream'), get_config('system','site_firehose'), t('Restrict the public stream to content originating at this site')),
+			'$open_pubstream'	=> array('open_pubstream', t('Allow anybody on the internet to access the public streams'), get_config('system','open_pubstream',1), t('Disable to require authentication before viewing')),
 			'$incl'           => array('pub_incl',t('Only import Public stream posts with this text'), get_config('system','pubstream_incl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
 			'$excl'           => array('pub_excl',t('Do not import Public stream posts with this text'), get_config('system','pubstream_excl'),t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')),
 
@@ -532,7 +532,7 @@ class Site {
 			'$timeout'			=> array('timeout', t("Network timeout"), (x(get_config('system','curl_timeout'))?get_config('system','curl_timeout'):60), t("Value is in seconds. Set to 0 for unlimited (not recommended).")),
 			'$delivery_interval'			=> array('delivery_interval', t("Delivery interval"), (x(get_config('system','delivery_interval'))?get_config('system','delivery_interval'):2), t("Delay background delivery processes by this many seconds to reduce system load. Recommend: 4-5 for shared hosts, 2-3 for virtual private servers. 0-1 for large dedicated servers.")),
 			'$delivery_batch_count' => array('delivery_batch_count', t('Deliveries per process'),(x(get_config('system','delivery_batch_count'))?get_config('system','delivery_batch_count'):1), t("Number of deliveries to attempt in a single operating system process. Adjust if necessary to tune system performance. Recommend: 1-5.")),
-			'$force_queue'			=> array('force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',3000), t("Always defer immediate delivery if queue contains more than this number of entries.")),
+			//'$force_queue'			=> array('force_queue', t("Queue Threshold"), get_config('system','force_queue_threshold',3000), t("Always defer immediate delivery if queue contains more than this number of entries.")),
 			'$poll_interval'			=> array('poll_interval', t("Poll interval"), (x(get_config('system','poll_interval'))?get_config('system','poll_interval'):2), t("Delay background polling processes by this many seconds to reduce system load. If 0, use delivery interval.")),
 			'$imagick_path'			=> array('imagick_path', t("Path to ImageMagick convert program"), get_config('system','imagick_convert_path'), t("If set, use this program to generate photo thumbnails for huge images ( > 4000 pixels in either dimension), otherwise memory exhaustion may occur. Example: /usr/bin/convert")),
 			'$maxloadavg'			=> array('maxloadavg', t("Maximum Load Average"), ((intval(get_config('system','maxloadavg')) > 0)?get_config('system','maxloadavg'):50), t("Maximum system load before delivery and poll processes are deferred - default 50.")),

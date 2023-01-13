@@ -103,5 +103,7 @@ class Expire {
 		}
 
 		del_config('procid', 'expire');
+
+		return;
 	}
 }

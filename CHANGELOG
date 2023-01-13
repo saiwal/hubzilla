@@ -1,3 +1,62 @@
+Hubzilla 8.0 (2023-01-13)
+	Updated ru strings
+	Implement ability to edit addon PDL with pdledit_gui and pdledit
+	Implement queueworker auto sleep time
+	Always add sys channel to receivers for public items
+	Improved server sent events loop
+	Exclude not tagable xchan networks handle_tag()
+	Add mark html tag to the html2bbcode parser
+	Embed or attach uploaded files depending on file type
+	Changed logic to enable site only public stream - please revisit admin setting
+	Updated nb-no strings
+	Moved queueworker to core
+	Provide a PDL file for mod invite and set the profile
+	Disabled outdated context help
+	Mark unseen items seen after a certain amount of time (default 90 days)
+	Slightly restructure lib webfinger
+	Improved redbasic dark schema
+	Implement unseen thread and unseen items count in HQ widget
+	In unseen items notifications just count the first 99 and display 99+ if there are more
+
+	Bugfixes
+	- Fix race conditions when processing multiple choice polls
+	- Fix affinity slider updates - issue #1714
+	- Fix issue where accounts created with a did2 could change their password
+	- Fix no message displayed if file not found in mod cloud
+	- Fix pubstream tagcloud unthreaded view
+	- Fix french invite template
+	- Fix comment permission issue in site only public stream
+	- Fix privacy tag not referring to latest hubloc entry
+	- Fix selected item not highlighted
+	- Fix poll issue when special chars and spaces are involved
+	- Fix prune_hub_reinstalls() to only care about zot6 hublocs
+	- Fix redis session PHP warnings
+	- Fix remote visitor photo uploads
+	- Fix mod shredwithme not showing any items
+	- Fix api_auth not referring to latest hubloc entry
+	- Fix category widget URLs
+	- Fix poller always polling broken feeds
+	- Fix sse event always triggered if public stream notification are off or the app is not installed
+	- Fix more PHP8 warnings
+	- Fix wrong variable in tag_deliver()
+	- Fix mod follow use trim() after punify() - issue #1698
+
+	Addons
+	- Cards: update widget info
+	- Articles: update widget info
+	- Wiki: update widget info
+	- Sse: filter apporvals
+	- Cards: use html_entity_decode before purify and html2plain for summary
+	- Articles: use html_entity_decode before purify and html2plain for summary
+	- Wiki: use html_entity_decode before purify and html2plain for summary
+	- Cards: fix comments not displayed if filter by category
+	- Articles: fix comments not displayed if filter by category
+	- Sse: respect the site public stream setting
+	- Queueworker: moved to core
+	- Pubcrawl: move db query out of foreach loop
+	- Pubcrawl: add mentions and thread owner to recipients for public items
+
+
 Hubzilla 7.8.7 (2022-12-03)
 	- Fix regression when adding feed contacts
 	- Fix regression new channel calendar event not created

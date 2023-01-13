@@ -79,10 +79,7 @@ class Notifier {
 	static public $encoded_item = null;
 	static public $channel = null;
 	static public $private = false;
-	// $fragment can contain additional info to omit de-duplication in the queueworker.
-	// E.g. if an item is updated many times in a row from different sources (multiple vote updates) the
-	// update source mid or a timestamp or random string can be added.
-	static public $fragment = null;
+
 
 	static public function run($argc, $argv) {
 
@@ -107,7 +104,6 @@ class Notifier {
 		self::$encoded_item = null;
 		self::$channel      = null;
 		self::$private      = false;
-		self::$fragment     = null;
 
 		$sys         = get_sys_channel();
 		$normal_mode = true;
@@ -232,8 +228,6 @@ class Notifier {
 			// Normal items
 
 			// Fetch the target item
-
-			self::$fragment = $argv[3] ?? '';
 
 			$r = q("SELECT * FROM item WHERE id = %d AND parent != 0",
 				intval($item_id)
@@ -509,6 +503,7 @@ class Notifier {
 		// public posts won't make it to the local public stream unless there's a recipient on this site.
 		// This code block sees if it's a public post and localhost is missing, and if so adds an entry for the local sys channel to the $hubs list
 
+		/* sys channel is now added in collect recipients
 		if (!self::$private) {
 			$found_localhost = false;
 			if ($hubs) {
@@ -529,6 +524,7 @@ class Notifier {
 				}
 			}
 		}
+		*/
 
 		if (!$hubs) {
 			logger('notifier: no hubs', LOGGER_NORMAL, LOG_NOTICE);
@@ -699,7 +695,7 @@ class Notifier {
 			// This wastes a process if there are no delivery hooks configured, so check this before launching the new process
 			$x = q("select * from hook where hook = 'notifier_normal'");
 			if ($x) {
-				Master::Summon(['Deliver_hooks', $target_item['id'], self::$fragment]);
+				Master::Summon(['Deliver_hooks', $target_item['id']]);
 			}
 		}
 

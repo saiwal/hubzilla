@@ -12,8 +12,12 @@ class Deliver_hooks {
 		$r = q("select * from item where id = '%d'",
 			intval($argv[1])
 		);
-		if ($r)
+
+		if ($r) {
 			call_hooks('notifier_normal', $r[0]);
+		}
+
+		return;
 
 	}
 }

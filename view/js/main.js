@@ -197,8 +197,7 @@ $(document).ready(function() {
 
 			if (singlethread_modules.indexOf(module) !== -1) {
 				history.pushState(stateObj, '', module + '/' + b64mid);
-				$('.message').removeClass('active');
-				$('[data-b64mid="' + b64mid + '"].message').addClass('active');
+
 			}
 
 			if (b64mid) {
@@ -207,6 +206,9 @@ $(document).ready(function() {
 
 				if(! page_load) {
 					prepareLiveUpdate(b64mid, notify_id);
+					$('.message').removeClass('active');
+					$('[data-b64mid="' + b64mid + '"].message').addClass('active');
+					$('[data-b64mid="' + b64mid + '"].message .badge').remove();
 				}
 			}
 		}
@@ -644,7 +646,6 @@ function updatePageItems(mode, data) {
 
 
 function updateConvItems(mode,data) {
-
 	var scroll_position = $(window).scrollTop();
 
 	if(mode !== 'update')
@@ -655,10 +656,6 @@ function updateConvItems(mode,data) {
 	}
 	if(mode === 'append') {
 		next = 'threads-end';
-	}
-
-	if(mode === 'replace') {
-		$('.thread-parent').remove(); // clear existing content
 	}
 
 	$('.thread-wrapper', data).each(function() {
@@ -953,9 +950,13 @@ function liveUpdate(notify_id) {
 	console.log('displaying: ' + update_url);
 
 	if(page_load) {
+
 		$("#page-spinner").show();
-		if(bParam_page == 1)
+
+		if(bParam_page == 1) {
 			update_mode = 'replace';
+			$('.thread-wrapper').remove();
+		}
 		else
 			update_mode = 'append';
 	}

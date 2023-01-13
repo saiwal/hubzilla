@@ -22,7 +22,7 @@
 		</a>
 	</li>
 </ul>
-<div id="messages-widget" class="border border-top-0 overflow-auto mb-3 clearfix" style="height: 70vh;">
+<div id="messages-widget" class="border-start border-end border-bottom overflow-auto mb-3 clearfix" style="height: 70vh;">
 	<div id="messages-template" rel="template" class="d-none">
 		<a href="{6}" class="list-group-item list-group-item-action message" data-b64mid="{0}">
 			<div class="d-flex w-100 justify-content-between">
@@ -36,6 +36,7 @@
 				<div class="text-break">{2}</div>
 			</div>
 			<small>{3}</small>
+			{8}
 		</a>
 	</div>
 	<div id="dm-container" class="list-group list-group-flush" data-offset="10">
@@ -52,6 +53,9 @@
 				<div class="text-break">{{$e.summary}}</div>
 			</div>
 			<small>{{$e.info}}</small>
+			{{if $e.unseen_count}}
+			<span class="badge bg-transparent border border-{{$e.unseen_class}} text-{{$e.unseen_class}} rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen_count}}">{{$e.unseen_count}}</span>
+			{{/if}}
 		</a>
 		{{/foreach}}
 		<div id="messages-empty" class="list-group-item border-0"{{if $entries}} style="display: none;"{{/if}}>
@@ -124,7 +128,8 @@
 						e.author_name,
 						e.author_addr,
 						e.href,
-						e.icon
+						e.icon,
+						e.unseen_count ? '<span class="badge bg-transparent border border-' + e.unseen_class + ' text-' + e.unseen_class + ' rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen_count}}">' + e.unseen_count + '</span>' : ''
 					);
 					$('#messages-loading').before(html);
 				});

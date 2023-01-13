@@ -536,7 +536,7 @@ class Import extends Controller {
 				$since = datetime_convert(date_default_timezone_get(), date_default_timezone_get(), '0001-01-01 00:00');
 				$until = datetime_convert(date_default_timezone_get(), date_default_timezone_get(), 'now + 1 day');
 
-				$poll_interval = get_config('system', 'poll_interval', 3);
+				//$poll_interval = get_config('system', 'poll_interval', 3);
 				$page          = 0;
 
 				Master::Summon(['Content_importer', sprintf('%d', $page), $since, $until, $channel['channel_address'], urlencode($hz_server)]);

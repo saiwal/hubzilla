@@ -73,5 +73,7 @@ class Thumbnail {
 				|| (filectime(dbunescbin($attach['content']) . 'thumb') < (time() - 60)))) {
 			$default_controller->Thumb($attach, $preview_style, $preview_width, $preview_height);
 		}
+
+		return;
 	}
 }

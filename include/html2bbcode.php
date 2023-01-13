@@ -171,6 +171,7 @@ function html2bbcode($message)
 	node2bbcode($doc, 'i', array(), '[i]', '[/i]');
 	node2bbcode($doc, 'u', array(), '[u]', '[/u]');
 	node2bbcode($doc, 's', array(), '[s]', '[/s]');
+	node2bbcode($doc, 'mark', array(), '[mark]', '[/mark]');
 
 	node2bbcode($doc, 'big', array(), "[size=large]", "[/size]");
 	node2bbcode($doc, 'small', array(), "[size=small]", "[/size]");

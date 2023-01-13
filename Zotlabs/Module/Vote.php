@@ -45,9 +45,7 @@ class Vote extends Controller {
 
 		if ($obj['oneOf']) {
 			foreach($obj['oneOf'] as $selection) {
-				//		logger('selection: ' . $selection);
-				//		logger('response: ' . $response);
-				if($selection['name'] && $selection['name'] === $response) {
+				if($selection['name'] && htmlspecialchars_decode($selection['name']) === $response) {
 					$valid = true;
 				}
 			}
@@ -56,7 +54,7 @@ class Vote extends Controller {
 		$choices = [];
 		if ($obj['anyOf']) {
 			foreach ($obj['anyOf'] as $selection) {
-				$choices[] = $selection['name'];
+				$choices[] = htmlspecialchars_decode($selection['name']);
 			}
 			foreach ($response as $res) {
 				if (! in_array($res,$choices)) {

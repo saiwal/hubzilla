@@ -135,8 +135,7 @@ class Libsync {
 				$info['collection_members'] = $r;
 		}
 
-		$interval = ((get_config('system', 'delivery_interval') !== false)
-			? intval(get_config('system', 'delivery_interval')) : 2);
+		$interval = get_config('queueworker', 'queue_interval', 500000);
 
 		logger('Packet: ' . print_r($info, true), LOGGER_DATA, LOG_DEBUG);
 
@@ -155,19 +154,26 @@ class Libsync {
 			]);
 
 
+			/*
 			$x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
+
 			if (intval($x[0]['total']) > intval(get_config('system', 'force_queue_threshold', 3000))) {
 				logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
 				Queue::update($hash);
 				continue;
 			}
-
+			*/
 
 			Master::Summon(['Deliver', $hash]);
-			$total = $total - 1;
 
-			if ($interval && $total)
-				@time_sleep_until(microtime(true) + (float)$interval);
+			/*
+			$total = $total - 1;
+			*/
+
+			if ($interval) {
+				usleep($interval);
+			}
+
 		}
 	}
 
@@ -183,8 +189,6 @@ class Libsync {
 	static function process_channel_sync_delivery($sender, $arr, $deliveries) {
 
 		require_once('include/import.php');
-
-hz_syslog(print_r($arr, true));
 
 		$result = [];
 		$keychange = ((array_key_exists('keychange', $arr)) ? true : false);
@@ -858,7 +862,9 @@ hz_syslog(print_r($arr, true));
 						);
 					}
 
-					// update connection timestamp if this is the site we're talking to
+					// Update connection timestamp if this is the site we're talking to.
+					// Also mark all entries from the current site with different sitekeys
+					// deleted (the site has been re-installed)
 					// This only happens when called from import_xchan
 
 					$current_site = false;
@@ -872,6 +878,12 @@ hz_syslog(print_r($arr, true));
 							intval($r[0]['hubloc_id']),
 							dbesc($t)
 						);
+
+						q("update hubloc set hubloc_error = 1, hubloc_deleted = 1 where hubloc_url = '%s' and hubloc_sitekey != '%s'",
+							dbesc($r[0]['hubloc_url']),
+							dbesc($r[0]['hubloc_sitekey'])
+						);
+
 						$current_site = true;
 					}
 

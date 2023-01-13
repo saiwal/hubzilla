@@ -32,6 +32,7 @@ class Admin {
 			'addons'    => array(z_root() . '/admin/addons/',   t('Addons'),         'addons'),
 			'themes'    => array(z_root() . '/admin/themes/',   t('Themes'),         'themes'),
 			'queue'     => array(z_root() . '/admin/queue',     t('Inspect queue'),  'queue'),
+			'queueworker' => array(z_root() . '/admin/queueworker', t('Queueworker'),  'queueworker'),
 			'profs'     => array(z_root() . '/admin/profs',     t('Profile Fields'), 'profs'),
 			'dbsync'    => array(z_root() . '/admin/dbsync/',   t('DB updates'),     'dbsync')
 		];

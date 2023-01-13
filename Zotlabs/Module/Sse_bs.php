@@ -173,6 +173,9 @@ class Sse_bs extends Controller {
 
 		$item_normal = item_normal();
 
+		// FEP-5624 filter approvals for comments
+		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+
 		if ($notifications) {
 			$items = q("SELECT * FROM item
 				WHERE uid = %d
@@ -181,6 +184,7 @@ class Sse_bs extends Controller {
 				AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 				AND author_xchan != '%s'
 				$item_normal
+				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
@@ -205,18 +209,19 @@ class Sse_bs extends Controller {
 
 		}
 
-		$r = q("SELECT count(id) as total FROM item
+		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_wall = 0 AND item_private IN (0, 1)
 			AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 			AND author_xchan != '%s'
 			$item_normal
-			$sql_extra",
+			$approvals
+			$sql_extra LIMIT 100",
 			intval(self::$uid),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['network']['count'] = intval($r[0]['total']);
+			$result['network']['count'] = count($r);
 
 		return $result;
 	}
@@ -253,6 +258,9 @@ class Sse_bs extends Controller {
 
 		$item_normal = item_normal();
 
+		// FEP-5624 filter approvals for comments
+		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+
 		if ($notifications) {
 			$items = q("SELECT * FROM item
 				WHERE uid = %d
@@ -261,6 +269,7 @@ class Sse_bs extends Controller {
 				AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 				AND author_xchan != '%s'
 				$item_normal
+				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
@@ -285,17 +294,18 @@ class Sse_bs extends Controller {
 
 		}
 
-		$r = q("SELECT count(id) as total FROM item
+		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_private = 2
 			$item_normal
+			$approvals
 			$sql_extra
-			AND author_xchan != '%s'",
+			AND author_xchan != '%s' LIMIT 100",
 			intval(self::$uid),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['dm']['count'] = intval($r[0]['total']);
+			$result['dm']['count'] = count($r);
 
 		return $result;
 	}
@@ -333,6 +343,9 @@ class Sse_bs extends Controller {
 
 		$item_normal = item_normal();
 
+		// FEP-5624 filter approvals for comments
+		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+
 		if ($notifications) {
 			$items = q("SELECT * FROM item
 				WHERE uid = %d
@@ -341,6 +354,7 @@ class Sse_bs extends Controller {
 				AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 				AND author_xchan != '%s'
 				$item_normal
+				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
@@ -365,17 +379,18 @@ class Sse_bs extends Controller {
 
 		}
 
-		$r = q("SELECT count(id) as total FROM item
+		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_wall = 1 AND item_private IN (0, 1)
 			$item_normal
+			$approvals
 			$sql_extra
-			AND author_xchan != '%s'",
+			AND author_xchan != '%s' LIMIT 100",
 			intval(self::$uid),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['home']['count'] = intval($r[0]['total']);
+			$result['home']['count'] = count($r);
 
 		return $result;
 	}
@@ -421,21 +436,30 @@ class Sse_bs extends Controller {
 		if(self::$xchans)
 			$sql_extra2 = " AND CASE WHEN verb = '" . ACTIVITY_SHARE . "' THEN owner_xchan ELSE author_xchan END IN (" . self::$xchans . ") ";
 
+		$uids = " AND uid IN ( " . $sys['channel_id'] . " ) ";
+
+		$site_firehose = get_config('system', 'site_firehose', 0);
+		if($site_firehose) {
+			$uids = " AND uid IN ( " . stream_perms_api_uids(PERMS_PUBLIC) . " ) AND item_private = 0 AND item_wall = 1 ";
+		}
+
 		$item_normal = item_normal();
+
+		// FEP-5624 filter approvals for comments
+		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
 
 		if ($notifications) {
 			$items = q("SELECT * FROM item
-				WHERE uid = %d
+				WHERE true $uids
 				AND created <= '%s'
-				AND item_unseen = 1
 				AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 				AND author_xchan != '%s'
 				AND created > '%s'
 				$item_normal
+				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
-				intval($sys['channel_id']),
 				dbescdate($_SESSION['sse_loadtime']),
 				dbesc(self::$ob_hash),
 				dbescdate($_SESSION['static_loadtime'])
@@ -454,23 +478,21 @@ class Sse_bs extends Controller {
 			else {
 				$result['pubs']['offset'] = -1;
 			}
-
-
 		}
 
-		$r = q("SELECT count(id) as total FROM item
-			WHERE uid = %d AND item_unseen = 1
+		$r = q("SELECT id FROM item
+			WHERE true $uids
 			AND created > '%s'
 			$item_normal
+			$approvals
 			$sql_extra
-			AND author_xchan != '%s'",
-			intval($sys['channel_id']),
+			AND author_xchan != '%s' LIMIT 100",
 			dbescdate($_SESSION['static_loadtime']),
 			dbesc(self::$ob_hash)
 		);
 
 		if($r)
-			$result['pubs']['count'] = intval($r[0]['total']);
+			$result['pubs']['count'] = count($r);
 
 		return $result;
 	}

@@ -30,6 +30,7 @@ class Convo {
 			intval($channel_id),
 			dbesc($contact_hash)
 		);
+
 		if (!$r) {
 			return;
 		}
@@ -40,19 +41,25 @@ class Convo {
 
 		$messages = $obj->get();
 
-		if ($messages) {
-			foreach ($messages as $message) {
-				if (is_string($message)) {
-					$message = Activity::fetch($message, $channel);
-				}
-				// set client flag because comments will probably just be objects and not full blown activities
-				// and that lets us use implied_create
-				$AS = new ActivityStreams($message);
-				if ($AS->is_valid() && is_array($AS->obj)) {
-					$item = Activity::decode_note($AS);
-					Activity::store($channel, $contact['abook_xchan'], $AS, $item);
-				}
+		if (!$messages) {
+			return;
+		}
+
+		foreach ($messages as $message) {
+			if (is_string($message)) {
+				$message = Activity::fetch($message, $channel);
+			}
+
+			// set client flag because comments will probably just be objects and not full blown activities
+			// and that lets us use implied_create
+			$AS = new ActivityStreams($message);
+			if ($AS->is_valid() && is_array($AS->obj)) {
+				$item = Activity::decode_note($AS);
+				Activity::store($channel, $contact['abook_xchan'], $AS, $item);
 			}
 		}
+
+		return;
+
 	}
 }

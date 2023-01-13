@@ -100,7 +100,6 @@ class Cloud extends Controller {
 
 
 		// over-ride the default XML output on thrown exceptions
-
 		$server->on('exception', [ $this, 'DAVException' ]);
 
 		// All we need to do now, is to fire up the server
@@ -117,21 +116,19 @@ class Cloud extends Controller {
 	function DAVException($err) {
 
 		if($err instanceof \Sabre\DAV\Exception\NotFound) {
-			notice( t('Not found') . EOL);
+			\App::$page['content'] = '<h2>404 Not found</h2>';
 		}
 		elseif($err instanceof \Sabre\DAV\Exception\Forbidden) {
-			notice( t('Permission denied') . EOL);
+			\App::$page['content'] = '<h2>403 Forbidden</h2>';
 		}
 		elseif($err instanceof \Sabre\DAV\Exception\NotImplemented) {
-			// notice( t('Please refresh page') . EOL);
 			goaway(z_root() . '/' . \App::$query_string);
 		}
 		else {
-			notice( t('Unknown error') . EOL);
+			\App::$page['content'] = '<h2>Unknown error</h2>';
 		}
 
 		construct_page();
-
 		killme();
 	}
 
