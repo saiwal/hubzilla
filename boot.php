@@ -1862,10 +1862,9 @@ function can_view_public_stream() {
 		}
 	}
 
-	$site_firehose = ((intval(get_config('system', 'site_firehose', 0))) ? true : false);
 	$net_firehose  = ((get_config('system', 'disable_discover_tab', 1)) ? false : true);
 
-	if (!($site_firehose || $net_firehose)) {
+	if (!$net_firehose)) {
 		return false;
 	}
 
