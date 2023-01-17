@@ -1864,7 +1864,7 @@ function can_view_public_stream() {
 
 	$net_firehose  = ((get_config('system', 'disable_discover_tab', 1)) ? false : true);
 
-	if (!$net_firehose)) {
+	if (!$net_firehose) {
 		return false;
 	}
 
