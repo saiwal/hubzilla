@@ -5,7 +5,6 @@
  * Originally by Fabio Comuni <fabrix.xm@gmail.com>
  */
 
-
 /* bootstrap variables */
 
 :root {
@@ -1563,13 +1562,13 @@ dl.bb-dl > dd > li {
 
 /* Turn checkboxes into switches */
 .onoffswitch.checkbox > div {
-    position: relative; width: 60px;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-    display:inline-block;
+	position: relative; width: 60px;
+	-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+	display:inline-block;
 }
 
 .onoffswitch.checkbox input {
-    display: none;
+	display: none;
 }
 
 .onoffswitch.checkbox > div label {
@@ -1581,51 +1580,53 @@ dl.bb-dl > dd > li {
 }
 
 .onoffswitch.checkbox:hover label {
-	color: var(--bs-primary);
+	color: var(--bs-link-color);
 }
 
 .onoffswitch.checkbox:hover > div label {
-	border-color: var(--bs-primary);
+	border-color: var(--bs-link-color);
 }
 
 .onoffswitch-inner {
-    display: block; width: 200%; margin-left: -100%;
+	display: block; width: 200%; margin-left: -100%;
+	transition: margin 0.19s ease-in-out;
 }
 
 .onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 20px; padding: 0; line-height:20px;
-    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+	display: block; float: left; width: 50%; height: 20px; padding: 0; line-height:20px;
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
 .onoffswitch-inner:before {
-    content: attr(data-on);
-    padding-right: 21px;
-    background-color: rgba(var(--bs-body-color-rgb), 0);
-    text-align: right;
+	content: attr(data-on);
+	padding-right: 21px;
+	background-color: rgba(var(--bs-body-color-rgb), 0);
+	text-align: right;
 }
 
 .onoffswitch-inner:after {
-    content: attr(data-off);
-    padding-left: 21px;
-    background-color: rgba(var(--bs-body-color-rgb), 0);
-    color: var(--bs-border-color);
-    text-align: left;
+	content: attr(data-off);
+	padding-left: 21px;
+	background-color: rgba(var(--bs-body-color-rgb), 0);
+	color: var(--bs-border-color);
+	text-align: left;
 }
 
 .onoffswitch-switch {
-    display: block; width: 15px; margin:4px;
-    background: var(--bs-secondary-bg);
-    border-radius: 10px;
-    position: absolute; top: 0; bottom: 0; right: 36px;
+	display: block; width: 15px; margin:4px;
+	background: var(--bs-secondary-bg);
+	border-radius: 10px;
+	position: absolute; top: 0; bottom: 0; right: 36px;
+	transition: right 0.2s ease-in-out;
 }
 
 .onoffswitch.checkbox > div > input:checked + label .onoffswitch-inner {
-    margin-left: 0px;
+	margin-left: 0px;
 }
 
 .onoffswitch.checkbox > div > input:checked + label .onoffswitch-switch {
-    right: 0px;
-    background-color: var(--bs-primary);
+	right: 0px;
+	background-color: var(--bs-link-color);
 }
 
 
@@ -1754,4 +1755,8 @@ dl.bb-dl > dd > li {
 
 .jg-entry img {
 	border-radius: var(--bs-border-radius);
+}
+
+.disable-transition {
+	transition: none !important;
 }

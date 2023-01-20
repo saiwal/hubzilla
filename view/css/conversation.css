@@ -223,10 +223,10 @@ a.wall-item-name-link {
 
 
 .comment-edit-text {
-	padding: 0.5rem;
+	padding: .5rem;
 	width: 100%;
 	display: inherit;
-	line-height: 1.25;
+	line-height: 1.5;
 	height: 2.5rem;
 	resize: none;
 	overflow: hidden;

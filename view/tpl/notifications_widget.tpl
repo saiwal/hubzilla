@@ -531,7 +531,7 @@
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
 	<div id="nav-notifications-template" rel="template">
-		<a class="list-group-item text-decoration-none text-reset clearfix notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
+		<a class="list-group-item list-group-item-action text-decoration-none text-reset clearfix notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
 			<img class="menu-img-3" data-src="{1}" loading="lazy">
 			<div class="contactname"><span class="text-reset fw-bold">{2}</span> <span class="text-muted">{3}</span></div>
 			<span class="text-muted">{4}</span><br>
@@ -539,7 +539,7 @@
 		</a>
 	</div>
 	<div id="nav-notifications-forums-template" rel="template">
-		<a class="list-group-item text-decoration-none clearfix notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
+		<a class="list-group-item list-group-item-action text-decoration-none clearfix notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
 			<span class="float-end badge bg-secondary">{10}</span>
 			<img class="menu-img-1" data-src="{1}" loading="lazy">
 			<span class="">{2}</span>
@@ -556,18 +556,18 @@
 		</div>
 		<div id="nav-{{$notification.type}}-sub" class="rounded-bottom border border-start-0 border-end-0 border-bottom-0 list-group list-group-flush collapse notification-content" data-bs-parent="#notifications" data-sse_type="{{$notification.type}}">
 			{{if $notification.viewall}}
-			<a class="list-group-item text-decoration-none text-reset" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
+			<a class="list-group-item list-group-item-action text-decoration-none" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
 				<i class="fa fa-fw fa-external-link"></i> {{$notification.viewall.label}}
 			</a>
 			{{/if}}
 			{{if $notification.markall}}
-			<div class="list-group-item cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
+			<div class="list-group-item list-group-item-action cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
 				<i class="fa fa-fw fa-check"></i> {{$notification.markall.label}}
 			</div>
 			{{/if}}
 			{{if $notification.filter}}
 			{{if $notification.filter.posts_label}}
-			<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
+			<div class="list-group-item list-group-item-action cursor-pointer" id="tt-{{$notification.type}}-only">
 				<i class="fa fa-fw fa-filter"></i> {{$notification.filter.posts_label}}
 			</div>
 			{{/if}}

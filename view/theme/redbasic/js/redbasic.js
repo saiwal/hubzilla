@@ -54,6 +54,8 @@ $(document).ready(function() {
 	});
 
 	$('#theme-switch').click(function() {
+		// $('*').addClass('disable-transition');
+
 		if ($('html').attr('data-bs-theme') === 'dark') {
 			$('html').attr('data-bs-theme', 'light');
 			localStorage.setItem('redbasic_dark_mode', 1);
@@ -64,6 +66,8 @@ $(document).ready(function() {
 			localStorage.setItem('redbasic_dark_mode', 2);
 			$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
 		}
+
+		// setTimeout(() => { $('*').removeClass('disable-transition') }, 100);
 	});
 
 

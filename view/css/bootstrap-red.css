@@ -7,9 +7,8 @@
   }
 }
 
-.nav-link,
-.form-control {
-	transition: none;
+* {
+	transition: none !important;
 }
 
 /* nav overrides */
