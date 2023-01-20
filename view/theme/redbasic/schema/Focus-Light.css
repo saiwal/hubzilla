@@ -1,5 +1,10 @@
 .dropdown-header.text-white-50,
 .navbar-dark .navbar-toggler,
-.navbar-dark .nav-link.active {
-	color: rgba(0,0,0,0.7) !important;
+.navbar-dark .nav-link:active, .navbar-dark .nav-link.active,
+.navbar-dark .navbar-text, .navbar-dark .nav-link, .navbar-dark .nav-link:hover {
+	color: var(--bs-secondary) !important;
+}
+
+.navbar-dark.bg-dark {
+	background-color: var(--bs-tertiary-bg) !important;
 }

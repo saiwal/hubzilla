@@ -2,8 +2,8 @@
 	padding-left: 3rem;
 }
 
-.wall-item-content-wrapper {
-	border-bottom: 1px solid rgba(0,0,0,.125);
+.wall-item-content-wrapper.comment {
+	border-bottom: 1px solid var(--bs-border-color);
 }
 
 .hide-comments-outer,
@@ -12,7 +12,7 @@
 }
 
 .widget {
-	border: 1px solid rgba(0,0,0,.125);
+	border: 1px solid var(--bs-border-color);
 }
 
 #note-text {
@@ -20,7 +20,7 @@
 }
 
 .vcard-card {
-	border: 1px solid rgba(0,0,0,.125);
+	border: 1px solid var(--bs-border-color);
 	border-bottom: 0;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .vcard-card .vcard {
-	border: 1px solid rgba(0,0,0,.125);
+	border: 1px solid var(--bs-border-color);
 	border-top: 0;
 	border-right: 0;
 	border-left: 0;

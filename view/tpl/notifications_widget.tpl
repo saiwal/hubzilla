@@ -531,9 +531,9 @@
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
 	<div id="nav-notifications-template" rel="template">
-		<a class="list-group-item text-decoration-none text-dark clearfix notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
+		<a class="list-group-item text-decoration-none text-reset clearfix notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
 			<img class="menu-img-3" data-src="{1}" loading="lazy">
-			<div class="contactname"><span class="text-dark fw-bold">{2}</span> <span class="text-muted">{3}</span></div>
+			<div class="contactname"><span class="text-reset fw-bold">{2}</span> <span class="text-muted">{3}</span></div>
 			<span class="text-muted">{4}</span><br>
 			<span class="text-muted notifications-autotime" title="{5}">{5}</span>
 		</a>
@@ -556,7 +556,7 @@
 		</div>
 		<div id="nav-{{$notification.type}}-sub" class="rounded-bottom border border-start-0 border-end-0 border-bottom-0 list-group list-group-flush collapse notification-content" data-bs-parent="#notifications" data-sse_type="{{$notification.type}}">
 			{{if $notification.viewall}}
-			<a class="list-group-item text-decoration-none text-dark" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
+			<a class="list-group-item text-decoration-none text-reset" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
 				<i class="fa fa-fw fa-external-link"></i> {{$notification.viewall.label}}
 			</a>
 			{{/if}}

@@ -3,9 +3,9 @@
 		{{if $userinfo}}
 		<div class="d-flex" style="max-width: 50%">
 			<div class="dropdown">
-				<div class="fakelink usermenu" data-bs-toggle="dropdown">
+				<div class="cursor-pointer usermenu" data-bs-toggle="dropdown">
 					<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}">
-					<i class="fa fa-caret-down"></i>
+					<i class="navbar-text fa fa-caret-down"></i>
 				</div>
 				{{if $is_owner}}
 				<div class="dropdown-menu">
@@ -162,8 +162,9 @@
 </nav>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="app-bin" aria-labelledby="app-bin-label">
 	<div class="offcanvas-header">
+
 		{{if $nav.login && !$userinfo}}
-		<div class="d-lg-none pt-1 pb-1">
+		<div class="hstack gap-1 d-lg-none pt-1 pb-1">
 			{{if $nav.loginmenu.1.4}}
 			<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-bs-toggle="modal" data-bs-target="#nav-login">
 				{{$nav.loginmenu.1.1}}
@@ -178,8 +179,9 @@
 				{{$nav.register.1}}
 			</a>
 			{{/if}}
+
 		</div>
-		<div class="nav d-lg-flex"></div>
+		<div class="nav d-lg-flex w-100"></div>
 		{{else}}
 		<div class="lh-sm w-100" id="app-bin-label">
 			{{if $name}}
@@ -193,6 +195,7 @@
 		<i id="app-bin-trash" class="fa fa-2x fa-fw fa-trash-o d-none"></i>
 		{{/if}}
 
+		<button id="theme-switch" type="button" class="btn btn-outline-secondary border-0"><i id="theme-switch-icon" class="fa fa-{{$theme_switch_icon}}-o"></i></button>
 		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 
 	</div>

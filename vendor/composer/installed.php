@@ -3,7 +3,7 @@
         'name' => 'zotlabs/hubzilla',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => 'e1f9b1c47d8f3ed3400465ec279e894a0d9255c5',
+        'reference' => 'cd9f35e78ae116e28de6ac4ce89fe94cde9a9928',
         'type' => 'application',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -233,9 +233,9 @@
             'dev_requirement' => false,
         ),
         'twbs/bootstrap' => array(
-            'pretty_version' => 'v5.2.2',
-            'version' => '5.2.2.0',
-            'reference' => '961d5ff9844372a4e294980c667bbe7e0651cdeb',
+            'pretty_version' => 'v5.3.0-alpha1',
+            'version' => '5.3.0.0-alpha1',
+            'reference' => 'cf9454caa00872899215603e5e036d9a824b1b11',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twbs/bootstrap',
             'aliases' => array(),
@@ -244,7 +244,7 @@
         'twitter/bootstrap' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => 'v5.2.2',
+                0 => 'v5.3.0-alpha1',
             ),
         ),
         'voku/portable-ascii' => array(
@@ -268,7 +268,7 @@
         'zotlabs/hubzilla' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'e1f9b1c47d8f3ed3400465ec279e894a0d9255c5',
+            'reference' => 'cd9f35e78ae116e28de6ac4ce89fe94cde9a9928',
             'type' => 'application',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

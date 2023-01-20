@@ -7,6 +7,11 @@
   }
 }
 
+.nav-link,
+.form-control {
+	transition: none;
+}
+
 /* nav overrides */
 
 nav .badge {

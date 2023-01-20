@@ -201,6 +201,8 @@ function nav($template = 'default') {
 		$nav['admin'] = ['admin/', t('Admin'), "", t('Site Setup and Configuration'), 'admin_nav_btn'];
 	}
 
+	$theme_switch_icon = ((App::$page['color_mode'] === 'dark') ? 'sun' : 'moon');
+
 	$x = ['nav' => $nav, 'usermenu' => $userinfo];
 
 	call_hooks('nav', $x);
@@ -317,6 +319,7 @@ function nav($template = 'default') {
 
 	App::$page['nav'] .= replace_macros($tpl, [
 		'$baseurl'            => z_root(),
+		'$theme_switch_icon'  => $theme_switch_icon,
 		'$fulldocs'           => t('Help'),
 		'$sitelocation'       => $sitelocation,
 		'$nav'                => $x['nav'],

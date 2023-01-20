@@ -11,22 +11,19 @@ if(! App::$install) {
 
 	// Load the owners pconfig
 	$nav_bg = get_pconfig($uid, 'redbasic', 'nav_bg');
-	$nav_icon_colour = get_pconfig($uid, 'redbasic', 'nav_icon_colour');
-	$nav_active_icon_colour = get_pconfig($uid, 'redbasic', 'nav_active_icon_colour');
-	$banner_colour = get_pconfig($uid,'redbasic','banner_colour');
+	$nav_bg_dark = get_pconfig($uid, 'redbasic', 'nav_bg_dark');
 	$narrow_navbar = get_pconfig($uid,'redbasic','narrow_navbar');
-	$link_colour = get_pconfig($uid, 'redbasic', 'link_colour');
-	$link_hover_colour = get_pconfig($uid, 'redbasic', 'link_hover_colour');
+	$link_color = get_pconfig($uid, 'redbasic', 'link_color');
+	$link_color_dark = get_pconfig($uid, 'redbasic', 'link_color_dark');
+	$link_hover_color = get_pconfig($uid, 'redbasic', 'link_hover_color');
+	$link_hover_color_dark = get_pconfig($uid, 'redbasic', 'link_hover_color_dark');
+	$bgcolor = get_pconfig($uid, 'redbasic', 'background_color');
+	$bgcolor_dark = get_pconfig($uid, 'redbasic', 'background_color_dark');
 	$schema = get_pconfig($uid,'redbasic','schema');
-	$bgcolour = get_pconfig($uid, 'redbasic', 'background_colour');
 	$background_image = get_pconfig($uid, 'redbasic', 'background_image');
-	$item_colour = get_pconfig($uid, 'redbasic', 'item_colour');
-	$comment_item_colour = get_pconfig($uid, 'redbasic', 'comment_item_colour');
-	$item_opacity = get_pconfig($uid, 'redbasic', 'item_opacity');
+	$background_image_dark = get_pconfig($uid, 'redbasic', 'background_image_dark');
 	$font_size = get_pconfig($uid, 'redbasic', 'font_size');
-	$font_colour = get_pconfig($uid, 'redbasic', 'font_colour');
 	$radius = get_pconfig($uid, 'redbasic', 'radius');
-	$shadow = get_pconfig($uid,'redbasic','photo_shadow');
 	$converse_width=get_pconfig($uid,'redbasic','converse_width');
 	$top_photo=get_pconfig($uid,'redbasic','top_photo');
 	$reply_photo=get_pconfig($uid,'redbasic','reply_photo');
@@ -75,39 +72,59 @@ if ((!$schema) || ($schema == '---')) {
 //Set some defaults - we have to do this after pulling owner settings, and we have to check for each setting
 //individually.  If we don't, we'll have problems if a user has set one, but not all options.
 if (! $nav_bg)
-	$nav_bg = '#343a40';
-if (! $nav_icon_colour)
-	$nav_icon_colour = 'rgba(255, 255, 255, 0.55)';
-if (! $nav_active_icon_colour)
-	$nav_active_icon_colour = 'rgba(255, 255, 255, 0.75)';
-if (! $link_colour)
-	$link_colour = '#0d6efd';
-if (! $link_hover_colour)
-	$link_hover_colour = '#0a58ca;';
-if (! $banner_colour)
-	$banner_colour = '#efefef';
-if (! $bgcolour)
-	$bgcolour = 'rgb(254,254,254)';
+	$nav_bg = 'rgba(33, 37, 41, 1)';
+
+if (! $nav_bg_dark)
+	$nav_bg_dark = 'rgba(0, 0, 0, 1)';
+
+if (! $link_color)
+	$link_color = '#0d6efd';
+
+if (! $link_color_dark)
+	$link_color_dark = '#6ea8fe';
+
+if (! $link_hover_color)
+	$link_hover_color = '#0a58ca';
+
+if (! $link_hover_color_dark)
+	$link_hover_color_dark = '#9ec5fe';
+
+if (! $bgcolor)
+	$bgcolor = '#fff';
+
+if (! $bgcolor_dark)
+	$bgcolor_dark = '#212529';
+
 if (! $background_image)
-	$background_image ='';
-if (! $item_colour)
-	$item_colour = '#f6f6f6';
-if (! $comment_item_colour)
-	$comment_item_colour = 'rgb(255,255,255)';
-if (! $item_opacity)
-	$item_opacity = '1';
+	$background_image = '';
+
+if (! $background_image_dark)
+	$background_image_dark = '';
+
+if (! $item_color)
+	$item_color = '#fff';
+
+if (! $item_color_dark)
+	$item_color_dark = '#212529';
+
+if (! $header_item_color)
+	$header_item_color = '#f8f9fa';
+
+if (! $header_item_color_dark)
+	$header_item_color_dark = '#212529';
+
 if (! $font_size)
 	$font_size = '0.875rem';
-if (! $font_colour)
-	$font_colour = '#4d4d4d';
+
 if (! $radius)
 	$radius = '0.375rem';
-if (! $shadow)
-	$shadow = '0';
+
 if (! $converse_width)
 	$converse_width = '52'; //unit: rem
+
 if(! $top_photo)
 	$top_photo = '2.3rem';
+
 if(! $reply_photo)
 	$reply_photo = '2.3rem';
 
@@ -138,19 +155,21 @@ if(file_exists('view/theme/redbasic/css/style.css')) {
 
 	$options = array (
 		'$nav_bg' => $nav_bg,
-		'$nav_icon_colour' => $nav_icon_colour,
-		'$nav_active_icon_colour' => $nav_active_icon_colour,
-		'$link_colour' => $link_colour,
-		'$link_hover_colour' => $link_hover_colour,
-		'$banner_colour' => $banner_colour,
-		'$bgcolour' => $bgcolour,
+		'$nav_bg_dark' => $nav_bg_dark,
+		'$link_color' => $link_color,
+		'$link_color_dark' => $link_color_dark,
+		'$link_hover_color' => $link_hover_color,
+		'$link_hover_color_dark' => $link_hover_color_dark,
+		'$bgcolor' => $bgcolor,
+		'$bgcolor_dark' => $bgcolor_dark,
 		'$background_image' => $background_image,
-		'$item_colour' => $item_colour,
-		'$comment_item_colour' => $comment_item_colour,
+		'$background_image_dark' => $background_image_dark,
+		'$item_color' => $item_color,
+		'$item_color_dark' => $item_color_dark,
+		'$header_item_color' => $header_item_color,
+		'$header_item_color_dark' => $header_item_color_dark,
 		'$font_size' => $font_size,
-		'$font_colour' => $font_colour,
 		'$radius' => $radius,
-		'$shadow' => $shadow,
 		'$converse_width' => $converse_width,
 		'$top_photo' => $top_photo,
 		'$reply_photo' => $reply_photo,
@@ -159,7 +178,7 @@ if(file_exists('view/theme/redbasic/css/style.css')) {
 		'$right_aside_width' => $right_aside_width
 	);
 
-	echo str_replace(array_keys($options), array_values($options), $x);
+	echo strtr($x, $options);
 
 }
 

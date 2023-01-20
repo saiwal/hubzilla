@@ -2,6 +2,19 @@
  * redbasic theme specific JavaScript
  */
 
+let redbasic_dark_mode = localStorage.getItem('redbasic_dark_mode');
+
+if (redbasic_dark_mode == 1) {
+	$('html').attr('data-bs-theme', 'light');
+	$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
+}
+
+
+if (redbasic_dark_mode == 2) {
+	$('html').attr('data-bs-theme', 'dark');
+	$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
+}
+
 $(document).ready(function() {
 
 	// CSS3 calc() fallback (for unsupported browsers)
@@ -39,6 +52,20 @@ $(document).ready(function() {
 			$('#navbar-collapse-1, #navbar-collapse-2').removeClass('show');
 		}
 	});
+
+	$('#theme-switch').click(function() {
+		if ($('html').attr('data-bs-theme') === 'dark') {
+			$('html').attr('data-bs-theme', 'light');
+			localStorage.setItem('redbasic_dark_mode', 1);
+			$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
+		}
+		else {
+			$('html').attr('data-bs-theme', 'dark');
+			localStorage.setItem('redbasic_dark_mode', 2);
+			$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
+		}
+	});
+
 
 	$('#menu-btn').click(function() {
 		if($('#navbar-collapse-1').hasClass('show')){
