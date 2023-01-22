@@ -194,9 +194,10 @@
 		</div>
 		<i id="app-bin-trash" class="fa fa-2x fa-fw fa-trash-o d-none"></i>
 		{{/if}}
-
-		<button id="theme-switch" type="button" class="btn btn-outline-secondary border-0"><i id="theme-switch-icon" class="fa fa-{{$theme_switch_icon}}-o"></i></button>
-		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		<div class="hstack gap-1">
+			<button id="theme-switch" type="button" class="btn btn-outline-secondary border-0"><i id="theme-switch-icon" class="fa fa-{{$theme_switch_icon}}-o"></i></button>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
 
 	</div>
 	<div class="offcanvas-body">
