@@ -9,7 +9,7 @@
  *   * Author: Fabrixxm
  *   * Maintainer: Mike Macgirvin
  *   * Maintainer: Mario Vavti
- *   * Theme_Color: #212529
+ *   * Theme_Color: rgb(248, 249, 250)
  *   * Background_Color: rgb(254,254,254)
  */
 
