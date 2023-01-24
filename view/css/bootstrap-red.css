@@ -46,10 +46,6 @@ nav .dropdown-menu {
 }
 
 
-.navbar-dark .navbar-toggler {
-	color: rgba(255,255,255,1);
-}
-
 /* offcanvas */
 .offcanvas,
 .offcanvas-backdrop.fade {

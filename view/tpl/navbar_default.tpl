@@ -1,4 +1,4 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
 	<div class="container-fluid flex-nowrap">
 		{{if $userinfo}}
 		<div class="d-flex" style="max-width: 50%">

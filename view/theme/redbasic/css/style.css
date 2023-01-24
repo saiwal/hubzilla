@@ -26,11 +26,11 @@
 	--hz-body-bg-image: url('$background_image_dark');
 }
 
-[data-bs-theme=light] .navbar-dark.bg-dark {
+[data-bs-theme=light] .navbar.bg-body-tertiary {
 	background-color: $nav_bg !important;
 }
 
-[data-bs-theme=dark] .navbar-dark.bg-dark {
+[data-bs-theme=dark] .navbar.bg-body-tertiary {
 	background-color: $nav_bg_dark !important;
 }
 
