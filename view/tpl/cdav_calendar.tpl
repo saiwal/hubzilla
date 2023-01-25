@@ -14,9 +14,6 @@ var contact_deny = [];
 var group_deny = [];
 
 var resource = {{$resource}};
-var default_view = resource !== null ? 'timeGridDay' : 'dayGridMonth';
-var default_date = resource !== null ? new Date(resource.dtstart) : new Date();
-
 var allday;
 
 $(document).ready(function() {
@@ -36,9 +33,6 @@ $(document).ready(function() {
 
 		firstDay: {{$first_day}},
 
-		defaultView: default_view,
-		defaultDate: default_date,
-
 		weekNumbers: true,
 		navLinks: true,
 
@@ -52,10 +46,6 @@ $(document).ready(function() {
 			changeView('timeGridWeek');
 		},
 
-		monthNames: aStr['monthNames'],
-		monthNamesShort: aStr['monthNamesShort'],
-		dayNames: aStr['dayNames'],
-		dayNamesShort: aStr['dayNamesShort'],
 		allDayText: aStr['allday'],
 
 		snapDuration: '00:05:00',
