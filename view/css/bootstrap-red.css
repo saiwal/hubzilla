@@ -13,15 +13,6 @@
 
 /* nav overrides */
 
-nav .badge {
-	position: absolute;
-	font-size: 0.75rem;
-}
-
-nav .dropdown-menu {
-	min-width: 16rem;
-}
-
 .nav-item.nav-item-hack {
 	height: 2.3rem;
 }

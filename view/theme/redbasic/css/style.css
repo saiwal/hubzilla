@@ -76,7 +76,7 @@ aside#region_1 {
 
 aside#region_3 {
 	width: $right_aside_widthrem;
-	min-width: $left_aside_widthrem;
+	min-width: $right_aside_widthrem;
 	max-width: $right_aside_widthrem;
 }
 
@@ -1449,10 +1449,6 @@ blockquote {
 
 
 @media screen and (max-width: 992px) {
-
-	aside#region_1 {
-		border-right: 1px solid $nav_bd;
-	}
 
 	main {
 		left: -$left_aside_widthrem;

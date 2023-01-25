@@ -1,24 +1,16 @@
 @media screen and (min-width: 767px) {
 
-	nav.navbar {
-		padding-top: 1px;
-		padding-bottom: 1px
-	}
-
-	nav .badge {
-		top: 0px;
-		left: -0.25rem;
+	.navbar {
+		--bs-navbar-padding-y: 1px;
 	}
 
 	.contextual-help-content-open {
 		top: 2.5rem;
 	}
 
-	aside {
-		padding-top: 3.5rem;
-	}
-
-	section {
+	#region_1,
+	#region_2,
+	#region_3 {
 		padding-top: 3.5rem;
 	}
 
