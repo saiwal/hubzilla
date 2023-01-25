@@ -595,9 +595,9 @@ class Activity {
 			foreach ($item['term'] as $t) {
 				switch ($t['ttype']) {
 					case TERM_HASHTAG:
-						// href is required so if we don't have a url in the taxonomy, ignore it and keep going.
+						// id is required so if we don't have a url in the taxonomy, ignore it and keep going.
 						if ($t['url']) {
-							$ret[] = ['type' => 'Hashtag', 'href' => $t['url'], 'name' => '#' . $t['term']];
+							$ret[] = ['type' => 'Hashtag', 'id' => $t['url'], 'name' => '#' . $t['term']];
 						}
 						break;
 
