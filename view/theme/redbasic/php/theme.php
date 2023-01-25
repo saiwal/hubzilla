@@ -32,5 +32,4 @@ function redbasic_init(&$a) {
 	}
 
 	App::$page['color_mode'] = 'data-bs-theme="' . $mode . '"';
-	App::$page['theme_color'] = 'rgb(248, 249, 250)';
 }
