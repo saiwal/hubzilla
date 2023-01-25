@@ -6,17 +6,18 @@ let redbasic_dark_mode = localStorage.getItem('redbasic_dark_mode');
 
 if (redbasic_dark_mode == 1) {
 	$('html').attr('data-bs-theme', 'light');
-	$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
 	$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
 }
 
 if (redbasic_dark_mode == 2) {
 	$('html').attr('data-bs-theme', 'dark');
-	$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
 	$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
 }
 
+
 $(document).ready(function() {
+
+	$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
 
 	// CSS3 calc() fallback (for unsupported browsers)
 	$('body').append('<div id="css3-calc" style="width: 10px; width: calc(10px + 10px); display: none;"></div>');
@@ -30,6 +31,7 @@ $(document).ready(function() {
 		});
 	}
 	$('#css3-calc').remove(); // Remove the test element
+
 
 	if (document.querySelector('#region_1')) {
 		stickyScroll('.aside_spacer_left', '.aside_spacer_top_left', '.content', parseFloat(window.getComputedStyle(document.querySelector('#region_1')).getPropertyValue('padding-top')), 0);

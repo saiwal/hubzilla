@@ -91,7 +91,7 @@
 				{{if $nav.login && !$userinfo}}
 				<li class="nav-item d-lg-flex">
 					{{if $nav.loginmenu.1.4}}
-					<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}" data-bs-toggle="modal" data-bs-target="#nav-login">
+					<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" data-bs-toggle="modal" data-bs-target="#nav-login">
 					{{$nav.loginmenu.1.1}}
 					</a>
 					{{else}}
@@ -103,7 +103,7 @@
 				{{/if}}
 				{{if $nav.register}}
 				<li class="nav-item {{$nav.register.2}} d-lg-flex">
-					<a class="nav-link" href="{{$nav.register.0}}" title="{{$nav.register.3}}" id="{{$nav.register.4}}">{{$nav.register.1}}</a>
+					<a class="nav-link" href="{{$nav.register.0}}" title="{{$nav.register.3}}">{{$nav.register.1}}</a>
 				</li>
 				{{/if}}
 				{{if $nav.alogout}}
@@ -166,7 +166,7 @@
 		{{if $nav.login && !$userinfo}}
 		<div class="hstack gap-1 d-lg-none pt-1 pb-1">
 			{{if $nav.loginmenu.1.4}}
-			<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-bs-toggle="modal" data-bs-target="#nav-login">
+			<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" data-bs-toggle="modal" data-bs-target="#nav-login">
 				{{$nav.loginmenu.1.1}}
 			</a>
 			{{else}}
@@ -175,7 +175,7 @@
 			</a>
 			{{/if}}
 			{{if $nav.register}}
-			<a class="btn btn-warning btn-sm text-dark" href="{{$nav.register.0}}" title="{{$nav.register.3}}" id="{{$nav.register.4}}" >
+			<a class="btn btn-warning btn-sm text-dark" href="{{$nav.register.0}}" title="{{$nav.register.3}}">
 				{{$nav.register.1}}
 			</a>
 			{{/if}}
