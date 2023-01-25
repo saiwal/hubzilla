@@ -1,33 +1,32 @@
 /* fix borders */
 
-.fc th:first-child,
-.fc td:first-child {
-	border-left-width: 0px;
+:root {
+	--fc-border-color: var(--bs-border-color) !important;
+	--fc-page-bg-color: var(--bs-tertiary-bg) !important;
+	--fc-list-event-hover-bg-color: var(--bs-tertiary-bg) !important;
+	--fc-daygrid-event-dot-width: 1rem !important;
+	--fc-list-event-dot-width: 1rem !important;
 }
 
-.fc th:last-child,
-.fc td:last-child {
-	border-right-width: 0px;
-	border-bottom-width: 0px;
+.fc .fc-cell-shaded, .fc .fc-day-disabled {
+	background: var(--bs-tertiary-bg) !important;
 }
 
-main.fullscreen .fc th:last-child,
-main.fullscreen .fc td:last-child {
-	border-bottom-width: 1px;
+.fc-theme-standard td:last-child,
+.fc-theme-standard th:last-child {
+	border-right: 0px !important;
 }
 
-.fc-unthemed th,
-.fc-unthemed td,
-.fc-unthemed thead,
-.fc-unthemed tbody,
-.fc-unthemed .fc-divider,
-.fc-unthemed .fc-row,
-.fc-unthemed .fc-popover {
-	border-color: #ccc !important;
+.fc-theme-standard td:last-child {
+	border-bottom: 0px !important;
 }
 
-.fc-list-view {
-	border-width: 0px;
+.fc-theme-standard .fc-scrollgrid {
+	border: 0px !important;
+}
+
+.fc-theme-standard .fc-list {
+	border: 0px !important;
 }
 
 .bootstrap-tagsinput {
@@ -35,4 +34,3 @@ main.fullscreen .fc td:last-child {
 	padding: 6px 12px;
 	margin-bottom: 0px !important;
 }
-

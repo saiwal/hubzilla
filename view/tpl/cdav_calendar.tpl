@@ -22,7 +22,7 @@ var allday;
 $(document).ready(function() {
 	var calendarEl = document.getElementById('calendar');
 	calendar = new FullCalendar.Calendar(calendarEl, {
-		plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+
 		eventSources: [ {{$sources}} ],
 
 		timeZone: '{{$timezone}}',
@@ -30,7 +30,7 @@ $(document).ready(function() {
 		locale: '{{$lang}}',
 
 		eventTextColor: 'white',
-		header: false,
+		headerToolbar: false,
 
 		height: 'auto',
 
@@ -383,7 +383,6 @@ $(document).ready(function() {
 	if(default_view === 'dayGridMonth');
 		$('#id_dtstart_wrapper, #id_dtend_wrapper, #id_timezone_select_wrapper').hide();
 });
-
 
 function changeView(viewName) {
 
