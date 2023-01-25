@@ -84,7 +84,7 @@ $(document).ready(function() {
 	});
 
 	$("input[data-role=cat-tagsinput]").tagsinput({
-		tagClass: 'badge rounded-pill bg-warning'
+		tagClass: 'badge rounded-pill bg-warning text-dark'
 	});
 
 	$('a.disabled').click(function(e) {

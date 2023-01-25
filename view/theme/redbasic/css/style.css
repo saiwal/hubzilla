@@ -1551,6 +1551,7 @@ dl.bb-dl > dd > li {
 }
 
 .bootstrap-tagsinput {
+	width: 100%;
 	padding: 0 .5rem;
 }
 
@@ -1748,10 +1749,6 @@ dl.bb-dl > dd > li {
 
 .hover-fx-show:hover .hover-fx-hide {
 	opacity: 1;
-}
-
-.bootstrap-tagsinput {
-	width: 100%;
 }
 
 .jg-entry img {

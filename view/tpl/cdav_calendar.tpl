@@ -370,8 +370,6 @@ $(document).ready(function() {
 			$('#event_submit').html('{{$update}}');
 	}
 
-	if(default_view === 'dayGridMonth');
-		$('#id_dtstart_wrapper, #id_dtend_wrapper, #id_timezone_select_wrapper').hide();
 });
 
 function changeView(viewName) {
