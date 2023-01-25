@@ -66,7 +66,7 @@
 			{{/if}}
 		</div>
 		{{else}}
-		<div id="banner" class="navbar-text d-lg-none">{{$banner}}</div>
+		<div class="navbar-text d-lg-none navbar-banner">{{$banner}}</div>
 		{{/if}}
 		<div class="navbar-toggler-right">
 			{{if $nav.help.6}}
@@ -113,7 +113,7 @@
 				{{/if}}
 			</ul>
 
-			<div id="banner" class="navbar-text">{{$banner}}</div>
+			<div class="navbar-text navbar-banner">{{$banner}}</div>
 
 			<ul id="nav-right" class="navbar-nav">
 				<li class="nav-item collapse clearfix" id="nav-search">

@@ -125,14 +125,15 @@ h6, .h6 {
 	font-size: 0.75rem;
 }
 
-#banner {
+.navbar-banner {
 	font-weight: bold;
+	color: var(--bs-emphasis-color);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-#banner img {
+.navbar-banner img {
 	max-height: 1.35rem;
 	width: auto;
 }

@@ -4,18 +4,20 @@
 
 let redbasic_dark_mode = localStorage.getItem('redbasic_dark_mode');
 
-if (redbasic_dark_mode == 1) {
-	$('html').attr('data-bs-theme', 'light');
-	$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
-}
-
-
-if (redbasic_dark_mode == 2) {
-	$('html').attr('data-bs-theme', 'dark');
-	$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
-}
-
 $(document).ready(function() {
+
+	if (redbasic_dark_mode == 1) {
+		$('html').attr('data-bs-theme', 'light');
+		$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
+		$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
+	}
+
+
+	if (redbasic_dark_mode == 2) {
+		$('html').attr('data-bs-theme', 'dark');
+		$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
+		$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
+	}
 
 	// CSS3 calc() fallback (for unsupported browsers)
 	$('body').append('<div id="css3-calc" style="width: 10px; width: calc(10px + 10px); display: none;"></div>');
@@ -54,8 +56,6 @@ $(document).ready(function() {
 	});
 
 	$('#theme-switch').click(function() {
-		// $('*').addClass('disable-transition');
-
 		if ($('html').attr('data-bs-theme') === 'dark') {
 			$('html').attr('data-bs-theme', 'light');
 			localStorage.setItem('redbasic_dark_mode', 1);
@@ -66,8 +66,7 @@ $(document).ready(function() {
 			localStorage.setItem('redbasic_dark_mode', 2);
 			$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
 		}
-
-		// setTimeout(() => { $('*').removeClass('disable-transition') }, 100);
+		$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
 	});
 
 
@@ -86,7 +85,7 @@ $(document).ready(function() {
 	});
 
 	$("input[data-role=cat-tagsinput]").tagsinput({
-		tagClass: 'badge rounded-pill bg-warning text-dark'
+		tagClass: 'badge rounded-pill bg-warning'
 	});
 
 	$('a.disabled').click(function(e) {

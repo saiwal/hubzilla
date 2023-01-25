@@ -16,7 +16,7 @@ class Magic extends Controller {
 			'url'     => '',
 			'message' => ''
 		];
-	
+
 		logger('mod_magic: invoked', LOGGER_DEBUG);
 
 		logger('args: ' . print_r($_REQUEST,true),LOGGER_DATA);
@@ -43,12 +43,12 @@ class Magic extends Controller {
 		$basepath = $parsed['scheme'] . '://' . $parsed['host'] . (isset($parsed['port']) ? ':' . $parsed['port'] : '');
 		$owapath = SConfig::get($basepath,'system','openwebauth', $basepath . '/owa');
 
-		// This is ready-made for a plugin that provides a blacklist or "ask me" before blindly authenticating. 
+		// This is ready-made for a plugin that provides a blacklist or "ask me" before blindly authenticating.
 		// By default, we'll proceed without asking.
 
 		$arr = [
 			'channel_id'  => local_channel(),
-			'destination' => $dest, 
+			'destination' => $dest,
 			'proceed'     => true
 		];
 
