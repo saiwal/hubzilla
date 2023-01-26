@@ -38,6 +38,7 @@ class RedbasicConfig {
 
 		$arr = array();
 		$arr['dark_mode'] = get_pconfig(local_channel(),'redbasic', 'dark_mode');
+		$arr['navbar_dark_mode'] = get_pconfig(local_channel(),'redbasic', 'navbar_dark_mode');
 		$arr['narrow_navbar'] = get_pconfig(local_channel(),'redbasic', 'narrow_navbar' );
 		$arr['nav_bg'] = get_pconfig(local_channel(),'redbasic', 'nav_bg' );
 		$arr['nav_bg_dark'] = get_pconfig(local_channel(),'redbasic', 'nav_bg_dark' );
@@ -65,6 +66,7 @@ class RedbasicConfig {
 
 		if (isset($_POST['redbasic-settings-submit'])) {
 			set_pconfig(local_channel(), 'redbasic', 'narrow_navbar', $_POST['redbasic_narrow_navbar']);
+			set_pconfig(local_channel(), 'redbasic', 'navbar_dark_mode', $_POST['redbasic_navbar_dark_mode']);
 			set_pconfig(local_channel(), 'redbasic', 'dark_mode', $_POST['redbasic_dark_mode']);
 			set_pconfig(local_channel(), 'redbasic', 'nav_bg', $_POST['redbasic_nav_bg']);
 			set_pconfig(local_channel(), 'redbasic', 'nav_bg_dark', $_POST['redbasic_nav_bg_dark']);
@@ -99,6 +101,7 @@ class RedbasicConfig {
 			'$expert' => $expert,
 			'$title' => t("Theme settings"),
 			'$dark_mode' => array('redbasic_dark_mode',t('Default to dark mode'),$arr['dark_mode'], '', array(t('No'),t('Yes'))),
+			'$navbar_dark_mode' => array('redbasic_navbar_dark_mode',t('Always use light icons for navbar'),$arr['navbar_dark_mode'], t('Enable this option if you use a dark navbar color in light mode'), array(t('No'),t('Yes'))),
 			'$narrow_navbar' => array('redbasic_narrow_navbar',t('Narrow navbar'),$arr['narrow_navbar'], '', array(t('No'),t('Yes'))),
 			'$nav_bg' => array('redbasic_nav_bg', t('Navigation bar background color'), $arr['nav_bg']),
 			'$nav_bg_dark' => array('redbasic_nav_bg_dark', t('Dark navigation bar background color'), $arr['nav_bg_dark']),

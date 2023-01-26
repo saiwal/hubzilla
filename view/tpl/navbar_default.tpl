@@ -1,4 +1,4 @@
-<nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+<nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" {{$navbar_color_mode}}>
 	<div class="container-fluid flex-nowrap">
 		{{if $userinfo}}
 		<div class="d-flex" style="max-width: 50%">
@@ -8,7 +8,7 @@
 					<i class="navbar-text fa fa-caret-down"></i>
 				</div>
 				{{if $is_owner}}
-				<div class="dropdown-menu">
+				<div class="dropdown-menu" {{$color_mode}}>
 					{{foreach $nav.usermenu as $usermenu}}
 					<a class="dropdown-item{{if $usermenu.2}} active{{/if}}"  href="{{$usermenu.0}}" title="{{$usermenu.3}}" role="menuitem" id="{{$usermenu.4}}">{{$usermenu.1}}</a>
 					{{/foreach}}
@@ -116,7 +116,7 @@
 			<div class="navbar-text navbar-banner">{{$banner}}</div>
 
 			<ul id="nav-right" class="navbar-nav">
-				<li class="nav-item collapse clearfix" id="nav-search">
+				<li class="nav-item collapse clearfix" id="nav-search" {{$color_mode}}>
 					<form class="form-inline" method="get" action="{{$nav.search.4}}" role="search">
 						<input class="form-control form-control-sm mt-1 me-2" id="nav-search-text" type="text" value="" placeholder="{{$help}}" name="search" title="{{$nav.search.3}}" onclick="this.submit();" onblur="closeMenu('nav-search'); openMenu('nav-search-btn');"/>
 					</form>
@@ -134,7 +134,7 @@
 				{{/if}}
 				{{if $localuser || $nav.pubs}}
 				<li id="notifications-btn" class="nav-item d-xl-none">
-					<a class="nav-link text-white notifications-btn" href="#"><i id="notifications-btn-icon" class="fa fa-exclamation-circle  notifications-btn-icon"></i></a>
+					<a class="nav-link notifications-btn" href="#"><i id="notifications-btn-icon" class="fa fa-exclamation-circle  notifications-btn-icon"></i></a>
 				</li>
 				{{/if}}
 				{{if $navbar_apps}}

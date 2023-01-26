@@ -319,6 +319,8 @@ function nav($template = 'default') {
 
 	App::$page['nav'] .= replace_macros($tpl, [
 		'$baseurl'            => z_root(),
+		'$color_mode'         => App::$page['color_mode'] ?? '',
+		'$navbar_color_mode'  => App::$page['navbar_color_mode'] ?? '',
 		'$theme_switch_icon'  => $theme_switch_icon,
 		'$fulldocs'           => t('Help'),
 		'$sitelocation'       => $sitelocation,

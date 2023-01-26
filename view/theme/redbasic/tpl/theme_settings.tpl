@@ -6,6 +6,7 @@
 
 {{if $expert}}
 	<h3>Light</h3>
+	{{include file="field_checkbox.tpl" field=$navbar_dark_mode}}
 	{{include file="field_colorinput.tpl" field=$nav_bg}}
 	{{include file="field_colorinput.tpl" field=$bgcolor}}
 	{{include file="field_colorinput.tpl" field=$background_image}}
@@ -26,8 +27,7 @@
 
 <script>
 	$(function(){
-		$('#id_redbasic_nav_bg, #id_redbasic_nav_bg_dark').colorpicker({format: 'rgba'});
-		$('#id_redbasic_link_color, #id_redbasic_link_color_dark, #id_redbasic_link_hover_color, #id_redbasic_link_hover_color_dark, #id_redbasic_background_color, #id_redbasic_background_color_dark').colorpicker();
+		$('#id_redbasic_link_color, #id_redbasic_link_color_dark, #id_redbasic_link_hover_color, #id_redbasic_link_hover_color_dark, #id_redbasic_background_color, #id_redbasic_background_color_dark, #id_redbasic_nav_bg, #id_redbasic_nav_bg_dark').colorpicker({format: 'rgba'});
 	});
 </script>
 {{/if}}
