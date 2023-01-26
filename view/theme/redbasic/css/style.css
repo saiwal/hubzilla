@@ -34,20 +34,8 @@
 	background-color: $nav_bg_dark !important;
 }
 
-.nav-tabs {
-	--bs-nav-tabs-border-radius: $radius;
-}
-
-.nav-pills {
-	--bs-nav-pills-border-radius: $radius;
-}
-
 .btn {
 	--bs-btn-border-radius: $radius;
-}
-
-.card {
-	--bs-card-border-radius: $radius;
 }
 
 
