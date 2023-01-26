@@ -101,18 +101,6 @@ if (! $background_image)
 if (! $background_image_dark)
 	$background_image_dark = '';
 
-if (! $item_color)
-	$item_color = '#fff';
-
-if (! $item_color_dark)
-	$item_color_dark = '#212529';
-
-if (! $header_item_color)
-	$header_item_color = '#f8f9fa';
-
-if (! $header_item_color_dark)
-	$header_item_color_dark = '#212529';
-
 if (! $font_size)
 	$font_size = '0.875rem';
 
@@ -160,10 +148,6 @@ if(file_exists('view/theme/redbasic/css/style.css')) {
 		'$bgcolor_dark' => $bgcolor_dark,
 		'$background_image' => $background_image,
 		'$background_image_dark' => $background_image_dark,
-		'$item_color' => $item_color,
-		'$item_color_dark' => $item_color_dark,
-		'$header_item_color' => $header_item_color,
-		'$header_item_color_dark' => $header_item_color_dark,
 		'$font_size' => $font_size,
 		'$radius' => $radius,
 		'$converse_width' => $converse_width,
