@@ -3,21 +3,28 @@
  */
 
 let redbasic_dark_mode = localStorage.getItem('redbasic_dark_mode');
+let redbasic_theme_color = localStorage.getItem('redbasic_theme_color');
 
-if (redbasic_dark_mode == 1) {
+if (redbasic_dark_mode) {
+	$('html').attr('data-bs-theme', 'dark');
+	$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
+}
+else {
 	$('html').attr('data-bs-theme', 'light');
 	$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
 }
 
-if (redbasic_dark_mode == 2) {
-	$('html').attr('data-bs-theme', 'dark');
-	$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
-}
 
+if (redbasic_theme_color) {
+	$('meta[name=theme-color]').attr('content', redbasic_theme_color);
+}
 
 $(document).ready(function() {
 
-	$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
+	if (redbasic_theme_color != $('nav').css('background-color')) {
+		$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
+		localStorage.setItem('redbasic_theme_color', $('nav').css('background-color'));
+	}
 
 	// CSS3 calc() fallback (for unsupported browsers)
 	$('body').append('<div id="css3-calc" style="width: 10px; width: calc(10px + 10px); display: none;"></div>');
@@ -59,15 +66,16 @@ $(document).ready(function() {
 	$('#theme-switch').click(function() {
 		if ($('html').attr('data-bs-theme') === 'dark') {
 			$('html').attr('data-bs-theme', 'light');
-			localStorage.setItem('redbasic_dark_mode', 1);
+			localStorage.removeItem('redbasic_dark_mode');
 			$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
 		}
 		else {
 			$('html').attr('data-bs-theme', 'dark');
-			localStorage.setItem('redbasic_dark_mode', 2);
+			localStorage.setItem('redbasic_dark_mode', 1);
 			$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
 		}
 		$('meta[name=theme-color]').attr('content', $('nav').css('background-color'));
+		localStorage.setItem('redbasic_theme_color', $('nav').css('background-color'));
 	});
 
 
