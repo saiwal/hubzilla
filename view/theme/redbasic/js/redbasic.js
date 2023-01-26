@@ -5,10 +5,10 @@
 let redbasic_dark_mode = localStorage.getItem('redbasic_dark_mode');
 let redbasic_theme_color = localStorage.getItem('redbasic_theme_color');
 
-if (redbasic_dark_mode === 1) {
+if (redbasic_dark_mode == 1) {
 	$('html').attr('data-bs-theme', 'dark');
 }
-if (redbasic_dark_mode === 0) {
+if (redbasic_dark_mode == 0) {
 	$('html').attr('data-bs-theme', 'light');
 }
 
@@ -19,11 +19,11 @@ if (redbasic_theme_color) {
 
 $(document).ready(function() {
 
-	if (redbasic_dark_mode === 1) {
+	if (redbasic_dark_mode == 1) {
 		$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
 		$('[data-bs-theme="light"]').attr('data-bs-theme', 'dark');
 	}
-	if (redbasic_dark_mode === 0) {
+	if (redbasic_dark_mode == 0) {
 		$('#theme-switch-icon').removeClass('fa-sun-o').addClass('fa-moon-o');
 		$('[data-bs-theme="dark"]:not(nav)').attr('data-bs-theme', 'light');
 	}
