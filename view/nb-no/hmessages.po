@@ -3,22 +3,22 @@
 # This file is distributed under the same license as the hubzilla package.
 #
 # Mike Macgirvin, 2012.
-# Haakon Meland Eriksen <haakon.eriksen@far.no>, 2015-2016
-# Harald Eilertsen <haraldei@anduin.net>, 2022.
+# Haakon Meland Eriksen <haakon.eriksen@far.no>, 2015-2016.
+# Harald Eilertsen <haraldei@anduin.net>, 2022, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: 7.8RC\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-26 07:09+0000\n"
-"PO-Revision-Date: 2022-12-03 00:20+0100\n"
+"PO-Revision-Date: 2023-01-26 20:02+0100\n"
 "Last-Translator: Harald Eilertsen <haraldei@anduin.net>\n"
 "Language-Team: Norwegian Bokmal <l10n-no@lister.huftis.org>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 22.08.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1 ? 1 : 0);\n"
+"X-Generator: Lokalize 22.12.1\n"
 
 #: ../../view/theme/redbasic/php/config.php:15
 #: ../../addon/cart/submodules/orderoptions.php:335
@@ -5254,7 +5254,7 @@ msgstr "timeago.prefixFromNow"
 
 #: ../../include/js_strings.php:57
 msgid "timeago.suffixAgo"
-msgstr ""
+msgstr "siden"
 
 #: ../../include/js_strings.php:58
 msgid "timeago.suffixFromNow"
