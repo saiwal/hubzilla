@@ -94,19 +94,6 @@ class DReport {
 		if(! $c)
 			return false;
 
-		// legacy zot recipients add a space and their name to the xchan. remove it if true.
-
-		$legacy_recipient = strpos($dr['recipient'], ' ');
-		if($legacy_recipient !== false) {
-			$legacy_recipient_parts = explode(' ', $dr['recipient'], 2);
-			$rxchan = $legacy_recipient_parts[0];
-		}
-		else {
-			$rxchan = $dr['recipient'];
-		}
-
-
-
 		// is the recipient one of our connections, or do we want to store every report?
 
 		$pcf = get_pconfig($c[0]['channel_id'],'system','dreport_store_all');
@@ -117,7 +104,7 @@ class DReport {
 		// So if a remote site says they can't find us, that's no big surprise
 		// and just creates a lot of extra report noise
 
-		if(($dr['location'] !== z_root()) && ($dr['sender'] === $rxchan) && ($dr['status'] === 'recipient not found'))
+		if(($dr['location'] !== z_root()) && ($dr['sender'] === $dr['recipient']) && ($dr['status'] === 'recipient not found'))
 			return false;
 
 		// If you have a private post with a recipient list, every single site is going to report
@@ -126,14 +113,14 @@ class DReport {
 		// have a channel on that site.
 
 		$r = q("select hubloc_id from hubloc where hubloc_hash = '%s' and hubloc_url = '%s'",
-			dbesc($rxchan),
+			dbesc($dr['recipient']),
 			dbesc($dr['location'])
 		);
 		if((! $r) && ($dr['status'] === 'recipient_not_found'))
 			return false;
 
 		$r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
-			dbesc($rxchan),
+			dbesc($dr['recipient']),
 			intval($c[0]['channel_id'])
 		);
 		if($r)

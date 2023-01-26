@@ -1051,19 +1051,9 @@ class Libzot {
 			}
 
 			if (is_array($x) && array_key_exists('delivery_report', $x) && is_array($x['delivery_report'])) {
-
 				foreach ($x['delivery_report'] as $xx) {
 					call_hooks('dreport_process', $xx);
 					if (is_array($xx) && array_key_exists('message_id', $xx) && DReport::is_storable($xx)) {
-
-						// legacy recipients add a space and their name to the xchan. split those if true.
-						$legacy_recipient = strpos($xx['recipient'], ' ');
-						if ($legacy_recipient !== false) {
-							$legacy_recipient_parts = explode(' ', $xx['recipient'], 2);
-							$xx['recipient']        = $legacy_recipient_parts[0];
-							$xx['name']             = $legacy_recipient_parts[1];
-						}
-
 						q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
 							dbesc($xx['message_id']),
 							dbesc($xx['location']),
@@ -1435,7 +1425,9 @@ class Libzot {
 
 		$r = [];
 
-		$c = q("select channel_id, channel_hash from channel where channel_removed = 0");
+		$c = q("select channel_id, channel_hash from channel where channel_hash != '%s' and channel_removed = 0",
+			dbesc($msg['sender'])
+		);
 
 		if ($c) {
 			foreach ($c as $cc) {
@@ -1463,9 +1455,10 @@ class Libzot {
 						if ($tag['type'] === 'Mention' && (strpos($tag['href'], z_root()) !== false)) {
 							$address = basename($tag['href']);
 							if ($address) {
-								$z = q("select channel_hash as hash from channel where channel_address = '%s'
+								$z = q("select channel_hash as hash from channel where channel_address = '%s' and channel_hash != '%s'
 									and channel_removed = 0 limit 1",
-									dbesc($address)
+									dbesc($address),
+									dbesc($msg['sender'])
 								);
 								if ($z) {
 									$r[] = $z[0]['hash'];
@@ -1484,9 +1477,10 @@ class Libzot {
 			$thread_parent = self::find_parent($msg, $act);
 
 			if ($thread_parent) {
-				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) ",
+				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) and channel_hash != '%s'",
 					dbesc($thread_parent),
-					dbesc($thread_parent)
+					dbesc($thread_parent),
+					dbesc($msg['sender'])
 				);
 				if ($z) {
 					foreach ($z as $zv) {
