@@ -2,10 +2,10 @@
 
 if(! function_exists("string_plural_select_nb_no")) {
 function string_plural_select_nb_no($n){
-	return ($n != 1);
+	return ($n != 1 ? 1 : 0);
 }}
 App::$rtl = 0;
-App::$strings["plural_function_code"] = "(n != 1)";
+App::$strings["plural_function_code"] = "(n != 1 ? 1 : 0)";
 App::$strings["Default"] = "Standard";
 App::$strings["Focus (Hubzilla default)"] = "Focus (Hubzilla standard)";
 App::$strings["Submit"] = "Lagre";
@@ -1112,7 +1112,7 @@ App::$strings["%d years"] = array(
 );
 App::$strings["timeago.prefixAgo"] = "timeago.prefixAgo";
 App::$strings["timeago.prefixFromNow"] = "timeago.prefixFromNow";
-App::$strings["timeago.suffixAgo"] = "";
+App::$strings["timeago.suffixAgo"] = "siden";
 App::$strings["timeago.suffixFromNow"] = "";
 App::$strings["less than a minute"] = "mindre enn ett minutt";
 App::$strings["about a minute"] = "omtrent et minutt";
