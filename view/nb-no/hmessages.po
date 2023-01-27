@@ -3,22 +3,22 @@
 # This file is distributed under the same license as the hubzilla package.
 #
 # Mike Macgirvin, 2012.
-# Haakon Meland Eriksen <haakon.eriksen@far.no>, 2015-2016
-# Harald Eilertsen <haraldei@anduin.net>, 2022.
+# Haakon Meland Eriksen <haakon.eriksen@far.no>, 2015-2016.
+# Harald Eilertsen <haraldei@anduin.net>, 2022, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: 7.8RC\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-26 07:09+0000\n"
-"PO-Revision-Date: 2022-12-03 00:20+0100\n"
+"PO-Revision-Date: 2023-01-26 20:02+0100\n"
 "Last-Translator: Harald Eilertsen <haraldei@anduin.net>\n"
 "Language-Team: Norwegian Bokmal <l10n-no@lister.huftis.org>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 22.08.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1 ? 1 : 0);\n"
+"X-Generator: Lokalize 22.12.1\n"
 
 #: ../../view/theme/redbasic/php/config.php:15
 #: ../../addon/cart/submodules/orderoptions.php:335
@@ -5254,7 +5254,7 @@ msgstr "timeago.prefixFromNow"
 
 #: ../../include/js_strings.php:57
 msgid "timeago.suffixAgo"
-msgstr ""
+msgstr "siden"
 
 #: ../../include/js_strings.php:58
 msgid "timeago.suffixFromNow"
@@ -6201,7 +6201,7 @@ msgstr ""
 
 #: ../../include/conversation.php:1474
 msgid "Minutes"
-msgstr ""
+msgstr "Minutter"
 
 #: ../../include/conversation.php:1474
 msgid "Hours"
@@ -7673,7 +7673,7 @@ msgstr ""
 #: ../../Zotlabs/Widget/Activity_filter.php:44
 #: ../../Zotlabs/Widget/Notifications.php:62
 msgid "Direct Messages"
-msgstr ""
+msgstr "Direktemeldinger"
 
 #: ../../Zotlabs/Widget/Activity_filter.php:48
 msgid "Show direct (private) messages"
@@ -7814,7 +7814,7 @@ msgstr ""
 
 #: ../../Zotlabs/Widget/Messages.php:33
 msgid "Direct messages"
-msgstr ""
+msgstr "Direktemeldinger"
 
 #: ../../Zotlabs/Widget/Messages.php:34
 msgid "Starred messages"
@@ -7988,11 +7988,11 @@ msgstr ""
 
 #: ../../Zotlabs/Widget/Notifications.php:63
 msgid "New direct messages notifications"
-msgstr ""
+msgstr "Varsel om nye direktemeldinger"
 
 #: ../../Zotlabs/Widget/Notifications.php:66
 msgid "Direct messages stream"
-msgstr ""
+msgstr "Strøm for direktemeldinger"
 
 #: ../../Zotlabs/Widget/Notifications.php:82
 msgid "New events notifications"
@@ -11817,6 +11817,9 @@ msgid ""
 "This will export your posts, direct messages, articles and cards per month "
 "stored into a zip file per year. Months with no posts will be dismissed."
 msgstr ""
+"Dette vil eksportere dine innlegg, direktemeldinger, artikler og kort, en fil"
+" for hver måned, pakket i en zip fil for hvert år. Måneder uten innhold blir"
+" ignorert."
 
 #: ../../Zotlabs/Module/Uexport.php:180
 msgid "Export wikis"
@@ -12528,6 +12531,10 @@ msgid ""
 "here to complete the account verification step. Please allow a few minutes "
 "for delivery, and check your spam folder if you do not see the message."
 msgstr ""
+"En verifikasjonskode ble sendt til epostadressen din [%s]. Skriv inn koden du"
+" mottok her for å fullføre kontoverifikasjonen. Det kan ta noen minutter før"
+" du mottar koden. Sjekk også at eposten ikke har havnet i mappen for"
+" søppelpost om du ikke ser den etter en stund."
 
 #: ../../Zotlabs/Module/Email_validation.php:38
 msgid "Resend Email"
@@ -14896,12 +14903,12 @@ msgstr "%s <!item_type!>"
 #: ../../Zotlabs/Lib/Enotify.php:128
 #, php-format
 msgid "[$Projectname:Notify] New direct message received at %s"
-msgstr ""
+msgstr "[$Projectname:Notify] Ny direktemelding mottatt kl. %s"
 
 #: ../../Zotlabs/Lib/Enotify.php:130
 #, php-format
 msgid "%1$s sent you a new direct message at %2$s"
-msgstr ""
+msgstr "%1$s sendte deg en ny direktemelding kl. %2$s"
 
 #: ../../Zotlabs/Lib/Enotify.php:131
 #, php-format
@@ -14910,12 +14917,12 @@ msgstr "%1$s sendte deg %2$s."
 
 #: ../../Zotlabs/Lib/Enotify.php:131
 msgid "a direct message"
-msgstr ""
+msgstr "en direktemelding"
 
 #: ../../Zotlabs/Lib/Enotify.php:132
 #, php-format
 msgid "Please visit %s to view and/or reply to your direct messages."
-msgstr ""
+msgstr "Gå til %s for å vise og/eller svare på dine direktemeldinger."
 
 #: ../../Zotlabs/Lib/Enotify.php:145
 msgid "commented on"
@@ -15154,7 +15161,7 @@ msgstr "la til din kanal"
 
 #: ../../Zotlabs/Lib/Enotify.php:961
 msgid "sent you a direct message"
-msgstr ""
+msgstr "sendte deg en direktemelding"
 
 #: ../../Zotlabs/Lib/Enotify.php:968
 msgid "g A l F d"
@@ -15382,7 +15389,7 @@ msgstr ""
 
 #: ../../Zotlabs/Lib/ThreadItem.php:117
 msgid "Direct message"
-msgstr ""
+msgstr "direktemelding"
 
 #: ../../Zotlabs/Lib/ThreadItem.php:122
 msgid "Public Policy"
@@ -15675,7 +15682,7 @@ msgstr "Kan kommentere på eller like mine innlegg"
 
 #: ../../Zotlabs/Access/Permissions.php:68
 msgid "Can send me direct messages"
-msgstr ""
+msgstr "Kan sende meg direktemeldinger"
 
 #: ../../Zotlabs/Access/Permissions.php:69
 msgid "Can like/dislike profiles and profile things"
