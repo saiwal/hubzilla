@@ -13,6 +13,10 @@
 
 /* nav overrides */
 
+[data-bs-theme=dark] .navbar-toggler {
+	--bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), 1);
+}
+
 .nav-item.nav-item-hack {
 	height: 2.3rem;
 }
