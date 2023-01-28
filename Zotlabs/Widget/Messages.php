@@ -66,7 +66,8 @@ class Messages {
 		$loadtime = (($offset) ? $_SESSION['messages_loadtime'] : datetime_convert());
 		$vnotify = get_pconfig(local_channel(), 'system', 'vnotify', -1);
 
-		$vnotify_sql = '';
+		$vnotify_sql_c = '';
+		$vnotify_sql_i = '';
 
 		if (!($vnotify & VNOTIFY_LIKE)) {
 			$vnotify_sql_c = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_LIKE) . "', '" . dbesc(ACTIVITY_DISLIKE) . "') ";
