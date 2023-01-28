@@ -67,7 +67,7 @@ class Chanview extends \Zotlabs\Web\Controller {
 
 			if(isset($_REQUEST['url']) && $_REQUEST['url']) {
 
-				$zf = Zotfinger::exec($_REQUEST['url'], null);
+				$zf = Zotfinger::exec($_REQUEST['url']);
 
 				if(array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $_REQUEST['url'] && intval($zf['signature']['header_valid'])) {
 					Libzot::import_xchan($zf['data']);
