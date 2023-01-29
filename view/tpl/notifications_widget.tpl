@@ -357,10 +357,10 @@
 
 	function sse_handleNotificationsItems(notifyType, data, replace, followup) {
 
-		var notifications_tpl = ((notifyType == 'forums') ? decodeURIComponent($("#nav-notifications-forums-template[rel=template]").html().replace('data-src', 'src')) : decodeURIComponent($("#nav-notifications-template[rel=template]").html().replace('data-src', 'src')));
-		var notify_menu = $("#nav-" + notifyType + "-menu");
-		var notify_loading = $("#nav-" + notifyType + "-loading");
-		var notify_count = $("." + notifyType + "-update");
+		let notifications_tpl = ((notifyType == 'forums') ? decodeURIComponent($("#nav-notifications-forums-template[rel=template]").html().replace('data-src', 'src')) : decodeURIComponent($("#nav-notifications-template[rel=template]").html().replace('data-src', 'src')));
+		let notify_menu = $("#nav-" + notifyType + "-menu");
+		let notify_loading = $("#nav-" + notifyType + "-loading");
+		let notify_count = $("." + notifyType + "-update");
 
 		if(replace && !followup) {
 			notify_menu.html('');
@@ -370,14 +370,17 @@
 		$(data).each(function() {
 
 			// do not add a notification if it is already present
-			if($('#nav-' + notifyType + '-menu .notification[data-b64mid=\'' + this.b64mid + '\']').length)
-				return true;
+
+			// TODO: this is questionable because at least in 'notify' notification type an item can have more than one notifications
+			// e.g. one for the mention and one for the item itself.
+			//if($('#nav-' + notifyType + '-menu .notification[data-b64mid=\'' + this.b64mid + '\']').length)
+			//	return true;
 
 			if(!replace && !followup && (this.thread_top && notifyType === 'network')) {
 				$(document).trigger('hz:handleNetworkNotificationsItems', this);
 			}
 
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.addr,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top,this.unseen,this.private_forum, encodeURIComponent(this.mids), this.body);
+			let html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.addr,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top,this.unseen,this.private_forum, encodeURIComponent(this.mids), this.body);
 			notify_menu.append(html);
 		});
 
@@ -395,13 +398,13 @@
 			$('#nav-' + notifyType + '-menu [data-thread_top=false]').addClass('tt-filter-active');
 
 		if($('#cn-' + notifyType + '-input').length) {
-			var filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
+			let filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
 			if(filter) {
 				filter = filter.indexOf('%') == 0 ? filter.substring(1) : filter;
 
 				$('#nav-' + notifyType + '-menu .notification').each(function(i, el) {
-					var cn = $(el).data('contact_name').toString().toLowerCase();
-					var ca = $(el).data('contact_addr').toString().toLowerCase();
+					let cn = $(el).data('contact_name').toString().toLowerCase();
+					let ca = $(el).data('contact_addr').toString().toLowerCase();
 					if(cn.indexOf(filter) === -1 && ca.indexOf(filter) === -1)
 						$(el).addClass('cn-filter-active');
 					else
