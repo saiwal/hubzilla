@@ -137,9 +137,25 @@ class QueueWorker {
 			self::$workermaxage = self::$workermaxage > 120 ? self::$workermaxage : 300;
 		}
 
-		q("update workerq set workerq_reservationid = null where workerq_reservationid is not null and workerq_processtimeout < %s",
+		self::qstart();
+
+		// skip locked is preferred but is not supported by mariadb < 10.6 which is still used a lot - hence make it optional
+		$sql_quirks = ((get_config('system', 'db_skip_locked_supported')) ? 'SKIP LOCKED' : 'NOWAIT');
+
+		$r = q("SELECT workerq_id FROM workerq WHERE workerq_reservationid IS NOT NULL AND workerq_processtimeout < %s FOR UPDATE $sql_quirks",
 			db_utcnow()
 		);
+
+		if ($r) {
+			$ids = ids_to_querystr($r, 'workerq_id');
+			$u = dbq("update workerq set workerq_reservationid = null where workerq_id in ($ids)");
+		}
+
+		self::qcommit();
+
+		//q("update workerq set workerq_reservationid = null where workerq_reservationid is not null and workerq_processtimeout < %s",
+			//db_utcnow()
+		//);
 
 		//usleep(self::$workersleep);
 
@@ -175,10 +191,10 @@ class QueueWorker {
 
 		self::qstart();
 
-		// This is probably the better solution but is not supported by mariadb < 10.6 which is still used a lot.
-		// $work = dbq("SELECT workerq_id FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE SKIP LOCKED;");
+		// skip locked is preferred but is not supported by mariadb < 10.6 which is still used a lot - hence make it optional
+		$sql_quirks = ((get_config('system', 'db_skip_locked_supported')) ? 'SKIP LOCKED' : 'NOWAIT');
 
-		$work = dbq("SELECT workerq_id, workerq_cmd FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE");
+		$work = dbq("SELECT workerq_id, workerq_cmd FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE $sql_quirks");
 
 		if (!$work) {
 			self::qcommit();
