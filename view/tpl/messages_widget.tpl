@@ -88,7 +88,6 @@
 		$("#messages-author").name_autocomplete(baseurl + '/acl', 'a', false, function(data) {
 			// a workaround to not re-trigger autocomplete after initial click
 			$("#messages-author").val('').attr('placeholder', data.name);
-			$("#messages-author").blur();
 			$('#textcomplete-dropdown').hide();
 
 			$('#messages-container .message').remove();
