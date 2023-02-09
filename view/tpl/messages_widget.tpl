@@ -86,6 +86,11 @@
 		}
 
 		$("#messages-author").name_autocomplete(baseurl + '/acl', 'a', false, function(data) {
+			// a workaround to not re-trigger autocomplete after initial click
+			$("#messages-author").val('').attr('placeholder', data.name);
+			$("#messages-author").blur();
+			$('#textcomplete-dropdown').hide();
+
 			$('#messages-container .message').remove();
 			$('#messages-author-container').addClass('active sticky-top');
 			$('#messages-author-input-clear').removeClass('d-none');
@@ -98,6 +103,8 @@
 
 		$(document).on('click', '#messages-author-input-clear', function() {
 			$('#messages-author').val('');
+			$("#messages-author").attr('placeholder', '{{$strings.filter}}');
+
 			$('#messages-author-container').removeClass('active sticky-top');
 			$('#messages-author-input-clear').addClass('d-none');
 			$('#messages-container .message').remove();
