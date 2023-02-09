@@ -35,7 +35,8 @@ class Messages {
 				'notice_messages_title' => t('Notices'),
 				'loading' => t('Loading'),
 				'empty' => t('No messages'),
-				'unseen_count' => t('Unseen')
+				'unseen_count' => t('Unseen'),
+				'filter' => t('Filter by name or address')
 			]
 		]);
 
@@ -47,7 +48,8 @@ class Messages {
 			return;
 
 		$offset = $options['offset'] ?? 0;
-		$type = $options['type'] ?? 'default';
+		$type = $options['type'] ?? '';
+		$author = $options['author'] ?? '';
 
 		if ($offset == -1) {
 			return;
@@ -63,6 +65,7 @@ class Messages {
 		$entries = [];
 		$limit = 30;
 		$dummy_order_sql = '';
+		$author_sql = '';
 		$loadtime = (($offset) ? $_SESSION['messages_loadtime'] : datetime_convert());
 		$vnotify = get_pconfig(local_channel(), 'system', 'vnotify', -1);
 
@@ -76,6 +79,10 @@ class Messages {
 		elseif (!feature_enabled(local_channel(), 'dislike')) {
 			$vnotify_sql_c = " AND c.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
 			$vnotify_sql_i = " AND i.verb NOT IN ('" . dbesc(ACTIVITY_DISLIKE) . "') ";
+		}
+
+		if($author) {
+			$author_sql = " AND i.author_xchan = '" . protect_sprintf(dbesc($author)) . "' ";
 		}
 
 		switch($type) {
@@ -101,6 +108,7 @@ class Messages {
 			AND i.created <= '%s'
 			$type_sql
 			AND i.item_thread_top = 1
+			$author_sql
 			$item_normal_i
 			ORDER BY i.created DESC $dummy_order_sql
 			LIMIT $limit OFFSET $offset",
@@ -241,6 +249,7 @@ class Messages {
 		if (!local_channel())
 			return;
 
+
 		$limit  = 30;
 
 		$offset = 0;
@@ -248,7 +257,14 @@ class Messages {
 			$offset = intval($options['offset']);
 		}
 
-		$notices = q("SELECT * FROM notify WHERE uid = %d
+		$author_url = $options['author'] ?? '';
+		$author_sql = '';
+
+		if($author_url) {
+			$author_sql = " AND url = '" . protect_sprintf(dbesc($author_url)) . "' ";
+		}
+
+		$notices = q("SELECT * FROM notify WHERE uid = %d $author_sql
 			ORDER BY created DESC LIMIT $limit OFFSET $offset",
 			intval(local_channel())
 		);

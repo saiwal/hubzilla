@@ -39,7 +39,12 @@
 			{8}
 		</a>
 	</div>
-	<div id="dm-container" class="list-group list-group-flush" data-offset="10">
+	<div id="messages-container" class="list-group list-group-flush" data-offset="10">
+		<div id="messages-author-container" class="list-group-item notifications-textinput">
+			<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-filter"></i></div>
+			<input id="messages-author" type="text" class="form-control form-control-sm" placeholder="{{$strings.filter}}">
+			<div id="messages-author-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-times"></i></div>
+		</div>
 		{{foreach $entries as $e}}
 		<a href="{{$e.href}}" class="list-group-item list-group-item-action message" data-b64mid="{{$e.b64mid}}">
 			<div class="d-flex w-100 justify-content-between">
@@ -67,15 +72,42 @@
 	</div>
 </div>
 <script>
-	var messages_offset = {{$offset}};
-	var get_messages_page_active = false;
-	var messages_type;
+	let messages_offset = {{$offset}};
+	let get_messages_page_active = false;
+	let messages_type;
+	let author_hash;
+	let author_url;
+	let author;
 
 	$(document).ready(function () {
 		$('.messages-timeago').timeago();
 		if (bParam_mid) {
 			$('.message[data-b64mid=\'' + bParam_mid + '\']').addClass('active');
 		}
+
+		$("#messages-author").name_autocomplete(baseurl + '/acl', 'a', false, function(data) {
+			$('#messages-container .message').remove();
+			$('#messages-author-container').addClass('active sticky-top');
+			$('#messages-author-input-clear').removeClass('d-none');
+			author_hash = data.xid;
+			author_url = data.url;
+			author = messages_type === 'notification' ? author_url : author_hash;
+			messages_offset = 0;
+			get_messages_page();
+		});
+
+		$(document).on('click', '#messages-author-input-clear', function() {
+			$('#messages-author').val('');
+			$('#messages-author-container').removeClass('active sticky-top');
+			$('#messages-author-input-clear').addClass('d-none');
+			$('#messages-container .message').remove();
+			author = '';
+			author_hash = '';
+			author_url = '';
+			messages_offset = 0;
+			get_messages_page();
+		});
+
 	});
 
 	$('#messages-widget').on('scroll', function() {
@@ -90,7 +122,8 @@
 		$(this).addClass('active');
 		messages_offset = 0;
 		messages_type = $(this).data('messages_type');
-		$('#dm-container .message').remove();
+		author = messages_type === 'notification' ? author_url : author_hash;
+		$('#messages-container .message').remove();
 		get_messages_page();
 	});
 
@@ -111,7 +144,8 @@
 			url: 'hq',
 			data: {
 				offset: messages_offset,
-				type: messages_type
+				type: messages_type,
+				author: author
 			}
 		}).done(function(obj) {
 			get_messages_page_active = false;
@@ -144,5 +178,6 @@
 			$('.messages-timeago').timeago();
 
 		});
+
 	}
 </script>

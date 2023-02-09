@@ -1111,7 +1111,7 @@ img.mail-conv-sender-photo {
 
 .wall-item-ago,
 .dropdown-sub-text {
-	color: #777;
+	color: var(--bs-tertiary-color);
 }
 
 .wall-item-content,
@@ -1425,9 +1425,10 @@ blockquote {
 	overflow: auto;
 }
 
-.dropdown-item.active {
+.dropdown-item.active,
+.textcomplete-item.active {
 	color: #fff;
-	background-color: #007bff;
+	background-color: var(--bs-tertiary-bg);
 }
 
 .navbar {

@@ -1974,7 +1974,7 @@ class Libzot {
 		$ret = [];
 
 
-		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' order by hubloc_id desc limit 1",
 			dbesc($a['signature']['signer'])
 		);
 
@@ -2002,7 +2002,7 @@ class Libzot {
 				continue;
 			}
 
-			$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s'",
+			$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
 				dbesc($AS->actor['id'])
 			);
 

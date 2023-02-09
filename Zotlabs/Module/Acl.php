@@ -378,6 +378,7 @@ class Acl extends \Zotlabs\Web\Controller {
 							"name"     => $g['name'],
 							"id"	   => urlencode($g['id']),
 							"xid"      => $g['hash'],
+							"url"      => $g['url'],
 							"link"     => $clink,
 							"nick"     => ((strpos($g['nick'],'@')) ? substr($g['nick'],0,strpos($g['nick'],'@')) : $g['nick']),
 							"self"     => (intval($g['abook_self']) ? 'abook-self' : ''),

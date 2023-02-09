@@ -31,8 +31,6 @@ function contact_search(term, callback, backend_url, type, extra_channels, spine
 		},
 	}).fail(function () {callback([]); }); // Callback must be invoked even if something went wrong.
 }
-contact_search.cache = {};
-
 
 function contact_format(item) {
 	// Show contact information if not explicitly told to show something else
@@ -40,10 +38,10 @@ function contact_format(item) {
 		var desc = ((item.label) ? item.nick + ' ' + item.label : item.nick);
 		if(typeof desc === 'undefined') desc = '';
 		if(desc) desc = ' ('+desc+')';
-		return "<div class='{0} dropdown-item dropdown-notification clearfix' title='{4}'><img class='menu-img-2' src='{1}' loading='lazy'><span class='font-weight-bold contactname'>{2}</span><span class='dropdown-sub-text'>{4}</span></div>".format(item.taggable, item.photo, item.name, desc, typeof(item.link) !== 'undefined' ? item.link : desc.replace('(','').replace(')',''));
+		return "<div class='{0} dropdown-item dropdown-notification clearfix' title='{4}'><img class='menu-img-2' src='{1}' loading='lazy'><span class='fw-bold contactname'>{2}</span><span class='dropdown-sub-text'>{4}</span></div>".format(item.taggable, item.photo, item.name, desc, typeof(item.link) !== 'undefined' ? item.link : desc.replace('(','').replace(')',''));
 	}
 	else
-		return "<div>" + item.text + "</div>";
+		return "";
 }
 
 function smiley_format(item) {
@@ -247,7 +245,7 @@ function string2bb(element) {
 			template: tag_format
 		};
 
-		this.attr('autocomplete', 'off');
+		//this.attr('autocomplete', 'off');
 
 		var textcomplete;
 		var Textarea = Textcomplete.editors.Textarea;
@@ -296,6 +294,7 @@ function string2bb(element) {
 			textcomplete = new Textcomplete(editor, {
 				dropdown: {
 					maxCount: 100
+
 				}
 			});
 			textcomplete.register([contacts]);
@@ -305,7 +304,8 @@ function string2bb(element) {
 			textcomplete.on('selected', function() { this.editor.el.form.submit(); });
 
 		if(typeof onselect !== 'undefined')
-			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
+			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data);});
+
 	};
 })( jQuery );
 
@@ -331,11 +331,11 @@ function string2bb(element) {
 
 		//this.attr('autocomplete','off');
 
-		var textcomplete;
-		var Textarea = Textcomplete.editors.Textarea;
+		let textcomplete;
+		let Textarea = Textcomplete.editors.Textarea;
 
 		$(this).each(function() {
-			var editor = new Textarea(this);
+			let editor = new Textarea(this);
 			textcomplete = new Textcomplete(editor, {
 				dropdown: {
 					maxCount: 100
@@ -344,11 +344,12 @@ function string2bb(element) {
 			textcomplete.register([names]);
 		});
 
+
 		if(autosubmit)
 			textcomplete.on('selected', function() { this.editor.el.form.submit(); });
 
 		if(typeof onselect !== 'undefined')
-			textcomplete.on('select', function() { var item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
+			textcomplete.on('select', function() { let item = this.dropdown.getActiveItem(); onselect(item.searchResult.data); });
 
 	};
 })( jQuery );
