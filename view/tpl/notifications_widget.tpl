@@ -534,19 +534,21 @@
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
 	<div id="nav-notifications-template" rel="template">
-		<a class="list-group-item list-group-item-action text-decoration-none text-reset clearfix notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
+		<a class="list-group-item list-group-item-action notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
 			<img class="menu-img-3" data-src="{1}" loading="lazy">
-			<div class="contactname"><span class="text-reset fw-bold">{2}</span> <span class="text-muted">{3}</span></div>
-			<span class="text-muted">{4}</span><br>
-			<span class="text-muted notifications-autotime" title="{5}">{5}</span>
+			<div class="contactname"><span class="fw-bold">{2}</span> <small>{3}</small></div>
+			<span>{4}</span><br>
+			<span class="notifications-autotime" title="{5}">{5}</span>
 		</a>
 	</div>
 	<div id="nav-notifications-forums-template" rel="template">
-		<a class="list-group-item list-group-item-action text-decoration-none clearfix notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
-			<span class="float-end badge bg-secondary">{10}</span>
-			<img class="menu-img-1" data-src="{1}" loading="lazy">
-			<span class="">{2}</span>
-			<i class="fa fa-{11} text-muted"></i>
+		<a class="list-group-item list-group-item-action notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
+			<div class="justify-content-between">
+				<img class="menu-img-1" data-src="{1}" loading="lazy">
+				<span class="badge bg-secondary">{10}</span>
+			</div>
+			<span>{2}</span>
+			<i class="fa fa-{11}"></i>
 		</a>
 	</div>
 	<div id="notifications" class="border border-top-0 rounded navbar-nav collapse">

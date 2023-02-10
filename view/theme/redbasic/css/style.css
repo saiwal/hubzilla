@@ -777,8 +777,7 @@ div.jGrowl div.jGrowl-notification {
 .dropdown-notification,
 .notification,
 .member-item {
-	line-height: 1.2em;
-	font-size: 0.75rem;
+	line-height: 1rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: block;
@@ -1201,16 +1200,16 @@ img.mail-conv-sender-photo {
 }
 
 .menu-img-3 {
-	width: 2.7rem;
-	height: 2.7rem;
+	width: 3rem;
+	height: 3rem;
 	margin-right: 5px;
 	border-radius: var(--bs-border-radius);
 	float: left;
 }
 
 .menu-img-2 {
-	height: 1.8rem;
-	width: 1.8rem;
+	height: 2rem;
+	width: 2rem;
 	margin-right: 5px;
 	border-radius: var(--bs-border-radius);
 	float: left;
