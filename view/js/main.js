@@ -163,7 +163,7 @@ $(document).ready(function() {
 	});
 	// @hilmar <-|
 
-	$(document).on('click focus', '.notification, .message', function(e) {
+	$(document).on('click', '.notification, .message', function(e) {
 		let b64mid = this.dataset.b64mid;
 		let notify_id = this.dataset.notify_id;
 		let path = $(this)[0].pathname.split('/')[1];

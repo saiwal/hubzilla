@@ -29,7 +29,7 @@
 				<img src="{9}" loading="lazy" class="rounded menu-img-2">
 				<div class="text-nowrap">
 					<div class="d-flex justify-content-between align-items-center lh-sm">
-						<div class="text-truncate mr-1">
+						<div class="text-truncate pe-1">
 							{7}
 							<strong title="{4}">{4}</strong>
 						</div>
@@ -59,7 +59,7 @@
 				<img src="{{$e.author_img}}" loading="lazy" class="rounded menu-img-2">
 				<div class="text-nowrap">
 					<div class="d-flex justify-content-between align-items-center lh-sm">
-						<div class="text-truncate mr-1">
+						<div class="text-truncate pe-1">
 							{{$e.icon}}
 							<strong title="{{$e.author_name}}">{{$e.author_name}}</strong>
 						</div>
