@@ -22,7 +22,7 @@ class Queue {
 		if ($oldqItems) {
 			foreach ($oldqItems as $qItem) {
 				$h = parse_url($qItem['outq_posturl']);
-				$site_url = $h['scheme'] . '://' . $h['host'] . (($h['port']) ? ':' . $h['port'] : '');
+				$site_url = $h['scheme'] . '://' . $h['host'] . ((!empty($h['port'])) ? ':' . $h['port'] : '');
 				q("update site set site_dead = 1 where site_dead = 0 and site_url = '%s' and site_update < %s - INTERVAL %s",
 					dbesc($site_url),
 					db_utcnow(),
@@ -44,7 +44,7 @@ class Queue {
 				dbesc($queue_id)
 			);
 			logger('queue deliver: ' . $qItems[0]['outq_hash'] . ' to ' . $qItems[0]['outq_posturl'], LOGGER_DEBUG);
-			LibQueue\Queue::deliver($qItems[0]);
+			LibQueue::deliver($qItems[0]);
 		}
 		else {
 			$qItems = q("SELECT * FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s ",
