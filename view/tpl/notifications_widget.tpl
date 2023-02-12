@@ -535,28 +535,36 @@
 	</div>
 	<div id="nav-notifications-template" rel="template">
 		<a class="list-group-item list-group-item-action notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
-			<img class="menu-img-3" data-src="{1}" loading="lazy">
-			<div class="contactname"><span class="fw-bold">{2}</span> <small>{3}</small></div>
-			<span>{4}</span><br>
-			<span class="notifications-autotime" title="{5}">{5}</span>
+			<img data-src="{1}" loading="lazy" class="rounded menu-img-2">
+			<div class="text-nowrap">
+				<div class="d-flex justify-content-between lh-sm">
+					<div class="text-truncate mr-1">
+						<strong title="{2} - {3}">{2}</strong>
+					</div>
+					<small class="notifications-autotime opacity-75" title="{5}"></small>
+				</div>
+				<div class="text-truncate">{4}</div>
+			</div>
 		</a>
 	</div>
 	<div id="nav-notifications-forums-template" rel="template">
-		<a class="list-group-item list-group-item-action notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
-			<div class="justify-content-between">
+		<a class="list-group-item list-group-item-action justify-content-between align-items-center d-flex notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
+			<div>
 				<img class="menu-img-1" data-src="{1}" loading="lazy">
-				<span class="badge bg-secondary">{10}</span>
+				<span>{2}</span>
 			</div>
-			<span>{2}</span>
-			<i class="fa fa-{11}"></i>
+			<span class="badge bg-secondary">{10}</span>
 		</a>
 	</div>
 	<div id="notifications" class="border border-top-0 rounded navbar-nav collapse">
 		{{foreach $notifications as $notification}}
 		<div class="rounded-top rounded-bottom border border-start-0 border-end-0 border-bottom-0 list-group list-group-flush collapse {{$notification.type}}-button">
-			<a id="notification-link-{{$notification.type}}" class="collapsed list-group-item fakelink notification-link" href="#" title="{{$notification.title}}" data-bs-target="#nav-{{$notification.type}}-sub" data-bs-toggle="collapse" data-sse_type="{{$notification.type}}">
-				<i class="fa fa-fw fa-{{$notification.icon}}"></i> {{$notification.label}}
-				<span class="float-end badge bg-{{$notification.severity}} {{$notification.type}}-update"></span>
+			<a id="notification-link-{{$notification.type}}" class="collapsed list-group-item justify-content-between align-items-center d-flex fakelink stretched-link notification-link" href="#" title="{{$notification.title}}" data-bs-target="#nav-{{$notification.type}}-sub" data-bs-toggle="collapse" data-sse_type="{{$notification.type}}">
+				<div>
+					<i class="fa fa-fw fa-{{$notification.icon}}"></i>
+					{{$notification.label}}
+				</div>
+				<span class="badge bg-{{$notification.severity}} {{$notification.type}}-update"></span>
 			</a>
 		</div>
 		<div id="nav-{{$notification.type}}-sub" class="rounded-bottom border border-start-0 border-end-0 border-bottom-0 list-group list-group-flush collapse notification-content" data-bs-parent="#notifications" data-sse_type="{{$notification.type}}">

@@ -242,6 +242,11 @@ a.wikilist {
 	position: relative;
 }
 
+/* messages (hq) */
+#messages-author-container {
+	z-index: 3 !important;
+}
+
 /* hq_controls */
 .hq_controls_fixed_bottom_center {
 	z-index: 1028;
@@ -250,3 +255,4 @@ a.wikilist {
 	left: 50%;
 	transform: translateX(-50%);
 }
+

@@ -179,7 +179,7 @@ class Channel_activities {
 
 		$account = App::get_account();
 
-		$r = q("SELECT channel_id, channel_name, xchan_photo_s FROM channel
+		$r = q("SELECT channel_id, channel_name, xchan_addr, xchan_photo_s FROM channel
 			LEFT JOIN xchan ON channel_hash = xchan_hash
 			WHERE channel_account_id = %d
 			AND channel_id != %d AND channel_removed = 0",
@@ -223,7 +223,7 @@ class Channel_activities {
 			$i[] = [
 				'url' => z_root() . '/manage/' . $rr['channel_id'],
 				'title' => '',
-				'summary' => '<img src="' . $rr['xchan_photo_s'] . '" class="menu-img-2">' . $rr['channel_name'],
+				'summary' => '<div class="text-truncate lh-sm"><img src="' . $rr['xchan_photo_s'] . '" class="menu-img-2">' . '<strong>' . $rr['channel_name'] . '</strong><br><small class="opacity-75">' . $rr['xchan_addr'] . '</small></div>',
 				'footer' => $footer
 			];
 

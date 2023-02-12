@@ -6,7 +6,7 @@
 	<div class="col">
 		<div class="card">
 			<a href="{{$i.url}}" class="text-reset">
-				<div class="card-body">
+				<div class="card-body clearfix">
 					{{if $i.title}}
 						<strong>{{$i.title}}</strong>
 						<hr>

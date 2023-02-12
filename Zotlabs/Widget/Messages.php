@@ -162,7 +162,7 @@ class Messages {
 				$summary = '...';
 			}
 			else {
-				$summary = substr_words($summary, 68);
+				$summary = substr_words($summary, 140);
 			}
 
 			switch(intval($item['item_private'])) {
@@ -178,6 +178,7 @@ class Messages {
 
 			$entries[$i]['author_name'] = $item['author']['xchan_name'];
 			$entries[$i]['author_addr'] = (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']);
+			$entries[$i]['author_img'] = $item['author']['xchan_photo_s'];
 			$entries[$i]['info'] = $info;
 			$entries[$i]['created'] = datetime_convert('UTC', date_default_timezone_get(), $item['created']);
 			$entries[$i]['summary'] = $summary;
@@ -282,6 +283,7 @@ class Messages {
 
 			$entries[$i]['author_name'] = $notice['xname'];
 			$entries[$i]['author_addr'] = $notice['url'];
+			$entries[$i]['author_img'] = $notice['photo'];// $item['author']['xchan_photo_s'];
 			$entries[$i]['info'] = '';
 			$entries[$i]['created'] = datetime_convert('UTC', date_default_timezone_get(), $notice['created']);
 			$entries[$i]['summary'] = $summary;

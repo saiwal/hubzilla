@@ -129,8 +129,8 @@ if(file_exists('view/theme/redbasic/css/style.css')) {
 		$x .= $schemecss;
 	}
 
-	$left_aside_width = 21; //unit: rem
-	$right_aside_width = 21; //unit: rem
+	$left_aside_width = 22; //unit: rem
+	$right_aside_width = 22; //unit: rem
 
 	$main_width = $left_aside_width + $right_aside_width + intval($converse_width);
 

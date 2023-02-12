@@ -774,20 +774,6 @@ div.jGrowl div.jGrowl-notification {
 	text-overflow: ellipsis;
 }
 
-.dropdown-notification,
-.notification,
-.member-item {
-	line-height: 1rem;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: block;
-	white-space: nowrap;
-}
-
-.notification.notification-forum {
-	font-size: 0.9rem;
-}
-
 #acl-search::-webkit-input-placeholder {
 	/* non-fontawesome fonts set a fallback for text parts of the placeholder*/
 	font-family: ForkAwesome, sans-serif, arial, freesans;
@@ -1202,15 +1188,15 @@ img.mail-conv-sender-photo {
 .menu-img-3 {
 	width: 3rem;
 	height: 3rem;
-	margin-right: 5px;
+	margin-right: .5rem;
 	border-radius: var(--bs-border-radius);
 	float: left;
 }
 
 .menu-img-2 {
-	height: 2rem;
-	width: 2rem;
-	margin-right: 5px;
+	height: 2.3rem;
+	width: 2.3rem;
+	margin-right: .5rem;
 	border-radius: var(--bs-border-radius);
 	float: left;
 }

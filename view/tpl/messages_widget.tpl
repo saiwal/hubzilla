@@ -25,17 +25,25 @@
 <div id="messages-widget" class="border-start border-end border-bottom overflow-auto mb-3 clearfix" style="height: 70vh;">
 	<div id="messages-template" rel="template" class="d-none">
 		<a href="{6}" class="list-group-item list-group-item-action message" data-b64mid="{0}">
-			<div class="d-flex w-100 justify-content-between">
-				<div class="mb-1 text-truncate" title="{5}">
-					{7}
-					<strong>{4}</strong>
+			<div class="mb-2">
+				<img src="{9}" loading="lazy" class="rounded menu-img-2">
+				<div class="text-nowrap">
+					<div class="d-flex justify-content-between align-items-center lh-sm">
+						<div class="text-truncate mr-1">
+							{7}
+							<strong title="{4}">{4}</strong>
+						</div>
+						<small class="messages-timeago opacity-75" title="{1}"></small>
+					</div>
+					<div class="text-truncate">
+						<small class="opacity-75" title="{5}">{5}</small>
+					</div>
 				</div>
-				<small class="messages-timeago text-nowrap" title="{1}"></small>
 			</div>
-			<div class="mb-1">
+			<div class="mb-2">
 				<div class="text-break">{2}</div>
 			</div>
-			<small>{3}</small>
+			<small class="opacity-75">{3}</small>
 			{8}
 		</a>
 	</div>
@@ -47,17 +55,25 @@
 		</div>
 		{{foreach $entries as $e}}
 		<a href="{{$e.href}}" class="list-group-item list-group-item-action message" data-b64mid="{{$e.b64mid}}">
-			<div class="d-flex w-100 justify-content-between">
-				<div class="mb-1 text-truncate" title="{{$e.author_addr}}">
-					{{$e.icon}}
-					<strong>{{$e.author_name}}</strong>
+			<div class="mb-2">
+				<img src="{{$e.author_img}}" loading="lazy" class="rounded menu-img-2">
+				<div class="text-nowrap">
+					<div class="d-flex justify-content-between align-items-center lh-sm">
+						<div class="text-truncate mr-1">
+							{{$e.icon}}
+							<strong title="{{$e.author_name}}">{{$e.author_name}}</strong>
+						</div>
+						<small class="messages-timeago opacity-75" title="{{$e.created}}"></small>
+					</div>
+					<div class="text-truncate">
+						<small class="opacity-75" title="{{$e.author_addr}}">{{$e.author_addr}}</small>
+					</div>
 				</div>
-				<small class="messages-timeago text-nowrap" title="{{$e.created}}"></small>
 			</div>
-			<div class="mb-1">
+			<div class="mb-2">
 				<div class="text-break">{{$e.summary}}</div>
 			</div>
-			<small>{{$e.info}}</small>
+			<small class="opacity-75">{{$e.info}}</small>
 			{{if $e.unseen_count}}
 			<span class="badge bg-transparent border border-{{$e.unseen_class}} text-{{$e.unseen_class}} rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen_count}}">{{$e.unseen_count}}</span>
 			{{/if}}
@@ -169,7 +185,8 @@
 						e.author_addr,
 						e.href,
 						e.icon,
-						e.unseen_count ? '<span class="badge bg-transparent border border-' + e.unseen_class + ' text-' + e.unseen_class + ' rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen_count}}">' + e.unseen_count + '</span>' : ''
+						e.unseen_count ? '<span class="badge bg-transparent border border-' + e.unseen_class + ' text-' + e.unseen_class + ' rounded-pill position-absolute bottom-0 end-0 m-2" title="{{$strings.unseen_count}}">' + e.unseen_count + '</span>' : '',
+						e.author_img
 					);
 					$('#messages-loading').before(html);
 				});
