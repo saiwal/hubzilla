@@ -1017,12 +1017,6 @@ img.mail-conv-sender-photo {
 
 
 /* conversation */
-
-.top-radius {
-	border-top-right-radius: var(--bs-border-radius);
-	border-top-left-radius: var(--bs-border-radius);
-}
-
 .wall-event-item {
 	padding: 10px;
 	color: #fff;
@@ -1094,11 +1088,6 @@ img.mail-conv-sender-photo {
 	height: $reply_photo;
 }
 
-.wall-item-ago,
-.dropdown-sub-text {
-	color: var(--bs-tertiary-color);
-}
-
 .wall-item-content,
 .mail-conv-body,
 .page-body,
@@ -1106,7 +1095,6 @@ img.mail-conv-sender-photo {
 .chat-item-text-self {
 	font-size: 1rem;
 }
-
 
 .comment-edit-text {
 	border: 1px solid var(--bs-border-color);

@@ -40,7 +40,7 @@
 					<hr class="m-0">
 				{{/if}}
 			{{/if}}
-			<div class="p-2 clearfix wall-item-head{{if !$title && !$event && !$photo}} rounded-top{{/if}}{{if $is_new && !$event}} wall-item-head-new{{/if}}">
+			<!--div class="p-2 clearfix wall-item-head{{if !$title && !$event && !$photo}} rounded-top{{/if}}{{if $is_new && !$event}} wall-item-head-new{{/if}}">
 				<span class="float-end" title="{{$pinned}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
 				<div class="wall-item-info" id="pinned-item-info-{{$id}}" >
 					<div class="wall-item-photo-wrapper{{if $owner_url}} wwfrom{{/if}} h-card p-author" id="pinned-item-photo-wrapper-{{$id}}">
@@ -61,7 +61,49 @@
 				<div class="wall-item-ago"  id="pinned-item-ago-{{$id}}">
 					{{if $verified}}<i class="fa fa-check item-verified" title="{{$verified}}"></i>&nbsp;{{elseif $forged}}<i class="fa fa-exclamation item-forged" title="{{$forged}}"></i>&nbsp;{{/if}}{{if $location}}<span class="wall-item-location p-location" id="pinned-item-location-{{$id}}">{{$location}},&nbsp;</span>{{/if}}<span class="autotime" title="{{$isotime}}"><time class="dt-published" datetime="{{$isotime}}">{{$localtime}}</time>{{if $editedtime}}&nbsp;{{$editedtime}}{{/if}}{{if $expiretime}}&nbsp;{{$expiretime}}{{/if}}</span>{{if $editedtime}}&nbsp;<i class="fa fa-pencil"></i>{{/if}}&nbsp;{{if $app}}<span class="item.app">{{$str_app}}</span>{{/if}}
 				</div>
+			</div-->
+
+			<div class="p-2 lh-sm d-flex wall-item-head{{if !$title && !$event && !$photo}} rounded-top{{/if}}{{if $is_new && !$event}} wall-item-head-new{{/if}}" >
+				<div class="wall-item-info pe-2" id="wall-item-info-{{$id}}" >
+					<div class="wall-item-photo-wrapper{{if $owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$id}}">
+						<img src="{{$thumb}}" class="fakelink wall-item-photo{{$sparkle}} u-photo p-name" id="wall-item-photo-{{$id}}" alt="{{$name}}" loading="lazy" data-bs-toggle="dropdown" />
+						{{if $thread_author_menu}}
+						<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-bs-toggle="dropdown"></i>
+						<div class="dropdown-menu">
+							{{foreach $thread_author_menu as $mitem}}
+							<a class="dropdown-item{{if $mitem.class}} {{$mitem.class}}{{/if}}" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}}{{if $mitem.data}} {{$mitem.data}}{{/if}}>{{$mitem.title}}</a>
+							{{/foreach}}
+						</div>
+						{{/if}}
+					</div>
+				</div>
+				<div class="wall-item-author text-truncate">
+					<a href="{{$profile_url}}" title="{{$linktitle}}" class="wall-item-name-link u-url"><span class="wall-item-name" id="pinned-item-name-{{$id}}" >{{$name}}</span></a>{{if $owner_url}}&nbsp;{{$via}}&nbsp;<a href="{{$owner_url}}" title="{{$olinktitle}}" class="wall-item-name-link"><span class="wall-item-name" id="pinned-item-ownername-{{$id}}">{{$owner_name}}</span></a>{{/if}}<br>
+					<small class="wall-item-addr opacity-75">{{$linktitle}}</small>
+				</div>
+				<div class="text-end ms-auto">
+					<div class="wall-item-ago text-nowrap opacity-75" id="wall-item-ago-{{$id}}">
+						{{if $editedtime}}
+						<i class="fa fa-pencil"></i>
+						{{/if}}
+						{{if $delayed}}
+						<i class="fa fa-clock-o"></i>
+						{{/if}}
+						{{if $location}}
+						<small class="wall-item-location p-location" id="wall-item-location-{{$id}}">{{$location}}</small>
+						{{/if}}
+						{{if $verified}}
+						<i class="fa fa-check text-success" title="{{$verified}}"></i>
+						{{elseif $forged}}
+						<i class="fa fa-exclamation text-danger" title="{{$forged}}"></i>
+						{{/if}}
+						<small class="autotime" title="{{$isotime}}"><time class="dt-published" datetime="{{$isotime}}">{{$localtime}}</time>{{if $editedtime}}&nbsp;{{$editedtime}}{{/if}}{{if $expiretime}}&nbsp;{{$expiretime}}{{/if}}</small>
+					</div>
+					<div class="wall-item-pinned" title="{{$pinned}}" id="wall-item-pinned-{{$id}}"><i class="fa fa-thumb-tack"></i></div>
+				</div>
 			</div>
+
+
 			{{if $divider}}
 				<hr class="wall-item-divider">
 			{{/if}}
