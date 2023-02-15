@@ -101,7 +101,6 @@ class Libzot {
 	static function build_packet($channel, $type = 'activity', $recipients = null, $msg = [], $encoding = 'activitystreams', $remote_key = null, $methods = '') {
 
 		$sig_method = get_config('system', 'signature_algorithm', 'sha256');
-
 		$data = [
 			'type'     => $type,
 			'encoding' => $encoding,
@@ -115,9 +114,9 @@ class Libzot {
 		}
 
 		if ($msg) {
-			$actor = channel_url($channel);
-			if ($encoding === 'activitystreams' && array_key_exists('actor', $msg) && is_string($msg['actor']) && $actor === $msg['actor']) {
-				$msg = JSalmon::sign($msg, $actor, $channel['channel_prvkey']);
+			$actors = get_hubloc_id_urls_by_x($channel['channel_hash']);
+			if ($encoding === 'activitystreams' && array_key_exists('actor', $msg) && is_string($msg['actor']) && in_array($msg['actor'], $actors)) {
+				$msg = JSalmon::sign($msg, $actors[0], $channel['channel_prvkey']);
 			}
 			$data['data'] = $msg;
 		}

@@ -3086,6 +3086,6 @@ function channel_url($channel) {
 }
 
 function get_channel_hashes() {
-	$r = q("SELECT channel_hash FROM channel WHERE channel_removed = 0");
+	$r = dbq("SELECT channel_hash FROM channel WHERE channel_removed = 0");
 	return flatten_array_recursive($r);
 }
