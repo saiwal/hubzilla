@@ -55,7 +55,7 @@
 						</div>
 						{{/if}}
 						<a href="{{$item.profile_url}}" class="wall-item-name-link u-url"{{if $item.app}} title="{{$item.str_app}}"{{/if}}><span class="wall-item-name{{$item.sparkle}}" id="wall-item-name-{{$item.id}}" ><bdi>{{$item.name}}</bdi></span></a>{{if $item.owner_url}}&nbsp;{{$item.via}}&nbsp;<a href="{{$item.owner_url}}" title="{{$item.olinktitle}}" class="wall-item-name-link"><span class="wall-item-name{{$item.osparkle}}" id="wall-item-ownername-{{$item.id}}"><bdi>{{$item.owner_name}}</bdi></span></a>{{/if}}<br>
-						<small class="wall-item-addr opacity-75">{{$item.linktitle}}</small>
+						<small class="wall-item-addr opacity-75">{{$item.author_id}}</small>
 					</div>
 					<div class="text-end ms-auto">
 						<div class="wall-item-ago text-nowrap opacity-75" id="wall-item-ago-{{$item.id}}">

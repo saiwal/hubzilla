@@ -1259,7 +1259,7 @@ function dopin(id) {
                         $('.dropdown-item-pinnable').html($('.dropdown-item-pinnable').html().replace(aStr['unpin_item'],aStr['pin_item']));
                         $('.wall-item-pinned').remove()
                         if(i.length == 0) {
-                                $('<span class="wall-item-pinned" title="' + aStr['pinned'] + '" id="wall-item-pinned-' + id + '"><i class="fa fa-thumb-tack">&nbsp;</i></span>').insertBefore('#wall-item-info-' + id);
+                                $('<span class="wall-item-pinned" title="' + aStr['pinned'] + '" id="wall-item-pinned-' + id + '"><i class="fa fa-thumb-tack">&nbsp;</i></span>').insertAfter('#wall-item-ago-' + id);
                                 me.html(me.html().replace(aStr['pin_item'],aStr['unpin_item']));
                         };
                 })

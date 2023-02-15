@@ -159,7 +159,9 @@ class Pinned {
 				'hide'		 => (! $is_new && isset($observer['xchan_hash']) && $observer['xchan_hash'] != $owner['xchan_hash'] ? t("Don't show") : ''),
 				// end toolbar buttons
 				'modal_dismiss' => t('Close'),
-				'responses'	 => $conv_responses
+				'responses'	 => $conv_responses,
+				'author_id' => (($author['xchan_addr']) ? $author['xchan_addr'] : $author['xchan_url'])
+
 			];
 
 			$tpl = get_markup_template('pinned_item.tpl');

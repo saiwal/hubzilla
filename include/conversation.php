@@ -802,6 +802,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 					'mid' => gen_link_id($item['mid']),
 					'mids' => json_encode([gen_link_id($item['mid'])]),
 					'linktitle' => sprintf( t('View %s\'s profile @ %s'), $profile_name, $profile_link),
+					'author_id' => (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']),
 					'profile_url' => $profile_link,
 					'thread_action_menu' => thread_action_menu($item,$mode),
 					'thread_author_menu' => thread_author_menu($item,$mode),
