@@ -26,39 +26,9 @@
 				<hr class="m-0">
 				{{/if}}
 				{{/if}}
-				<div class="p-2 lh-sm d-flex wall-item-head{{if !$item.title && !$item.event && !$item.photo}} rounded-top{{/if}}{{if $item.is_new && !$item.event && !$item.is_comment}} wall-item-head-new{{/if}}" >
-					<div class="wall-item-info pe-2" id="wall-item-info-{{$item.id}}" >
-						<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$item.id}}">
-							{{if $item.contact_id}}
-							<div class="spinner-wrapper contact-edit-rotator contact-edit-rotator-{{$item.contact_id}}"><div class="spinner s"></div></div>
-							{{/if}}
-							<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" loading="lazy" data-bs-toggle="dropdown" />
-							{{if $item.author_is_group_actor}}
-							<i class="fa fa-comments-o wall-item-photo-group-actor" title="{{$item.author_is_group_actor}}"></i>
-							{{/if}}
-							{{if $item.thread_author_menu}}
-							<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-bs-toggle="dropdown"></i>
-							<div class="dropdown-menu">
-								{{foreach $item.thread_author_menu as $mitem}}
-								<a class="dropdown-item{{if $mitem.class}} {{$mitem.class}}{{/if}}" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}}{{if $mitem.data}} {{$mitem.data}}{{/if}}>{{$mitem.title}}</a>
-								{{/foreach}}
-							</div>
-							{{/if}}
-						</div>
-					</div>
-					<div class="wall-item-author text-truncate">
-						{{if $item.previewing}}<span class="preview-indicator"><i class="fa fa-eye" title="{{$item.preview_lbl}}"></i></span>{{/if}}
-						{{if $item.lock}}
-						<div class="wall-item-lock dropdown">
-							<i class="fa {{if $item.locktype == 2}}fa-envelope-o{{else if $item.locktype == 1}}fa-lock{{else}}fa-unlock{{/if}} lockview{{if $item.privacy_warning}} text-danger{{/if}}" data-bs-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
-							<div id="panel-{{$item.id}}" class="dropdown-menu"></div>
-						</div>
-						{{/if}}
-						<a href="{{$item.profile_url}}" class="wall-item-name-link u-url"{{if $item.app}} title="{{$item.str_app}}"{{/if}}><span class="wall-item-name{{$item.sparkle}}" id="wall-item-name-{{$item.id}}" ><bdi>{{$item.name}}</bdi></span></a>{{if $item.owner_url}}&nbsp;{{$item.via}}&nbsp;<a href="{{$item.owner_url}}" title="{{$item.olinktitle}}" class="wall-item-name-link"><span class="wall-item-name{{$item.osparkle}}" id="wall-item-ownername-{{$item.id}}"><bdi>{{$item.owner_name}}</bdi></span></a>{{/if}}<br>
-						<small class="wall-item-addr opacity-75">{{$item.author_id}}</small>
-					</div>
-					<div class="text-end ms-auto">
-						<div class="wall-item-ago text-nowrap opacity-75" id="wall-item-ago-{{$item.id}}">
+				<div class="p-2 wall-item-head{{if !$item.title && !$item.event && !$item.photo}} rounded-top{{/if}}{{if $item.is_new && !$item.event && !$item.is_comment}} wall-item-head-new{{/if}}" >
+					<div class="text-end float-end">
+						<div class="wall-item-ago opacity-75" id="wall-item-ago-{{$item.id}}">
 							{{if $item.editedtime}}
 							<i class="fa fa-pencil"></i>
 							{{/if}}
@@ -81,6 +51,38 @@
 						{{if $item.pinned}}
 						<div class="wall-item-pinned" title="{{$item.pinned}}" id="wall-item-pinned-{{$item.id}}"><i class="fa fa-thumb-tack"></i></div>
 						{{/if}}
+					</div>
+					<div class="float-start wall-item-info pe-2" id="wall-item-info-{{$item.id}}" >
+						<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$item.id}}">
+							{{if $item.contact_id}}
+							<div class="spinner-wrapper contact-edit-rotator contact-edit-rotator-{{$item.contact_id}}"><div class="spinner s"></div></div>
+							{{/if}}
+							<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" loading="lazy" data-bs-toggle="dropdown" />
+							{{if $item.author_is_group_actor}}
+							<i class="fa fa-comments-o wall-item-photo-group-actor" title="{{$item.author_is_group_actor}}"></i>
+							{{/if}}
+							{{if $item.thread_author_menu}}
+							<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-bs-toggle="dropdown"></i>
+							<div class="dropdown-menu">
+								{{foreach $item.thread_author_menu as $mitem}}
+								<a class="dropdown-item{{if $mitem.class}} {{$mitem.class}}{{/if}}" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}}{{if $mitem.data}} {{$mitem.data}}{{/if}}>{{$mitem.title}}</a>
+								{{/foreach}}
+							</div>
+							{{/if}}
+						</div>
+					</div>
+					<div class="wall-item-author">
+						{{if $item.previewing}}<span class="preview-indicator"><i class="fa fa-eye" title="{{$item.preview_lbl}}"></i></span>{{/if}}
+						{{if $item.lock}}
+						<div class="wall-item-lock dropdown">
+							<i class="fa {{if $item.locktype == 2}}fa-envelope-o{{else if $item.locktype == 1}}fa-lock{{else}}fa-unlock{{/if}} lockview{{if $item.privacy_warning}} text-danger{{/if}}" data-bs-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
+							<div id="panel-{{$item.id}}" class="dropdown-menu"></div>
+						</div>
+						{{/if}}
+						<div class="text-truncate">
+							<a href="{{$item.profile_url}}" class="lh-sm wall-item-name-link u-url"{{if $item.app}} title="{{$item.str_app}}"{{/if}}><span class="wall-item-name{{$item.sparkle}}" id="wall-item-name-{{$item.id}}" ><bdi>{{$item.name}}</bdi></span></a>{{if $item.owner_url}}&nbsp;{{$item.via}}&nbsp;<a href="{{$item.owner_url}}" title="{{$item.olinktitle}}" class="wall-item-name-link"><span class="wall-item-name{{$item.osparkle}}" id="wall-item-ownername-{{$item.id}}"><bdi>{{$item.owner_name}}</bdi></span></a>{{/if}}
+						</div>
+						<small class="lh-sm text-truncate d-block wall-item-addr opacity-75">{{$item.author_id}}</small>
 					</div>
 				</div>
 				{{if $item.divider}}
