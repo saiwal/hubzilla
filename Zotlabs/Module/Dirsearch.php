@@ -263,7 +263,7 @@ class Dirsearch extends Controller {
 				xprof.xprof_homepage as homepage,
 				xprof.xprof_hometown as hometown,
 				xprof.xprof_keywords as keywords
-				from xchan left join xprof on xchan_hash = xprof_hash left join hubloc on hubloc_id_url = xchan_url
+				from xchan left join xprof on xchan_hash = xprof_hash left join hubloc on (hubloc_id_url = xchan_url and hubloc_hash = xchan_hash)
 				where hubloc_primary = 1 and hubloc_updated > %s - INTERVAL %s and ( $logic $sql_extra ) $hub_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0
 				$safesql $order $qlimit",
 				db_utcnow(),
