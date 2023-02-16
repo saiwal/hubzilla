@@ -998,12 +998,12 @@ class Libsync {
 				}
 			}
 
-			// get rid of any hubs we have for this channel which weren't reported.
+			// get rid of any hublocs we have for this channel which weren't reported.
 
 			if ($xisting) {
 				foreach ($xisting as $x) {
 					if (!array_key_exists('updated', $x)) {
-						hz_syslog('Deleting unreferenced hub location ' . $x['hubloc_addr']);
+						logger('Deleting unreferenced hub location ' . $x['hubloc_addr']);
 						q("update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id_url = '%s'",
 							dbesc(datetime_convert()),
 							dbesc($x['hubloc_id_url'])
