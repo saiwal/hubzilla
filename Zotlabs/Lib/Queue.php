@@ -85,10 +85,29 @@ class Queue {
 			// entries still exist for it. This fixes an issue where one immediate delivery left everything
 			// else for that site undeliverable since all the other entries had been pushed far into the future.
 
-			q("update outq set outq_scheduled = '%s' where outq_posturl = '%s' limit 1",
-				dbesc(datetime_convert()),
+			$x = null;
+			$sql_quirks = ((get_config('system', 'db_skip_locked_supported')) ? 'SKIP LOCKED' : 'NOWAIT');
+
+			q("START TRANSACTION");
+
+			$r = q("SELECT outq_hash FROM outq WHERE outq_posturl = '%s' LIMIT 1 FOR UPDATE $sql_quirks",
 				dbesc($record[0]['outq_posturl'])
 			);
+
+			if ($r) {
+				$x = q("UPDATE outq SET outq_scheduled = '%s' WHERE outq_hash = '%s'",
+					dbesc(datetime_convert()),
+					dbesc($r[0]['outq_hash'])
+				);
+			}
+
+			if ($x) {
+				q("COMMIT");
+			}
+			else {
+				q("ROLLBACK");
+			}
+
 		}
 	}
 
@@ -167,17 +186,18 @@ class Queue {
 				dbesc($base)
 			);
 
-			// Don't bother delivering if the site is dead.
-			// And if we haven't heard from the site in over a month - let them through but 3 strikes you're out.
-			if ($y && (intval($y[0]['site_dead']) || ($y[0]['site_update'] < datetime_convert('UTC', 'UTC', 'now - 1 month') && $outq['outq_priority'] > 20 ))) {
-				q("update dreport set dreport_result = '%s' where dreport_queue = '%s'",
-					dbesc('site dead'),
-					dbesc($outq['outq_hash'])
-				);
-
-				self::remove_by_posturl($outq['outq_posturl']);
-				logger('dead site ignored ' . $base);
-				return;
+			if ($y) {
+				// Don't bother delivering if the site is dead.
+				// And if we haven't heard from the site in over a month - let them through but 3 strikes you're out.
+				if (intval($y[0]['site_dead']) || ($y[0]['site_update'] < datetime_convert('UTC', 'UTC', 'now - 1 month') && $outq['outq_priority'] > 20)) {
+					q("update dreport set dreport_result = '%s' where dreport_queue = '%s'",
+						dbesc('site dead'),
+						dbesc($outq['outq_hash'])
+					);
+					self::remove_by_posturl($outq['outq_posturl']);
+					logger('dead site ignored ' . $base);
+					return;
+				}
 			}
 			else {
 
