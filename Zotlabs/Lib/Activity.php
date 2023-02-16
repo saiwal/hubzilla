@@ -822,7 +822,8 @@ class Activity {
 			];
 		}
 
-		$ret['published'] = ((isset($i['created'])) ? datetime_convert('UTC', 'UTC', $i['created'], ATOM_TIME) : datetime_convert());
+		$ret['published'] = datetime_convert('UTC', 'UTC', $i['created'], ATOM_TIME);
+
 		if (isset($i['created'], $i['edited']) && $i['created'] !== $i['edited']) {
 			$ret['updated'] = datetime_convert('UTC', 'UTC', $i['edited'], ATOM_TIME);
 			if ($ret['type'] === 'Create') {
