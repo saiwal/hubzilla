@@ -82,7 +82,7 @@ class Messages {
 		}
 
 		if($author) {
-			$author_sql = " AND i.author_xchan = '" . protect_sprintf(dbesc($author)) . "' ";
+			$author_sql = " AND i.owner_xchan = '" . protect_sprintf(dbesc($author)) . "' ";
 		}
 
 		switch($type) {
