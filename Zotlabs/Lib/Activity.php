@@ -2518,7 +2518,11 @@ class Activity {
 			if ($act->type === 'Announce') {
 				$s['author_xchan'] = self::get_attributed_to_actor_url($act);
 				$s['mid'] = $act->obj['id'];
-				$s['parent_mid'] = $act->obj['id'];
+
+				// Do not force new thread if the announce is from a group actor
+				if ($act->actor['type'] !== 'Group') {
+					$s['parent_mid'] = $act->obj['id'];
+				}
 			}
 
 			// we will need a hook here to extract magnet links e.g. peertube
