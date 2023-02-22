@@ -1691,6 +1691,8 @@ class Activity {
 			}
 		}
 
+		$group_actor = ($person_obj['type'] === 'Group');
+
 		$r = q("select * from xchan join hubloc on xchan_hash = hubloc_hash where xchan_hash = '%s'",
 			dbesc($url)
 		);
@@ -1709,11 +1711,12 @@ class Activity {
 			);
 
 			// update existing xchan record
-			q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_addr = '%s', xchan_network = 'activitypub', xchan_name_date = '%s' where xchan_hash = '%s'",
+			q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_addr = '%s', xchan_network = 'activitypub', xchan_name_date = '%s', xchan_pubforum = %d where xchan_hash = '%s'",
 				dbesc(escape_tags($name)),
 				dbesc(escape_tags($pubkey)),
 				dbesc(escape_tags($webfinger_addr)),
 				dbescdate(datetime_convert()),
+				intval($group_actor),
 				dbesc($url)
 			);
 
@@ -1740,7 +1743,8 @@ class Activity {
 					'xchan_url'       => $profile,
 					'xchan_name'      => escape_tags($name),
 					'xchan_name_date' => datetime_convert(),
-					'xchan_network'   => 'activitypub'
+					'xchan_network'   => 'activitypub',
+					'xchan_pubforum'  => intval($group_actor)
 				]
 			);
 
@@ -2219,7 +2223,6 @@ class Activity {
 		) {
 			return false;
 		}
-
 		// Within our family of projects, Follow/Unfollow of a thread is an internal activity which should not be transmitted,
 		// hence if we receive it - ignore or reject it.
 		// Unfollow is not defined by ActivityStreams, which prefers Undo->Follow.
