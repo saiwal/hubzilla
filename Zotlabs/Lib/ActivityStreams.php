@@ -113,7 +113,7 @@ class ActivityStreams {
 			// fetch recursive or embedded activities
 
 			if ($this->obj && is_array($this->obj) && array_key_exists('object', $this->obj)) {
-				$this->obj['object'] = $this->get_compound_property($this->obj['object']);
+				$this->obj['object'] = $this->get_compound_property('object', $this->obj);
 			}
 
 			if ($this->obj && is_array($this->obj) && isset($this->obj['actor']))
@@ -364,6 +364,7 @@ class ActivityStreams {
 	 */
 	function get_compound_property($property, $base = '', $namespace = '', $first = false) {
 		$x = $this->get_property_obj($property, $base, $namespace);
+
 		if ($this->is_url($x)) {
 			$y = $this->fetch_property($x);
 			if (is_array($y)) {
