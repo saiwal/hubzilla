@@ -1393,8 +1393,9 @@ blockquote {
 }
 
 .textcomplete-dropdown {
-	max-height: 300px;
-	max-width: 250px;
+	max-height: 20rem;
+	max-width: 17rem;
+	min-width: 15rem;
 	overflow: auto;
 }
 
