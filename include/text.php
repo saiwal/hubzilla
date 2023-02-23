@@ -3505,6 +3505,14 @@ function flatten_array_recursive($arr) {
 	return($ret);
 }
 
+// Turn $element into an array if it isn't already.
+function force_array($element) {
+	if (empty($element)) {
+		return [];
+	}
+	return (is_array($element)) ? $element : [$element];
+}
+
 /**
  * @brief Highlight Text.
  *
