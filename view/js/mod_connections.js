@@ -1,5 +1,7 @@
 $(document).ready(function() {
-	$("#contacts-search").contact_autocomplete(baseurl + '/acl', 'a', true);
+	$("#contacts-search").name_autocomplete(baseurl + '/acl', 'a', true, function(data) {
+		$("#contacts-search-xchan").val(data.xid);
+	});
 	$(".autotime").timeago();
 });
 

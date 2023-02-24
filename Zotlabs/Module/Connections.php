@@ -145,6 +145,7 @@ class Connections extends \Zotlabs\Web\Controller {
 		}
 
 		$search = ((x($_REQUEST,'search')) ? notags(trim($_REQUEST['search'])) : '');
+		$search_xchan = ((x($_REQUEST,'search_xchan')) ? notags(trim($_REQUEST['search_xchan'])) : '');
 
 		$tabs = array(
 			/*
@@ -233,10 +234,15 @@ class Connections extends \Zotlabs\Web\Controller {
 
 		if($search) {
 			$search_hdr = $search;
-			$search_txt = dbesc(protect_sprintf(preg_quote($search)));
-			$searching = true;
+			$search_txt = (($search_xchan) ? urldecode($search_xchan) : preg_quote($search));
+
+			if ($search_xchan) {
+				$sql_extra .= " AND xchan_hash = '" . protect_sprintf(dbesc($search_txt)) . "' ";
+			}
+			else {
+				$sql_extra .= " AND xchan_name LIKE '%%" . protect_sprintf(dbesc($search_txt)) . "%%' ";
+			}
 		}
-		$sql_extra .= (($searching) ? protect_sprintf(" AND xchan_name like '%$search_txt%' ") : "");
 
 		if(isset($_REQUEST['gid']) && $_REQUEST['gid']) {
 			$sql_extra .= " and xchan_hash in ( select xchan from pgrp_member where gid = " . intval($_REQUEST['gid']) . " and uid = " . intval(local_channel()) . " ) ";
@@ -396,7 +402,7 @@ class Connections extends \Zotlabs\Web\Controller {
 				'$search' => $search_hdr,
 				'$label' => t('Search'),
 				'$role_label' => t('Contact role'),
-				'$desc' => t('Search your connections'),
+				'$desc' => $search ?? t('Search your connections'),
 				'$finding' => (($searching) ? t('Contact search') . ": '" . $search . "'" : ""),
 				'$submit' => t('Find'),
 				'$edit' => t('Edit'),

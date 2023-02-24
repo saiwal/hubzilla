@@ -22,6 +22,7 @@
 		<form action="{{$cmd}}" method="get" name="contacts-search-form">
 			<div class="input-group mb-3">
 				<input type="text" name="search" id="contacts-search" class="form-control" onfocus="this.select();" value="{{$search}}" placeholder="{{$desc}}" />
+				<input type="hidden" name="search_xchan" id="contacts-search-xchan" value=""/>
 				<button id="contacts-search-submit" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-search"></i></button>
 			</div>
 		</form>
