@@ -2657,7 +2657,7 @@ function check_for_new_perms() {
 	$found_new_perm = false;
 
 	foreach ($pcurrent as $p) {
-		if (!in_array($pregistered, $p)) {
+		if (!in_array($p, $pregistered)) {
 
 			$found_new_perm = true;
 			// for all channels
