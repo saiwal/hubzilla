@@ -2852,6 +2852,7 @@ class Activity {
 		}
 
 		$allowed = false;
+		$item['owner_xchan'] = $observer_hash;
 
 		// TODO: not implemented
 		// $permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item));
