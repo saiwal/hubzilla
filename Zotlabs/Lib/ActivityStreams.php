@@ -182,11 +182,11 @@ class ActivityStreams {
 			$values = $this->objprop($field);
 			if ($values) {
 				$values = force_array($values);
-				$tmp[$field] = (($tmp[$field]) ? array_merge($tmp[$field], $values) : $values);
+				$tmp[$field] = ((isset($tmp[$field])) ? array_merge($tmp[$field], $values) : $values);
 				$result = array_values(array_unique(array_merge($result, $values)));
 			}
 			// remove duplicates
-			if (is_array($tmp[$field])) {
+			if (isset($tmp[$field])) {
 				$tmp[$field] = array_values(array_unique($tmp[$field]));
 			}
 		}

@@ -42,6 +42,8 @@ class Pinned {
 
 		$observer = \App::get_observer();
 
+		xchan_query($items);
+
 		foreach($items as $item) {
 
 			$midb64 = gen_link_id($item['mid']);
@@ -49,8 +51,8 @@ class Pinned {
 			if(isset($observer['xchan_hash']) && in_array($observer['xchan_hash'], get_pconfig($item['uid'], 'pinned_hide', $midb64, [])))
 				continue;
 
-			$author = channelx_by_hash($item['author_xchan']);
-			$owner = channelx_by_hash($item['owner_xchan']);
+			$author = $item['author'];
+			$owner = $item['owner'];
 
 			$profile_avatar = $author['xchan_photo_m'];
 			$profile_link = chanlink_hash($item['author_xchan']);
