@@ -199,7 +199,7 @@ class Hq extends \Zotlabs\Web\Controller {
 					$simple_update
 					LIMIT 1",
 					intval(local_channel()),
-					dbesc($mid)
+					dbesc($target_item['parent_mid'])
 				);
 			}
 			else {
