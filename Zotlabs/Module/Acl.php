@@ -69,6 +69,7 @@ class Acl extends \Zotlabs\Web\Controller {
 		$sql_extra = '';
 		$sql_extra2 = '';
 		$sql_extra3 = '';
+		$sql_extra4 = (($type === 'f') ? ' AND xchan_pubforum = 1 ' : '');
 		$sql_extra2_xchan = '';
 		$order_extra2 = '';
 
@@ -219,7 +220,7 @@ class Acl extends \Zotlabs\Web\Controller {
 
 				$r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_network as net, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, abook_their_perms, xchan_pubforum, abook_flags, abook_self
 					FROM abook left join xchan on abook_xchan = xchan_hash
-					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc" ,
+					WHERE (abook_channel = %d $extra_channels_sql) AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra2 $sql_extra4 order by $order_extra2 xchan_name asc" ,
 					intval(local_channel())
 				);
 
@@ -337,6 +338,7 @@ class Acl extends \Zotlabs\Web\Controller {
 		else
 			$r = array();
 
+
 		if($r) {
 			$i = count($contacts);
 			$x = [];
@@ -367,10 +369,12 @@ class Acl extends \Zotlabs\Web\Controller {
 						"nick"     => substr($g['nick'],0,strpos($g['nick'],'@')),
 						"self"     => (intval($g['abook_self']) ? 'abook-self' : ''),
 						"taggable" => 'taggable',
-						"label"    => t('network')
+						"label"    => t('network'),
+						"net"      => $g['net'] ?? ''
+
 					);
 				}
-				if($type !== 'f') {
+				//if($type !== 'f') {
 					if (! array_key_exists($x[$lkey], $contacts) || ($contacts[$x[$lkey]]['net'] !== 'zot6' && $g['net'] == 'zot6')) {
 						$contacts[$x[$lkey]] = array(
 							"type"     => "c",
@@ -387,7 +391,7 @@ class Acl extends \Zotlabs\Web\Controller {
 							"net"      => $g['net'] ?? ''
 						);
 					}
-				}
+				//}
 				$i++;
 			}
 		}

@@ -2686,12 +2686,7 @@ function tag_deliver($uid, $item_id) {
 	 * Now we've got those out of the way. Let's see if this is a post that's tagged for re-delivery
 	 */
 
-	$terms = [];
-	if (array_key_exists('term', $item)) {
-		$terms = array_merge(get_terms_oftype($item['term'],TERM_MENTION),get_terms_oftype($item['term'],TERM_FORUM));
-		logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
-	}
-
+	$terms = isset($item['term']) ? get_terms_oftype($item['term'], [TERM_MENTION, TERM_FORUM]) : [];
 	$max_forums = get_config('system','max_tagged_forums',2);
 	$matched_forums = 0;
 
@@ -2732,7 +2727,7 @@ function tag_deliver($uid, $item_id) {
 
 
 			// standard forum tagging sequence !forumname
-/*
+
 			$forumpattern = '/\!\!?\[[uz]rl\=([^\]]*?)\]((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
 
 			$forumpattern2 = '/\[[uz]rl\=([^\]]*?)\]\!((?:.(?!\[[uz]rl\=))*?)\[\/[uz]rl\]/';
@@ -2765,8 +2760,6 @@ function tag_deliver($uid, $item_id) {
 					}
 				}
 			}
-
-*/
 
 			if(! ($tagged || $plustagged)) {
 				logger('Mention was in a reshare or exceeded max_tagged_forums - ignoring');
@@ -2993,7 +2986,6 @@ function tgroup_check($uid, $item) {
 
 			$body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
 
-/*
 			$forumpattern = '/\!\!?\[zrl\=([^\]]*?)\]((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
 
 			$forumpattern2 = '/\[zrl\=([^\]]*?)\]\!((?:.(?!\[zrl\=))*?)\[\/zrl\]/';
@@ -3033,7 +3025,6 @@ function tgroup_check($uid, $item) {
 				logger('tgroup_check: mention was in a reshare or exceeded max_tagged_forums - ignoring');
 				continue;
 			}
-*/
 
 			return true;
 		}
