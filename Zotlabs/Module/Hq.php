@@ -52,12 +52,19 @@ class Hq extends \Zotlabs\Web\Controller {
 
 		if($item_hash) {
 
-			$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where mid = '%s' limit 1",
+			$sql_order = ((local_channel() > $sys['channel_id']) ? 'DESC' : 'ASC');
+
+			$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where uid in (%d, %d) and mid = '%s' order by uid $sql_order limit 2",
+				intval(local_channel()),
+				intval($sys['channel_id']),
 				dbesc($item_hash)
 			);
 
 			if($r) {
 				$target_item = $r[0];
+				if (intval($r[0]['uid']) === intval($sys['channel_id'])) {
+					$sys_item = true;
+				}
 			}
 
 			//if the item is to be moderated redirect to /moderate
@@ -158,19 +165,18 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 
 		if($load && $target_item) {
-			$r = null;
 
-			$r = q("SELECT item.id AS item_id FROM item
-				WHERE uid = %d
-				AND mid = '%s'
-				$item_normal
-				LIMIT 1",
-				intval(local_channel()),
-				dbesc($target_item['parent_mid'])
-			);
-
-			if(!$r) {
-				$sys_item = true;
+			if (!$sys_item) {
+				$r = q("SELECT item.id AS item_id FROM item
+					WHERE uid = %d
+					AND mid = '%s'
+					$item_normal
+					LIMIT 1",
+					intval(local_channel()),
+					dbesc($target_item['parent_mid'])
+				);
+			}
+			else {
 				$sql_extra = item_permissions_sql($sys['channel_id']);
 
 				$r = q("SELECT item.id AS item_id FROM item
@@ -184,20 +190,19 @@ class Hq extends \Zotlabs\Web\Controller {
 			}
 		}
 		elseif($update && $target_item) {
-			$r = null;
+			if (!$sys_item) {
 
-			$r = q("SELECT item.parent AS item_id FROM item
-				WHERE uid = %d
-				AND parent_mid = '%s'
-				$item_normal_update
-				$simple_update
-				LIMIT 1",
-				intval(local_channel()),
-				dbesc($target_item['parent_mid'])
-			);
-
-			if(!$r) {
-				$sys_item = true;
+				$r = q("SELECT item.parent AS item_id FROM item
+					WHERE uid = %d
+					AND parent_mid = '%s'
+					$item_normal_update
+					$simple_update
+					LIMIT 1",
+					intval(local_channel()),
+					dbesc($mid)
+				);
+			}
+			else {
 				$sql_extra = item_permissions_sql($sys['channel_id']);
 
 				$r = q("SELECT item.parent AS item_id FROM item
