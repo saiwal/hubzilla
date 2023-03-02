@@ -1243,7 +1243,7 @@ class Libzot {
 					return;
 				}
 
-				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
+				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 					dbesc($AS->actor['id'])
 				);
 
@@ -1251,7 +1251,7 @@ class Libzot {
 					// Author is unknown to this site. Perform channel discovery and try again.
 					$z = discover_by_webbie($AS->actor['id']);
 					if ($z) {
-						$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
+						$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 							dbesc($AS->actor['id'])
 						);
 					}
