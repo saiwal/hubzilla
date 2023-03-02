@@ -191,7 +191,6 @@ class Hq extends \Zotlabs\Web\Controller {
 		}
 		elseif($update && $target_item) {
 			if (!$sys_item) {
-
 				$r = q("SELECT item.parent AS item_id FROM item
 					WHERE uid = %d
 					AND parent_mid = '%s'
