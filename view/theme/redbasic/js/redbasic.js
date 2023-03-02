@@ -13,11 +13,29 @@ if (redbasic_dark_mode == 0) {
 }
 
 
+
+
+
 if (redbasic_theme_color) {
 	$('meta[name=theme-color]').attr('content', redbasic_theme_color);
 }
 
+
+
 $(document).ready(function() {
+	// provide a fake progress bar for pwa standalone mode
+	if (window.matchMedia('(display-mode: standalone)').matches) {
+		$(window).on('beforeunload', function(){
+			$('<div style="position:fixed; z-index:10000; height:2px;" class="bg-primary page-loader"></div>').prependTo('body');
+			let w = 10;
+			setInterval(function () {
+				$('.page-loader').css('width', w + 'vw');
+				if (w < 90) {
+					w = w+2;
+				}
+			}, 10);
+		});
+	}
 
 	if (redbasic_dark_mode == 1) {
 		$('#theme-switch-icon').removeClass('fa-moon-o').addClass('fa-sun-o');
