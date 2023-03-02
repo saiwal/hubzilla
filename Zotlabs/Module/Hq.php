@@ -51,7 +51,7 @@ class Hq extends \Zotlabs\Web\Controller {
 		$o = '';
 
 		if($item_hash) {
-
+			// select the target item with a bias to our own item
 			$sql_order = ((local_channel() > $sys['channel_id']) ? 'DESC' : 'ASC');
 
 			$r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where uid in (%d, %d) and mid = '%s' order by uid $sql_order limit 2",
@@ -62,7 +62,7 @@ class Hq extends \Zotlabs\Web\Controller {
 
 			if($r) {
 				$target_item = $r[0];
-				if (intval($r[0]['uid']) === intval($sys['channel_id'])) {
+				if (intval($target_item['uid']) === intval($sys['channel_id'])) {
 					$sys_item = true;
 				}
 			}
