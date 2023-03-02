@@ -25,7 +25,7 @@ class MessageFilter {
 
 		if ($exclude) {
 			foreach ($exclude as $word) {
-				$word = trim($word);
+				$word = html_entity_decode(trim($word));
 				if (! $word) {
 					continue;
 				}
@@ -73,7 +73,7 @@ class MessageFilter {
 
 		if ($include) {
 			foreach ($include as $word) {
-				$word = trim($word);
+				$word = html_entity_decode(trim($word));
 				if (! $word) {
 					continue;
 				}
