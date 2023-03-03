@@ -1773,6 +1773,10 @@ class Activity {
 				dbesc($url)
 			);
 			if (!$zx) {
+				// FIXME: we might need to fetch and store this url immediately
+				// otherwise at least the first post of a yet unknown author might
+				// be stored with the activitypub url instead of the portable id.
+				// Another solution could be to fix the items after Gprobe has done its work.
 				Master::Summon(['Gprobe', bin2hex($url)]);
 			}
 		}
