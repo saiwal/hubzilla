@@ -3033,46 +3033,44 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
 		if($r) {
 
-			$xchan[0] = Libzot::zot_record_preferred($r, 'xchan_network');
+			$xc = Libzot::zot_record_preferred($r, 'xchan_network');
 
-			foreach($xchan as $xc) {
-				$profile = $xc['xchan_url'];
-				$newname = $xc['xchan_name'];
-				// add the channel's xchan_hash to $access_tag if exclusive
-				if($exclusive) {
-					$access_tag = 'cid:' . $xc['xchan_hash'];
-				}
-
-				// if there is a url for this channel
-
-				if(isset($profile)) {
-					$replaced = true;
-					//create profile link
-					$profile = str_replace(',','%2c',$profile);
-					$url = $profile;
-
-					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-
-					// append tag to str_tags
-					if(! stristr($str_tags,$newtag)) {
-						if(strlen($str_tags))
-							$str_tags .= ',';
-						$str_tags .= $newtag;
-					}
-				}
-
-
-				$fn_results[] =  [
-					'replaced'   => $replaced,
-					'termtype'   => $termtype,
-					'term'       => $newname,
-					'url'        => $url,
-					'access_tag' => $access_tag,
-					'contact'    => (($r) ? $xc : []),
-				];
-
+			$profile = $xc['xchan_url'];
+			$newname = $xc['xchan_name'];
+			// add the channel's xchan_hash to $access_tag if exclusive
+			if($exclusive) {
+				$access_tag = 'cid:' . $xc['xchan_hash'];
 			}
+
+			// if there is a url for this channel
+
+			if(isset($profile)) {
+				$replaced = true;
+				//create profile link
+				$profile = str_replace(',','%2c',$profile);
+				$url = $profile;
+				$bb_tag = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
+
+				$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $bb_tag . '=' . $profile . ']' . $newname	. '[/' . $bb_tag . ']';
+				$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+
+				// append tag to str_tags
+				if(! stristr($str_tags,$newtag)) {
+					if(strlen($str_tags))
+						$str_tags .= ',';
+					$str_tags .= $newtag;
+				}
+			}
+
+
+			$fn_results[] =  [
+				'replaced'   => $replaced,
+				'termtype'   => $termtype,
+				'term'       => $newname,
+				'url'        => $url,
+				'access_tag' => $access_tag,
+				'contact'    => (($r) ? $xc : []),
+			];
 
 		}
 		else {
