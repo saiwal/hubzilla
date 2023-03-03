@@ -178,16 +178,6 @@ function string2bb(element) {
 			template: contact_format
 		};
 
-		// Autocomplete forums
-		forums = {
-			match: /(^|\s)(\!\!*)([^ \n]{3,})$/,
-			index: 3,
-			cache: true,
-			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', extra_channels, spinelement=false); },
-			replace: editor_replace,
-			template: contact_format
-		};
-
 		// Autocomplete hashtags
 		tags = {
 			match: /(^|\s)(\#)([^ \n]{2,})$/,
@@ -220,7 +210,7 @@ function string2bb(element) {
 				}
 			});
 			// it seems important that contacts are before channels here. Otherwise we run into regex issues.
-			textcomplete.register([contacts, channels, smilies, forums, tags]);
+			textcomplete.register([contacts,channels,smilies,tags]);
 		});
 	};
 })( jQuery );
@@ -243,17 +233,6 @@ function string2bb(element) {
 			replace: basic_replace,
 			template: contact_format,
 		};
-
-		// Autocomplete forums
-		forums = {
-			match: /(^\!)([^\n]{2,})$/,
-			index: 2,
-			cache: true,
-			search: function(term, callback) { contact_search(term, callback, backend_url, 'f', [], spinelement='#nav-search-spinner'); },
-			replace: basic_replace,
-			template: contact_format
-		};
-
 
 		// Autocomplete hashtags
 		tags = {
@@ -278,7 +257,7 @@ function string2bb(element) {
 					maxCount: 100
 				}
 			});
-			textcomplete.register([contacts, forums, tags]);
+			textcomplete.register([contacts,tags]);
 		});
 
 		textcomplete.on('selected', function() { this.editor.el.form.submit(); });

@@ -1652,7 +1652,7 @@ function format_hashtags(&$item) {
 function format_mentions(&$item) {
 
 	$s = '';
-	$terms = isset($item['term']) ? get_terms_oftype($item['term'], [TERM_MENTION, TERM_FORUM]) : [];
+	$terms = isset($item['term']) ? get_terms_oftype($item['term'], TERM_MENTION) : [];
 	if($terms) {
 		foreach($terms as $t) {
 			if(! isset($t['term']))
@@ -2876,7 +2876,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
 	$termtype = ((strpos($tag,'#') === 0)   ? TERM_HASHTAG  : TERM_UNKNOWN);
 	$termtype = ((strpos($tag,'@') === 0)   ? TERM_MENTION  : $termtype);
-	$termtype = ((strpos($tag,'!') === 0)   ? TERM_FORUM    : $termtype);
+//	$termtype = ((strpos($tag,'!') === 0)   ? TERM_FORUM    : $termtype);
 	$termtype = ((strpos($tag,'#^[') === 0) ? TERM_BOOKMARK : $termtype);
 
 	// Is it a hashtag of some kind?
@@ -2943,7 +2943,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
 	// BEGIN mentions
 
-	if (in_array($termtype, [TERM_MENTION, TERM_FORUM])) {
+	if ($termtype === TERM_MENTION) {
 
 		// The @! tag will alter permissions
 
@@ -3051,15 +3051,8 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 					$profile = str_replace(',','%2c',$profile);
 					$url = $profile;
 
-					if($termtype === TERM_FORUM) {
-						$newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-						$body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-					}
-
-					if ($termtype === TERM_MENTION) {
-						$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-						$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-					}
+					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
+					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 
 					// append tag to str_tags
 					if(! stristr($str_tags,$newtag)) {
@@ -3117,12 +3110,12 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 				//create profile link
 				$profile = str_replace(',','%2c',$profile);
 				$url = $profile;
-
+/*
 				if($termtype === TERM_FORUM) {
 					$newtag = '!' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
 					$body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 				}
-
+*/
 				if ($termtype === TERM_MENTION) {
 					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
 					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);

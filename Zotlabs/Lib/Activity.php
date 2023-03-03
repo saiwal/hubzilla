@@ -570,12 +570,7 @@ class Activity {
 							break;
 
 						case 'Mention':
-							$mention_type = substr($t['name'], 0, 1);
-							if ($mention_type === '!') {
-								$ret[] = ['ttype' => TERM_FORUM, 'url' => $t['href'], 'term' => escape_tags(substr($t['name'], 1))];
-							} else {
-								$ret[] = ['ttype' => TERM_MENTION, 'url' => $t['href'], 'term' => escape_tags((substr($t['name'], 0, 1) === '@') ? substr($t['name'], 1) : $t['name'])];
-							}
+							$ret[] = ['ttype' => TERM_MENTION, 'url' => $t['href'], 'term' => escape_tags((substr($t['name'], 0, 1) === '@') ? substr($t['name'], 1) : $t['name'])];
 							break;
 
 						case 'Bookmark':
@@ -608,10 +603,6 @@ class Activity {
 
 					case TERM_MENTION:
 						$ret[] = ['type' => 'Mention', 'href' => $t['url'], 'name' => '@' . $t['term']];
-						break;
-
-					case TERM_FORUM:
-						$ret[] = ['type' => 'Mention', 'href' => $t['url'], 'name' => '!' . $t['term']];
 						break;
 
 					case TERM_BOOKMARK:
@@ -945,7 +936,7 @@ class Activity {
 				if (!$t['url']) {
 					continue;
 				}
-				if (in_array($t['ttype'], [TERM_MENTION, TERM_FORUM])) {
+				if ($t['ttype'] == TERM_MENTION) {
 					$url    = self::lookup_term_url($t['url']);
 					$list[] = (($url) ? $url : $t['url']);
 				}

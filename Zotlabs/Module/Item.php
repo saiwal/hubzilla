@@ -840,6 +840,7 @@ class Item extends Controller {
 			// Look for tags and linkify them
 
 			$results = linkify_tags($body, ($uid) ? $uid : $profile_uid);
+
 			if ($results) {
 
 				// Set permissions based on tag replacements
