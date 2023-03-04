@@ -1717,3 +1717,20 @@ dl.bb-dl > dd > li {
 .disable-transition {
 	transition: none !important;
 }
+
+.page-loader {
+	z-index: 10000;
+	width: 20vw;
+	height: 3px;
+	position: absolute;
+	animation: pageloader_move 2s ease-out infinite;
+}
+
+@keyframes pageloader_move {
+	0% {
+		transform: translateX(0px);
+	}
+	50% {
+		transform: translateX(80vw);
+	}
+}

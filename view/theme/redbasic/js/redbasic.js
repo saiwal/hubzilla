@@ -26,14 +26,10 @@ $(document).ready(function() {
 	// provide a fake progress bar for pwa standalone mode
 	if (window.matchMedia('(display-mode: standalone)').matches) {
 		$(window).on('beforeunload', function(){
-			$('<div style="position:fixed; z-index:10000; height:2px;" class="bg-primary page-loader"></div>').prependTo('body');
-			let w = 10;
-			setInterval(function () {
-				$('.page-loader').css('width', w + 'vw');
-				if (w < 90) {
-					w = w+2;
-				}
-			}, 10);
+			if ($('.page-loader').length) {
+				return;
+			}
+			$('<div class="bg-primary page-loader"></div>').prependTo('body');
 		});
 	}
 
