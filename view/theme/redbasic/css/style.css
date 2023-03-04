@@ -1722,7 +1722,9 @@ dl.bb-dl > dd > li {
 	z-index: 10000;
 	width: 20vw;
 	height: 3px;
-	position: absolute;
+	position: fixed;
+	top: 0px;
+	left: 0px;
 	animation: pageloader_move 2s ease-out infinite;
 }
 
