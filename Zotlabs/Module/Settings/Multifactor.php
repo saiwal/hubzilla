@@ -18,6 +18,9 @@ class Multifactor {
 		}
 		$enable_mfa = isset($_POST['enable_mfa']) ? (int) $_POST['enable_mfa'] : false;
 		AConfig::Set($account['account_id'], 'system', 'mfa_enabled', $enable_mfa);
+		if ($enable_mfa) {
+			$_SESSION['2FA_VERIFIED'] = true;
+		}
 	}
 
 	public function get() {
@@ -48,10 +51,11 @@ class Multifactor {
 		return replace_macros(get_markup_template('totp_setup.tpl'),
 			[
 				'$form_security_token' => get_form_security_token("settings_mfa"),
-				'$title' => t('Multifactor Settings'),
+				'$title' => t(' Account Multifactor Settings'),
 				'$totp_setup_text' => t('Multi-Factor Authentication Setup'),
-				'$secret_text' => t('This is your generated secret. This may be used in some cases if the QR image cannot be read. Please save it.'),
+				'$secret_text' => t('This is your generated secret. It may be used in some cases if the QR image cannot be read. Please save it.'),
 				'$test_title' => t('Please enter the code from your authenticator'),
+				'$test_title_sub' => t('You will only be able to enable MFA if the test passes'),
 				'$qrcode' => (new QRCode())->render($uri),
 				'$uri' => $uri,
 				'$secret' => ($account['account_external'] ?? ''),
