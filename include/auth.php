@@ -268,7 +268,7 @@ if((isset($_SESSION)) && (x($_SESSION, 'authenticated')) &&
 			$multiFactor = AConfig::Get(App::$account['account_id'], 'system', 'mfa_enabled');
 			if ($multiFactor && empty($_SESSION['2FA_VERIFIED']) && App::$module !== 'totp_check') {
 				$o = new Zotlabs\Module\Totp_check;
-				echo $o->get(true);
+				echo $o->get();
 				killme();
 			}
 

@@ -78,9 +78,6 @@ class Totp_check extends Controller {
 				'$header' => t('Multifactor Verification'),
 				'$id' => $id,
 				'$desc'   => t('Please enter the verification key from your authenticator app'),
-				//'$success' => t('Success!'),
-				//'$fail' => t('Invalid code, please try again.'),
-				//'$maxfails' => t('Too many invalid codes...'),
 				'$submit' => t('Verify'),
 				'$static' => $static
 			]
