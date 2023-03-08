@@ -11,6 +11,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\AConfig;
+use Zotlabs\Module\Totp_check;
 
 require_once('include/api_auth.php');
 require_once('include/security.php');
@@ -267,7 +268,7 @@ if((isset($_SESSION)) && (x($_SESSION, 'authenticated')) &&
 
 			$multiFactor = AConfig::Get(App::$account['account_id'], 'system', 'mfa_enabled');
 			if ($multiFactor && empty($_SESSION['2FA_VERIFIED']) && App::$module !== 'totp_check') {
-				$o = new Zotlabs\Module\Totp_check;
+				$o = new Totp_check;
 				echo $o->get();
 				killme();
 			}

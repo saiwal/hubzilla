@@ -62,8 +62,8 @@ class Totp_check extends Controller {
 
 	public function get() {
 
-		if (!local_channel()) {
-			return;
+		if (!local_channel() || App::$module === 'totp_check') {
+			goaway(z_root());
 		}
 
 		$account = App::get_account();
@@ -78,8 +78,7 @@ class Totp_check extends Controller {
 				'$header' => t('Multifactor Verification'),
 				'$id' => $id,
 				'$desc'   => t('Please enter the verification key from your authenticator app'),
-				'$submit' => t('Verify'),
-				'$static' => $static
+				'$submit' => t('Verify')
 			]
 		);
 	}
