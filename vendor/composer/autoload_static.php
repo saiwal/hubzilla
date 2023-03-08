@@ -29,6 +29,11 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         array (
             'phpseclib\\' => 10,
         ),
+        'c' => 
+        array (
+            'chillerlan\\Settings\\' => 20,
+            'chillerlan\\QRCode\\' => 18,
+        ),
         'Z' => 
         array (
             'Zotlabs\\' => 8,
@@ -55,6 +60,11 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'P' => 
         array (
             'Psr\\Log\\' => 8,
+            'ParagonIE\\ConstantTime\\' => 23,
+        ),
+        'O' => 
+        array (
+            'OTPHP\\' => 6,
         ),
         'M' => 
         array (
@@ -91,6 +101,14 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'phpseclib\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
+        ),
+        'chillerlan\\Settings\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-settings-container/src',
+        ),
+        'chillerlan\\QRCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-qrcode/src',
         ),
         'Zotlabs\\' => 
         array (
@@ -151,6 +169,14 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
+        ),
+        'ParagonIE\\ConstantTime\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+        'OTPHP\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spomky-labs/otphp/src',
         ),
         'Michelf\\' => 
         array (
@@ -590,6 +616,27 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'OAuth2\\TokenType\\Bearer' => __DIR__ . '/..' . '/bshaffer/oauth2-server-php/src/OAuth2/TokenType/Bearer.php',
         'OAuth2\\TokenType\\Mac' => __DIR__ . '/..' . '/bshaffer/oauth2-server-php/src/OAuth2/TokenType/Mac.php',
         'OAuth2\\TokenType\\TokenTypeInterface' => __DIR__ . '/..' . '/bshaffer/oauth2-server-php/src/OAuth2/TokenType/TokenTypeInterface.php',
+        'OTPHP\\Factory' => __DIR__ . '/..' . '/spomky-labs/otphp/src/Factory.php',
+        'OTPHP\\FactoryInterface' => __DIR__ . '/..' . '/spomky-labs/otphp/src/FactoryInterface.php',
+        'OTPHP\\HOTP' => __DIR__ . '/..' . '/spomky-labs/otphp/src/HOTP.php',
+        'OTPHP\\HOTPInterface' => __DIR__ . '/..' . '/spomky-labs/otphp/src/HOTPInterface.php',
+        'OTPHP\\OTP' => __DIR__ . '/..' . '/spomky-labs/otphp/src/OTP.php',
+        'OTPHP\\OTPInterface' => __DIR__ . '/..' . '/spomky-labs/otphp/src/OTPInterface.php',
+        'OTPHP\\ParameterTrait' => __DIR__ . '/..' . '/spomky-labs/otphp/src/ParameterTrait.php',
+        'OTPHP\\TOTP' => __DIR__ . '/..' . '/spomky-labs/otphp/src/TOTP.php',
+        'OTPHP\\TOTPInterface' => __DIR__ . '/..' . '/spomky-labs/otphp/src/TOTPInterface.php',
+        'OTPHP\\Url' => __DIR__ . '/..' . '/spomky-labs/otphp/src/Url.php',
+        'ParagonIE\\ConstantTime\\Base32' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Base32.php',
+        'ParagonIE\\ConstantTime\\Base32Hex' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Base32Hex.php',
+        'ParagonIE\\ConstantTime\\Base64' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Base64.php',
+        'ParagonIE\\ConstantTime\\Base64DotSlash' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Base64DotSlash.php',
+        'ParagonIE\\ConstantTime\\Base64DotSlashOrdered' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Base64DotSlashOrdered.php',
+        'ParagonIE\\ConstantTime\\Base64UrlSafe' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Base64UrlSafe.php',
+        'ParagonIE\\ConstantTime\\Binary' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Binary.php',
+        'ParagonIE\\ConstantTime\\EncoderInterface' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/EncoderInterface.php',
+        'ParagonIE\\ConstantTime\\Encoding' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Encoding.php',
+        'ParagonIE\\ConstantTime\\Hex' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/Hex.php',
+        'ParagonIE\\ConstantTime\\RFC4648' => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src/RFC4648.php',
         'Psr\\Log\\AbstractLogger' => __DIR__ . '/..' . '/psr/log/src/AbstractLogger.php',
         'Psr\\Log\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/log/src/InvalidArgumentException.php',
         'Psr\\Log\\LogLevel' => __DIR__ . '/..' . '/psr/log/src/LogLevel.php',
@@ -1409,6 +1456,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Lib\\Libzotdir' => __DIR__ . '/../..' . '/Zotlabs/Lib/Libzotdir.php',
         'Zotlabs\\Lib\\MarkdownSoap' => __DIR__ . '/../..' . '/Zotlabs/Lib/MarkdownSoap.php',
         'Zotlabs\\Lib\\MessageFilter' => __DIR__ . '/../..' . '/Zotlabs/Lib/MessageFilter.php',
+        'Zotlabs\\Lib\\ObjCache' => __DIR__ . '/../..' . '/Zotlabs/Lib/ObjCache.php',
         'Zotlabs\\Lib\\PConfig' => __DIR__ . '/../..' . '/Zotlabs/Lib/PConfig.php',
         'Zotlabs\\Lib\\Permcat' => __DIR__ . '/../..' . '/Zotlabs/Lib/Permcat.php',
         'Zotlabs\\Lib\\PermissionDescription' => __DIR__ . '/../..' . '/Zotlabs/Lib/PermissionDescription.php',
@@ -1599,6 +1647,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Settings\\Featured' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Featured.php',
         'Zotlabs\\Module\\Settings\\Features' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Features.php',
         'Zotlabs\\Module\\Settings\\Manage' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Manage.php',
+        'Zotlabs\\Module\\Settings\\Multifactor' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Multifactor.php',
         'Zotlabs\\Module\\Settings\\Network' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Network.php',
         'Zotlabs\\Module\\Settings\\Photos' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Photos.php',
         'Zotlabs\\Module\\Settings\\Privacy' => __DIR__ . '/../..' . '/Zotlabs/Module/Settings/Privacy.php',
@@ -1626,6 +1675,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Toggle_safesearch' => __DIR__ . '/../..' . '/Zotlabs/Module/Toggle_safesearch.php',
         'Zotlabs\\Module\\Token' => __DIR__ . '/../..' . '/Zotlabs/Module/Token.php',
         'Zotlabs\\Module\\Tokens' => __DIR__ . '/../..' . '/Zotlabs/Module/Tokens.php',
+        'Zotlabs\\Module\\Totp_check' => __DIR__ . '/../..' . '/Zotlabs/Module/Totp_check.php',
         'Zotlabs\\Module\\Uexport' => __DIR__ . '/../..' . '/Zotlabs/Module/Uexport.php',
         'Zotlabs\\Module\\Update' => __DIR__ . '/../..' . '/Zotlabs/Module/Update.php',
         'Zotlabs\\Module\\Userinfo' => __DIR__ . '/../..' . '/Zotlabs/Module/Userinfo.php',
@@ -1998,6 +2048,31 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Zot6\\IHandler' => __DIR__ . '/../..' . '/Zotlabs/Zot6/IHandler.php',
         'Zotlabs\\Zot6\\Receiver' => __DIR__ . '/../..' . '/Zotlabs/Zot6/Receiver.php',
         'Zotlabs\\Zot6\\Zot6Handler' => __DIR__ . '/../..' . '/Zotlabs/Zot6/Zot6Handler.php',
+        'chillerlan\\QRCode\\Data\\AlphaNum' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/AlphaNum.php',
+        'chillerlan\\QRCode\\Data\\Byte' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/Byte.php',
+        'chillerlan\\QRCode\\Data\\Kanji' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/Kanji.php',
+        'chillerlan\\QRCode\\Data\\MaskPatternTester' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/MaskPatternTester.php',
+        'chillerlan\\QRCode\\Data\\Number' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/Number.php',
+        'chillerlan\\QRCode\\Data\\QRCodeDataException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRCodeDataException.php',
+        'chillerlan\\QRCode\\Data\\QRDataAbstract' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRDataAbstract.php',
+        'chillerlan\\QRCode\\Data\\QRDataInterface' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRDataInterface.php',
+        'chillerlan\\QRCode\\Data\\QRMatrix' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRMatrix.php',
+        'chillerlan\\QRCode\\Helpers\\BitBuffer' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Helpers/BitBuffer.php',
+        'chillerlan\\QRCode\\Helpers\\Polynomial' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Helpers/Polynomial.php',
+        'chillerlan\\QRCode\\Output\\QRCodeOutputException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRCodeOutputException.php',
+        'chillerlan\\QRCode\\Output\\QRFpdf' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRFpdf.php',
+        'chillerlan\\QRCode\\Output\\QRImage' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRImage.php',
+        'chillerlan\\QRCode\\Output\\QRImagick' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRImagick.php',
+        'chillerlan\\QRCode\\Output\\QRMarkup' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRMarkup.php',
+        'chillerlan\\QRCode\\Output\\QROutputAbstract' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QROutputAbstract.php',
+        'chillerlan\\QRCode\\Output\\QROutputInterface' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QROutputInterface.php',
+        'chillerlan\\QRCode\\Output\\QRString' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRString.php',
+        'chillerlan\\QRCode\\QRCode' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QRCode.php',
+        'chillerlan\\QRCode\\QRCodeException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QRCodeException.php',
+        'chillerlan\\QRCode\\QROptions' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QROptions.php',
+        'chillerlan\\QRCode\\QROptionsTrait' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QROptionsTrait.php',
+        'chillerlan\\Settings\\SettingsContainerAbstract' => __DIR__ . '/..' . '/chillerlan/php-settings-container/src/SettingsContainerAbstract.php',
+        'chillerlan\\Settings\\SettingsContainerInterface' => __DIR__ . '/..' . '/chillerlan/php-settings-container/src/SettingsContainerInterface.php',
         'phpseclib\\Crypt\\AES' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/Crypt/AES.php',
         'phpseclib\\Crypt\\Base' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/Crypt/Base.php',
         'phpseclib\\Crypt\\Blowfish' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/Crypt/Blowfish.php',

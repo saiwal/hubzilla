@@ -10,6 +10,7 @@
  */
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\AConfig;
 
 require_once('include/api_auth.php');
 require_once('include/security.php');
@@ -263,8 +264,16 @@ if((isset($_SESSION)) && (x($_SESSION, 'authenticated')) &&
 				App::$session->extend_cookie();
 				$login_refresh = true;
 			}
+
+			$multiFactor = AConfig::Get(App::$account['account_id'], 'system', 'mfa_enabled');
+			if ($multiFactor && empty($_SESSION['2FA_VERIFIED']) && App::$module !== 'totp_check') {
+				$o = new Zotlabs\Module\Totp_check;
+				echo $o->get(true);
+				killme();
+			}
+
 			$ch = (($_SESSION['uid']) ? channelx_by_n($_SESSION['uid']) : null);
-			authenticate_success($r[0], null, $ch, false, false, $login_refresh);
+			authenticate_success($r[0], $ch, false, false, $login_refresh);
 		}
 		else {
 			$_SESSION['account_id'] = 0;
