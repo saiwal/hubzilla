@@ -3,7 +3,7 @@
 # Use a prepared Hubzilla image to optimise pipeline duration
 # image: registry.gitlab.com/dawnbreak/hubzilla/core:php7.3
 
-image: php:8.0
+image: php:8.1
 
 stages:
   - test
@@ -96,8 +96,8 @@ before_script:
       - tests/results/
 
 
-# PHP8.0
-php8.0:
+# PHP8.1
+php8.1:
   <<: *job_definition_php
 
 # PHP8.0 with MySQL 5.7
