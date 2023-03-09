@@ -2855,8 +2855,11 @@ class Activity {
 			$is_child_node = true;
 		}
 
+		if (empty($item['item_fetched'])) {
+			$item['owner_xchan'] = $observer_hash;
+		}
+
 		$allowed = false;
-		$item['owner_xchan'] = $observer_hash;
 
 		// TODO: not implemented
 		// $permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item));
@@ -2932,7 +2935,7 @@ class Activity {
 
 			// The $item['item_fetched'] flag is set in fetch_and_store_parents().
 			// In this case we should check against author permissions because sender is not owner.
-			if (perm_is_allowed($channel['channel_id'], ((isset($item['item_fetched']) && $item['item_fetched']) ? $item['author_xchan'] : $observer_hash), 'send_stream') || $is_sys_channel) {
+			if (perm_is_allowed($channel['channel_id'], ((!empty($item['item_fetched'])) ? $item['author_xchan'] : $observer_hash), 'send_stream') || $is_sys_channel) {
 				$allowed = true;
 			}
 			// TODO: not implemented
@@ -3241,7 +3244,7 @@ class Activity {
 			$item = $hookinfo['item'];
 
 			if ($item) {
-				$item['item_fetched'] = 1;
+				$item['item_fetched'] = true;
 
 				if (intval($channel['channel_system']) && intval($item['item_private'])) {
 					$p = [];
@@ -3355,7 +3358,7 @@ class Activity {
 
 			return false;
 		}
-	*/
+
 	static public function fetch_and_store_replies($channel, $arr) {
 
 		logger('fetching replies');
@@ -3412,6 +3415,7 @@ class Activity {
 		}
 
 	}
+*/
 
 /* this is deprecated and not used anymore
 	static function announce_note($channel, $observer_hash, $act) {
