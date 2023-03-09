@@ -51,10 +51,9 @@ class Multifactor {
 		return replace_macros(get_markup_template('totp_setup.tpl'),
 			[
 				'$form_security_token' => get_form_security_token("settings_mfa"),
-				'$title' => t(' Account Multifactor Settings'),
-				'$totp_setup_text' => t('Multi-Factor Authentication Setup'),
-				'$secret_text' => t('This is your generated secret. It may be used in some cases if the QR image cannot be read. Please save it.'),
-				'$test_title' => t('Please enter the code from your authenticator'),
+				'$title' => t('Account Multi-Factor Authentication'),
+				'$secret_text' => t('This is your generated secret. It may be used in some cases if the QR image cannot be read. Please store it in a safe place.'),
+				'$test_title' => t('Please enter the code from your authenticator app'),
 				'$test_title_sub' => t('You will only be able to enable MFA if the test passes'),
 				'$qrcode' => (new QRCode())->render($uri),
 				'$uri' => $uri,
@@ -63,9 +62,9 @@ class Multifactor {
 				'$test_fail' => t("Incorrect code."),
 				'$enable_mfa' => [
 					'enable_mfa',
-					t('Enable Multi-factor Authentication'),
+					t('Enable Multi-Factor Authentication'),
 					AConfig::Get($account['account_id'], 'system', 'mfa_enabled'),
-					'',
+					t('Logging in will require you to be in possession of your smartphone with an authenticator app'),
 					[t('No'), t('Yes')]
 				],
 				'$submit' => t('Submit'),
