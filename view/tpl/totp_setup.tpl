@@ -28,6 +28,7 @@
 		<div id="mfa-submit-wrapper" class="{{if !$enable_mfa.2}}d-none{{/if}}">
 			<form action="settings/multifactor" method="post">
 				<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
+				{{include file="field_password.tpl" field=$password}}
 				{{include file="field_checkbox.tpl" field=$enable_mfa}}
 				<div class="settings-submit-wrapper" >
 					<button id="otp-enable-submit" type="b" name="submit" class="btn btn-primary">

@@ -12,10 +12,24 @@ use ParagonIE\ConstantTime\Base32;
 
 class Multifactor {
 	public function post() {
+		check_form_security_token_redirectOnErr('/settings/multifactor', 'settings_mfa');
+
 		$account = App::get_account();
 		if (!$account) {
 			return;
 		}
+
+		if (empty($_POST['password'])) {
+			notice(t('Password is required') . EOL);
+			return;
+		}
+
+		$password = trim($_POST['password']);
+		if(!account_verify_password($account['account_email'], $password)) {
+			notice(t('The provided password is not correct') . EOL);
+			return;
+		}
+
 		$enable_mfa = isset($_POST['enable_mfa']) ? (int) $_POST['enable_mfa'] : false;
 		AConfig::Set($account['account_id'], 'system', 'mfa_enabled', $enable_mfa);
 		if ($enable_mfa) {
@@ -67,6 +81,7 @@ class Multifactor {
 					t('Logging in will require you to be in possession of your smartphone with an authenticator app'),
 					[t('No'), t('Yes')]
 				],
+				'$password' => ['password', t('Please enter your password'), '', t('Required')],
 				'$submit' => t('Submit'),
 				'$test' => t('Test')
 			]
