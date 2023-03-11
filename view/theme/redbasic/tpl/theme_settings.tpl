@@ -5,7 +5,7 @@
 {{include file="field_checkbox.tpl" field=$advanced_theming}}
 
 {{if $expert}}
-	<h3>Light</h3>
+	<h3>{{$light}}</h3>
 	{{include file="field_checkbox.tpl" field=$navbar_dark_mode}}
 	{{include file="field_colorinput.tpl" field=$nav_bg}}
 	{{include file="field_colorinput.tpl" field=$bgcolor}}
@@ -13,14 +13,14 @@
 	{{include file="field_colorinput.tpl" field=$link_color}}
 	{{include file="field_colorinput.tpl" field=$link_hover_color}}
 
-	<h3>Dark</h3>
+	<h3>{{$dark}}</h3>
 	{{include file="field_colorinput.tpl" field=$nav_bg_dark}}
 	{{include file="field_colorinput.tpl" field=$bgcolor_dark}}
 	{{include file="field_colorinput.tpl" field=$background_image_dark}}
 	{{include file="field_colorinput.tpl" field=$link_color_dark}}
 	{{include file="field_colorinput.tpl" field=$link_hover_color_dark}}
 
-	<h3>Common</h3>
+	<h3>{{$common}}</h3>
 	{{include file="field_input.tpl" field=$radius}}
 	{{include file="field_input.tpl" field=$top_photo}}
 	{{include file="field_input.tpl" field=$reply_photo}}
