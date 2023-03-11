@@ -1366,7 +1366,7 @@ class Libzot {
 				return false;
 			}
 			$x = self::find_parent($env, $act);
-			if ($x === $act->id || $x === $act->obj['id']) {
+			if ($x === $act->id || (is_array($act->obj) && array_key_exists('id', $act->obj) && $x === $act->obj['id'])) {
 				return true;
 			}
 		}
