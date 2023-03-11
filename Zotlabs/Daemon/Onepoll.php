@@ -172,6 +172,7 @@ class Onepoll {
 							$AS = new ActivityStreams($message);
 							if ($AS->is_valid() && is_array($AS->obj)) {
 								$item = Activity::decode_note($AS);
+								$item['item_fetched'] = true;
 								Activity::store($importer, $contact['abook_xchan'], $AS, $item);
 							}
 						}
