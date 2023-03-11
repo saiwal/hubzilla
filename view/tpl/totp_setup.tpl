@@ -20,9 +20,6 @@
 				<button id="otp-test-submit" type="submit" name="submit" class="btn btn-outline-primary" onclick="totp_test_code(); return false;">
 					{{$test}}
 				</button>
-				<div class="">
-					<strong id="otptest_results"></strong>
-				</div>
 			</form>
 		</div>
 		<div id="mfa-submit-wrapper" class="{{if !$enable_mfa.2}}d-none{{/if}}">
@@ -42,10 +39,9 @@
 
 <script>
 	function totp_clear_code() {
-		let box = document.getElementById("totp_test");
-		box.value = "";
+		let box = document.getElementById('totp_test');
+		box.value = '';
 		box.focus();
-		document.getElementById("otptest_results").innerHTML = "";
 	}
 
 	function totp_test_code() {
@@ -53,11 +49,13 @@
 			'totp_check',
 			{totp_code: document.getElementById('totp_test').value},
 			function(data) {
-				document.getElementById("otptest_results").innerHTML = data['status'] ? '{{$test_pass}}' : '{{$test_fail}}';
 				if (data['status']) {
+					$.jGrowl('{{$test_pass}}', { sticky: false, theme: 'info', life: 10000 });
 					let e = document.getElementById('mfa-submit-wrapper');
 					e.classList.remove('d-none');
+					return;
 				}
+				$.jGrowl('{{$test_fail}}', { sticky: false, theme: 'notice', life: 10000 });
 			}
 		);
 	}

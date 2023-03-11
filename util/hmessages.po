@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 8.2RC1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-11 19:33+0000\n"
+"POT-Creation-Date: 2023-03-11 20:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,7 +113,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Settings/Manage.php:43
 #: ../../Zotlabs/Module/Settings/Channel_home.php:91
 #: ../../Zotlabs/Module/Settings/Calendar.php:42
-#: ../../Zotlabs/Module/Settings/Multifactor.php:70
+#: ../../Zotlabs/Module/Settings/Multifactor.php:85
 #: ../../Zotlabs/Module/Settings/Display.php:186
 #: ../../Zotlabs/Module/Settings/Directory.php:42
 #: ../../Zotlabs/Module/Settings/Editor.php:42
@@ -213,7 +213,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Profiles.php:686 ../../Zotlabs/Module/Profiles.php:694
 #: ../../Zotlabs/Module/Profiles.php:698
 #: ../../Zotlabs/Module/Settings/Channel.php:224
-#: ../../Zotlabs/Module/Settings/Multifactor.php:68
+#: ../../Zotlabs/Module/Settings/Multifactor.php:82
 #: ../../Zotlabs/Module/Settings/Display.php:86
 #: ../../Zotlabs/Module/Settings/Privacy.php:120
 #: ../../Zotlabs/Module/Settings/Privacy.php:121
@@ -290,7 +290,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Profiles.php:686 ../../Zotlabs/Module/Profiles.php:694
 #: ../../Zotlabs/Module/Profiles.php:698
 #: ../../Zotlabs/Module/Settings/Channel.php:224
-#: ../../Zotlabs/Module/Settings/Multifactor.php:68
+#: ../../Zotlabs/Module/Settings/Multifactor.php:82
 #: ../../Zotlabs/Module/Settings/Display.php:86
 #: ../../Zotlabs/Module/Settings/Privacy.php:120
 #: ../../Zotlabs/Module/Settings/Privacy.php:121
@@ -2125,7 +2125,7 @@ msgid ""
 msgstr ""
 
 #: ../../addon/totp_bak/Settings/Totp.php:101
-#: ../../Zotlabs/Module/Settings/Multifactor.php:71
+#: ../../Zotlabs/Module/Settings/Multifactor.php:86
 msgid "Test"
 msgstr ""
 
@@ -2991,6 +2991,7 @@ msgstr ""
 #: ../../Zotlabs/Module/Register.php:498 ../../Zotlabs/Module/Appman.php:208
 #: ../../Zotlabs/Module/Appman.php:209 ../../Zotlabs/Module/Profiles.php:762
 #: ../../Zotlabs/Module/Profiles.php:766
+#: ../../Zotlabs/Module/Settings/Multifactor.php:84
 msgid "Required"
 msgstr ""
 
@@ -13714,40 +13715,50 @@ msgstr ""
 msgid "Calendar Settings"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:54
+#: ../../Zotlabs/Module/Settings/Multifactor.php:23
+msgid "Password is required"
+msgstr ""
+
+#: ../../Zotlabs/Module/Settings/Multifactor.php:29
+msgid "The provided password is not correct"
+msgstr ""
+
+#: ../../Zotlabs/Module/Settings/Multifactor.php:68
 msgid "Account Multi-Factor Authentication"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:55
+#: ../../Zotlabs/Module/Settings/Multifactor.php:69
 msgid ""
 "This is your generated secret. It may be used in some cases if the QR image "
 "cannot be read. Please store it in a safe place."
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:56
+#: ../../Zotlabs/Module/Settings/Multifactor.php:70
 msgid "Please enter the code from your authenticator app"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:57
+#: ../../Zotlabs/Module/Settings/Multifactor.php:71
 msgid "You will only be able to enable MFA if the test passes"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:61
-msgid "That code is correct."
+#: ../../Zotlabs/Module/Settings/Multifactor.php:75
+msgid "Congratulations, the provided code was correct"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:62
-msgid "Incorrect code."
+#: ../../Zotlabs/Module/Settings/Multifactor.php:76
+msgid "Incorrect code"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:65
+#: ../../Zotlabs/Module/Settings/Multifactor.php:79
 msgid "Enable Multi-Factor Authentication"
 msgstr ""
 
-#: ../../Zotlabs/Module/Settings/Multifactor.php:67
-msgid ""
-"Logging in will require you to be in possession of your smartphone with an "
-"authenticator app"
+#: ../../Zotlabs/Module/Settings/Multifactor.php:81
+msgid "Logging in will require you to be in possession of your smartphone"
+msgstr ""
+
+#: ../../Zotlabs/Module/Settings/Multifactor.php:84
+msgid "Your account password"
 msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Display.php:125

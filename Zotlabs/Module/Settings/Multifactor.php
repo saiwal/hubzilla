@@ -72,16 +72,16 @@ class Multifactor {
 				'$qrcode' => (new QRCode())->render($uri),
 				'$uri' => $uri,
 				'$secret' => ($account['account_external'] ?? ''),
-				'$test_pass' => t("That code is correct."),
-				'$test_fail' => t("Incorrect code."),
+				'$test_pass' => t("Congratulations, the provided code was correct"),
+				'$test_fail' => t("Incorrect code"),
 				'$enable_mfa' => [
 					'enable_mfa',
 					t('Enable Multi-Factor Authentication'),
 					AConfig::Get($account['account_id'], 'system', 'mfa_enabled'),
-					t('Logging in will require you to be in possession of your smartphone with an authenticator app'),
+					t('Logging in will require you to be in possession of your smartphone'),
 					[t('No'), t('Yes')]
 				],
-				'$password' => ['password', t('Please enter your password'), '', t('Required')],
+				'$password' => ['password', t('Your account password'), '', t('Required')],
 				'$submit' => t('Submit'),
 				'$test' => t('Test')
 			]
