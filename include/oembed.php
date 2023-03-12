@@ -147,6 +147,7 @@ function oembed_fetch_url($embedurl){
 		$txt = Cache::get('[' . App::$videowidth . '] ' . $furl);
 	}
 
+
 	if(strpos(strtolower($embedurl),'.pdf') !== false && get_config('system','inline_pdf')) {
 		$action = 'allow';
 		$j = [
@@ -158,7 +159,6 @@ function oembed_fetch_url($embedurl){
 		// set $txt to something so that we don't attempt to fetch what could be a lengthy pdf.
 		$txt = EMPTY_STR;
 	}
-
 	if(is_null($txt)) {
 
 		$txt = EMPTY_STR;
@@ -177,12 +177,17 @@ function oembed_fetch_url($embedurl){
 
 			$headers = get_headers($furl, true);
 
-			if (isset($headers['Content-Length']) && $headers['Content-Length'] > $max_oembed_size) {
-				$action = 'block';
+			if (isset($headers['Content-Length'])) {
+				$content_length = ((is_array($headers['Content-Length'])) ? array_key_last($headers['Content-Length']) : $headers['Content-Length']);
+
+				if ($content_length > $max_oembed_size) {
+					$action = 'block';
+				}
 			}
 		}
 
 		if ($action !== 'block') {
+
 			// try oembed autodiscovery
 			$redirects = 0;
 			$result = z_fetch_url($furl, false, $redirects,
