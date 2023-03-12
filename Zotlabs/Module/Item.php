@@ -818,7 +818,7 @@ class Item extends Controller {
 
 		$is_group = get_pconfig($profile_uid, 'system', 'group_actor');
 
-		if (($is_group) && ($walltowall) && (!$walltowall_comment)) {
+		if ($is_group && $walltowall && !$walltowall_comment && !$webpage) {
 			$groupww           = true;
 			$str_contact_allow = $owner_xchan['xchan_hash'];
 			$str_group_allow   = '';
