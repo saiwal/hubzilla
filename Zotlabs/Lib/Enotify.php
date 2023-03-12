@@ -828,7 +828,7 @@ class Enotify {
 				: (($item['obj_type'] === 'Answer') ? sprintf( t('voted on %s\'s poll'), '[bdi]' . $item['owner']['xchan_name'] . '[/bdi]') : sprintf( t('commented on %s\'s post'), '[bdi]' . $item['owner']['xchan_name'] . '[/bdi]'))
 			);
 
-			if($item['verb'] === ACTIVITY_SHARE) {
+			if($item['verb'] === ACTIVITY_SHARE && empty($item['owner']['xchan_pubforum'])) {
 				$itemem_text = sprintf( t('repeated %s\'s post'), '[bdi]' . $item['author']['xchan_name'] . '[/bdi]');
 			}
 
@@ -860,7 +860,7 @@ class Enotify {
 
 		// convert this logic into a json array just like the system notifications
 
-		$who = (($item['verb'] === ACTIVITY_SHARE) ? 'owner' : 'author');
+		$who = (($item['verb'] === ACTIVITY_SHARE && empty($item['owner']['xchan_pubforum'])) ? 'owner' : 'author');
 		$body = html2plain(bbcode($item['body'], ['drop_media' => true, 'tryoembed' => false]), 75, true);
 		if ($body) {
 			$body = htmlentities($body, ENT_QUOTES, 'UTF-8', false);
