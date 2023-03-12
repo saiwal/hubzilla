@@ -1389,8 +1389,8 @@ function event_store_item($arr, $event) {
 //              'summary'    => bbcode($arr['summary']),
 				// RFC3339 Section 4.3
 				'startTime'  => (($arr['adjust']) ? datetime_convert('UTC', 'UTC', $arr['dtstart'], ATOM_TIME) : datetime_convert('UTC', 'UTC', $arr['dtstart'], 'Y-m-d\\TH:i:s-00:00')),
-				'content'    => bbcode($arr['description']),
-				'location'   => [ 'type' => 'Place', 'name' => bbcode($arr['location']) ],
+				'content'    => $arr['description'],
+				'location'   => [ 'type' => 'Place', 'name' => $arr['location'] ],
 				'source'     => [ 'content' => format_event_bbcode($arr), 'mediaType' => 'text/bbcode' ],
 				'url'        => [ [ 'mediaType' => 'text/calendar', 'href' => z_root() . '/events/ical/' . $event['event_hash'] ] ],
 				'actor'      => Activity::encode_person($z, false),

@@ -1795,7 +1795,6 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	}
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : []);
-
 	$prep_arr = [
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,
