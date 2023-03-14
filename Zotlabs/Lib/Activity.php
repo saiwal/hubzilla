@@ -700,6 +700,13 @@ class Activity {
 				if (array_key_exists('name', $att) && $att['name']) {
 					$entry['name'] = html2plain(purify_html($att['name']), 256);
 				}
+				// Friendica attachments don't match the URL in the body.
+				// This makes it more difficult to detect image duplication in bb_attach()
+				// which adds images to plaintext microblog software. For these we need to examine both the
+				// url and image properties.
+				if (isset($att['image']) && is_string($att['image']) && isset($att['url']) && $att['image'] !== $att['url']) {
+					$entry['image'] = $att['image'];
+				}
 				if ($entry) {
 					$ret[] = $entry;
 				}
@@ -2601,13 +2608,13 @@ class Activity {
 					if ($mps) {
 						usort($mps,[ '\Zotlabs\Lib\Activity', 'vid_sort' ]);
 						foreach ($mps as $m) {
-							if (intval($m['height']) < 500 && Activity::media_not_in_body($m['href'],$s['body'])) {
+							if (intval($m['height']) < 500 && self::media_not_in_body($m['href'],$s['body'])) {
 								$s['body'] = $tag . $m['href'] . '[/video]' . "\r\n" . $s['body'];
 								break;
 							}
 						}
 					}
-					elseif (is_string($act->obj['url']) && Activity::media_not_in_body($act->obj['url'],$s['body'])) {
+					elseif (is_string($act->obj['url']) && self::media_not_in_body($act->obj['url'],$s['body'])) {
 						$s['body'] = $tag . $act->obj['url'] . '[/video]' . "\r\n" . $s['body'];
 					}
 
@@ -3691,7 +3698,21 @@ class Activity {
 				if ($a['type'] === 'image/svg+xml' && strpos($item['body'], '[/svg]')) {
 					continue;
 				}
-				if (self::media_not_in_body($a['href'], $item['body'])) {
+				// Friendica attachment weirdness
+				// Check both the attachment image and href since they can be different and the one in the href is a different link with different resolution.
+				// Otheriwse you'll get duplicated images
+				if (isset($a['image'])) {
+					if (self::media_not_in_body($a['image'], $item['body']) && self::media_not_in_body($a['href'], $item['body'])) {
+						if (isset($a['name']) && $a['name']) {
+							$alt = htmlspecialchars($a['name'], ENT_QUOTES);
+							$item['body'] = '[img=' . $a['href']  . ']' . $alt . '[/img]' . "\r\n" . $item['body'];
+						} else {
+							$item['body'] = '[img]' . $a['href'] . '[/img]' . "\r\n" . $item['body'];
+						}
+					}
+					continue;
+				}
+				elseif (self::media_not_in_body($a['href'], $item['body'])) {
 					if (isset($a['name']) && $a['name']) {
 						$alt = htmlspecialchars($a['name'], ENT_QUOTES);
 						$item['body'] = '[img=' . $a['href']  . ']' . $alt . '[/img]' . "\r\n" . $item['body'];
