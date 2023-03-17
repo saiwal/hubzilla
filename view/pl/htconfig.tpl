@@ -10,6 +10,12 @@ $db_pass = '{{$dbpass}}';
 $db_data = '{{$dbdata}}';
 $db_type = '{{$dbtype}}'; // liczba całkowita. 0 lub nieustawienie dla mysql, 1 dla postgres
 
+// Set this to 1 if your DB backend supports skip locked.
+// This is known to be the case for
+// postgresql > 9.5, mysql > 8.0 and mariadb > 10.6
+App::$config['system']['db_skip_locked_supported'] = 0;
+
+
 /*
  * Uwaga: wiele z poniższych ustawień będzie dostępnych w panelu administracyjnym
  * po pomyślnej instalacji portalu. Po ustawieniu w panelu administracyjnym, opcje

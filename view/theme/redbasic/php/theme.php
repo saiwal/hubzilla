@@ -13,7 +13,6 @@
  *   * Background_Color: rgb(254,254,254)
  */
 
-use App;
 
 function redbasic_init(&$a) {
 
