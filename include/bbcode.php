@@ -295,9 +295,11 @@ function bb_parse_b64_crypt($match) {
 	if(empty($match[2]))
 		return;
 
-	$r .= '----- ENCRYPTED CONTENT -----' . PHP_EOL;
-	$r .= $match[2] . PHP_EOL;
+	$r .= '<code>';
+	$r .= '----- ENCRYPTED CONTENT -----' . '<br>';
+	$r .= $match[2] . '<br>';
 	$r .= '----- END ENCRYPTED CONTENT -----';
+	$r .= '</code>';
 
 	return $r;
 
