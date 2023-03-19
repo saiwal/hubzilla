@@ -72,9 +72,8 @@
 						</div>
 					</div>
 					<div class="wall-item-author">
-						{{if $item.previewing}}<span class="preview-indicator"><i class="fa fa-eye" title="{{$item.preview_lbl}}"></i></span>{{/if}}
 						{{if $item.lock}}
-						<div class="wall-item-lock dropdown">
+						<div class="float-start dropdown wall-item-lock">
 							<i class="fa {{if $item.locktype == 2}}fa-envelope-o{{else if $item.locktype == 1}}fa-lock{{else}}fa-unlock{{/if}} lockview{{if $item.privacy_warning}} text-danger{{/if}}" data-bs-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
 							<div id="panel-{{$item.id}}" class="dropdown-menu"></div>
 						</div>
