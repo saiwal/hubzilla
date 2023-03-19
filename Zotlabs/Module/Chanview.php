@@ -16,17 +16,17 @@ class Chanview extends \Zotlabs\Web\Controller {
 
 		$r = null;
 
-		if(isset($_REQUEST['hash']) && $_REQUEST['hash']) {
+		if(!empty($_REQUEST['hash'])) {
 			$r = q("select * from xchan where xchan_hash = '%s' and xchan_deleted = 0",
 				dbesc($_REQUEST['hash'])
 			);
 		}
-		if(isset($_REQUEST['address']) && $_REQUEST['address']) {
+		if(!empty($_REQUEST['address'])) {
 			$r = q("select * from xchan where xchan_addr = '%s' and xchan_deleted = 0",
 				dbesc(punify($_REQUEST['address']))
 			);
 		}
-		elseif(local_channel() && isset($_REQUEST['cid']) && $_REQUEST['cid']) {
+		elseif(local_channel() && !empty($_REQUEST['cid'])) {
 			$r = q("SELECT abook.*, xchan.*
 				FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_id = %d and xchan_deleted = 0",
@@ -34,8 +34,7 @@ class Chanview extends \Zotlabs\Web\Controller {
 				intval($_REQUEST['cid'])
 			);
 		}
-		elseif(isset($_REQUEST['url']) && $_REQUEST['url']) {
-
+		elseif(!empty($_REQUEST['url'])) {
 			// if somebody re-installed they will have more than one xchan, use the most recent name date as this is
 			// the most useful consistently ascending table item we have.
 
@@ -56,7 +55,7 @@ class Chanview extends \Zotlabs\Web\Controller {
 		if(! App::$poi) {
 			logger('mod_chanview: fallback');
 
-			if(isset($_REQUEST['address']) && $_REQUEST['address']) {
+			if(!empty($_REQUEST['address'])) {
 				$href = Webfinger::zot_url(punify($_REQUEST['address']));
 				if($href) {
 					$_REQUEST['url'] = $href;
@@ -65,7 +64,7 @@ class Chanview extends \Zotlabs\Web\Controller {
 
 			$r = null;
 
-			if(isset($_REQUEST['url']) && $_REQUEST['url']) {
+			if(!empty($_REQUEST['url'])) {
 
 				$zf = Zotfinger::exec($_REQUEST['url']);
 
@@ -79,6 +78,7 @@ class Chanview extends \Zotlabs\Web\Controller {
 					}
 				}
 				if(! $r) {
+
 					if(discover_by_webbie($_REQUEST['url'])) {
 						$r = q("select * from xchan where xchan_url = '%s' and xchan_deleted = 0",
 							dbesc($_REQUEST['url'])
