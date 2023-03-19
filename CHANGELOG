@@ -19,7 +19,8 @@ Hubzilla 8.2 (2023-03-??)
 	- Updated smarty library
 	- Updated forkawesome library
 	- Updated fullcalendar library
-	- Implement native dark mode and remove dark schema
+	- Implement native dark/light mode in favour of dark/light schema
+	- Updated bootstrap library
 
 	Bugfixes
 	- Fix channel calendar location html not interpreted - issue #1728
