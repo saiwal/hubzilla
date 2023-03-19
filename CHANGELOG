@@ -1,4 +1,4 @@
-Hubzilla 8.2 (2023-03-??)
+Hubzilla 8.2 (2023-03-19)
 	- Remove redundant untranslated htconfig templates
 	- Implement workaround for friendica image/attachment construct
 	- Implement notification exception for forum posts repeated by group actors
