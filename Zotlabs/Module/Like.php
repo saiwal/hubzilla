@@ -546,6 +546,7 @@ class Like extends Controller {
 		$arr['deny_cid']     = $deny_cid;
 		$arr['deny_gid']     = $deny_gid;
 		$arr['item_private'] = $private;
+		$arr['created']      = datetime_convert();
 
 		call_hooks('post_local', $arr);
 

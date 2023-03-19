@@ -1,15 +1,24 @@
 /*!
- *  Fork Awesome 1.1.0, originaly by Dave Gandy - http://forkawesome.github.io/Fork-Awesome/
- *  License - http://forkawesome.github.io/Fork-Awesome//license (Font: SIL OFL 1.1, CSS: MIT License)
+Fork Awesome 1.2.0
+License - https://forkaweso.me/Fork-Awesome/license
+
+Copyright 2018 Dave Gandy & Fork Awesome
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'ForkAwesome';
-  src: url('../fonts/forkawesome-webfont.eot?v=1.1.0');
-  src: url('../fonts/forkawesome-webfont.eot?#iefix&v=1.1.0') format('embedded-opentype'), url('../fonts/forkawesome-webfont.woff2?v=1.1.0') format('woff2'), url('../fonts/forkawesome-webfont.woff?v=1.1.0') format('woff'), url('../fonts/forkawesome-webfont.ttf?v=1.1.0') format('truetype'), url('../fonts/forkawesome-webfont.svg?v=1.1.0#forkawesomeregular') format('svg');
+  src: url('../fonts/forkawesome-webfont.eot?v=1.2.0');
+  src: url('../fonts/forkawesome-webfont.eot?#iefix&v=1.2.0') format('embedded-opentype'), url('../fonts/forkawesome-webfont.woff2?v=1.2.0') format('woff2'), url('../fonts/forkawesome-webfont.woff?v=1.2.0') format('woff'), url('../fonts/forkawesome-webfont.ttf?v=1.2.0') format('truetype'), url('../fonts/forkawesome-webfont.svg?v=1.2.0#forkawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
+  font-display: block;
 }
 .fa {
   display: inline-block;
@@ -274,6 +283,7 @@
 .fa-repeat:before {
   content: "\f01e";
 }
+.fa-sync:before,
 .fa-refresh:before {
   content: "\f021";
 }
@@ -359,6 +369,7 @@
 .fa-indent:before {
   content: "\f03c";
 }
+.fa-video:before,
 .fa-video-camera:before {
   content: "\f03d";
 }
@@ -650,7 +661,7 @@
 .fa-bullhorn:before {
   content: "\f0a1";
 }
-.fa-bell:before {
+.fa-bell-o:before {
   content: "\f0f3";
 }
 .fa-certificate:before {
@@ -772,6 +783,7 @@
 .fa-google-plus-square:before {
   content: "\f0d4";
 }
+.fa-google-plus-g:before,
 .fa-google-plus:before {
   content: "\f0d5";
 }
@@ -864,12 +876,13 @@
 .fa-suitcase:before {
   content: "\f0f2";
 }
-.fa-bell-o:before {
+.fa-bell:before {
   content: "\f0a2";
 }
 .fa-coffee:before {
   content: "\f0f4";
 }
+.fa-utensils:before,
 .fa-cutlery:before {
   content: "\f0f5";
 }
@@ -1141,6 +1154,7 @@
 .fa-eur:before {
   content: "\f153";
 }
+.fa-pound:before,
 .fa-gbp:before {
   content: "\f154";
 }
@@ -1177,21 +1191,27 @@
 .fa-file-text:before {
   content: "\f15c";
 }
+.fa-sort-alpha-down:before,
 .fa-sort-alpha-asc:before {
   content: "\f15d";
 }
+.fa-sort-alpha-up:before,
 .fa-sort-alpha-desc:before {
   content: "\f15e";
 }
+.fa-sort-amount-down:before,
 .fa-sort-amount-asc:before {
   content: "\f160";
 }
+.fa-sort-amount-up:before,
 .fa-sort-amount-desc:before {
   content: "\f161";
 }
+.fa-sort-numeric-down:before,
 .fa-sort-numeric-asc:before {
   content: "\f162";
 }
+.fa-sort-numeric-up:before,
 .fa-sort-numeric-desc:before {
   content: "\f163";
 }
@@ -1411,6 +1431,7 @@
 .fa-paw:before {
   content: "\f1b0";
 }
+.fa-utensil-spoon:before,
 .fa-spoon:before {
   content: "\f1b1";
 }
@@ -1553,6 +1574,7 @@
 .fa-circle-thin:before {
   content: "\f1db";
 }
+.fa-heading:before,
 .fa-header:before {
   content: "\f1dc";
 }
@@ -1683,6 +1705,7 @@
 .fa-angellist:before {
   content: "\f209";
 }
+.fa-closed-captioning:before,
 .fa-cc:before {
   content: "\f20a";
 }
@@ -1727,6 +1750,7 @@
 .fa-cart-arrow-down:before {
   content: "\f218";
 }
+.fa-gem:before,
 .fa-diamond:before {
   content: "\f219";
 }
@@ -2021,6 +2045,7 @@
 .fa-houzz:before {
   content: "\f27c";
 }
+.fa-vimeo-v:before,
 .fa-vimeo:before {
   content: "\f27d";
 }
@@ -2117,6 +2142,7 @@
 .fa-audio-description:before {
   content: "\f29e";
 }
+.fa-phone-volume:before,
 .fa-volume-control-phone:before {
   content: "\f2a0";
 }
@@ -2448,6 +2474,243 @@
 }
 .fa-joplin:before {
   content: "\f310";
+}
+.fa-syncthing:before {
+  content: "\f311";
+}
+.fa-inkscape:before {
+  content: "\f312";
+}
+.fa-matrix-org:before {
+  content: "\f313";
+}
+.fa-pixelfed:before {
+  content: "\f314";
+}
+.fa-bootstrap:before {
+  content: "\f315";
+}
+.fa-dev-to:before {
+  content: "\f316";
+}
+.fa-hashnode:before {
+  content: "\f317";
+}
+.fa-jirafeau:before {
+  content: "\f318";
+}
+.fa-emby:before {
+  content: "\f319";
+}
+.fa-wikidata:before {
+  content: "\f31a";
+}
+.fa-gimp:before {
+  content: "\f31b";
+}
+.fa-c:before {
+  content: "\f31c";
+}
+.fa-digitalocean:before {
+  content: "\f31d";
+}
+.fa-att:before {
+  content: "\f31e";
+}
+.fa-gitea:before {
+  content: "\f31f";
+}
+.fa-file-epub:before {
+  content: "\f321";
+}
+.fa-python:before {
+  content: "\f322";
+}
+.fa-archlinux:before {
+  content: "\f323";
+}
+.fa-pleroma:before {
+  content: "\f324";
+}
+.fa-unsplash:before {
+  content: "\f325";
+}
+.fa-hackster:before {
+  content: "\f326";
+}
+.fa-spell-check:before {
+  content: "\f327";
+}
+.fa-moon:before {
+  content: "\f328";
+}
+.fa-sun:before {
+  content: "\f329";
+}
+.fa-f-droid:before {
+  content: "\f32a";
+}
+.fa-biometric:before {
+  content: "\f32b";
+}
+.fa-wire:before {
+  content: "\f32c";
+}
+.fa-tor-onion:before {
+  content: "\f32e";
+}
+.fa-volume-mute:before {
+  content: "\f32f";
+}
+.fa-bell-ringing:before {
+  content: "\f32d";
+}
+.fa-bell-ringing-o:before {
+  content: "\f330";
+}
+.fa-hal:before {
+  content: "\f333";
+}
+.fa-jupyter:before {
+  content: "\f335";
+}
+.fa-julia:before {
+  content: "\f334";
+}
+.fa-classicpress:before {
+  content: "\f331";
+}
+.fa-classicpress-circle:before {
+  content: "\f332";
+}
+.fa-open-collective:before {
+  content: "\f336";
+}
+.fa-orcid:before {
+  content: "\f337";
+}
+.fa-researchgate:before {
+  content: "\f338";
+}
+.fa-funkwhale:before {
+  content: "\f339";
+}
+.fa-askfm:before {
+  content: "\f33a";
+}
+.fa-blockstack:before {
+  content: "\f33b";
+}
+.fa-boardgamegeek:before {
+  content: "\f33c";
+}
+.fa-bunny:before {
+  content: "\f35f";
+}
+.fa-buymeacoffee:before {
+  content: "\f33d";
+}
+.fa-cc-by:before {
+  content: "\f33e";
+}
+.fa-creative-commons-alt:before,
+.fa-cc-cc:before {
+  content: "\f33f";
+}
+.fa-cc-nc-eu:before {
+  content: "\f341";
+}
+.fa-cc-nc-jp:before {
+  content: "\f342";
+}
+.fa-cc-nc:before {
+  content: "\f340";
+}
+.fa-cc-nd:before {
+  content: "\f343";
+}
+.fa-cc-pd:before {
+  content: "\f344";
+}
+.fa-cc-remix:before {
+  content: "\f345";
+}
+.fa-cc-sa:before {
+  content: "\f346";
+}
+.fa-cc-share:before {
+  content: "\f347";
+}
+.fa-cc-zero:before {
+  content: "\f348";
+}
+.fa-conway-hacker:before,
+.fa-conway-glider:before {
+  content: "\f349";
+}
+.fa-csharp:before {
+  content: "\f34a";
+}
+.fa-email-bulk:before {
+  content: "\f34b";
+}
+.fa-email-bulk-o:before {
+  content: "\f34c";
+}
+.fa-gnu:before {
+  content: "\f34d";
+}
+.fa-google-play:before {
+  content: "\f34e";
+}
+.fa-heroku:before {
+  content: "\f34f";
+}
+.fa-hassio:before,
+.fa-home-assistant:before {
+  content: "\f350";
+}
+.fa-java:before {
+  content: "\f351";
+}
+.fa-mariadb:before {
+  content: "\f352";
+}
+.fa-markdown:before {
+  content: "\f353";
+}
+.fa-mysql:before {
+  content: "\f354";
+}
+.fa-nordcast:before {
+  content: "\f355";
+}
+.fa-plume:before {
+  content: "\f356";
+}
+.fa-postgresql:before {
+  content: "\f357";
+}
+.fa-sass-alt:before {
+  content: "\f359";
+}
+.fa-sass:before {
+  content: "\f358";
+}
+.fa-skate:before {
+  content: "\f35a";
+}
+.fa-sketchfab:before {
+  content: "\f35b";
+}
+.fa-tex:before {
+  content: "\f35c";
+}
+.fa-textpattern:before {
+  content: "\f35d";
+}
+.fa-unity:before {
+  content: "\f35e";
 }
 .sr-only {
   position: absolute;

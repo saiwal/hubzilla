@@ -65,16 +65,51 @@ class Queue {
 		);
 	}
 
-
-	static function remove($id,$channel_id = 0) {
-		logger('queue: remove queue item ' . $id,LOGGER_DEBUG);
+	public static function remove($id, $channel_id = 0) {
+		logger('queue: remove queue item ' . $id, LOGGER_DEBUG);
 		$sql_extra = (($channel_id) ? " and outq_channel = " . intval($channel_id) . " " : '');
 
-		q("DELETE FROM outq WHERE outq_hash = '%s' $sql_extra",
+		// figure out what endpoint it is going to.
+		$record = q("select outq_posturl from outq where outq_hash = '%s' $sql_extra",
 			dbesc($id)
 		);
-	}
 
+		if ($record) {
+			q("DELETE FROM outq WHERE outq_hash = '%s' $sql_extra",
+				dbesc($id)
+			);
+
+			// If there's anything remaining in the queue for this site, move one of them to the next active
+			// queue run by setting outq_scheduled back to the present. We may be attempting to deliver it
+			// as a 'piled_up' delivery, but this ensures the site has an active queue entry as long as queued
+			// entries still exist for it. This fixes an issue where one immediate delivery left everything
+			// else for that site undeliverable since all the other entries had been pushed far into the future.
+
+			$x = null;
+			$sql_quirks = ((get_config('system', 'db_skip_locked_supported')) ? 'SKIP LOCKED' : 'NOWAIT');
+
+			q("START TRANSACTION");
+
+			$r = q("SELECT outq_hash FROM outq WHERE outq_posturl = '%s' LIMIT 1 FOR UPDATE $sql_quirks",
+				dbesc($record[0]['outq_posturl'])
+			);
+
+			if ($r) {
+				$x = q("UPDATE outq SET outq_scheduled = '%s' WHERE outq_hash = '%s'",
+					dbesc(datetime_convert()),
+					dbesc($r[0]['outq_hash'])
+				);
+			}
+
+			if ($x) {
+				q("COMMIT");
+			}
+			else {
+				q("ROLLBACK");
+			}
+
+		}
+	}
 
 	static function remove_by_posturl($posturl) {
 		logger('queue: remove queue posturl ' . $posturl,LOGGER_DEBUG);
@@ -83,8 +118,6 @@ class Queue {
 			dbesc($posturl)
 		);
 	}
-
-
 
 	static function set_delivered($id,$channel = 0) {
 		logger('queue: set delivered ' . $id,LOGGER_DEBUG);
@@ -152,15 +185,17 @@ class Queue {
 			$y = q("select site_update, site_dead from site where site_url = '%s' ",
 				dbesc($base)
 			);
-			if($y) {
-				if(intval($y[0]['site_dead'])) {
+
+			if ($y) {
+				// Don't bother delivering if the site is dead.
+				// And if we haven't heard from the site in over a month - let them through but 3 strikes you're out.
+				if (intval($y[0]['site_dead']) || ($y[0]['site_update'] < datetime_convert('UTC', 'UTC', 'now - 1 month') && $outq['outq_priority'] > 20)) {
+					q("update dreport set dreport_result = '%s' where dreport_queue = '%s'",
+						dbesc('site dead'),
+						dbesc($outq['outq_hash'])
+					);
 					self::remove_by_posturl($outq['outq_posturl']);
 					logger('dead site ignored ' . $base);
-					return;
-				}
-				if($y[0]['site_update'] < datetime_convert('UTC','UTC','now - 1 month')) {
-					self::update($outq['outq_hash'], 10);
-					logger('immediate delivery deferred for site ' . $base);
 					return;
 				}
 			}

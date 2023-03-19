@@ -17,6 +17,7 @@
 
 			<div class="settings-submit-wrapper" >
 				<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
+				<a href="/settings/multifactor" class="btn btn-outline-success">{{$mfa}}</a>
 			</div>
 			{{$account_settings}}
 		</div>

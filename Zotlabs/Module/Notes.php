@@ -39,7 +39,7 @@ class Notes extends Controller {
 			}
 			set_pconfig(local_channel(),'notes','text',$body);
 
-			$ret['html'] = bbcode($body);
+			$ret['html'] = bbcode($body, ['tryoembed' => false]);
 			$ret['success'] = true;
 
 		}

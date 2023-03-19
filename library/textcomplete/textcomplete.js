@@ -1863,7 +1863,7 @@ var DropdownItem = function () {
     value: function destroy() {
       this.el.removeEventListener("mousedown", this.onClick, false);
       this.el.removeEventListener("mouseover", this.onMouseover, false);
-      this.el.removeEventListener("touchstart", this.onClick, false);
+      //this.el.removeEventListener("touchstart", this.onClick, false);
       if (this.active) {
         this.dropdown.activeItem = null;
       }
@@ -1954,7 +1954,7 @@ var DropdownItem = function () {
       this._el = li;
       li.addEventListener("mousedown", this.onClick);
       li.addEventListener("mouseover", this.onMouseover);
-      li.addEventListener("touchstart", this.onClick);
+      //li.addEventListener("touchstart", this.onClick);
       return li;
     }
   }, {

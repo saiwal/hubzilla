@@ -7,15 +7,14 @@
   }
 }
 
-/* nav overrides */
-
-nav .badge {
-	position: absolute;
-	font-size: 0.75rem;
+* {
+	transition: none !important;
 }
 
-nav .dropdown-menu {
-	min-width: 16rem;
+/* nav overrides */
+
+[data-bs-theme=dark] .navbar-toggler {
+	--bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), 1);
 }
 
 .nav-item.nav-item-hack {
@@ -41,10 +40,6 @@ nav .dropdown-menu {
 	overflow: auto;
 }
 
-
-.navbar-dark .navbar-toggler {
-	color: rgba(255,255,255,1);
-}
 
 /* offcanvas */
 .offcanvas,

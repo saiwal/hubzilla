@@ -357,10 +357,10 @@
 
 	function sse_handleNotificationsItems(notifyType, data, replace, followup) {
 
-		var notifications_tpl = ((notifyType == 'forums') ? decodeURIComponent($("#nav-notifications-forums-template[rel=template]").html().replace('data-src', 'src')) : decodeURIComponent($("#nav-notifications-template[rel=template]").html().replace('data-src', 'src')));
-		var notify_menu = $("#nav-" + notifyType + "-menu");
-		var notify_loading = $("#nav-" + notifyType + "-loading");
-		var notify_count = $("." + notifyType + "-update");
+		let notifications_tpl = ((notifyType == 'forums') ? decodeURIComponent($("#nav-notifications-forums-template[rel=template]").html().replace('data-src', 'src')) : decodeURIComponent($("#nav-notifications-template[rel=template]").html().replace('data-src', 'src')));
+		let notify_menu = $("#nav-" + notifyType + "-menu");
+		let notify_loading = $("#nav-" + notifyType + "-loading");
+		let notify_count = $("." + notifyType + "-update");
 
 		if(replace && !followup) {
 			notify_menu.html('');
@@ -370,14 +370,17 @@
 		$(data).each(function() {
 
 			// do not add a notification if it is already present
-			if($('#nav-' + notifyType + '-menu .notification[data-b64mid=\'' + this.b64mid + '\']').length)
-				return true;
+
+			// TODO: this is questionable because at least in 'notify' notification type an item can have more than one notifications
+			// e.g. one for the mention and one for the item itself.
+			//if($('#nav-' + notifyType + '-menu .notification[data-b64mid=\'' + this.b64mid + '\']').length)
+			//	return true;
 
 			if(!replace && !followup && (this.thread_top && notifyType === 'network')) {
 				$(document).trigger('hz:handleNetworkNotificationsItems', this);
 			}
 
-			html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.addr,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top,this.unseen,this.private_forum, encodeURIComponent(this.mids), this.body);
+			let html = notifications_tpl.format(this.notify_link,this.photo,this.name,this.addr,this.message,this.when,this.hclass,this.b64mid,this.notify_id,this.thread_top,this.unseen,this.private_forum, encodeURIComponent(this.mids), this.body);
 			notify_menu.append(html);
 		});
 
@@ -395,13 +398,13 @@
 			$('#nav-' + notifyType + '-menu [data-thread_top=false]').addClass('tt-filter-active');
 
 		if($('#cn-' + notifyType + '-input').length) {
-			var filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
+			let filter = $('#cn-' + notifyType + '-input').val().toString().toLowerCase();
 			if(filter) {
 				filter = filter.indexOf('%') == 0 ? filter.substring(1) : filter;
 
 				$('#nav-' + notifyType + '-menu .notification').each(function(i, el) {
-					var cn = $(el).data('contact_name').toString().toLowerCase();
-					var ca = $(el).data('contact_addr').toString().toLowerCase();
+					let cn = $(el).data('contact_name').toString().toLowerCase();
+					let ca = $(el).data('contact_addr').toString().toLowerCase();
 					if(cn.indexOf(filter) === -1 && ca.indexOf(filter) === -1)
 						$(el).addClass('cn-filter-active');
 					else
@@ -531,43 +534,53 @@
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
 	<div id="nav-notifications-template" rel="template">
-		<a class="list-group-item text-decoration-none text-dark clearfix notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
-			<img class="menu-img-3" data-src="{1}" loading="lazy">
-			<div class="contactname"><span class="text-dark fw-bold">{2}</span> <span class="text-muted">{3}</span></div>
-			<span class="text-muted">{4}</span><br>
-			<span class="text-muted notifications-autotime" title="{5}">{5}</span>
+		<a class="list-group-item list-group-item-action notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
+			<img data-src="{1}" loading="lazy" class="rounded menu-img-2">
+			<div class="text-nowrap">
+				<div class="d-flex justify-content-between align-items-center lh-sm">
+					<div class="text-truncate pe-1">
+						<strong title="{2} - {3}">{2}</strong>
+					</div>
+					<small class="notifications-autotime opacity-75" title="{5}"></small>
+				</div>
+				<div class="text-truncate">{4}</div>
+			</div>
 		</a>
 	</div>
 	<div id="nav-notifications-forums-template" rel="template">
-		<a class="list-group-item text-decoration-none clearfix notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
-			<span class="float-end badge bg-secondary">{10}</span>
-			<img class="menu-img-1" data-src="{1}" loading="lazy">
-			<span class="">{2}</span>
-			<i class="fa fa-{11} text-muted"></i>
+		<a class="list-group-item list-group-item-action justify-content-between align-items-center d-flex notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
+			<div>
+				<img class="menu-img-1" data-src="{1}" loading="lazy">
+				<span>{2}</span>
+			</div>
+			<span class="badge bg-secondary">{10}</span>
 		</a>
 	</div>
 	<div id="notifications" class="border border-top-0 rounded navbar-nav collapse">
 		{{foreach $notifications as $notification}}
 		<div class="rounded-top rounded-bottom border border-start-0 border-end-0 border-bottom-0 list-group list-group-flush collapse {{$notification.type}}-button">
-			<a id="notification-link-{{$notification.type}}" class="collapsed list-group-item fakelink notification-link" href="#" title="{{$notification.title}}" data-bs-target="#nav-{{$notification.type}}-sub" data-bs-toggle="collapse" data-sse_type="{{$notification.type}}">
-				<i class="fa fa-fw fa-{{$notification.icon}}"></i> {{$notification.label}}
-				<span class="float-end badge bg-{{$notification.severity}} {{$notification.type}}-update"></span>
+			<a id="notification-link-{{$notification.type}}" class="collapsed list-group-item justify-content-between align-items-center d-flex fakelink stretched-link notification-link" href="#" title="{{$notification.title}}" data-bs-target="#nav-{{$notification.type}}-sub" data-bs-toggle="collapse" data-sse_type="{{$notification.type}}">
+				<div>
+					<i class="fa fa-fw fa-{{$notification.icon}}"></i>
+					{{$notification.label}}
+				</div>
+				<span class="badge bg-{{$notification.severity}} {{$notification.type}}-update"></span>
 			</a>
 		</div>
 		<div id="nav-{{$notification.type}}-sub" class="rounded-bottom border border-start-0 border-end-0 border-bottom-0 list-group list-group-flush collapse notification-content" data-bs-parent="#notifications" data-sse_type="{{$notification.type}}">
 			{{if $notification.viewall}}
-			<a class="list-group-item text-decoration-none text-dark" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
+			<a class="list-group-item list-group-item-action text-decoration-none" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
 				<i class="fa fa-fw fa-external-link"></i> {{$notification.viewall.label}}
 			</a>
 			{{/if}}
 			{{if $notification.markall}}
-			<div class="list-group-item cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
+			<div class="list-group-item list-group-item-action cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
 				<i class="fa fa-fw fa-check"></i> {{$notification.markall.label}}
 			</div>
 			{{/if}}
 			{{if $notification.filter}}
 			{{if $notification.filter.posts_label}}
-			<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
+			<div class="list-group-item list-group-item-action cursor-pointer" id="tt-{{$notification.type}}-only">
 				<i class="fa fa-fw fa-filter"></i> {{$notification.filter.posts_label}}
 			</div>
 			{{/if}}

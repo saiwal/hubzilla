@@ -1,14 +1,14 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" {{$navbar_color_mode}}>
 	<div class="container-fluid flex-nowrap">
 		{{if $userinfo}}
 		<div class="d-flex" style="max-width: 50%">
 			<div class="dropdown">
-				<div class="fakelink usermenu" data-bs-toggle="dropdown">
+				<div class="cursor-pointer usermenu" data-bs-toggle="dropdown">
 					<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}">
-					<i class="fa fa-caret-down"></i>
+					<i class="navbar-text fa fa-caret-down"></i>
 				</div>
 				{{if $is_owner}}
-				<div class="dropdown-menu">
+				<div class="dropdown-menu" {{$color_mode}}>
 					{{foreach $nav.usermenu as $usermenu}}
 					<a class="dropdown-item{{if $usermenu.2}} active{{/if}}"  href="{{$usermenu.0}}" title="{{$usermenu.3}}" role="menuitem" id="{{$usermenu.4}}">{{$usermenu.1}}</a>
 					{{/foreach}}
@@ -41,7 +41,7 @@
 				</div>
 				{{/if}}
 				{{if ! $is_owner}}
-				<div class="dropdown-menu" role="menu" aria-labelledby="avatar">
+				<div class="dropdown-menu" role="menu" aria-labelledby="avatar" {{$color_mode}}>
 					<a class="dropdown-item" href="{{$nav.rusermenu.0}}" role="menuitem">{{$nav.rusermenu.1}}</a>
 					<a class="dropdown-item" href="{{$nav.rusermenu.2}}" role="menuitem">{{$nav.rusermenu.3}}</a>
 				</div>
@@ -66,7 +66,7 @@
 			{{/if}}
 		</div>
 		{{else}}
-		<div id="banner" class="navbar-text d-lg-none">{{$banner}}</div>
+		<div class="navbar-text d-lg-none navbar-banner">{{$banner}}</div>
 		{{/if}}
 		<div class="navbar-toggler-right">
 			{{if $nav.help.6}}
@@ -91,7 +91,7 @@
 				{{if $nav.login && !$userinfo}}
 				<li class="nav-item d-lg-flex">
 					{{if $nav.loginmenu.1.4}}
-					<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}" data-bs-toggle="modal" data-bs-target="#nav-login">
+					<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" data-bs-toggle="modal" data-bs-target="#nav-login">
 					{{$nav.loginmenu.1.1}}
 					</a>
 					{{else}}
@@ -103,7 +103,7 @@
 				{{/if}}
 				{{if $nav.register}}
 				<li class="nav-item {{$nav.register.2}} d-lg-flex">
-					<a class="nav-link" href="{{$nav.register.0}}" title="{{$nav.register.3}}" id="{{$nav.register.4}}">{{$nav.register.1}}</a>
+					<a class="nav-link" href="{{$nav.register.0}}" title="{{$nav.register.3}}">{{$nav.register.1}}</a>
 				</li>
 				{{/if}}
 				{{if $nav.alogout}}
@@ -113,10 +113,10 @@
 				{{/if}}
 			</ul>
 
-			<div id="banner" class="navbar-text">{{$banner}}</div>
+			<div class="navbar-text navbar-banner">{{$banner}}</div>
 
 			<ul id="nav-right" class="navbar-nav">
-				<li class="nav-item collapse clearfix" id="nav-search">
+				<li class="nav-item collapse clearfix" id="nav-search" {{$color_mode}}>
 					<form class="form-inline" method="get" action="{{$nav.search.4}}" role="search">
 						<input class="form-control form-control-sm mt-1 me-2" id="nav-search-text" type="text" value="" placeholder="{{$help}}" name="search" title="{{$nav.search.3}}" onclick="this.submit();" onblur="closeMenu('nav-search'); openMenu('nav-search-btn');"/>
 					</form>
@@ -134,7 +134,7 @@
 				{{/if}}
 				{{if $localuser || $nav.pubs}}
 				<li id="notifications-btn" class="nav-item d-xl-none">
-					<a class="nav-link text-white notifications-btn" href="#"><i id="notifications-btn-icon" class="fa fa-exclamation-circle  notifications-btn-icon"></i></a>
+					<a class="nav-link notifications-btn" href="#"><i id="notifications-btn-icon" class="fa fa-exclamation-circle  notifications-btn-icon"></i></a>
 				</li>
 				{{/if}}
 				{{if $navbar_apps}}
@@ -162,10 +162,11 @@
 </nav>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="app-bin" aria-labelledby="app-bin-label">
 	<div class="offcanvas-header">
+
 		{{if $nav.login && !$userinfo}}
-		<div class="d-lg-none pt-1 pb-1">
+		<div class="hstack gap-1 d-lg-none pt-1 pb-1">
 			{{if $nav.loginmenu.1.4}}
-			<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-bs-toggle="modal" data-bs-target="#nav-login">
+			<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" data-bs-toggle="modal" data-bs-target="#nav-login">
 				{{$nav.loginmenu.1.1}}
 			</a>
 			{{else}}
@@ -174,12 +175,13 @@
 			</a>
 			{{/if}}
 			{{if $nav.register}}
-			<a class="btn btn-warning btn-sm text-dark" href="{{$nav.register.0}}" title="{{$nav.register.3}}" id="{{$nav.register.4}}" >
+			<a class="btn btn-warning btn-sm text-dark" href="{{$nav.register.0}}" title="{{$nav.register.3}}">
 				{{$nav.register.1}}
 			</a>
 			{{/if}}
+
 		</div>
-		<div class="nav d-lg-flex"></div>
+		<div class="nav d-lg-flex w-100"></div>
 		{{else}}
 		<div class="lh-sm w-100" id="app-bin-label">
 			{{if $name}}
@@ -192,8 +194,10 @@
 		</div>
 		<i id="app-bin-trash" class="fa fa-2x fa-fw fa-trash-o d-none"></i>
 		{{/if}}
-
-		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		<div class="hstack gap-1">
+			<button id="theme-switch" type="button" class="btn btn-outline-secondary border-0"><i id="theme-switch-icon" class="fa fa-{{$theme_switch_icon}}-o"></i></button>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
 
 	</div>
 	<div class="offcanvas-body">

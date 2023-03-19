@@ -149,14 +149,16 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		// in the middle of a public thread. Unless we can guarantee beyond all doubt that
 		// this is public, don't allow it to go to thread listeners.
 
-		if(! intval($item['item_private'])) {
+		if(!intval($item['item_private'])) {
 			$sys = get_sys_channel();
 			$recipients[] = $sys['xchan_hash'];
 
 			$r = ThreadListener::fetch_by_target($item['parent_mid']);
 			if($r) {
 				foreach($r as $rv) {
-					$recipients[] = $rv['portable_id'];
+					if (!in_array($rv['portable_id'], $recipients)) {
+						$recipients[] = $rv['portable_id'];
+					}
 				}
 			}
 		}
@@ -172,9 +174,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		$r = q("select author_xchan from item where parent = %d",
 			intval($item['parent'])
 		);
-		if($r) {
+		if ($r) {
 			foreach($r as $rv) {
-				if(! in_array($rv['author_xchan'],$recipients)) {
+				if (!in_array($rv['author_xchan'], $recipients)) {
 					$recipients[] = $rv['author_xchan'];
 				}
 			}
@@ -185,7 +187,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who isn't allowed to see it
 
-	$recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
+	$recipients = check_list_permissions($item['uid'], $recipients, 'view_stream');
 
 	// remove any upstream recipients from our list.
 	// If it is ourself we'll add it back in a second.
@@ -193,7 +195,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// sending to anybody who is on our list of those who sent it to us.
 
 	if($item['route']) {
-		$route = explode(',',$item['route']);
+		$route = explode(',', $item['route']);
 		if(count($route)) {
 			$route = array_unique($route);
 			$recipients = array_diff($recipients,$route);
@@ -202,9 +204,13 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 	// add ourself just in case we have nomadic clones that need to get a copy.
 
-	$recipients[] = $item['author_xchan'];
-	if($item['owner_xchan'] != $item['author_xchan'])
+	if (!in_array($item['author_xchan'], $recipients)) {
+		$recipients[] = $item['author_xchan'];
+	}
+
+	if($item['owner_xchan'] !== $item['author_xchan'] && !in_array($item['owner_xchan'], $recipients)) {
 		$recipients[] = $item['owner_xchan'];
+	}
 
 	return $recipients;
 }

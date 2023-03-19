@@ -1,51 +1,43 @@
 /* fix borders */
 
-.fc th:first-child,
-.fc td:first-child {
-    border-left-width: 0px;
+:root {
+	--fc-border-color: var(--bs-border-color) !important;
+	--fc-page-bg-color: var(--bs-tertiary-bg) !important;
+	--fc-list-event-hover-bg-color: var(--bs-tertiary-bg) !important;
+	--fc-daygrid-event-dot-width: 1em !important;
+	--fc-list-event-dot-width: 1em !important;
 }
 
-.fc th:last-child,
-.fc td:last-child {
-    border-right-width: 0px;
-    border-bottom-width: 0px;
+.fc .fc-cell-shaded, .fc .fc-day-disabled {
+	background: var(--bs-tertiary-bg) !important;
 }
 
-.fc-unthemed th,
-.fc-unthemed td,
-.fc-unthemed thead,
-.fc-unthemed tbody,
-.fc-unthemed .fc-divider,
-.fc-unthemed .fc-row,
-.fc-unthemed .fc-popover {
-	border-color: #ccc !important;
+.fc-theme-standard td:last-child,
+.fc-theme-standard th:last-child {
+	border-right: 0px !important;
 }
 
-#events-spinner .spinner {
-	margin-top: 9px;
-	margin-bottom: -9px;
+.fc-theme-standard td:last-child {
+	border-bottom: 0px !important;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+	border: 0px !important;
+}
+
+.fc-theme-standard .fc-list {
+	border: 0px !important;
 }
 
 .bootstrap-tagsinput {
-	width: 100%;
-	padding: 6px 12px;
+	border: 1px solid var(--bs-border-color) !important;
+	margin-bottom: 0px !important;
+	border-radius: var(--bs-border-radius) !important;
+	background-color: var(--bs-body-bg) !important;
+	padding: 0 .75rem !important;
+
 }
 
-.event-wrapper,
-.vevent {
-	max-width: 700px;
+.bootstrap-tagsinput input {
+	min-width: 30% !important;
 }
-
-.event-owner {
-	padding: 10px;
-}
-
-.event-owner img {
-	margin-right: 5px;
-}
-
-.vevent,
-.event-buttons {
-	padding: 10px;
-}
-

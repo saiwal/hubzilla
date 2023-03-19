@@ -5,8 +5,8 @@
 	{{foreach $items as $i}}
 	<div class="col">
 		<div class="card">
-			<a href="{{$i.url}}" class="text-dark">
-				<div class="card-body">
+			<a href="{{$i.url}}" class="text-reset">
+				<div class="card-body clearfix">
 					{{if $i.title}}
 						<strong>{{$i.title}}</strong>
 						<hr>

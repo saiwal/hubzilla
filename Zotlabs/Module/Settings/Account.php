@@ -105,6 +105,7 @@ class Account {
 			'$password1'        => array('npassword', t('Enter New Password'), '', ''),
 			'$password2'        => array('confirm', t('Confirm New Password'), '', t('Leave password fields blank unless changing')),
 			'$submit'           => t('Submit'),
+			'$mfa'              => t('Multi-Factor Authentication'),
 			'$email'            => array('email', t('DId2 or Email Address:'), $email, '', '', $attremail),
 			'$email_hidden'     => (($attremail) ? $email : ''),
 			'$removeme'         => t('Remove Account'),

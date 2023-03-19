@@ -60,7 +60,7 @@ require_once('include/bbcode.php');
 require_once('include/items.php');
 
 define('PLATFORM_NAME', 'hubzilla');
-define('STD_VERSION', '8.0');
+define('STD_VERSION', '8.2');
 define('ZOT_REVISION', '6.0');
 
 define('DB_UPDATE_VERSION', 1255);
@@ -1862,10 +1862,9 @@ function can_view_public_stream() {
 		}
 	}
 
-	$site_firehose = ((intval(get_config('system', 'site_firehose', 0))) ? true : false);
 	$net_firehose  = ((get_config('system', 'disable_discover_tab', 1)) ? false : true);
 
-	if (!($site_firehose || $net_firehose)) {
+	if (!$net_firehose) {
 		return false;
 	}
 

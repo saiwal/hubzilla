@@ -1795,7 +1795,6 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 	}
 
 	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : []);
-
 	$prep_arr = [
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,
@@ -2621,13 +2620,13 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 	if(count($arr)) {
 		if($abook) {
 			$chans = q("select * from xchan left join hubloc on hubloc_hash = xchan_hash left join abook on abook_xchan = xchan_hash and abook_channel = %d
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1",
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_deleted = 0 order by hubloc_primary desc",
 				intval($item['uid'])
 			);
 		}
 		else {
 			$chans = q("select xchan.*,hubloc.* from xchan left join hubloc on hubloc_hash = xchan_hash
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1");
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_deleted = 0 order by hubloc_primary desc");
 		}
 		$xchans = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',',$arr)) . ") and xchan_network in ('rss','unknown', 'anon', 'token')");
 		if(! $chans)
@@ -3033,46 +3032,44 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 
 		if($r) {
 
-			$xchan[0] = Libzot::zot_record_preferred($r, 'xchan_network');
+			$xc = Libzot::zot_record_preferred($r, 'xchan_network');
 
-			foreach($xchan as $xc) {
-				$profile = $xc['xchan_url'];
-				$newname = $xc['xchan_name'];
-				// add the channel's xchan_hash to $access_tag if exclusive
-				if($exclusive) {
-					$access_tag = 'cid:' . $xc['xchan_hash'];
-				}
-
-				// if there is a url for this channel
-
-				if(isset($profile)) {
-					$replaced = true;
-					//create profile link
-					$profile = str_replace(',','%2c',$profile);
-					$url = $profile;
-
-					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
-
-					// append tag to str_tags
-					if(! stristr($str_tags,$newtag)) {
-						if(strlen($str_tags))
-							$str_tags .= ',';
-						$str_tags .= $newtag;
-					}
-				}
-
-
-				$fn_results[] =  [
-					'replaced'   => $replaced,
-					'termtype'   => $termtype,
-					'term'       => $newname,
-					'url'        => $url,
-					'access_tag' => $access_tag,
-					'contact'    => (($r) ? $xc : []),
-				];
-
+			$profile = $xc['xchan_url'];
+			$newname = $xc['xchan_name'];
+			// add the channel's xchan_hash to $access_tag if exclusive
+			if($exclusive) {
+				$access_tag = 'cid:' . $xc['xchan_hash'];
 			}
+
+			// if there is a url for this channel
+
+			if(isset($profile)) {
+				$replaced = true;
+				//create profile link
+				$profile = str_replace(',','%2c',$profile);
+				$url = $profile;
+				$bb_tag = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
+
+				$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $bb_tag . '=' . $profile . ']' . $newname	. '[/' . $bb_tag . ']';
+				$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+
+				// append tag to str_tags
+				if(! stristr($str_tags,$newtag)) {
+					if(strlen($str_tags))
+						$str_tags .= ',';
+					$str_tags .= $newtag;
+				}
+			}
+
+
+			$fn_results[] =  [
+				'replaced'   => $replaced,
+				'termtype'   => $termtype,
+				'term'       => $newname,
+				'url'        => $url,
+				'access_tag' => $access_tag,
+				'contact'    => (($r) ? $xc : []),
+			];
 
 		}
 		else {
@@ -3503,6 +3500,14 @@ function flatten_array_recursive($arr) {
 	}
 
 	return($ret);
+}
+
+// Turn $element into an array if it isn't already.
+function force_array($element) {
+	if (empty($element)) {
+		return [];
+	}
+	return (is_array($element)) ? $element : [$element];
 }
 
 /**

@@ -4,7 +4,7 @@ var calendar;
 $(document).ready(function() {
 	var calendarEl = document.getElementById('calendar');
 	calendar = new FullCalendar.Calendar(calendarEl, {
-		plugins: [ 'dayGrid' ],
+
 		eventSources: [ {{$sources}} ],
 
 		timeZone: '{{$timezone}}',
@@ -12,16 +12,12 @@ $(document).ready(function() {
 		locale: '{{$lang}}',
 
 		eventTextColor: 'white',
-		header: false,
+		headerToolbar: false,
 
 		height: 'auto',
 
 		firstDay: {{$first_day}},
 
-		monthNames: aStr['monthNames'],
-		monthNamesShort: aStr['monthNamesShort'],
-		dayNames: aStr['dayNames'],
-		dayNamesShort: aStr['dayNamesShort'],
 		allDayText: aStr['allday'],
 
 		eventClick: function(info) {

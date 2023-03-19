@@ -65,12 +65,8 @@ class Cal extends Controller {
 
 		nav_set_selected('Calendar');
 
-		head_add_css('/library/fullcalendar/packages/core/main.min.css');
-		head_add_css('/library/fullcalendar/packages/daygrid/main.min.css');
+		head_add_js('/library/fullcalendar/dist/index.global.js');
 		head_add_css('cdav_calendar.css');
-
-		head_add_js('/library/fullcalendar/packages/core/main.min.js');
-		head_add_js('/library/fullcalendar/packages/daygrid/main.min.js');
 
 		$sql_extra = permissions_sql($channel['channel_id'], get_observer_hash(), 'event');
 

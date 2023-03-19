@@ -247,9 +247,7 @@ class Channel extends Controller {
 				$channel_acl = ['allow_cid' => '', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => ''];
 			}
 
-
 			if ($perms['post_wall']) {
-
 				$x = [
 					'is_owner'            => $is_owner,
 					'allow_location'      => ((($is_owner || $observer) && (intval(get_pconfig(App::$profile['profile_uid'], 'system', 'use_browser_location')))) ? true : false),
@@ -273,6 +271,12 @@ class Channel extends Controller {
 				$o .= status_editor($a, $x, false, 'Channel');
 			}
 
+			// Add pinned content
+			if (!x($_REQUEST, 'mid') && !$search) {
+				$pinned = new \Zotlabs\Widget\Pinned;
+				$r = $pinned->widget(intval(App::$profile['profile_uid']), [ITEM_TYPE_POST]);
+				$o .= $r['html'];
+			}
 		}
 
 
@@ -423,16 +427,13 @@ class Channel extends Controller {
 			$items = [];
 		}
 
-		// Add pinned content
-		if (!x($_REQUEST, 'mid') && !$search) {
-			$pinned = new \Zotlabs\Widget\Pinned;
-			$r      = $pinned->widget(intval(App::$profile['profile_uid']), [ITEM_TYPE_POST]);
-			$o      .= $r['html'];
-		}
+
 
 		$mode = (($search) ? 'search' : 'channel');
 
 		if ((!$update) && (!$load)) {
+
+
 
 			//if we got a decoded hash we must encode it again before handing to javascript
 			$mid = gen_link_id($mid);

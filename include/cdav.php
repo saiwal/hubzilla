@@ -132,7 +132,7 @@ function import_cdav_card($id, $ext, $table, $column, $objects, $profile, $backe
 					$objectUri = random_string(40) . '.' . $ext;
 
 					$r = q("SELECT uri FROM $table WHERE $column = %d AND uri = '%s' LIMIT 1",
-						dbesc($id),
+						dbesc(is_array($id) ? $id[0] : $id),
 						dbesc($objectUri)
 					);
 					if (count($r))

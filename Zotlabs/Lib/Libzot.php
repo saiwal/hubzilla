@@ -101,7 +101,6 @@ class Libzot {
 	static function build_packet($channel, $type = 'activity', $recipients = null, $msg = [], $encoding = 'activitystreams', $remote_key = null, $methods = '') {
 
 		$sig_method = get_config('system', 'signature_algorithm', 'sha256');
-
 		$data = [
 			'type'     => $type,
 			'encoding' => $encoding,
@@ -115,9 +114,9 @@ class Libzot {
 		}
 
 		if ($msg) {
-			$actor = channel_url($channel);
-			if ($encoding === 'activitystreams' && array_key_exists('actor', $msg) && is_string($msg['actor']) && $actor === $msg['actor']) {
-				$msg = JSalmon::sign($msg, $actor, $channel['channel_prvkey']);
+			$actors = get_hubloc_id_urls_by_x($channel['channel_hash']);
+			if ($encoding === 'activitystreams' && array_key_exists('actor', $msg) && is_string($msg['actor']) && in_array($msg['actor'], $actors)) {
+				$msg = JSalmon::sign($msg, $actors[0], $channel['channel_prvkey']);
 			}
 			$data['data'] = $msg;
 		}
@@ -1051,19 +1050,9 @@ class Libzot {
 			}
 
 			if (is_array($x) && array_key_exists('delivery_report', $x) && is_array($x['delivery_report'])) {
-
 				foreach ($x['delivery_report'] as $xx) {
 					call_hooks('dreport_process', $xx);
 					if (is_array($xx) && array_key_exists('message_id', $xx) && DReport::is_storable($xx)) {
-
-						// legacy recipients add a space and their name to the xchan. split those if true.
-						$legacy_recipient = strpos($xx['recipient'], ' ');
-						if ($legacy_recipient !== false) {
-							$legacy_recipient_parts = explode(' ', $xx['recipient'], 2);
-							$xx['recipient']        = $legacy_recipient_parts[0];
-							$xx['name']             = $legacy_recipient_parts[1];
-						}
-
 						q("insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan ) values ( '%s', '%s', '%s','%s','%s','%s','%s' ) ",
 							dbesc($xx['message_id']),
 							dbesc($xx['location']),
@@ -1254,7 +1243,7 @@ class Libzot {
 					return;
 				}
 
-				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
+				$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 					dbesc($AS->actor['id'])
 				);
 
@@ -1262,7 +1251,7 @@ class Libzot {
 					// Author is unknown to this site. Perform channel discovery and try again.
 					$z = discover_by_webbie($AS->actor['id']);
 					if ($z) {
-						$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
+						$r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 							dbesc($AS->actor['id'])
 						);
 					}
@@ -1377,7 +1366,7 @@ class Libzot {
 				return false;
 			}
 			$x = self::find_parent($env, $act);
-			if ($x === $act->id || $x === $act->obj['id']) {
+			if ($x === $act->id || (is_array($act->obj) && array_key_exists('id', $act->obj) && $x === $act->obj['id'])) {
 				return true;
 			}
 		}
@@ -1435,7 +1424,9 @@ class Libzot {
 
 		$r = [];
 
-		$c = q("select channel_id, channel_hash from channel where channel_removed = 0");
+		$c = q("select channel_id, channel_hash from channel where channel_hash != '%s' and channel_removed = 0",
+			dbesc($msg['sender'])
+		);
 
 		if ($c) {
 			foreach ($c as $cc) {
@@ -1463,9 +1454,10 @@ class Libzot {
 						if ($tag['type'] === 'Mention' && (strpos($tag['href'], z_root()) !== false)) {
 							$address = basename($tag['href']);
 							if ($address) {
-								$z = q("select channel_hash as hash from channel where channel_address = '%s'
+								$z = q("select channel_hash as hash from channel where channel_address = '%s' and channel_hash != '%s'
 									and channel_removed = 0 limit 1",
-									dbesc($address)
+									dbesc($address),
+									dbesc($msg['sender'])
 								);
 								if ($z) {
 									$r[] = $z[0]['hash'];
@@ -1484,9 +1476,10 @@ class Libzot {
 			$thread_parent = self::find_parent($msg, $act);
 
 			if ($thread_parent) {
-				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) ",
+				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) and channel_hash != '%s'",
 					dbesc($thread_parent),
-					dbesc($thread_parent)
+					dbesc($thread_parent),
+					dbesc($msg['sender'])
 				);
 				if ($z) {
 					foreach ($z as $zv) {
@@ -1980,7 +1973,7 @@ class Libzot {
 		$ret = [];
 
 
-		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+		$signer = q("select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6' order by hubloc_id desc limit 1",
 			dbesc($a['signature']['signer'])
 		);
 
@@ -2008,7 +2001,7 @@ class Libzot {
 				continue;
 			}
 
-			$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s'",
+			$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
 				dbesc($AS->actor['id'])
 			);
 
@@ -2309,120 +2302,6 @@ class Libzot {
 		}
 
 		return $post_id;
-	}
-
-
-	/**
-	 * @brief Processes delivery of profile.
-	 *
-	 * @param string $sender
-	 * @param array $arr
-	 * @param array $deliveries (unused)
-	 * @return void
-	 * @see import_directory_profile()
-	 *
-	 */
-	static function process_profile_delivery($sender, $arr, $deliveries) {
-
-		logger('process_profile_delivery', LOGGER_DEBUG);
-
-		$r = q("select xchan_addr from xchan where xchan_hash = '%s' limit 1",
-			dbesc($sender)
-		);
-		if ($r) {
-			Libzotdir::import_directory_profile($sender, $arr, $r[0]['xchan_addr'], UPDATE_FLAGS_UPDATED, 0);
-		}
-	}
-
-
-	/**
-	 * @brief
-	 *
-	 * @param string $sender
-	 * @param array $arr
-	 * @param array $deliveries (unused) deliveries is irrelevant
-	 * @return void
-	 */
-	static function process_location_delivery($sender, $arr, $deliveries) {
-
-		// deliveries is irrelevant
-		logger('process_location_delivery', LOGGER_DEBUG);
-
-		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
-			dbesc($sender)
-		);
-		if ($r) {
-			$xchan = ['id'   => $r[0]['xchan_guid'], 'id_sig' => $r[0]['xchan_guid_sig'],
-					  'hash' => $r[0]['xchan_hash'], 'public_key' => $r[0]['xchan_pubkey']];
-		}
-		if (array_key_exists('locations', $arr) && $arr['locations']) {
-			$x = Libsync::sync_locations($xchan, $arr, true);
-			logger('results: ' . print_r($x, true), LOGGER_DEBUG);
-			if ($x['changed']) {
-				//$guid = random_string() . '@' . App::get_hostname();
-				Libzotdir::update_modtime($sender, $r[0]['xchan_guid'], $arr['locations'][0]['address'], UPDATE_FLAGS_UPDATED);
-			}
-		}
-	}
-
-	/**
-	 * @brief Checks for a moved channel and sets the channel_moved flag.
-	 *
-	 * Currently the effect of this flag is to turn the channel into 'read-only' mode.
-	 * New content will not be processed (there was still an issue with blocking the
-	 * ability to post comments as of 10-Mar-2016).
-	 * We do not physically remove the channel at this time. The hub admin may choose
-	 * to do so, but is encouraged to allow a grace period of several days in case there
-	 * are any issues migrating content. This packet will generally be received by the
-	 * original site when the basic channel import has been processed.
-	 *
-	 * This will only be executed on the old location
-	 * if a new location is reported and there is only one location record.
-	 * The rest of the hubloc syncronisation will be handled within
-	 * sync_locations
-	 *
-	 * @param string $sender_hash A channel hash
-	 * @param array $locations
-	 * @return void
-	 */
-	static function check_location_move($sender_hash, $locations) {
-
-		if (!$locations)
-			return;
-
-		if (count($locations) != 1)
-			return;
-
-		$loc = $locations[0];
-
-		$r = q("select * from channel where channel_hash = '%s' limit 1",
-			dbesc($sender_hash)
-		);
-
-		if (!$r)
-			return;
-
-		if ($loc['url'] !== z_root()) {
-			$x = q("update channel set channel_moved = '%s' where channel_hash = '%s' limit 1",
-				dbesc($loc['url']),
-				dbesc($sender_hash)
-			);
-
-			// federation plugins may wish to notify connections
-			// of the move on singleton networks
-
-			$arr = [
-				'channel'   => $r[0],
-				'locations' => $locations
-			];
-			/**
-			 * @hooks location_move
-			 *   Called when a new location has been provided to a UNO channel (indicating a move rather than a clone).
-			 *   * \e array \b channel
-			 *   * \e array \b locations
-			 */
-			call_hooks('location_move', $arr);
-		}
 	}
 
 

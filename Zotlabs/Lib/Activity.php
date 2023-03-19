@@ -595,9 +595,9 @@ class Activity {
 			foreach ($item['term'] as $t) {
 				switch ($t['ttype']) {
 					case TERM_HASHTAG:
-						// href is required so if we don't have a url in the taxonomy, ignore it and keep going.
+						// id is required so if we don't have a url in the taxonomy, ignore it and keep going.
 						if ($t['url']) {
-							$ret[] = ['type' => 'Hashtag', 'href' => $t['url'], 'name' => '#' . $t['term']];
+							$ret[] = ['type' => 'Hashtag', 'id' => $t['url'], 'name' => '#' . $t['term']];
 						}
 						break;
 
@@ -699,6 +699,13 @@ class Activity {
 				}
 				if (array_key_exists('name', $att) && $att['name']) {
 					$entry['name'] = html2plain(purify_html($att['name']), 256);
+				}
+				// Friendica attachments don't match the URL in the body.
+				// This makes it more difficult to detect image duplication in bb_attach()
+				// which adds images to plaintext microblog software. For these we need to examine both the
+				// url and image properties.
+				if (isset($att['image']) && is_string($att['image']) && isset($att['url']) && $att['image'] !== $att['url']) {
+					$entry['image'] = $att['image'];
 				}
 				if ($entry) {
 					$ret[] = $entry;
@@ -822,7 +829,8 @@ class Activity {
 			];
 		}
 
-		$ret['published'] = ((isset($i['created'])) ? datetime_convert('UTC', 'UTC', $i['created'], ATOM_TIME) : datetime_convert());
+		$ret['published'] = datetime_convert('UTC', 'UTC', $i['created'], ATOM_TIME);
+
 		if (isset($i['created'], $i['edited']) && $i['created'] !== $i['edited']) {
 			$ret['updated'] = datetime_convert('UTC', 'UTC', $i['edited'], ATOM_TIME);
 			if ($ret['type'] === 'Create') {
@@ -1690,6 +1698,8 @@ class Activity {
 			}
 		}
 
+		$group_actor = ($person_obj['type'] === 'Group');
+
 		$r = q("select * from xchan join hubloc on xchan_hash = hubloc_hash where xchan_hash = '%s'",
 			dbesc($url)
 		);
@@ -1708,11 +1718,12 @@ class Activity {
 			);
 
 			// update existing xchan record
-			q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_addr = '%s', xchan_network = 'activitypub', xchan_name_date = '%s' where xchan_hash = '%s'",
+			q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_addr = '%s', xchan_network = 'activitypub', xchan_name_date = '%s', xchan_pubforum = %d where xchan_hash = '%s'",
 				dbesc(escape_tags($name)),
 				dbesc(escape_tags($pubkey)),
 				dbesc(escape_tags($webfinger_addr)),
 				dbescdate(datetime_convert()),
+				intval($group_actor),
 				dbesc($url)
 			);
 
@@ -1739,7 +1750,8 @@ class Activity {
 					'xchan_url'       => $profile,
 					'xchan_name'      => escape_tags($name),
 					'xchan_name_date' => datetime_convert(),
-					'xchan_network'   => 'activitypub'
+					'xchan_network'   => 'activitypub',
+					'xchan_pubforum'  => intval($group_actor)
 				]
 			);
 
@@ -1768,6 +1780,10 @@ class Activity {
 				dbesc($url)
 			);
 			if (!$zx) {
+				// FIXME: we might need to fetch and store this url immediately
+				// otherwise at least the first post of a yet unknown author might
+				// be stored with the activitypub url instead of the portable id.
+				// Another solution could be to fix the items after Gprobe has done its work.
 				Master::Summon(['Gprobe', bin2hex($url)]);
 			}
 		}
@@ -2218,7 +2234,6 @@ class Activity {
 		) {
 			return false;
 		}
-
 		// Within our family of projects, Follow/Unfollow of a thread is an internal activity which should not be transmitted,
 		// hence if we receive it - ignore or reject it.
 		// Unfollow is not defined by ActivityStreams, which prefers Undo->Follow.
@@ -2514,7 +2529,11 @@ class Activity {
 			if ($act->type === 'Announce') {
 				$s['author_xchan'] = self::get_attributed_to_actor_url($act);
 				$s['mid'] = $act->obj['id'];
-				$s['parent_mid'] = $act->obj['id'];
+
+				// Do not force new thread if the announce is from a group actor
+				if ($act->actor['type'] !== 'Group') {
+					$s['parent_mid'] = $act->obj['id'];
+				}
 			}
 
 			// we will need a hook here to extract magnet links e.g. peertube
@@ -2589,13 +2608,13 @@ class Activity {
 					if ($mps) {
 						usort($mps,[ '\Zotlabs\Lib\Activity', 'vid_sort' ]);
 						foreach ($mps as $m) {
-							if (intval($m['height']) < 500 && Activity::media_not_in_body($m['href'],$s['body'])) {
+							if (intval($m['height']) < 500 && self::media_not_in_body($m['href'],$s['body'])) {
 								$s['body'] = $tag . $m['href'] . '[/video]' . "\r\n" . $s['body'];
 								break;
 							}
 						}
 					}
-					elseif (is_string($act->obj['url']) && Activity::media_not_in_body($act->obj['url'],$s['body'])) {
+					elseif (is_string($act->obj['url']) && self::media_not_in_body($act->obj['url'],$s['body'])) {
 						$s['body'] = $tag . $act->obj['url'] . '[/video]' . "\r\n" . $s['body'];
 					}
 
@@ -2843,6 +2862,10 @@ class Activity {
 			$is_child_node = true;
 		}
 
+		if (empty($item['item_fetched'])) {
+			$item['owner_xchan'] = $observer_hash;
+		}
+
 		$allowed = false;
 
 		// TODO: not implemented
@@ -2919,7 +2942,7 @@ class Activity {
 
 			// The $item['item_fetched'] flag is set in fetch_and_store_parents().
 			// In this case we should check against author permissions because sender is not owner.
-			if (perm_is_allowed($channel['channel_id'], ((isset($item['item_fetched']) && $item['item_fetched']) ? $item['author_xchan'] : $observer_hash), 'send_stream') || $is_sys_channel) {
+			if (perm_is_allowed($channel['channel_id'], ((!empty($item['item_fetched'])) ? $item['author_xchan'] : $observer_hash), 'send_stream') || $is_sys_channel) {
 				$allowed = true;
 			}
 			// TODO: not implemented
@@ -3228,7 +3251,7 @@ class Activity {
 			$item = $hookinfo['item'];
 
 			if ($item) {
-				$item['item_fetched'] = 1;
+				$item['item_fetched'] = true;
 
 				if (intval($channel['channel_system']) && intval($item['item_private'])) {
 					$p = [];
@@ -3342,7 +3365,7 @@ class Activity {
 
 			return false;
 		}
-	*/
+
 	static public function fetch_and_store_replies($channel, $arr) {
 
 		logger('fetching replies');
@@ -3399,6 +3422,7 @@ class Activity {
 		}
 
 	}
+*/
 
 /* this is deprecated and not used anymore
 	static function announce_note($channel, $observer_hash, $act) {
@@ -3674,7 +3698,21 @@ class Activity {
 				if ($a['type'] === 'image/svg+xml' && strpos($item['body'], '[/svg]')) {
 					continue;
 				}
-				if (self::media_not_in_body($a['href'], $item['body'])) {
+				// Friendica attachment weirdness
+				// Check both the attachment image and href since they can be different and the one in the href is a different link with different resolution.
+				// Otheriwse you'll get duplicated images
+				if (isset($a['image'])) {
+					if (self::media_not_in_body($a['image'], $item['body']) && self::media_not_in_body($a['href'], $item['body'])) {
+						if (isset($a['name']) && $a['name']) {
+							$alt = htmlspecialchars($a['name'], ENT_QUOTES);
+							$item['body'] = '[img=' . $a['href']  . ']' . $alt . '[/img]' . "\r\n" . $item['body'];
+						} else {
+							$item['body'] = '[img]' . $a['href'] . '[/img]' . "\r\n" . $item['body'];
+						}
+					}
+					continue;
+				}
+				elseif (self::media_not_in_body($a['href'], $item['body'])) {
 					if (isset($a['name']) && $a['name']) {
 						$alt = htmlspecialchars($a['name'], ENT_QUOTES);
 						$item['body'] = '[img=' . $a['href']  . ']' . $alt . '[/img]' . "\r\n" . $item['body'];

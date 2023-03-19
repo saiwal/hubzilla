@@ -11,7 +11,7 @@
  */
 ?>
 <!DOCTYPE html >
-<html prefix="og: http://ogp.me/ns#">
+<html prefix="og: http://ogp.me/ns#" <?php if(x($page,'color_mode')) echo $page['color_mode'] ?>>
 <head>
   <title><?php if(x($page,'title')) echo $page['title'] ?></title>
   <script>var baseurl="<?php echo z_root() ?>";</script>

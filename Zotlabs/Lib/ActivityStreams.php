@@ -113,7 +113,7 @@ class ActivityStreams {
 			// fetch recursive or embedded activities
 
 			if ($this->obj && is_array($this->obj) && array_key_exists('object', $this->obj)) {
-				$this->obj['object'] = $this->get_compound_property($this->obj['object']);
+				$this->obj['object'] = $this->get_compound_property('object', $this->obj);
 			}
 
 			if ($this->obj && is_array($this->obj) && isset($this->obj['actor']))
@@ -146,34 +146,57 @@ class ActivityStreams {
 	}
 
 	/**
+	 * @brief get single property from Activity object
+	 *
+	 * @param string $property
+	 * @param mixed $default return value if property or object not set
+	 *    or object is a string id which could not be fetched.
+	 * @return mixed
+	 */
+	public function objprop(string $property, mixed $default = false): mixed {
+		$x = $this->get_property_obj($property,$this->obj);
+		return (isset($x)) ? $x : $default;
+	}
+
+	/**
 	 * @brief Collects all recipients.
 	 *
-	 * @param string $base
+	 * @param mixed $base
 	 * @param string $namespace (optional) default empty
 	 * @return array
 	 */
-	function collect_recips($base = '', $namespace = '') {
-		$x = [];
+	public function collect_recips(mixed $base = '', string $namespace = ''): array {
+		$result = [];
+		$tmp = [];
 
 		$fields = ['to', 'cc', 'bto', 'bcc', 'audience'];
-		foreach ($fields as $f) {
-			$y = $this->get_compound_property($f, $base, $namespace);
-			if ($y) {
-				if (!is_array($this->raw_recips)) {
-					$this->raw_recips = [];
-				}
-
-				if (!is_array($y)) {
-					$y = [$y];
-				}
-				$this->raw_recips[$f] = $y;
-				$x                    = array_merge($x, $y);
+		foreach ($fields as $field) {
+			// don't expand these yet
+			$values = $this->get_property_obj($field, $base, $namespace);
+			if ($values) {
+				$values = force_array($values);
+				$tmp[$field] = $values;
+				$result = array_values(array_unique(array_merge($result, $values)));
+			}
+			// Merge the object recipients if they exist.
+			$values = $this->objprop($field);
+			if ($values) {
+				$values = force_array($values);
+				$tmp[$field] = ((isset($tmp[$field])) ? array_merge($tmp[$field], $values) : $values);
+				$result = array_values(array_unique(array_merge($result, $values)));
+			}
+			// remove duplicates
+			if (isset($tmp[$field])) {
+				$tmp[$field] = array_values(array_unique($tmp[$field]));
 			}
 		}
-// not yet ready for prime time
-//		$x = $this->expand($x,$base,$namespace);
-		return $x;
+		$this->raw_recips = $tmp;
+
+		// not yet ready for prime time
+		//      $result = $this->expand($result,$base,$namespace);
+		return $result;
 	}
+
 
 	function expand($arr, $base = '', $namespace = '') {
 		$ret = [];
@@ -341,6 +364,7 @@ class ActivityStreams {
 	 */
 	function get_compound_property($property, $base = '', $namespace = '', $first = false) {
 		$x = $this->get_property_obj($property, $base, $namespace);
+
 		if ($this->is_url($x)) {
 			$y = $this->fetch_property($x);
 			if (is_array($y)) {

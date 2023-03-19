@@ -392,3 +392,11 @@ function z6_discover() {
 	}
 
 }
+
+function get_hubloc_id_urls_by_x($xchan) {
+	$r = q("SELECT hubloc_id_url FROM hubloc WHERE hubloc_deleted = 0 AND hubloc_hash = '%s' order by hubloc_primary desc",
+		dbesc($xchan)
+	);
+	return flatten_array_recursive($r);
+}
+

@@ -21,12 +21,12 @@
 #jot-pagetitle-wrap,
 #jot-category-wrap,
 #jot-customjotheaders-wrap {
-	border-bottom: 1px solid rgba(0, 0, 0, .2);
+	border-bottom: 1px solid var(--bs-border-color);
 }
 
 #jot-attachment-wrap,
 #jot-poll-wrap {
-	border-top: 1px solid rgba(0, 0, 0, .2);
+	border-top: 1px solid rvar(--bs-border-color);
 }
 
 #jot-title-wrap input,
@@ -89,7 +89,7 @@
 }
 
 #profile-jot-submit-wrapper {
-	border-top: 1px solid rgba(0, 0, 0, .2);
+	border-top: 1px solid var(--bs-border-color);
 }
 
 /* conversation */
@@ -98,12 +98,6 @@
 
 .wall-item-head-new {
 	border-top: 0.2rem solid var(--bs-blue);
-}
-
-.wall-item-info {
-	display: block;
-	float: left;
-	margin-right: .75rem;
 }
 
 .wall-item-wrapper {
@@ -139,24 +133,8 @@
 	margin: 5px;
 }
 
-.wall-item-lock {
-	float: left;
-}
-
 a.wall-item-name-link {
 	font-weight: bold !important;
-}
-
-.wall-item-author {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.wall-item-ago,
-.wall-item-ago i {
-	font-size: 0.75rem;
-	line-height: 1.1;
 }
 
 .wall-item-ago .fa-check {
@@ -223,13 +201,14 @@ a.wall-item-name-link {
 
 
 .comment-edit-text {
-	padding: 0.5rem;
+	padding: .5rem;
 	width: 100%;
 	display: inherit;
-	line-height: 1;
-	height: 2rem;
+	line-height: 1.5;
+	height: 2.5rem;
 	resize: none;
 	overflow: hidden;
+	outline: none;
 }
 
 .comment-edit-text.expanded {

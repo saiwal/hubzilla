@@ -213,7 +213,7 @@ a.wikilist {
 	top: 0px;
 	left: 0px;
 	padding: 4.5rem .5rem 1rem .5rem;
-	background-color: white;
+	background-color: var(--bs-body-bg);
 	width: 100%;
 	max-width: 100%;
 	height: 100%;
@@ -223,6 +223,7 @@ a.wikilist {
 
 #notifications {
 	margin-bottom: 1rem;
+	background-color: var(--bs-body-bg);
 }
 
 .tt-filter-active,
@@ -241,6 +242,11 @@ a.wikilist {
 	position: relative;
 }
 
+/* messages (hq) */
+#messages-author-container {
+	z-index: 3 !important;
+}
+
 /* hq_controls */
 .hq_controls_fixed_bottom_center {
 	z-index: 1028;
@@ -249,3 +255,4 @@ a.wikilist {
 	left: 50%;
 	transform: translateX(-50%);
 }
+
