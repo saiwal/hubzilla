@@ -1,22 +1,78 @@
+Hubzilla 8.2 (2023-03-??)
+	- Remove redundant untranslated htconfig templates
+	- Implement workaround for friendica image/attachment construct
+	- Implement notification exception for forum posts repeated by group actors
+	- Updated es translations
+	- Rewrite totp multifactor auth and move it from addon to core (ported from streams)
+	- Implement page load progress indicator for pwa standalone mode
+	- Improved mod HQ logic to save some DB lookups
+	- Default owner_xchan to sender in Activity::store() except for fetched items
+	- Improved contact search
+	- Do not force new thread if announce comes from group actor
+	- Disable oembed in notes app
+	- Improved queue handling
+	- Slightly restructure conv item head
+	- Implemet author images in HQ widget
+	- Implement author filter in HQ widget
+	- Add config option db_skip_locked_supported which should be set if the DB backend supports skip locked
+	- Updated simple pie library
+	- Updated smarty library
+	- Updated forkawesome library
+	- Updated fullcalendar library
+	- Implement native dark/light mode in favour of dark/light schema
+	- Updated bootstrap library
+
+	Bugfixes
+	- Fix channel calendar location html not interpreted - issue #1728
+	- Fix max oembed size check if content length header is an array
+	- Fix group actor wall posts turned into direct messages when posting article or card
+	- Fix non zot profile mentions using zrl tag
+	- Fix message filter > and < not decoded
+	- Fix deleted hublocs included in author lookup
+	- Fix some more PHP warnings
+	- Fix syntax for get_compund_property()
+	- Fix xchan_pubforum not set on actor updates
+	- Fix duplicate directory entries for xchans with bogus second primary entry
+	- Fix missing created timestamp in like activity - issue #1729
+	- Fix messages not signed when posting from non primary locations
+	- Fix pinned post regression
+	- Fix autocomplete items not selectable on mobile
+	- Fix hubloc confusion in Libzot::fetch_conversation()
+	- Fix valid duplicate notification entries deduplicated
+	- Fix ics file import
+	- Fix recipients deduplication in some places
+	- Fix hashtag encoded with href instead of id
+
+	Addons
+	- Pubcrawl: re-implement encrypted content which got lost in transition
+	- Pubcrawl: flag fetched items
+	- Totp: removed from addons in favor of implementation in core
+	- Pubcrawl: fix delivery issues for relayed activities
+	- Cart: fix missing bootstrap namespace
+	- Gallery: do not inject gallery code in webpages
+	- Pubcrawl: fix sql error if mentions string is empty
+	- Cart: fix paypal order hash size
+
+
 Hubzilla 8.0 (2023-01-13)
-	Updated ru strings
-	Implement ability to edit addon PDL with pdledit_gui and pdledit
-	Implement queueworker auto sleep time
-	Always add sys channel to receivers for public items
-	Improved server sent events loop
-	Exclude not tagable xchan networks handle_tag()
-	Add mark html tag to the html2bbcode parser
-	Embed or attach uploaded files depending on file type
-	Changed logic to enable site only public stream - please revisit admin setting
-	Updated nb-no strings
-	Moved queueworker to core
-	Provide a PDL file for mod invite and set the profile
-	Disabled outdated context help
-	Mark unseen items seen after a certain amount of time (default 90 days)
-	Slightly restructure lib webfinger
-	Improved redbasic dark schema
-	Implement unseen thread and unseen items count in HQ widget
-	In unseen items notifications just count the first 99 and display 99+ if there are more
+	- Updated ru strings
+	- Implement ability to edit addon PDL with pdledit_gui and pdledit
+	- Implement queueworker auto sleep time
+	- Always add sys channel to receivers for public items
+	- Improved server sent events loop
+	- Exclude not tagable xchan networks handle_tag()
+	- Add mark html tag to the html2bbcode parser
+	- Embed or attach uploaded files depending on file type
+	- Changed logic to enable site only public stream - please revisit admin setting
+	- Updated nb-no strings
+	- Moved queueworker to core
+	- Provide a PDL file for mod invite and set the profile
+	- Disabled outdated context help
+	- Mark unseen items seen after a certain amount of time (default 90 days)
+	- Slightly restructure lib webfinger
+	- Improved redbasic dark schema
+	- Implement unseen thread and unseen items count in HQ widget
+	- In unseen items notifications just count the first 99 and display 99+ if there are more
 
 	Bugfixes
 	- Fix race conditions when processing multiple choice polls
