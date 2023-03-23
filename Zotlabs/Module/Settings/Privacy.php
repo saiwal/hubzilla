@@ -22,6 +22,9 @@ class Privacy {
 		$autoperms = (((x($_POST, 'autoperms')) && (intval($_POST['autoperms']) == 1)) ? 1 : 0);
 		set_pconfig(local_channel(), 'system', 'autoperms', $autoperms);
 
+		$permit_all_mentions = (((x($_POST, 'permit_all_mentions')) && (intval($_POST['permit_all_mentions']) == 1)) ? 1 : 0);
+		set_pconfig(local_channel(), 'system', 'permit_all_mentions', $permit_all_mentions);
+
 		$role = get_pconfig(local_channel(), 'system', 'permissions_role');
 		if ($role === 'custom') {
 
@@ -99,6 +102,7 @@ class Privacy {
 		$autoperms = get_pconfig(local_channel(), 'system', 'autoperms');
 		$index_opt_out = get_pconfig(local_channel(), 'system', 'index_opt_out');
 		$group_actor = get_pconfig(local_channel(), 'system', 'group_actor');
+		$permit_all_mentions = get_pconfig(local_channel(), 'system', 'permit_all_mentions');
 
 		$permissions_role   = get_pconfig(local_channel(), 'system', 'permissions_role', 'custom');
 		$permission_limits  = ($permissions_role === 'custom');
@@ -119,7 +123,8 @@ class Privacy {
 			],
 			'$autoperms' => ['autoperms', t('Automatically approve new contacts'), $autoperms, '', [t('No'), t('Yes')]],
 			'$index_opt_out' => ['index_opt_out', t('Opt-out of search engine indexing'), $index_opt_out, '', [t('No'), t('Yes')]],
-			'$group_actor' => ['group_actor', t('Group actor'), $group_actor, t('Allow this channel to act as a forum'), [t('No'), t('Yes')]]
+			'$group_actor' => ['group_actor', t('Group actor'), $group_actor, t('Allow this channel to act as a forum'), [t('No'), t('Yes')]],
+			'$permit_all_mentions' => ['permit_all_mentions', t('Accept all messages which mention you'), $permit_all_mentions, t('This setting bypasses normal permissions'), [t('No'), t('Yes')]],
 		]);
 
 		return $o;

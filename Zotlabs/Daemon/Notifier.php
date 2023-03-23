@@ -409,8 +409,6 @@ class Notifier {
 				self::$private    = false;
 				self::$recipients = collect_recipients($parent_item, self::$private);
 
-				// FIXME add any additional recipients such as mentions, etc.
-
 				if ($top_level_post) {
 					// remove clones who will receive the post via sync
 					self::$recipients = array_values(array_diff(self::$recipients, [$target_item['owner_xchan']]));

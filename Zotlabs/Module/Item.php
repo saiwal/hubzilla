@@ -1194,11 +1194,14 @@ class Item extends Controller {
 				(($remote_id) ? $remote_id : basename($datarray['mid'])), true);
 		}
 
-
 		if ($orig_post) {
 			$datarray['id'] = $post_id;
 
 			$x = item_store_update($datarray, $execflag);
+
+			if ($x['success']) {
+				$this->add_listeners($datarray);
+			}
 
 			// We only need edit activities for other federated protocols
 			// which do not support edits natively. While this does federate
@@ -1237,6 +1240,10 @@ class Item extends Controller {
 		}
 
 		$post = item_store($datarray, $execflag);
+
+		if ($post['success']) {
+			$this->add_listeners($datarray);
+		}
 
 		$post_id = $post['item_id'];
 
@@ -1600,6 +1607,35 @@ class Item extends Controller {
 
 		return $obj;
 
+	}
+
+
+	function add_listeners($item) {
+		// ONLY public items!
+		if ($item['item_thread_top'] && !$item['item_private'] && !empty($item['term'])) {
+			foreach($item['term'] as $t) {
+				if (empty($t['url']) || $t['ttype'] != TERM_MENTION || $t['otype'] != TERM_OBJ_POST) {
+					continue;
+				}
+
+				$listener = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
+					dbesc($t['url'])
+				);
+
+				if ($listener) {
+					$listener = Libzot::zot_record_preferred($listener);
+
+					$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
+						intval($profile_uid),
+						dbesc($listener['hubloc_hash'])
+					);
+
+					if (!$c) {
+						ThreadListener::store($item['mid'], $listener['hubloc_hash']);
+					}
+				}
+			}
+		}
 	}
 
 

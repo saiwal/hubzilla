@@ -1233,7 +1233,6 @@ class Libzot {
 			return;
 		}
 
-
 		if ($has_data) {
 
 			if (in_array($env['type'], ['activity', 'response'])) {
@@ -1386,6 +1385,23 @@ class Libzot {
 		return false;
 	}
 
+	static function find_parent_owner_hashes($env, $act) {
+		$r = [];
+		$thread_parent = self::find_parent($env, $act);
+		if ($thread_parent) {
+			$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) and channel_hash != '%s'",
+				dbesc($thread_parent),
+				dbesc($thread_parent),
+				dbesc($env['sender'])
+			);
+			if ($z) {
+				foreach ($z as $zv) {
+					$r[] = $zv['hash'];
+				}
+			}
+		}
+		return $r;
+	}
 
 	/**
 	 * @brief
@@ -1466,26 +1482,23 @@ class Libzot {
 						}
 					}
 				}
+				if ($act->obj['type'] === 'Tombstone') {
+					// This is a delete. There are no tags to look at - add anyone owning the item.
+					$parent_owners = self::find_parent_owner_hashes($msg, $act);
+					if ($parent_owners) {
+						$r = array_merge($r, $parent_owners);
+					}
+				}
+
 			}
 		}
 		else {
 			// This is a comment. We need to find any parent with ITEM_UPLINK set. But in fact, let's just return
 			// everybody that stored a copy of the parent. This way we know we're covered. We'll check the
 			// comment permissions when we deliver them.
-
-			$thread_parent = self::find_parent($msg, $act);
-
-			if ($thread_parent) {
-				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) and channel_hash != '%s'",
-					dbesc($thread_parent),
-					dbesc($thread_parent),
-					dbesc($msg['sender'])
-				);
-				if ($z) {
-					foreach ($z as $zv) {
-						$r[] = $zv['hash'];
-					}
-				}
+			$parent_owners = self::find_parent_owner_hashes($msg, $act);
+			if ($parent_owners) {
+				$r = array_merge($r, $parent_owners);
 			}
 		}
 
@@ -1622,13 +1635,23 @@ class Libzot {
 			if ((!$tag_delivery) && (!$local_public)) {
 				$allowed = (perm_is_allowed($channel['channel_id'], $sender, $perm));
 
-				if ((!$allowed) && $perm === 'post_comments') {
-					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-						dbesc($arr['parent_mid']),
-						intval($channel['channel_id'])
-					);
-					if ($parent) {
-						$allowed = can_comment_on_post($sender, $parent[0]);
+				$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system', 'permit_all_mentions') && i_am_mentioned($channel, $arr));
+
+				if (!$allowed) {
+					if ($perm === 'post_comments') {
+						$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+							dbesc($arr['parent_mid']),
+							intval($channel['channel_id'])
+						);
+						if ($parent) {
+							$allowed = can_comment_on_post($sender, $parent[0]);
+							if (!$allowed && $permit_mentions) {
+								$allowed = true;
+							}
+						}
+
+					} elseif ($permit_mentions) {
+						$allowed = true;
 					}
 				}
 

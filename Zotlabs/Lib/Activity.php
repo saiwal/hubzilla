@@ -2869,7 +2869,7 @@ class Activity {
 		$allowed = false;
 
 		// TODO: not implemented
-		// $permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel,$item));
+		$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel, $item));
 
 		if ($is_child_node) {
 
@@ -2894,7 +2894,7 @@ class Activity {
 
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'post_comments');
-				if ((!$allowed)/* && $permit_mentions*/) {
+				if ((!$allowed) && $permit_mentions) {
 					if ($p[0]['owner_xchan'] === $channel['channel_hash']) {
 						$allowed = false;
 					}
@@ -2946,9 +2946,9 @@ class Activity {
 				$allowed = true;
 			}
 			// TODO: not implemented
-			/*if ($permit_mentions) {
+			if ($permit_mentions) {
 				$allowed = true;
-			}*/
+			}
 		}
 
 		if (tgroup_check($channel['channel_id'], $item) && (!$is_child_node)) {

@@ -8,8 +8,9 @@
 
 		<div class="section-content-tools-wrapper">
 
-			{{include file="field_checkbox.tpl" field=$autoperms}}
 			{{include file="field_checkbox.tpl" field=$index_opt_out}}
+			{{include file="field_checkbox.tpl" field=$autoperms}}
+			{{include file="field_checkbox.tpl" field=$permit_all_mentions}}
 
 			{{if $sec_addon}}
 			{{$sec_addon}}
