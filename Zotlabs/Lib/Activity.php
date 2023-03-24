@@ -431,10 +431,6 @@ class Activity {
 		}
 
 		if (isset($i['obj']) && $i['obj']) {
-			$ret = Activity::encode_object($i['obj']);
-		}
-
-		if (isset($i['obj']) && $i['obj']) {
 			if (is_array($i['obj'])) {
 				$ret = $i['obj'];
 			}
