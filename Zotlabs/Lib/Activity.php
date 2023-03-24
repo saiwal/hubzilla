@@ -419,10 +419,6 @@ class Activity {
 			$objtype = self::activity_obj_mapper($i['obj_type']);
 		}
 
-		if (isset($i['obj']) && $i['obj']) {
-			$ret = Activity::encode_object($i['obj']);
-		}
-
 		if (intval($i['item_deleted'])) {
 			$ret['type']       = 'Tombstone';
 			$ret['formerType'] = $objtype;
@@ -432,6 +428,10 @@ class Activity {
 
 			$ret['to'] = [ACTIVITY_PUBLIC_INBOX];
 			return $ret;
+		}
+
+		if (isset($i['obj']) && $i['obj']) {
+			$ret = Activity::encode_object($i['obj']);
 		}
 
 		if (isset($i['obj']) && $i['obj']) {
