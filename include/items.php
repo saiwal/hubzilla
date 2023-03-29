@@ -112,7 +112,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			if ($hookinfo['recipients']) {
 				$r = $hookinfo['recipients'];
 			} else {
-				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
+				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 and abook_not_here = 0 and xchan_network not in ('anon', 'token', 'rss')",
 					intval($item['uid'])
 				);
 			}
@@ -208,7 +208,6 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	if($item['owner_xchan'] !== $item['author_xchan'] && !in_array($item['owner_xchan'], $recipients)) {
 		$recipients[] = $item['owner_xchan'];
 	}
-
 
 	return $recipients;
 }
