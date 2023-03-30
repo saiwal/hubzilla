@@ -334,6 +334,7 @@ class Notifier {
 			$m = get_iconfig($target_item, 'activitypub', 'signed_data');
 			// Re-use existing signature unless the activity type changed to a Tombstone, which won't verify.
 			if ($m && (!intval($target_item['item_deleted']))) {
+				hz_syslog('notifier existing');
 				self::$encoded_item = json_decode($m, true);
 			}
 			else {

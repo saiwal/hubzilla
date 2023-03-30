@@ -202,7 +202,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// add ourself just in case we have nomadic clones that need to get a copy.
 
 	if (!in_array($item['author_xchan'], $recipients)) {
-		$recipients[] = $item['author_xchan'];
+	//	$recipients[] = $item['author_xchan'];
 	}
 
 	if($item['owner_xchan'] !== $item['author_xchan'] && !in_array($item['owner_xchan'], $recipients)) {

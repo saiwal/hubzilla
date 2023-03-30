@@ -1585,7 +1585,7 @@ class Libzot {
 			 * access checks.
 			 */
 
-			if ($sender === $channel['channel_hash'] && $arr['author_xchan'] === $channel['channel_hash'] && $arr['mid'] === $arr['parent_mid']) {
+			if ($sender === $channel['channel_hash'] && $arr['author_xchan'] === $channel['channel_hash'] && !str_starts_with($arr['mid'], z_root())) {
 				$DR->update('self delivery ignored');
 				$result[] = $DR->get();
 				continue;
