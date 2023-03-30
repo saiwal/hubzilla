@@ -1583,6 +1583,11 @@ class Libzot {
 			 * There's a chance the current delivery could take place before the cloned copy arrives
 			 * hence the item could have the wrong ACL and *could* be used in subsequent deliveries or
 			 * access checks.
+			 *
+			 * 30.3.23: block all incoming items from ourselves except if the origin is local.
+			 * This is to prevent multiple relay delivery of items that arrive via sync.
+			 * They have already been relayed at the origin location.
+			 *
 			 */
 
 			if ($sender === $channel['channel_hash'] && $arr['author_xchan'] === $channel['channel_hash'] && !str_starts_with($arr['mid'], z_root())) {
