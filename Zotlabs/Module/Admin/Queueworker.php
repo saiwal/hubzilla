@@ -41,7 +41,7 @@ class Queueworker extends Controller {
 
 		$content .= "<H4>There are " . $r[0]['total'] . " queue items to be processed.</H4>";
 
-		$r = dbq("select count(distinct workerq_reservationid) as qworkers from workerq where workerq_reservationid is not null");
+		$r = dbq("select count(*) as qworkers from workerq where workerq_reservationid is not null");
 
 		$content .= "<H4>Active workers: " . $r[0]['qworkers'] . "</H4>";
 
