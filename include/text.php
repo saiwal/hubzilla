@@ -3322,6 +3322,8 @@ function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
 	$root_replaced = null;
 	$nick_replaced = null;
 
+	// FIXME: ignore anything in a share tag
+
 	$item['body'] = str_replace($old, $new, $item['body'], $root_replaced);
 
 	if($oldnick && ($oldnick !== $channel['channel_address'])) {

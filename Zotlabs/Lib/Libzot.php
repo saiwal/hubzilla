@@ -1389,14 +1389,20 @@ class Libzot {
 		$r = [];
 		$thread_parent = self::find_parent($env, $act);
 		if ($thread_parent) {
-			$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) and channel_hash != '%s'",
+			$uids = q("SELECT uid FROM item WHERE thr_parent = '%s' OR parent_mid = '%s'",
 				dbesc($thread_parent),
-				dbesc($thread_parent),
-				dbesc($env['sender'])
+				dbesc($thread_parent)
 			);
+
+			$uids = ids_to_querystr($uids, 'uid');
+
+			$z = q("SELECT channel_hash FROM channel WHERE channel_hash != '%s' AND channel_id IN ($uids)",
+				dbesc($msg['sender'])
+			);
+
 			if ($z) {
 				foreach ($z as $zv) {
-					$r[] = $zv['hash'];
+					$r[] = $zv['channel_hash'];
 				}
 			}
 		}
