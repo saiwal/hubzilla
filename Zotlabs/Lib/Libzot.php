@@ -984,7 +984,7 @@ class Libzot {
 		}
 		elseif (!$ud_flags) {
 			// nothing changed but we still need to update the updates record
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and not (ud_flags & %d) > 0 ",
+			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and (ud_flags & %d) = 0 ",
 				intval(UPDATE_FLAGS_UPDATED),
 				dbesc($address),
 				intval(UPDATE_FLAGS_UPDATED)
@@ -1394,15 +1394,17 @@ class Libzot {
 				dbesc($thread_parent)
 			);
 
-			$uids = ids_to_querystr($uids, 'uid');
+			if ($uids) {
+				$uids = ids_to_querystr($uids, 'uid');
 
-			$z = q("SELECT channel_hash FROM channel WHERE channel_hash != '%s' AND channel_id IN ($uids)",
-				dbesc($msg['sender'])
-			);
+				$z = q("SELECT channel_hash FROM channel WHERE channel_hash != '%s' AND channel_id IN ($uids)",
+					dbesc($msg['sender'])
+				);
 
-			if ($z) {
-				foreach ($z as $zv) {
-					$r[] = $zv['channel_hash'];
+				if ($z) {
+					foreach ($z as $zv) {
+						$r[] = $zv['channel_hash'];
+					}
 				}
 			}
 		}
