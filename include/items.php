@@ -112,7 +112,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			if ($hookinfo['recipients']) {
 				$r = $hookinfo['recipients'];
 			} else {
-				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
+				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 and abook_not_here = 0 and xchan_network not in ('anon', 'token', 'rss')",
 					intval($item['uid'])
 				);
 			}
@@ -143,11 +143,8 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		}
 
 
-		// Forward to thread listeners and pubstream (sys channel), *unless* there is even
-		// a remote hint that the item might have some privacy attached.
-		// This could be (for instance) an ActivityPub DM
-		// in the middle of a public thread. Unless we can guarantee beyond all doubt that
-		// this is public, don't allow it to go to thread listeners.
+		// Forward to thread listeners and pubstream (sys channel),
+		// *unless* there is even a remote hint that the item might have some privacy attached.
 
 		if(!intval($item['item_private'])) {
 			$sys = get_sys_channel();
@@ -205,7 +202,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// add ourself just in case we have nomadic clones that need to get a copy.
 
 	if (!in_array($item['author_xchan'], $recipients)) {
-		$recipients[] = $item['author_xchan'];
+	//	$recipients[] = $item['author_xchan'];
 	}
 
 	if($item['owner_xchan'] !== $item['author_xchan'] && !in_array($item['owner_xchan'], $recipients)) {
@@ -3042,6 +3039,40 @@ function tgroup_check($uid, $item) {
 	return false;
 
 }
+
+
+function i_am_mentioned($channel, $item, $check_groups = false) {
+
+	$link = z_root() . '/channel/' . $channel['channel_address'];
+
+	$body = preg_replace('/\[share(.*?)\[\/share]/','',$item['body']);
+
+	$tagged = false;
+	$matches = [];
+	$tagtype = $check_groups ? TERM_FORUM : TERM_MENTION;
+	$terms = ((isset($item['term'])) ? get_terms_oftype($item['term'], $tagtype) : false);
+
+	if ($terms) {
+		foreach ($terms as $term) {
+			if ($link === $term['url']) {
+				$pattern = '/[!@]!?\[[uz]rl=' . preg_quote($term['url'],'/') . '](.*?)\[\/[uz]rl]/';
+				if (preg_match($pattern,$body,$matches)) {
+					$tagged = true;
+				}
+				$pattern = '/\[[uz]rl=' . preg_quote($term['url'],'/') . '][!@](.*?)\[\/[uz]rl]/';
+				if (preg_match($pattern,$body,$matches)) {
+					$tagged = true;
+				}
+			}
+		}
+	}
+	$unless = intval(get_pconfig($channel['channel_id'], 'system', 'unless_mention_count', get_config('system', 'unless_mention_count', 20)));
+	if ($unless && $terms && count($terms) > $unless) {
+		$tagged = false;
+	}
+	return $tagged;
+}
+
 
 /**
  * Sourced and tag-delivered posts are re-targetted for delivery to the connections of the channel

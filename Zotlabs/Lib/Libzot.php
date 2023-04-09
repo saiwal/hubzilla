@@ -984,7 +984,7 @@ class Libzot {
 		}
 		elseif (!$ud_flags) {
 			// nothing changed but we still need to update the updates record
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and not (ud_flags & %d) > 0 ",
+			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and (ud_flags & %d) = 0 ",
 				intval(UPDATE_FLAGS_UPDATED),
 				dbesc($address),
 				intval(UPDATE_FLAGS_UPDATED)
@@ -1233,7 +1233,6 @@ class Libzot {
 			return;
 		}
 
-
 		if ($has_data) {
 
 			if (in_array($env['type'], ['activity', 'response'])) {
@@ -1386,6 +1385,31 @@ class Libzot {
 		return false;
 	}
 
+	static function find_parent_owner_hashes($env, $act) {
+		$r = [];
+		$thread_parent = self::find_parent($env, $act);
+		if ($thread_parent) {
+			$uids = q("SELECT uid FROM item WHERE thr_parent = '%s' OR parent_mid = '%s'",
+				dbesc($thread_parent),
+				dbesc($thread_parent)
+			);
+
+			if ($uids) {
+				$uids = ids_to_querystr($uids, 'uid');
+
+				$z = q("SELECT channel_hash FROM channel WHERE channel_hash != '%s' AND channel_id IN ($uids)",
+					dbesc($msg['sender'])
+				);
+
+				if ($z) {
+					foreach ($z as $zv) {
+						$r[] = $zv['channel_hash'];
+					}
+				}
+			}
+		}
+		return $r;
+	}
 
 	/**
 	 * @brief
@@ -1466,26 +1490,23 @@ class Libzot {
 						}
 					}
 				}
+				if ($act->obj['type'] === 'Tombstone') {
+					// This is a delete. There are no tags to look at - add anyone owning the item.
+					$parent_owners = self::find_parent_owner_hashes($msg, $act);
+					if ($parent_owners) {
+						$r = array_merge($r, $parent_owners);
+					}
+				}
+
 			}
 		}
 		else {
 			// This is a comment. We need to find any parent with ITEM_UPLINK set. But in fact, let's just return
 			// everybody that stored a copy of the parent. This way we know we're covered. We'll check the
 			// comment permissions when we deliver them.
-
-			$thread_parent = self::find_parent($msg, $act);
-
-			if ($thread_parent) {
-				$z = q("select channel_hash as hash from channel left join item on channel.channel_id = item.uid where ( item.thr_parent = '%s' OR item.parent_mid = '%s' ) and channel_hash != '%s'",
-					dbesc($thread_parent),
-					dbesc($thread_parent),
-					dbesc($msg['sender'])
-				);
-				if ($z) {
-					foreach ($z as $zv) {
-						$r[] = $zv['hash'];
-					}
-				}
+			$parent_owners = self::find_parent_owner_hashes($msg, $act);
+			if ($parent_owners) {
+				$r = array_merge($r, $parent_owners);
 			}
 		}
 
@@ -1570,9 +1591,14 @@ class Libzot {
 			 * There's a chance the current delivery could take place before the cloned copy arrives
 			 * hence the item could have the wrong ACL and *could* be used in subsequent deliveries or
 			 * access checks.
+			 *
+			 * 30.3.23: block all incoming items from ourselves except if the origin is local.
+			 * This is to prevent multiple relay delivery of items that arrive via sync.
+			 * They have already been relayed at the origin location.
+			 *
 			 */
 
-			if ($sender === $channel['channel_hash'] && $arr['author_xchan'] === $channel['channel_hash'] && $arr['mid'] === $arr['parent_mid']) {
+			if ($sender === $channel['channel_hash'] && $arr['author_xchan'] === $channel['channel_hash'] && !str_starts_with($arr['mid'], z_root())) {
 				$DR->update('self delivery ignored');
 				$result[] = $DR->get();
 				continue;
@@ -1622,13 +1648,23 @@ class Libzot {
 			if ((!$tag_delivery) && (!$local_public)) {
 				$allowed = (perm_is_allowed($channel['channel_id'], $sender, $perm));
 
-				if ((!$allowed) && $perm === 'post_comments') {
-					$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-						dbesc($arr['parent_mid']),
-						intval($channel['channel_id'])
-					);
-					if ($parent) {
-						$allowed = can_comment_on_post($sender, $parent[0]);
+				$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system', 'permit_all_mentions') && i_am_mentioned($channel, $arr));
+
+				if (!$allowed) {
+					if ($perm === 'post_comments') {
+						$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+							dbesc($arr['parent_mid']),
+							intval($channel['channel_id'])
+						);
+						if ($parent) {
+							$allowed = can_comment_on_post($sender, $parent[0]);
+							if (!$allowed && $permit_mentions) {
+								$allowed = true;
+							}
+						}
+
+					} elseif ($permit_mentions) {
+						$allowed = true;
 					}
 				}
 

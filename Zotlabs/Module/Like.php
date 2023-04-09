@@ -407,11 +407,19 @@ class Like extends Controller {
 					if (activity_match($rr['verb'], $activity))
 						$multi_undo = false;
 
+					$d = q("select * from item where id = %d",
+						intval($rr['id'])
+					);
+					if ($d) {
+						xchan_query($d);
+						$sync_item = fetch_post_tags($d);
+						Libsync::build_sync_packet($profile_uid, ['item' => [encode_item($sync_item[0], true)]]);
+					}
+
 					// drop_item was not done interactively, so we need to invoke the notifier
 					// in order to push the changes to connections
 
 					Master::Summon(array('Notifier', 'drop', $rr['id']));
-
 
 				}
 
@@ -561,6 +569,15 @@ class Like extends Controller {
 		$arr['id'] = $post_id;
 
 		call_hooks('post_local_end', $arr);
+
+		$r = q("select * from item where id = %d",
+			intval($post_id)
+		);
+		if ($r) {
+			xchan_query($r);
+			$sync_item = fetch_post_tags($r);
+			Libsync::build_sync_packet($profile_uid, ['item' => [encode_item($sync_item[0], true)]]);
+		}
 
 		if ($extended_like) {
 			$r = q("insert into likes (channel_id,liker,likee,iid,i_mid,verb,target_type,target_id,target) values (%d,'%s','%s',%d,'%s','%s','%s','%s','%s')",

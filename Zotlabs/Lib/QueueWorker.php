@@ -159,7 +159,7 @@ class QueueWorker {
 
 		//usleep(self::$workersleep);
 
-		$workers = dbq("select count(distinct workerq_reservationid) as total from workerq where workerq_reservationid is not null");
+		$workers = dbq("select count(*) as total from workerq where workerq_reservationid is not null");
 		logger("WORKERCOUNT: " . $workers[0]['total'], LOGGER_DEBUG);
 
 		return intval($workers[0]['total']);
@@ -172,7 +172,7 @@ class QueueWorker {
 
 		$wid = uniqid('', true);
 
-		usleep(mt_rand(300000, 1000000)); //Sleep .3 - 1 seconds before creating a new worker.
+		//usleep(mt_rand(300000, 1000000)); //Sleep .3 - 1 seconds before creating a new worker.
 
 		$workers = self::GetWorkerCount();
 
@@ -197,7 +197,7 @@ class QueueWorker {
 		$work = dbq("SELECT workerq_id, workerq_cmd FROM workerq WHERE workerq_reservationid IS NULL ORDER BY workerq_priority DESC, workerq_id ASC LIMIT 1 FOR UPDATE $sql_quirks");
 
 		if (!$work) {
-			self::qcommit();
+			self::qrollback();
 			return false;
 		}
 
