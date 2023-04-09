@@ -331,7 +331,8 @@ class Libzotdir {
 						dbesc($zf['data']['primary_location']['url'])
 					);
 				}
-
+			}
+			else {
 				q("update updates set ud_last = '%s' where ud_addr = '%s'",
 					dbesc(datetime_convert()),
 					dbesc($ud['ud_addr'])
