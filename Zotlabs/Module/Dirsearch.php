@@ -222,19 +222,19 @@ class Dirsearch extends Controller {
 
 			if($r) {
 				foreach($r as $rr) {
-					$flags = array();
+					$flags = [];
 					if($rr['ud_flags'] & UPDATE_FLAGS_DELETED)
 						$flags[] = 'deleted';
 					if($rr['ud_flags'] & UPDATE_FLAGS_FORCED)
 						$flags[] = 'forced';
 
-					$spkt['transactions'][] = array(
+					$spkt['transactions'][] = [
 						'hash' => $rr['ud_hash'],
 						'address' => $rr['ud_addr'],
 						'transaction_id' => $rr['ud_guid'],
 						'timestamp' => $rr['ud_date'],
 						'flags' => $flags
-					);
+					];
 				}
 			}
 

@@ -338,7 +338,7 @@ class Libzotdir {
 			$success = false;
 			$zf = [];
 
-			$href = Webfinger::zot_url(punify($ud['ud_addr']));
+			$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
 			if($href) {
 				$zf = Zotfinger::exec($href);
 			}
@@ -374,85 +374,78 @@ class Libzotdir {
 	 */
 
 	static function local_dir_update($uid, $force) {
+		logger('local_dir_update uid: ' . $uid, LOGGER_DEBUG);
 
-
-		logger('local_dir_update: uid: ' . $uid, LOGGER_DEBUG);
-
-		$p = q("select channel.channel_hash, channel_address, channel_timezone, profile.* from profile left join channel on channel_id = uid where uid = %d and is_default = 1",
+		$p = q("select channel.channel_hash, channel_address, channel_timezone, profile.*, xchan.xchan_hidden, xchan.xchan_url from profile left join channel on channel_id = uid left join xchan on channel_hash = xchan_hash where profile.uid = %d and profile.is_default = 1",
 			intval($uid)
 		);
 
-		$profile = array();
-		$profile['encoding'] = 'zot';
-
-		if ($p) {
-			$hash = $p[0]['channel_hash'];
-
-			$profile['description'] = $p[0]['pdesc'];
-			$profile['birthday']    = $p[0]['dob'];
-			if ($age = age($p[0]['dob'],$p[0]['channel_timezone'],''))
-				$profile['age'] = $age;
-
-			$profile['gender']      = $p[0]['gender'];
-			$profile['marital']     = $p[0]['marital'];
-			$profile['sexual']      = $p[0]['sexual'];
-			$profile['locale']      = $p[0]['locality'];
-			$profile['region']      = $p[0]['region'];
-			$profile['postcode']    = $p[0]['postal_code'];
-			$profile['country']     = $p[0]['country_name'];
-			$profile['about']       = $p[0]['about'];
-			$profile['homepage']    = $p[0]['homepage'];
-			$profile['hometown']    = $p[0]['hometown'];
-
-			if ($p[0]['keywords']) {
-				$tags = array();
-				$k = explode(' ', $p[0]['keywords']);
-				if ($k)
-					foreach ($k as $kk)
-						if (trim($kk))
-							$tags[] = trim($kk);
-
-				if ($tags)
-					$profile['keywords'] = $tags;
-			}
-
-			$hidden = (1 - intval($p[0]['publish']));
-
-			logger('hidden: ' . $hidden);
-
-			$r = q("select xchan_hidden from xchan where xchan_hash = '%s'",
-				dbesc($p[0]['channel_hash'])
-			);
-
-			if(intval($r[0]['xchan_hidden']) != $hidden) {
-				$r = q("update xchan set xchan_hidden = %d where xchan_hash = '%s'",
-					intval($hidden),
-					dbesc($hash)
-				);
-			}
-
-			$arr = [ 'channel_id' => $uid, 'hash' => $hash, 'profile' => $profile ];
-			call_hooks('local_dir_update', $arr);
-
-			$address = channel_reddress($p[0]);
-
-			if (perm_is_allowed($uid, '', 'view_profile')) {
-				self::import_directory_profile($hash, $arr['profile'], $address, 0);
-			}
-			else {
-				// they may have made it private
-				q("delete from xprof where xprof_hash = '%s'",
-					dbesc($hash)
-				);
-				q("delete from xtag where xtag_hash = '%s'",
-					dbesc($hash)
-				);
-			}
-
+		if (!$p) {
+			logger('profile not found');
+			return;
 		}
 
-		$ud_hash = random_string() . '@' . \App::get_hostname();
-		self::update_modtime($hash, $ud_hash, channel_reddress($p[0]), 0);
+		$profile = [];
+		$profile['encoding'] = 'zot';
+
+		$hash = $p[0]['channel_hash'];
+
+		$profile['description'] = $p[0]['pdesc'];
+		$profile['birthday']    = $p[0]['dob'];
+		if ($age = age($p[0]['dob'],$p[0]['channel_timezone'],''))
+			$profile['age'] = $age;
+
+		$profile['gender']      = $p[0]['gender'];
+		$profile['marital']     = $p[0]['marital'];
+		$profile['sexual']      = $p[0]['sexual'];
+		$profile['locale']      = $p[0]['locality'];
+		$profile['region']      = $p[0]['region'];
+		$profile['postcode']    = $p[0]['postal_code'];
+		$profile['country']     = $p[0]['country_name'];
+		$profile['about']       = $p[0]['about'];
+		$profile['homepage']    = $p[0]['homepage'];
+		$profile['hometown']    = $p[0]['hometown'];
+
+		if ($p[0]['keywords']) {
+			$tags = array();
+			$k = explode(' ', $p[0]['keywords']);
+			if ($k)
+				foreach ($k as $kk)
+					if (trim($kk))
+						$tags[] = trim($kk);
+
+			if ($tags)
+				$profile['keywords'] = $tags;
+		}
+
+		$hidden = (1 - intval($p[0]['publish']));
+
+		logger('hidden: ' . $hidden);
+
+		if(intval($p[0]['xchan_hidden']) !== $hidden) {
+			q("update xchan set xchan_hidden = %d where xchan_hash = '%s'",
+				intval($hidden),
+				dbesc($hash)
+			);
+		}
+
+		$arr = [ 'channel_id' => $uid, 'hash' => $hash, 'profile' => $profile ];
+		call_hooks('local_dir_update', $arr);
+
+		if (perm_is_allowed($uid, '', 'view_profile')) {
+			self::import_directory_profile($hash, $arr['profile'], $p[0]['xchan_url'], 0, 1);
+		}
+		else {
+			// they may have made it private
+			q("delete from xprof where xprof_hash = '%s'",
+				dbesc($hash)
+			);
+			q("delete from xtag where xtag_hash = '%s'",
+				dbesc($hash)
+			);
+		}
+
+		self::update_modtime($hash, $p[0]['xchan_url']);
 	}
 
 
@@ -609,7 +602,7 @@ class Libzotdir {
 		call_hooks('import_directory_profile', $d);
 
 		if (($d['update']) && (! $suppress_update))
-			self::update_modtime($arr['xprof_hash'],random_string() . '@' . \App::get_hostname(), $addr, $ud_flags);
+			self::update_modtime($arr['xprof_hash'], $addr);
 
 		return $d['update'];
 	}
@@ -662,12 +655,11 @@ class Libzotdir {
 	 * @brief
 	 *
 	 * @param string $hash
-	 * @param string $guid
 	 * @param string $addr
 	 * @param int $flags (optional) default 0
 	 */
 
-	static function update_modtime($hash, $guid, $addr, $flags = 0) {
+	static function update_modtime($hash, $addr, $flags = 0) {
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
 
@@ -675,7 +667,7 @@ class Libzotdir {
 			return;
 		}
 
-		if (empty($hash) || empty($guid) || empty($addr)) {
+		if (empty($hash) || empty($addr)) {
 			return;
 		}
 

@@ -649,7 +649,7 @@ class Libzot {
 	 *   * \e string \b message (optional) error string only if success is false
 	 */
 
-	static function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
+	static function import_xchan($arr, $ud_flags = 0, $ud_arr = null) {
 
 		$ret     = ['success' => false];
 
@@ -665,7 +665,7 @@ class Libzot {
 		 */
 		call_hooks('import_xchan', $arr);
 
-		$dirmode = intval(get_config('system', 'directory_mode'));
+		$dirmode = intval(get_config('system', 'directory_mode', DIRECTORY_MODE_NORMAL));
 
 		$changed = false;
 		$what    = '';
@@ -696,7 +696,7 @@ class Libzot {
 			return $ret;
 		}
 
-		logger('import_xchan: ' . $xchan_hash, LOGGER_DEBUG);
+		hz_syslog('import_xchan: ' . $xchan_hash, LOGGER_DEBUG);
 
 		if (isset($arr['signing_algorithm']) && $arr['signing_algorithm']) {
 			set_xconfig($xchan_hash, 'system', 'signing_algorithm', $arr['signing_algorithm']);
@@ -787,8 +787,8 @@ class Libzot {
 					dbesc($xchan_hash)
 				);
 
-				logger('Update: existing: ' . print_r($r[0], true), LOGGER_DATA, LOG_DEBUG);
-				logger('Update: new: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
+				hz_syslog('Update: existing: ' . print_r($r[0], true), LOGGER_DATA, LOG_DEBUG);
+				hz_syslog('Update: new: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
 				$what    .= 'xchan ';
 				$changed = true;
 			}
@@ -928,20 +928,16 @@ class Libzot {
 				$ret['message'] .= $s['message'];
 		}
 
-		// Which entries in the update table are we interested in updating?
-
-		$address = (($ud_arr && $ud_arr['ud_addr']) ? $ud_arr['ud_addr'] : $arr['primary_location']['address']);
-
-
-		// Are we a directory server of some kind?
 
 		$other_realm = false;
 		$realm       = get_directory_realm();
-		if (array_key_exists('site', $arr)
-			&& array_key_exists('realm', $arr['site'])
-			&& (strpos($arr['site']['realm'], $realm) === false))
+		if (array_key_exists('site', $arr) && array_key_exists('realm', $arr['site']) && (strpos($arr['site']['realm'], $realm) === false)) {
 			$other_realm = true;
+		}
 
+		$address = $arr['primary_location']['url'];
+
+		// Are we a directory server of some kind?
 
 		if ($dirmode != DIRECTORY_MODE_NORMAL) {
 
@@ -977,16 +973,9 @@ class Libzot {
 			}
 		}
 
-		if ($changed/* || ($ud_flags == UPDATE_FLAGS_FORCED)*/) {
-			$guid = random_string() . '@' . \App::get_hostname();
-			Libzotdir::update_modtime($xchan_hash, $guid, $address, $ud_flags);
-		}
-		elseif (!$ud_flags) {
-			// nothing changed but we still need to update the updates record
-			q("update updates set ud_flags = 0, ud_date = '%s' where ud_hash = '%s'",
-				dbesc(datetime_convert()),
-				dbesc($xchan_hash)
-			);
+		if ($ud_arr) {
+			// Always update updates if we were provided an ud_arr
+			Libzotdir::update_modtime($xchan_hash, $address);
 		}
 
 		if (!x($ret, 'message')) {
