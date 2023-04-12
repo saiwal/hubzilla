@@ -984,7 +984,7 @@ class Libzot {
 			Libzotdir::update_modtime($xchan_hash, $address);
 		}
 
-		if (!x($ret, 'message')) {
+		if (empty($ret['message'])) {
 			$ret['success'] = true;
 			$ret['hash']    = $xchan_hash;
 		}
