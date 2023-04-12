@@ -293,23 +293,6 @@ class Libzotdir {
 							dbesc($t['address'])
 						);
 					}
-
-/*
-					$ud_flags = 0;
-					if (is_array($t['flags']) && in_array('deleted',$t['flags']))
-						$ud_flags |= UPDATE_FLAGS_DELETED;
-					if (is_array($t['flags']) && in_array('forced',$t['flags']))
-						$ud_flags |= UPDATE_FLAGS_FORCED;
-
-					$z = q("insert into updates ( ud_hash, ud_guid, ud_date, ud_flags, ud_addr )
-						values ( '%s', '%s', '%s', %d, '%s' ) ",
-						dbesc($t['hash']),
-						dbesc($t['transaction_id']),
-						dbesc($t['timestamp']),
-						intval($ud_flags),
-						dbesc($t['address'])
-					);
-*/
 				}
 			}
 		}
@@ -450,7 +433,7 @@ class Libzotdir {
 			);
 		}
 
-		self::update_modtime($hash, $p[0]['xchan_url']);
+		self::update($hash, $p[0]['xchan_url']);
 	}
 
 
@@ -653,12 +636,12 @@ class Libzotdir {
 	/**
 	 * @brief
 	 *
-	 * @param string $hash
-	 * @param string $addr
-	 * @param int $flags (optional) default 0
+	 * @param string $hash the channel hash
+	 * @param string $addr the channel url
+	 * @param bool $bump_date (optional) default true
 	 */
 
-	static function update_modtime($hash, $addr, $flags = 0) {
+	static function update($hash, $addr, $bump_date = true) {
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
 
@@ -674,9 +657,13 @@ class Libzotdir {
 			dbesc($hash)
 		);
 
+		$date_sql = '';
+		if ($bump_date) {
+			$date_sql = "ud_date = '" . dbesc(datetime_convert()) . "'";
+		}
+
 		if ($u) {
-			$x = q("UPDATE updates SET ud_date = '%s', ud_last = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
-				dbesc(datetime_convert()),
+			$x = q("UPDATE updates SET $date_sql, ud_last = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
 				dbesc(NULL_DATE),
 				dbesc(\App::get_hostname()),
 				dbesc($addr),
@@ -694,24 +681,7 @@ class Libzotdir {
 		);
 
 		return;
-/*
-		if($flags) {
-			q("insert into updates (ud_hash, ud_guid, ud_date, ud_flags, ud_addr ) values ( '%s', '%s', '%s', %d, '%s' )",
-				dbesc($hash),
-				dbesc($guid),
-				dbesc(datetime_convert()),
-				intval($flags),
-				dbesc($addr)
-			);
-		}
-		else {
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and not (ud_flags & %d)>0 ",
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc($addr),
-				intval(UPDATE_FLAGS_UPDATED)
-			);
-		}
-*/
+
 	}
 
 }

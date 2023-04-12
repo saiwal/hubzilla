@@ -968,8 +968,10 @@ class Libzot {
 			}
 		}
 
-		// update updates if anything changed
-		Libzotdir::update_modtime($xchan_hash, $address);
+
+		// update updates if anything changed bump the ud_date
+		Libzotdir::update($xchan_hash, $address, $changed);
+
 
 		if (empty($ret['message'])) {
 			$ret['success'] = true;
