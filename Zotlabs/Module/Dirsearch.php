@@ -215,9 +215,11 @@ class Dirsearch extends Controller {
 
 		if($sync) {
 			$spkt = array('transactions' => array());
-			$r = q("select * from updates where ud_date >= '%s' and ud_guid != '' and ud_addr != '' order by ud_date desc",
+
+			$r = q("select * from updates where ud_date >= '%s' order by ud_date desc",
 				dbesc($sync)
 			);
+
 			if($r) {
 				foreach($r as $rr) {
 					$flags = array();
@@ -235,6 +237,7 @@ class Dirsearch extends Controller {
 					);
 				}
 			}
+
 			json_return_and_die($spkt);
 		}
 		else {

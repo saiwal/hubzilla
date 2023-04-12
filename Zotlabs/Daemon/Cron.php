@@ -3,6 +3,7 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Libzotdir;
 
 class Cron {
 
@@ -34,6 +35,17 @@ class Cron {
 */
 
 		logger('cron: start');
+
+		// If this is a directory server, request a sync with an upstream
+		// directory at least once a day, up to once every poll interval.
+		// Pull remote changes and push local changes.
+		// potential issue: how do we keep from creating an endless update loop?
+
+		$dirmode = get_config('system', 'directory_mode');
+
+		if ($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
+			Libzotdir::sync_directories($dirmode);
+		}
 
 		// run queue delivery process in the background
 

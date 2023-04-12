@@ -920,11 +920,11 @@ class Libzot {
 		$s = Libsync::sync_locations($arr, $arr);
 
 		if ($s) {
-			if (isset($s['change_message']))
+			if (!empty($s['change_message']))
 				$what .= $s['change_message'];
-			if (isset($s['changed']))
+			if (!empty($s['changed']))
 				$changed = $s['changed'];
-			if (isset($s['message']))
+			if (!empty($s['message']))
 				$ret['message'] .= $s['message'];
 		}
 
@@ -977,17 +977,15 @@ class Libzot {
 			}
 		}
 
-		if (($changed) || ($ud_flags == UPDATE_FLAGS_FORCED)) {
+		if ($changed/* || ($ud_flags == UPDATE_FLAGS_FORCED)*/) {
 			$guid = random_string() . '@' . \App::get_hostname();
 			Libzotdir::update_modtime($xchan_hash, $guid, $address, $ud_flags);
-			logger('Changed: ' . $what, LOGGER_DEBUG);
 		}
 		elseif (!$ud_flags) {
 			// nothing changed but we still need to update the updates record
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and (ud_flags & %d) = 0 ",
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc($address),
-				intval(UPDATE_FLAGS_UPDATED)
+			q("update updates set ud_flags = 0, ud_date = '%s' where ud_hash = '%s'",
+				dbesc(datetime_convert()),
+				dbesc($xchan_hash)
 			);
 		}
 

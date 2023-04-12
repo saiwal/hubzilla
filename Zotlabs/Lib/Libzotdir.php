@@ -265,16 +265,36 @@ class Libzotdir {
 			if (is_array($j['transactions']) && count($j['transactions'])) {
 				foreach ($j['transactions'] as $t) {
 
-					if (empty($t['hash']) || empty($t['transaction_id']) || empty($t['address'])) {
+					if (empty($t['hash'])) {
 						continue;
 					}
 
-					$r = q("select * from updates where ud_guid = '%s' limit 1",
-						dbesc($t['transaction_id'])
+					$r = q("select * from updates where ud_hash = '%s' limit 1",
+						dbesc($t['hash'])
 					);
-					if($r)
-						continue;
 
+					if ($r) {
+
+						if ($r[0]['ud_date'] >= $t['timestamp']) {
+							continue;
+						}
+
+						q("UPDATE updates SET ud_flags = 1 WHERE ud_id = %d",
+							dbesc($r[0]['ud_id'])
+						);
+					}
+					else {
+						$t['transaction_id'] = strpos($t['transaction_id'], '@') === false ? $t['transaction_id'] : substr($t['transaction_id'], strpos($t['transaction_id'], '@') + 1);
+						q("insert into updates ( ud_hash, ud_guid, ud_date, ud_addr, ud_flags )
+							values ( '%s', '%s', '%s', '%s', 1 ) ",
+							dbesc($t['hash']),
+							dbesc($t['transaction_id']),
+							dbesc($t['timestamp']),
+							dbesc($t['address'])
+						);
+					}
+
+/*
 					$ud_flags = 0;
 					if (is_array($t['flags']) && in_array('deleted',$t['flags']))
 						$ud_flags |= UPDATE_FLAGS_DELETED;
@@ -289,6 +309,7 @@ class Libzotdir {
 						intval($ud_flags),
 						dbesc($t['address'])
 					);
+*/
 				}
 			}
 		}
@@ -313,7 +334,7 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		if ($ud['ud_addr'] && (! ($ud['ud_flags'] & UPDATE_FLAGS_DELETED))) {
+		if ($ud['ud_hash'] /* && (! ($ud['ud_flags'] & UPDATE_FLAGS_DELETED))*/) {
 			$success = false;
 			$zf = [];
 
@@ -331,10 +352,11 @@ class Libzotdir {
 						dbesc($zf['data']['primary_location']['url'])
 					);
 				}
-
-				q("update updates set ud_last = '%s' where ud_addr = '%s'",
+			}
+			else {
+				q("UPDATE updates SET ud_last = '%s' WHERE ud_hash = '%s'",
 					dbesc(datetime_convert()),
-					dbesc($ud['ud_addr'])
+					dbesc($ud['ud_hash'])
 				);
 			}
 		}
@@ -430,7 +452,7 @@ class Libzotdir {
 		}
 
 		$ud_hash = random_string() . '@' . \App::get_hostname();
-		self::update_modtime($hash, $ud_hash, channel_reddress($p[0]),(($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+		self::update_modtime($hash, $ud_hash, channel_reddress($p[0]), 0);
 	}
 
 
@@ -657,6 +679,30 @@ class Libzotdir {
 			return;
 		}
 
+		$u = q("SELECT ud_id FROM updates WHERE ud_hash = '%s' LIMIT 1",
+			dbesc($hash)
+		);
+
+		if ($u) {
+			$x = q("UPDATE updates SET ud_date = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
+				dbesc(datetime_convert()),
+				dbesc(\App::get_hostname()),
+				dbesc($addr),
+				intval($u[0]['ud_id'])
+			);
+
+			return;
+		}
+
+		q("INSERT INTO updates (ud_hash, ud_guid, ud_date, ud_addr ) VALUES ( '%s', '%s', '%s', '%s' )",
+			dbesc($hash),
+			dbesc(\App::get_hostname()),
+			dbesc(datetime_convert()),
+			dbesc($addr)
+		);
+
+		return;
+/*
 		if($flags) {
 			q("insert into updates (ud_hash, ud_guid, ud_date, ud_flags, ud_addr ) values ( '%s', '%s', '%s', %d, '%s' )",
 				dbesc($hash),
@@ -673,6 +719,7 @@ class Libzotdir {
 				intval(UPDATE_FLAGS_UPDATED)
 			);
 		}
+*/
 	}
 
 }

@@ -183,11 +183,20 @@ class Poller {
 		$dirmode = intval(get_config('system', 'directory_mode'));
 
 		if ($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
+/*
 			$r = q("SELECT u.ud_addr, u.ud_id, u.ud_last FROM updates AS u INNER JOIN (SELECT ud_addr, max(ud_id) AS ud_id FROM updates WHERE ( ud_flags & %d ) = 0 AND ud_addr != '' AND ( ud_last <= '%s' OR ud_last > %s - INTERVAL %s ) GROUP BY ud_addr) AS s ON s.ud_id = u.ud_id ",
 				intval(UPDATE_FLAGS_UPDATED),
 				dbesc(NULL_DATE),
 				db_utcnow(), db_quoteinterval('7 DAY')
 			);
+*/
+
+			$r = q("SELECT * FROM updates WHERE ud_flags = 1 AND (ud_last = '%s' OR ud_last > %s - INTERVAL %s)",
+				dbesc(NULL_DATE),
+				db_utcnow(),
+				db_quoteinterval('7 DAY')
+			);
+
 			if ($r) {
 				foreach ($r as $rr) {
 

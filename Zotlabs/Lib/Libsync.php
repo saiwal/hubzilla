@@ -786,7 +786,7 @@ class Libsync {
 
 		if (isset($arr['locations']) && $arr['locations']) {
 
-			$xisting = q("select * from hubloc where hubloc_hash = '%s'",
+			$xisting = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
 				dbesc($sender['hash'])
 			);
 
