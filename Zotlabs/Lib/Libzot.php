@@ -712,8 +712,6 @@ class Libzot {
 		if (!array_key_exists('connect_url', $arr))
 			$arr['connect_url'] = '';
 
-		$new_xchan = false;
-
 		if ($r) {
 
 			if ($arr['photo'] && array_key_exists('updated', $arr['photo']) && $arr['photo']['updated'] > $r[0]['xchan_photo_date'])
@@ -831,7 +829,6 @@ class Libzot {
 			);
 
 			$what    .= 'new_xchan';
-			$new_xchan = true;
 			$changed = true;
 		}
 
@@ -979,8 +976,8 @@ class Libzot {
 			}
 		}
 
-		if ($ud_arr || ($new_xchan && in_array($dirmode, [DIRECTORY_MODE_PRIMARY, DIRECTORY_MODE_SECONDARY]))) {
-			// update updates if we were provided an ud_arr or the xchan is new and we are some sort of directory
+		if ($changed) {
+			// update updates if anything changed
 			Libzotdir::update_modtime($xchan_hash, $address);
 		}
 
