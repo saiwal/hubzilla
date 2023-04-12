@@ -659,11 +659,11 @@ class Libzotdir {
 
 		$date_sql = '';
 		if ($bump_date) {
-			$date_sql = "ud_date = '" . dbesc(datetime_convert()) . "'";
+			$date_sql = "ud_date = '" . dbesc(datetime_convert()) . "',";
 		}
 
 		if ($u) {
-			$x = q("UPDATE updates SET $date_sql, ud_last = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
+			$x = q("UPDATE updates SET $date_sql ud_last = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
 				dbesc(NULL_DATE),
 				dbesc(\App::get_hostname()),
 				dbesc($addr),
