@@ -771,7 +771,12 @@ class Libsync {
 
 	static function sync_locations($sender, $arr) {
 
-		$ret = [];
+		$ret = [
+			'change_message' => '',
+			'changed' => false,
+			'message' => ''
+		];
+
 		$what = '';
 		$changed = false;
 
