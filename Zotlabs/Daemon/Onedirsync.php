@@ -23,35 +23,13 @@ class Onedirsync {
 			intval($update_id)
 		);
 
-		if (!$r)
-			return;
-
-/*
-		if (($r[0]['ud_flags'] & UPDATE_FLAGS_UPDATED) || (!$r[0]['ud_addr']))
-			return;
-
-		// Have we probed this channel more recently than the other directory server
-		// (where we received this update from) ?
-		// If we have, we don't need to do anything except mark any older entries updated
-
-		$x = q("select * from updates where ud_addr = '%s' and ud_date > '%s' and ( ud_flags & %d )>0 order by ud_date desc limit 1",
-			dbesc($r[0]['ud_addr']),
-			dbesc($r[0]['ud_date']),
-			intval(UPDATE_FLAGS_UPDATED)
-		);
-		if ($x) {
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and ( ud_flags & %d ) = 0 and ud_date != '%s'",
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc($r[0]['ud_addr']),
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc($x[0]['ud_date'])
-			);
+		if (!$r) {
 			return;
 		}
-*/
+
 		// ignore doing an update if this ud_addr refers to a known dead hubloc
 
-		$h = q("select * from hubloc where hubloc_addr = '%s' order by hubloc_id desc",
+		$h = q("select * from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
 			dbesc($r[0]['ud_addr']),
 		);
 
@@ -71,8 +49,9 @@ class Onedirsync {
 		// we might have to pull this out some day, but for now update_directory_entry()
 		// runs zot_finger() and is kind of zot specific
 
-		if ($h && $h['hubloc_network'] !== 'zot6')
+		if ($h && $h['hubloc_network'] !== 'zot6') {
 			return;
+		}
 
 		Libzotdir::update_directory_entry($r[0]);
 

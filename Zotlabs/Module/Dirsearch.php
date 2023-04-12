@@ -216,7 +216,8 @@ class Dirsearch extends Controller {
 		if($sync) {
 			$spkt = array('transactions' => array());
 
-			$r = q("SELECT * FROM updates WHERE ud_flags = 0 AND ud_date >= '%s' ORDER BY ud_date DESC",
+			$r = q("SELECT * FROM updates WHERE ud_flags = 0 AND ud_last = '%s' AND ud_date >= '%s' ORDER BY ud_date DESC",
+				dbesc(NULL_DATE),
 				dbesc($sync)
 			);
 

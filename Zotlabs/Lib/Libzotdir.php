@@ -334,32 +334,37 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		if ($ud['ud_hash'] /* && (! ($ud['ud_flags'] & UPDATE_FLAGS_DELETED))*/) {
-			$success = false;
-			$zf = [];
+		if (!$ud['ud_hash'] && !$ud['ud_addr']) {
+			return;
+		}
 
-			$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
-			if($href) {
-				$zf = Zotfinger::exec($href);
-			}
-			if(array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
-				$xc = Libzot::import_xchan($zf['data']);
-				// This is a workaround for a missing xchan_updated column
-				// TODO: implement xchan_updated in the xchan table and update this column instead
-				if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
-					q("UPDATE hubloc SET hubloc_updated = '%s' WHERE hubloc_id_url = '%s' AND hubloc_primary = 1",
-						dbesc(datetime_convert()),
-						dbesc($zf['data']['primary_location']['url'])
-					);
-				}
-			}
-			else {
-				q("UPDATE updates SET ud_last = '%s' WHERE ud_hash = '%s'",
+		$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
+		if(!$href) {
+			return;
+		}
+
+		$zf = Zotfinger::exec($href);
+
+		if(array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
+			$xc = Libzot::import_xchan($zf['data']);
+			// This is a workaround for a missing xchan_updated column
+			// TODO: implement xchan_updated in the xchan table and update this column instead
+			if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
+				q("UPDATE hubloc SET hubloc_updated = '%s' WHERE hubloc_id_url = '%s' AND hubloc_primary = 1",
 					dbesc(datetime_convert()),
-					dbesc($ud['ud_hash'])
+					dbesc($zf['data']['primary_location']['url'])
 				);
 			}
+
+			return true;
 		}
+
+		q("UPDATE updates SET ud_last = '%s' WHERE ud_hash = '%s'",
+			dbesc(datetime_convert()),
+			dbesc($ud['ud_hash'])
+		);
+
+		return false;
 	}
 
 
@@ -676,8 +681,9 @@ class Libzotdir {
 		);
 
 		if ($u) {
-			$x = q("UPDATE updates SET ud_date = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
+			$x = q("UPDATE updates SET ud_date = '%s', ud_last = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
 				dbesc(datetime_convert()),
+				dbesc(NULL_DATE),
 				dbesc(\App::get_hostname()),
 				dbesc($addr),
 				intval($u[0]['ud_id'])
