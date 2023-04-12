@@ -651,7 +651,10 @@ class Libzot {
 
 	static function import_xchan($arr, $ud_flags = 0, $ud_arr = null) {
 
-		$ret     = ['success' => false];
+		$ret = [
+			'success' => false,
+			'message' => ''
+		];
 
 		if (!is_array($arr)) {
 			logger('Not an array: ' . print_r($arr, true), LOGGER_DEBUG);
@@ -696,7 +699,7 @@ class Libzot {
 			return $ret;
 		}
 
-		hz_syslog('import_xchan: ' . $xchan_hash, LOGGER_DEBUG);
+		logger('import_xchan: ' . $xchan_hash, LOGGER_DEBUG);
 
 		if (isset($arr['signing_algorithm']) && $arr['signing_algorithm']) {
 			set_xconfig($xchan_hash, 'system', 'signing_algorithm', $arr['signing_algorithm']);
@@ -708,6 +711,8 @@ class Libzot {
 
 		if (!array_key_exists('connect_url', $arr))
 			$arr['connect_url'] = '';
+
+		$new_xchan = false;
 
 		if ($r) {
 
@@ -787,8 +792,8 @@ class Libzot {
 					dbesc($xchan_hash)
 				);
 
-				hz_syslog('Update: existing: ' . print_r($r[0], true), LOGGER_DATA, LOG_DEBUG);
-				hz_syslog('Update: new: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
+				logger('Update: existing: ' . print_r($r[0], true), LOGGER_DATA, LOG_DEBUG);
+				logger('Update: new: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
 				$what    .= 'xchan ';
 				$changed = true;
 			}
@@ -826,6 +831,7 @@ class Libzot {
 			);
 
 			$what    .= 'new_xchan';
+			$new_xchan = true;
 			$changed = true;
 		}
 
@@ -923,7 +929,7 @@ class Libzot {
 			if (!empty($s['change_message']))
 				$what .= $s['change_message'];
 			if (!empty($s['changed']))
-				$changed = $s['changed'];
+				$changed .= $s['changed'];
 			if (!empty($s['message']))
 				$ret['message'] .= $s['message'];
 		}
@@ -939,7 +945,7 @@ class Libzot {
 
 		// Are we a directory server of some kind?
 
-		if ($dirmode != DIRECTORY_MODE_NORMAL) {
+		if ($dirmode !== DIRECTORY_MODE_NORMAL) {
 
 			// We're some kind of directory server. However we can only add directory information
 			// if the entry is in the same realm (or is a sub-realm). Sub-realms are denoted by
@@ -973,8 +979,8 @@ class Libzot {
 			}
 		}
 
-		if ($ud_arr) {
-			// Always update updates if we were provided an ud_arr
+		if ($ud_arr || ($new_xchan && in_array($dirmode, [DIRECTORY_MODE_PRIMARY, DIRECTORY_MODE_SECONDARY]))) {
+			// update updates if we were provided an ud_arr or the xchan is new and we are some sort of directory
 			Libzotdir::update_modtime($xchan_hash, $address);
 		}
 
