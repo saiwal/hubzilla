@@ -15,7 +15,7 @@ class Onedirsync {
 			$update_id = intval($argv[1]);
 
 		if (!$update_id) {
-			logger('onedirsync: no update');
+			logger('onedirsync: no update id');
 			return;
 		}
 
@@ -24,6 +24,7 @@ class Onedirsync {
 		);
 
 		if (!$r) {
+			logger('onedirsync: update id not found');
 			return;
 		}
 
