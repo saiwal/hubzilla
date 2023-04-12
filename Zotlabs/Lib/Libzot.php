@@ -328,7 +328,7 @@ class Libzot {
 
 		logger('zot-info: ' . print_r($record, true), LOGGER_DATA, LOG_DEBUG);
 
-		$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+		$x = self::import_xchan($record['data']);
 
 		if (!$x['success']) {
 			return false;
@@ -635,21 +635,13 @@ class Libzot {
 	 *   all internal data structures which need to be updated as a result.
 	 *
 	 * @param array $arr => json_decoded discovery packet
-	 * @param int $ud_flags
-	 *    Determines whether to create a directory update record if any changes occur, default is UPDATE_FLAGS_UPDATED
-	 *    $ud_flags = UPDATE_FLAGS_FORCED indicates a forced refresh where we unconditionally create a directory update record
-	 *      this typically occurs once a month for each channel as part of a scheduled ping to notify the directory
-	 *      that the channel still exists
-	 * @param array $ud_arr
-	 *    If set [typically by update_directory_entry()] indicates a specific update table row and more particularly
-	 *    contains a particular address (ud_addr) which needs to be updated in that table.
-	 *
+
 	 * @return array An associative array with:
 	 *   * \e boolean \b success boolean true or false
 	 *   * \e string \b message (optional) error string only if success is false
 	 */
 
-	static function import_xchan($arr, $ud_flags = 0, $ud_arr = null) {
+	static function import_xchan($arr) {
 
 		$ret = [
 			'success' => false,

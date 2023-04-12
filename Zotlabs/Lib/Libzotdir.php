@@ -343,7 +343,7 @@ class Libzotdir {
 				$zf = Zotfinger::exec($href);
 			}
 			if(array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
-				$xc = Libzot::import_xchan($zf['data'], 0, $ud);
+				$xc = Libzot::import_xchan($zf['data']);
 				// This is a workaround for a missing xchan_updated column
 				// TODO: implement xchan_updated in the xchan table and update this column instead
 				if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
