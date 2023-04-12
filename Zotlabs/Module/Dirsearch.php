@@ -216,24 +216,18 @@ class Dirsearch extends Controller {
 		if($sync) {
 			$spkt = array('transactions' => array());
 
-			$r = q("select * from updates where ud_date >= '%s' order by ud_date desc",
+			$r = q("SELECT * FROM updates WHERE ud_flags = 0 AND ud_date >= '%s' ORDER BY ud_date DESC",
 				dbesc($sync)
 			);
 
 			if($r) {
 				foreach($r as $rr) {
-					$flags = [];
-					if($rr['ud_flags'] & UPDATE_FLAGS_DELETED)
-						$flags[] = 'deleted';
-					if($rr['ud_flags'] & UPDATE_FLAGS_FORCED)
-						$flags[] = 'forced';
-
 					$spkt['transactions'][] = [
 						'hash' => $rr['ud_hash'],
 						'address' => $rr['ud_addr'],
-						'transaction_id' => $rr['ud_guid'],
-						'timestamp' => $rr['ud_date'],
-						'flags' => $flags
+						'host' => $rr['ud_guid'],
+						'transaction_id' => $rr['ud_guid'], // deprecated 2023-04-12
+						'timestamp' => $rr['ud_date']
 					];
 				}
 			}
