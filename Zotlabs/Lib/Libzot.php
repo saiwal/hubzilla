@@ -942,7 +942,7 @@ class Libzot {
 			// be in directories for the local realm (foo) and also the RED_GLOBAL realm.
 
 			if (array_key_exists('profile', $arr) && is_array($arr['profile']) && (!$other_realm)) {
-				$profile_changed = Libzotdir::import_directory_profile($xchan_hash, $arr['profile'], $address, $ud_flags, 1);
+				$profile_changed = Libzotdir::import_directory_profile($xchan_hash, $arr['profile']);
 				if ($profile_changed) {
 					$what    .= 'profile ';
 					$changed = true;

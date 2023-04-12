@@ -438,7 +438,7 @@ class Libzotdir {
 		call_hooks('local_dir_update', $arr);
 
 		if (perm_is_allowed($uid, '', 'view_profile')) {
-			self::import_directory_profile($hash, $arr['profile'], $p[0]['xchan_url'], 0, 1);
+			self::import_directory_profile($hash, $arr['profile']);
 		}
 		else {
 			// they may have made it private
@@ -460,13 +460,10 @@ class Libzotdir {
 	 *
 	 * @param string $hash
 	 * @param array $profile
-	 * @param string $addr
-	 * @param number $ud_flags (optional) UPDATE_FLAGS_UPDATED
-	 * @param number $suppress_update (optional) default 0
 	 * @return boolean $updated if something changed
 	 */
 
-	static function import_directory_profile($hash, $profile, $addr, $ud_flags = UPDATE_FLAGS_UPDATED, $suppress_update = 0) {
+	static function import_directory_profile($hash, $profile) {
 
 		logger('import_directory_profile', LOGGER_DEBUG);
 		if (! $hash)
@@ -605,9 +602,6 @@ class Libzotdir {
 		 *   * \e boolean \b update
 		 */
 		call_hooks('import_directory_profile', $d);
-
-		if (($d['update']) && (! $suppress_update))
-			self::update_modtime($arr['xprof_hash'], $addr);
 
 		return $d['update'];
 	}
