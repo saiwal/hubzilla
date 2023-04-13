@@ -67,9 +67,17 @@ class DBA {
 		require_once('include/dba/dba_pdo.php');
 		self::$dba = new dba_pdo($server,self::$scheme,$port,$user,$pass,$db,$db_charset,$install);
 
-		define('NULL_DATE', self::$null_date);
-		define('ACTIVE_DBTYPE', self::$dbtype);
-		define('TQUOT', self::$tquot);
+		if (!defined('NULL_DATE')) {
+			define('NULL_DATE', self::$null_date);
+		}
+
+		if (!defined('ACTIVE_DBTYPE')) {
+			define('ACTIVE_DBTYPE', self::$dbtype);
+		}
+
+		if (!defined('TQUOT')) {
+			define('TQUOT', self::$tquot);
+		}
 
 		return self::$dba;
 	}
