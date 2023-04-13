@@ -2724,13 +2724,12 @@ class Libzot {
 		$e = $r[0];
 		$id = $e['channel_id'];
 
-		$sys_channel     = ((intval($e['channel_system'])) ? true : false);
+		$sys_channel     = ((empty($e['channel_system'])) ? false : true);
 		$special_channel = (($e['channel_pageflags'] & PAGE_PREMIUM) ? true : false);
 		$adult_channel   = (($e['channel_pageflags'] & PAGE_ADULT) ? true : false);
 		$censored        = (($e['channel_pageflags'] & PAGE_CENSORED) ? true : false);
 		$searchable      = (($e['channel_pageflags'] & PAGE_HIDDEN) ? false : true);
-		// if the xchan has been deleted (instead of marked deleted) xchan entries will return null
-		$deleted         = ((intval($e['xchan_deleted']) || $e['xchan_hash'] === null) ? true : false);
+		$deleted         = ((empty($e['xchan_deleted'])) ? false : true);
 
 		if ($deleted || $censored || $sys_channel)
 			$searchable = false;
