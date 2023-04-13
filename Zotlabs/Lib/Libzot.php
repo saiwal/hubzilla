@@ -721,7 +721,7 @@ class Libzot {
 				$hidden_changed = 1;
 			if (isset($arr['adult_content']) && intval($r[0]['xchan_selfcensored']) != intval($arr['adult_content']))
 				$adult_changed = 1;
-			if (isset($arr['xchan_deleted']) && intval($r[0]['xchan_deleted']) != intval($arr['deleted']))
+			if (isset($arr['deleted']) && intval($r[0]['xchan_deleted']) != intval($arr['deleted']))
 				$deleted_changed = 1;
 
 			// new style 6-MAR-2019
@@ -2724,12 +2724,12 @@ class Libzot {
 		$e = $r[0];
 		$id = $e['channel_id'];
 
-		$sys_channel     = (intval($e['channel_system']) ? true : false);
+		$sys_channel     = ((empty($e['channel_system'])) ? false : true);
 		$special_channel = (($e['channel_pageflags'] & PAGE_PREMIUM) ? true : false);
 		$adult_channel   = (($e['channel_pageflags'] & PAGE_ADULT) ? true : false);
 		$censored        = (($e['channel_pageflags'] & PAGE_CENSORED) ? true : false);
 		$searchable      = (($e['channel_pageflags'] & PAGE_HIDDEN) ? false : true);
-		$deleted         = (intval($e['xchan_deleted']) ? true : false);
+		$deleted         = ((empty($e['xchan_deleted'])) ? false : true);
 
 		if ($deleted || $censored || $sys_channel)
 			$searchable = false;
