@@ -2855,7 +2855,6 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	q("DELETE FROM app WHERE app_channel = %d", intval($channel_id));
 	q("DELETE FROM atoken WHERE atoken_uid = %d", intval($channel_id));
 	q("DELETE FROM chatroom WHERE cr_uid = %d", intval($channel_id));
-	q("DELETE FROM conv WHERE uid = %d", intval($channel_id));
 
 	q("DELETE FROM pgrp WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM pgrp_member WHERE uid = %d", intval($channel_id));

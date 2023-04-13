@@ -270,8 +270,6 @@ function mark_orphan_hubsxchans() {
 }
 
 
-
-
 function remove_all_xchan_resources($xchan, $channel_id = 0) {
 
 	if(!$xchan)
@@ -279,18 +277,27 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 
 	if(intval($channel_id)) {
 
-
+		// reserved for future use
 
 	}
 	else {
 
-		$dirmode = intval(get_config('system','directory_mode'));
+		// This function is only to be executed on remote servers where only the xchan exists
+		// and there is no associated channel.
+
+		$c = q("select channel_id from channel where channel_hash = '%s'",
+			dbesc($xchan)
+		);
+
+		if ($c) {
+			return;
+		}
 
 		$r = q("delete from photo where xchan = '%s'",
 			dbesc($xchan)
 		);
 
-		$r = q("select resource_id, resource_type, uid, id from item where ( author_xchan = '%s' or owner_xchan = '%s' ) ",
+		$r = q("select id from item where ( author_xchan = '%s' or owner_xchan = '%s' ) ",
 			dbesc($xchan),
 			dbesc($xchan)
 		);
@@ -309,37 +316,30 @@ function remove_all_xchan_resources($xchan, $channel_id = 0) {
 			dbesc($xchan)
 		);
 
-		$r = q("delete from xlink where ( xlink_xchan = '%s' or xlink_link = '%s' )",
-			dbesc($xchan),
-			dbesc($xchan)
-		);
-
 		$r = q("delete from abook where abook_xchan = '%s'",
 			dbesc($xchan)
 		);
 
-		if($dirmode === false || $dirmode == DIRECTORY_MODE_NORMAL) {
+		$r = q("delete from abconfig where xchan = '%s'",
+			dbesc($xchan)
+		);
 
-			$r = q("delete from xchan where xchan_hash = '%s'",
-				dbesc($xchan)
-			);
-			$r = q("delete from hubloc where hubloc_hash = '%s'",
-				dbesc($xchan)
-			);
+		$r = q("delete from xlink where (xlink_xchan = '%s' or xlink_link = '%s')",
+			dbesc($xchan),
+			dbesc($xchan)
+		);
 
-		}
-		else {
+		$r = q("delete from xprof where xprof_hash = '%s'",
+			dbesc($xchan)
+		);
 
-			// directory servers need to keep the record around for sync purposes - mark it deleted
+		$r = q("update hubloc set hubloc_deleted = 1 where hubloc_hash = '%s'",
+			dbesc($xchan)
+		);
 
-			$r = q("update hubloc set hubloc_deleted = 1 where hubloc_hash = '%s'",
-				dbesc($xchan)
-			);
-
-			$r = q("update xchan set xchan_deleted = 1 where xchan_hash = '%s'",
-				dbesc($xchan)
-			);
-		}
+		$r = q("update xchan set xchan_deleted = 1 where xchan_hash = '%s'",
+			dbesc($xchan)
+		);
 	}
 }
 
