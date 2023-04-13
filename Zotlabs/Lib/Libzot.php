@@ -678,15 +678,11 @@ class Libzot {
 		$sig_methods = ((array_key_exists('signing', $arr) && is_array($arr['signing'])) ? $arr['signing'] : ['sha256']);
 		$verified    = false;
 
-		if (!self::verify($arr['id'], $arr['id_sig'], $arr['public_key'])) {
-			logger('Unable to verify channel signature for ' . $arr['primary_location']['address']);
-			return $ret;
-		}
-		else {
+		if (self::verify($arr['id'], $arr['id_sig'], $arr['public_key'])) {
 			$verified = true;
 		}
-
-		if (!$verified) {
+		else {
+			logger('Unable to verify channel signature for ' . $xchan_hash . ' (' . $arr['primary_location']['address']) . ')';
 			$ret['message'] = t('Unable to verify channel signature');
 			return $ret;
 		}
@@ -968,10 +964,8 @@ class Libzot {
 			}
 		}
 
-
 		// update updates if anything changed bump the ud_date
 		Libzotdir::update($xchan_hash, $address, $changed);
-
 
 		if (empty($ret['message'])) {
 			$ret['success'] = true;
@@ -2800,8 +2794,8 @@ class Libzot {
 
 		// Communication details
 
-		$ret['id']     = $e['xchan_guid'];
-		$ret['id_sig'] = self::sign($e['xchan_guid'], $e['channel_prvkey']);
+		$ret['id']     = $e['channel_guid'];
+		$ret['id_sig'] = self::sign($e['channel_guid'], $e['channel_prvkey']);
 
 		$ret['primary_location'] = [
 			'address'         => $e['xchan_addr'],
@@ -2810,10 +2804,10 @@ class Libzot {
 			'follow_url'      => $e['xchan_follow'],
 		];
 
-		$ret['public_key']   = $e['xchan_pubkey'];
+		$ret['public_key']   = $e['channel_pubkey'];
 		$ret['signing_algorithm'] = 'rsa-sha256';
 		$ret['username']     = $e['channel_address'];
-		$ret['name']         = $e['xchan_name'];
+		$ret['name']         = $e['channel_name'];
 		$ret['name_updated'] = $e['xchan_name_date'];
 		$ret['photo']        = [
 			'url'     => $e['xchan_photo_l'],
