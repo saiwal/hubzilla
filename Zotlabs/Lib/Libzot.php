@@ -2353,19 +2353,6 @@ class Libzot {
 					'deleted'  => (intval($hub['hubloc_deleted']) ? true : false)
 				];
 
-				// version compatibility tweaks
-
-				if (!strpos($z['url_sig'], '.')) {
-					$z['url_sig'] = 'sha256.' . $z['url_sig'];
-				}
-
-				if (!$z['id_url']) {
-					$z['id_url'] = $z['url'] . '/channel/' . substr($z['address'], 0, strpos($z['address'], '@'));
-				}
-				if (!$z['site_id']) {
-					$z['site_id'] = Libzot::make_xchan_hash($z['url'], $z['sitekey']);
-				}
-
 				$ret[] = $z;
 			}
 		}
