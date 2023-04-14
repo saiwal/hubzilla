@@ -3755,45 +3755,34 @@ function item_expire($uid,$days,$comment_days = 7) {
 
 	$sql_extra = ((intval($expire_network_only)) ? " AND item_wall = 0 " : "");
 
-	$expire_limit = get_config('system','expire_limit');
-	if(! intval($expire_limit))
-		$expire_limit = 5000;
+	$expire_limit = get_config('system','expire_limit', 1000);
 
 	$item_normal = item_normal();
 
-	$r = q("SELECT id FROM item
-		WHERE uid = %d
-		AND created < %s - INTERVAL %s
-		AND commented < %s - INTERVAL %s
-		AND item_retained = 0
-		AND item_thread_top = 1
-		AND resource_type = ''
-		AND item_starred = 0
-		$sql_extra $item_normal LIMIT $expire_limit ",
-		intval($uid),
-		db_utcnow(),
-		db_quoteinterval(intval($days) . ' DAY'),
-		db_utcnow(),
-		db_quoteinterval(intval($comment_days) . ' DAY')
-	);
+	do {
+		$r = q("SELECT id FROM item
+			WHERE uid = %d
+			AND created < %s - INTERVAL %s
+			AND commented < %s - INTERVAL %s
+			AND item_retained = 0
+			AND item_thread_top = 1
+			AND resource_type = ''
+			AND item_starred = 0
+			$sql_extra $item_normal LIMIT $expire_limit",
+			intval($uid),
+			db_utcnow(),
+			db_quoteinterval(intval($days) . ' DAY'),
+			db_utcnow(),
+			db_quoteinterval(intval($comment_days) . ' DAY')
+		);
 
-	if(! $r)
-		return;
-
-	$r = fetch_post_tags($r,true);
-
-	foreach($r as $item) {
-
-		// don't expire filed items
-
-		if (isset($item['term']) && get_terms_oftype($item['term'], TERM_FILE)) {
-			retain_item($item['id']);
-			continue;
+		if ($r) {
+			foreach ($r as $item) {
+				drop_item($item['id'], false);
+			}
 		}
 
-		drop_item($item['id'],false);
-	}
-
+	} while ($r);
 }
 
 function retain_item($id) {
