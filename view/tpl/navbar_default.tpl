@@ -183,7 +183,7 @@
 		</div>
 		<div class="nav d-lg-flex w-100"></div>
 		{{else}}
-		<div class="lh-sm w-100" id="app-bin-label">
+		<div class="lh-sm w-75" id="app-bin-label">
 			{{if $name}}
 			<img src="{{$thumb}}" class="menu-img-3">
 			<div class="p-1">
