@@ -94,17 +94,6 @@ class Cron_daily {
 		// expire any expired accounts
 		downgrade_accounts();
 
-		// If this is a directory server, request a sync with an upstream
-		// directory at least once a day, up to once every poll interval.
-		// Pull remote changes and push local changes.
-		// potential issue: how do we keep from creating an endless update loop?
-
-		$dirmode = get_config('system', 'directory_mode');
-
-		if ($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
-			Libzotdir::sync_directories($dirmode);
-		}
-
 		Master::Summon(array('Expire'));
 		Master::Summon(array('Cli_suggest'));
 
