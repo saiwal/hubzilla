@@ -676,7 +676,7 @@ class Activity {
 
 		$ret = [];
 
-		if (isset($item['attachment'])) {
+		if (isset($item['attachment']) && is_array($obj['attachment'])) {
 			$ptr = $item['attachment'];
 			if (!array_key_exists(0, $ptr)) {
 				$ptr = [$ptr];
@@ -2413,7 +2413,10 @@ class Activity {
 			$s['item_deleted'] = 1;
 		}
 
-		$s['obj_type'] = self::activity_obj_decode_mapper($act->obj['type']);
+		if (isset($act->obj['type'])) {
+			$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
+		}
+
 		if ($s['obj_type'] === ACTIVITY_OBJ_NOTE && $s['mid'] !== $s['parent_mid']) {
 			$s['obj_type'] = ACTIVITY_OBJ_COMMENT;
 		}
