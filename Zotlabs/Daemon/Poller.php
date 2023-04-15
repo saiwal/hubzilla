@@ -19,24 +19,6 @@ class Poller {
 
 		$interval = get_config('queueworker', 'queue_interval', 500000);
 
-/*
-		if (!$interval) {
-			$interval = ((get_config('system', 'delivery_interval') === false) ? 3 : intval(get_config('system', 'delivery_interval')));
-		}
-
-		// Check for a lockfile.  If it exists, but is over an hour old, it's stale.  Ignore it.
-		$lockfile = 'store/[data]/poller';
-		if ((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 3600))
-			&& (!get_config('system', 'override_poll_lockfile'))) {
-			logger("poller: Already running");
-			return;
-		}
-
-		// Create a lockfile.  Needs two vars, but $x doesn't need to contain anything.
-		$x = '';
-		file_put_contents($lockfile, $x);
-*/
-
 		logger('poller: start');
 
 		$manual_id  = 0;
@@ -183,14 +165,6 @@ class Poller {
 		$dirmode = intval(get_config('system', 'directory_mode'));
 
 		if ($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
-/*
-			$r = q("SELECT u.ud_addr, u.ud_id, u.ud_last FROM updates AS u INNER JOIN (SELECT ud_addr, max(ud_id) AS ud_id FROM updates WHERE ( ud_flags & %d ) = 0 AND ud_addr != '' AND ( ud_last <= '%s' OR ud_last > %s - INTERVAL %s ) GROUP BY ud_addr) AS s ON s.ud_id = u.ud_id ",
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc(NULL_DATE),
-				db_utcnow(), db_quoteinterval('7 DAY')
-			);
-*/
-
 			$r = q("SELECT * FROM updates WHERE ud_flags = 1 AND (ud_last = '%s' OR ud_last > %s - INTERVAL %s)",
 				dbesc(NULL_DATE),
 				db_utcnow(),
@@ -218,10 +192,6 @@ class Poller {
 
 		set_config('system', 'lastpoll', datetime_convert());
 
-		//All done - clear the lockfile
-/*
-		@unlink($lockfile);
-*/
 		return;
 	}
 }
