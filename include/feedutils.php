@@ -598,12 +598,13 @@ function get_atom_elements($feed, $item) {
 	// uses the OStatus stack. We need a more generalised way for the calling
 	// function to specify this behaviour or for plugins to alter it.
 
+	$terms = [];
+
 	if($ostatus_protocol) {
 		$res['title'] = '';
 	}
 	elseif($res['plink'] && $res['title']) {
 		$res['body'] = '#^[url=' . $res['plink'] . ']' . $res['title'] . '[/url]' . "\n\n" . $res['body'];
-		$terms = array();
 		$terms[] = array(
 			'otype' => TERM_OBJ_POST,
 			'ttype' => TERM_BOOKMARK,
@@ -613,7 +614,6 @@ function get_atom_elements($feed, $item) {
 	}
 	elseif($res['plink']) {
 		$res['body'] = '#^[url]' . $res['plink'] . '[/url]' . "\n\n" . $res['body'];
-		$terms = array();
 		$terms[] = array(
 			'otype' => TERM_OBJ_POST,
 			'ttype' => TERM_BOOKMARK,
@@ -698,7 +698,7 @@ function get_atom_elements($feed, $item) {
 		}
 	}
 
-	if(! is_null($terms))
+	if($terms)
 		$res['term'] =  $terms;
 
 	$attach = $item->get_enclosures();
