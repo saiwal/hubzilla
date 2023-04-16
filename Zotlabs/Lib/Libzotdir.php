@@ -307,8 +307,9 @@ class Libzotdir {
 	 *
 	 * Ignore updating records marked as deleted.
 	 *
-	 * If successful, sets ud_last in the DB to the current datetime for this
+	 * If successful, sets ud_updated in the DB to the current datetime for this
 	 * reddress/webbie.
+	 * Else update ud_last so we can stop trying after 7 days (Daemon/Poller.php)
 	 *
 	 * @param array $ud Entry from update table
 	 */
@@ -317,32 +318,33 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		if (!$ud['ud_hash'] && !$ud['ud_addr']) {
-			return;
+		if (!$ud['ud_hash'] || !$ud['ud_addr']) {
+			q("DELETE FROM updates WHERE ud_id = %d",
+				dbesc($ud['ud_id'])
+			);
+			return false;
 		}
 
 		$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
-		if(!$href) {
-			return;
-		}
 
-		$zf = Zotfinger::exec($href);
-
-		if(array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
-			$xc = Libzot::import_xchan($zf['data']);
-			// This is a workaround for a missing xchan_updated column
-			// TODO: implement xchan_updated in the xchan table and update this column instead
-			if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
-				q("UPDATE hubloc SET hubloc_updated = '%s' WHERE hubloc_id_url = '%s' AND hubloc_primary = 1",
-					dbesc(datetime_convert()),
-					dbesc($zf['data']['primary_location']['url'])
-				);
+		if($href) {
+			$zf = Zotfinger::exec($href);
+			if($zf && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
+				$xc = Libzot::import_xchan($zf['data']);
+				// This is a workaround for a missing xchan_updated column
+				// TODO: implement xchan_updated in the xchan table and update this column instead
+				if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
+					q("UPDATE hubloc SET hubloc_updated = '%s' WHERE hubloc_id_url = '%s' AND hubloc_primary = 1",
+						dbesc(datetime_convert()),
+						dbesc($zf['data']['primary_location']['url'])
+					);
+				}
+				return true;
 			}
-
-			return true;
 		}
 
-		q("UPDATE updates SET ud_last = '%s' WHERE ud_hash = '%s'",
+		q("UPDATE updates SET ud_addr = '%s', ud_last = '%s' WHERE ud_hash = '%s'",
+			dbesc($href ? $href : $ud['ud_addr']),
 			dbesc(datetime_convert()),
 			dbesc($ud['ud_hash'])
 		);
