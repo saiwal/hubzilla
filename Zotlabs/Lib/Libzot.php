@@ -1374,7 +1374,7 @@ class Libzot {
 				$uids = ids_to_querystr($uids, 'uid');
 
 				$z = q("SELECT channel_hash FROM channel WHERE channel_hash != '%s' AND channel_id IN ($uids)",
-					dbesc($msg['sender'])
+					dbesc($env['sender'])
 				);
 
 				if ($z) {
