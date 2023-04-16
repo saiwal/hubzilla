@@ -318,7 +318,7 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		if (!$ud['ud_hash'] || !$ud['ud_addr']) {
+		if (empty($ud['ud_hash']) || empty($ud['ud_addr'])) {
 			q("DELETE FROM updates WHERE ud_id = %d",
 				dbesc($ud['ud_id'])
 			);
