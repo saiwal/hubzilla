@@ -141,7 +141,7 @@ class Libsync {
 
 		$total = count($synchubs);
 		foreach ($synchubs as $hub) {
-			$hash = random_string();
+			$hash = new_uuid();
 			$n    = Libzot::build_packet($channel, 'sync', $env_recips, json_encode($info), 'hz', $hub['hubloc_sitekey'], $hub['site_crypto']);
 			Queue::insert([
 				'hash'       => $hash,

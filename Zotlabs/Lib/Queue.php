@@ -57,7 +57,6 @@ class Queue {
 			outq_priority = outq_priority + %d,
 			outq_scheduled = '%s'
 			WHERE outq_hash = '%s'",
-
 			dbesc(datetime_convert()),
 			intval($add_priority),
 			dbesc($next),
@@ -85,29 +84,16 @@ class Queue {
 			// entries still exist for it. This fixes an issue where one immediate delivery left everything
 			// else for that site undeliverable since all the other entries had been pushed far into the future.
 
-			$x = null;
-			$sql_quirks = ((get_config('system', 'db_skip_locked_supported')) ? 'SKIP LOCKED' : 'NOWAIT');
-
-			q("START TRANSACTION");
-
-			$r = q("SELECT outq_hash FROM outq WHERE outq_posturl = '%s' LIMIT 1 FOR UPDATE $sql_quirks",
+			$r = q("SELECT outq_hash, outq_posturl FROM outq WHERE outq_posturl = '%s' LIMIT 1",
 				dbesc($record[0]['outq_posturl'])
 			);
 
 			if ($r) {
-				$x = q("UPDATE outq SET outq_scheduled = '%s' WHERE outq_hash = '%s'",
-					dbesc(datetime_convert()),
-					dbesc($r[0]['outq_hash'])
+				$hashes = ids_to_querystr($r, 'outq_hash', true);
+				$x = q("UPDATE outq SET outq_scheduled = '%s' WHERE outq_hash IN ($hashes)",
+					dbesc(datetime_convert())
 				);
 			}
-
-			if ($x) {
-				q("COMMIT");
-			}
-			else {
-				q("ROLLBACK");
-			}
-
 		}
 	}
 
@@ -260,7 +246,7 @@ class Queue {
 
 			if($result['success']) {
 				logger('deliver: remote zot delivery succeeded to ' . $outq['outq_posturl']);
-				Libzot::process_response($outq['outq_posturl'],$result, $outq);
+				Libzot::process_response($outq['outq_posturl'], $result, $outq);
 			}
 			else {
 				logger('deliver: remote zot delivery failed to ' . $outq['outq_posturl']);

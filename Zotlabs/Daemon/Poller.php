@@ -49,6 +49,11 @@ class Poller {
 			: ''
 		);
 
+		$allow_feeds = get_config('system', 'feed_contacts');
+		if(!$allow_feeds) {
+			$sql_extra .= ' and abook_feed = 0 ';
+		}
+
 		$randfunc = db_getfunc('RAND');
 
 		$contacts = q("SELECT abook.abook_updated, abook.abook_connected, abook.abook_feed,
@@ -58,7 +63,7 @@ class Poller {
 			account.account_lastlog, account.account_flags
 			FROM abook LEFT JOIN xchan on abook_xchan = xchan_hash
 			LEFT JOIN account on abook_account = account_id
-			where abook_self = 0
+			where abook_self = 0 and abook_pending = 0 and abook_archived = 0 and abook_blocked = 0 and abook_ignored = 0
 			$sql_extra
 			AND (( account_flags = %d ) OR ( account_flags = %d )) $abandon_sql ORDER BY $randfunc",
 			intval(ACCOUNT_OK),
