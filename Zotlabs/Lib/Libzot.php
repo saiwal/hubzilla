@@ -1722,7 +1722,7 @@ class Libzot {
 					// this is just an exercise in futility.
 
 					if (perm_is_allowed($channel['channel_id'], $sender, 'send_stream')) {
-						self::fetch_conversation($channel, $arr['parent_mid']);
+						Master::Summon(['Zotconvo', $channel['channel_id'], $arr['parent_mid']]);
 					}
 
 					continue;
