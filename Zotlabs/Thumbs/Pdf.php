@@ -11,9 +11,13 @@ class Pdf {
 
 	function Thumb($attach,$preview_style,$height = 300, $width = 300) {
 
+		$file = dbunescbin($attach['content']);
+		if (!$file) {
+			return;
+		}
+
 		$photo = false;
 
-		$file = dbunescbin($attach['content']);
 		$tmpfile = $file . '.pdf';
 		$outfile = $file . '.jpg';
 
