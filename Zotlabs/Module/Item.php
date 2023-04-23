@@ -63,7 +63,7 @@ class Item extends Controller {
 
 			// do we have the item (at all)?
 
-			$r = q("select * from item where mid = '%s' $item_normal limit 1",
+			$r = q("select parent_mid from item where mid = '%s' $item_normal limit 1",
 				dbesc(z_root() . '/item/' . $item_id)
 			);
 
@@ -84,7 +84,7 @@ class Item extends Controller {
 				}
 				observer_auth($portable_id);
 
-				$i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1",
+				$i = q("select id as item_id, uid from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1",
 					dbesc($r[0]['parent_mid']),
 					dbesc($portable_id)
 				);
@@ -99,7 +99,7 @@ class Item extends Controller {
 			$sql_extra = item_permissions_sql(0);
 
 			if (!$i) {
-				$i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+				$i = q("select id as item_id, uid from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
 					dbesc($r[0]['parent_mid'])
 				);
 			}
@@ -108,57 +108,53 @@ class Item extends Controller {
 				http_status_exit(403, 'Forbidden');
 			}
 
+			$chan = channelx_by_n($i[0]['uid']);
+
+			if (!$chan) {
+				http_status_exit(404, 'Not found');
+			}
+
+			if (!perm_is_allowed($chan['channel_id'], get_observer_hash(), 'view_stream')) {
+				http_status_exit(403, 'Forbidden');
+			}
+
 			$parents_str = ids_to_querystr($i, 'item_id');
 
-			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal order by item.id asc",
-				dbesc($parents_str)
+			$total = q("SELECT count(*) AS count FROM item WHERE parent = %d $item_normal",
+				intval($parents_str)
 			);
 
-			if (!$items) {
-				http_status_exit(404, 'Not found');
+			App::set_pager_total($total[0]['count']);
+			App::set_pager_itemspage(30);
+
+			if (App::$pager['total'] > App::$pager['itemspage']) {
+				// let mod conversation handle this request
+				App::$query_string = str_replace('item', 'conversation', App::$query_string);
+				$i = Activity::paged_collection_init(App::$pager['total'], App::$query_string);
+				as_return_and_die($i ,$chan);
 			}
+			else {
+				$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent = %d $item_normal ORDER BY item.id",
+					intval($parents_str)
+				);
 
-			xchan_query($items, true);
-			$items = fetch_post_tags($items, true);
+				xchan_query($items, true);
+				$items = fetch_post_tags($items, true);
 
-			if (!$items)
-				http_status_exit(404, 'Not found');
-
-			$chan = channelx_by_n($items[0]['uid']);
-
-			if (!$chan)
-				http_status_exit(404, 'Not found');
-
-			if (!perm_is_allowed($chan['channel_id'], get_observer_hash(), 'view_stream'))
-				http_status_exit(403, 'Forbidden');
-
-
-			$i = Activity::encode_item_collection($items, 'conversation/' . $item_id, 'OrderedCollection');
-
-			if (!$i)
-				http_status_exit(404, 'Not found');
+				$i = Activity::encode_item_collection($items, App::$query_string, 'OrderedCollection', App::$pager['total']);
+			}
 
 			if ($portable_id && (!intval($items[0]['item_private']))) {
-				ThreadListener::store(z_root() . '/item/' . $item_id, $portable_id);
+				$c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
+					intval($items[0]['uid']),
+					dbesc($portable_id)
+				);
+				if (!$c) {
+					ThreadListener::store(z_root() . '/item/' . $item_id, $portable_id);
+				}
 			}
 
-			$x = array_merge(['@context' => [
-				ACTIVITYSTREAMS_JSONLD_REV,
-				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
-			]], $i);
-
-			$headers                     = [];
-			$headers['Content-Type']     = 'application/x-zot+json';
-			$x['signature']              = LDSignatures::sign($x, $chan);
-			$ret                         = json_encode($x, JSON_UNESCAPED_SLASHES);
-			$headers['Digest']           = HTTPSig::generate_digest_header($ret);
-			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-			$h                           = HTTPSig::create_sig($headers, $chan['channel_prvkey'], channel_url($chan));
-			HTTPSig::set_headers($h);
-			echo $ret;
-			killme();
-
+			as_return_and_die($i ,$chan);
 		}
 
 		if (ActivityStreams::is_as_request()) {
@@ -255,23 +251,7 @@ class Item extends Controller {
 				}
 			}
 
-			$x = array_merge(['@context' => [
-				ACTIVITYSTREAMS_JSONLD_REV,
-				'https://w3id.org/security/v1',
-				z_root() . ZOT_APSCHEMA_REV
-			]], $i);
-
-			$headers                     = [];
-			$headers['Content-Type']     = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"';
-			$x['signature']              = LDSignatures::sign($x, $chan);
-			$ret                         = json_encode($x, JSON_UNESCAPED_SLASHES);
-			$headers['Date']             = datetime_convert('UTC', 'UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T');
-			$headers['Digest']           = HTTPSig::generate_digest_header($ret);
-			$headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-			$h                           = HTTPSig::create_sig($headers, $chan['channel_prvkey'], channel_url($chan));
-			HTTPSig::set_headers($h);
-			echo $ret;
-			killme();
+			as_return_and_die($i ,$chan);
 
 		}
 
