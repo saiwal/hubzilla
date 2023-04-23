@@ -2215,7 +2215,7 @@ class Activity {
 	}
 
 	static function decode_note($act) {
-
+//hz_syslog(print_r($act,true));
 		$response_activity = false;
 
 		$s = [];

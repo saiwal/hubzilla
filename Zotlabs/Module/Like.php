@@ -451,7 +451,7 @@ class Like extends Controller {
 		}
 		else {
 			$post_type = (($item['resource_type'] === 'photo') ? t('photo') : t('status'));
-			if ($item['obj_type'] === ACTIVITY_OBJ_EVENT)
+			if (in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT]))
 				$post_type = t('event');
 
 			$obj_type = (($item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_NOTE);

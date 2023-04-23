@@ -713,7 +713,7 @@ function event_addtocal($item_id, $uid) {
 		intval($channel['channel_id'])
 	);
 
-	if((! $r) || ($r[0]['obj_type'] !== ACTIVITY_OBJ_EVENT))
+	if(!$r || !in_array($r[0]['obj_type'], ['Event', ACTIVITY_OBJ_EVENT]))
 		return false;
 
 	$item = $r[0];

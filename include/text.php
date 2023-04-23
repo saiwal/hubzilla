@@ -1794,7 +1794,8 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$s = $poll;
 	}
 
-	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : []);
+	$event = (in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT]) ? format_event_obj($item['obj']) : []);
+
 	$prep_arr = [
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,
