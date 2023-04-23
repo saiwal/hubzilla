@@ -63,8 +63,8 @@ class Item extends Controller {
 
 			// do we have the item (at all)?
 
-			$r = q("select parent_mid from item where mid = '%s' $item_normal limit 1",
-				dbesc(z_root() . '/item/' . $item_id)
+			$r = q("select parent_mid from item where uuid = '%s' $item_normal limit 1",
+				dbesc($item_id)
 			);
 
 			if (!$r) {
@@ -177,8 +177,7 @@ class Item extends Controller {
 			// do we have the item (at all)?
 			// add preferential bias to item owners (item_wall = 1)
 
-			$r = q("select * from item where mid = '%s' or uuid = '%s' $item_normal order by item_wall desc limit 1",
-				dbesc(z_root() . '/item/' . $item_id),
+			$r = q("select * from item where uuid = '%s' $item_normal order by item_wall desc limit 1",
 				dbesc($item_id)
 			);
 
