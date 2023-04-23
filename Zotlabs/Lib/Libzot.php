@@ -2013,18 +2013,12 @@ class Libzot {
 				continue;
 			}
 
-			$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
-				dbesc($AS->actor['id'])
-			);
-
+			$r = Activity::get_actor_hublocs($AS->actor['id']);
 			$r = self::zot_record_preferred($r);
-
 			if (!$r) {
 				$y = import_author_xchan(['url' => $AS->actor['id']]);
 				if ($y) {
-					$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s'",
-						dbesc($AS->actor['id'])
-					);
+					$r = Activity::get_actor_hublocs($AS->actor['id']);
 					$r = self::zot_record_preferred($r);
 				}
 				if (!$r) {
@@ -2034,22 +2028,29 @@ class Libzot {
 			}
 
 			if (isset($AS->obj['actor']['id']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
-				$y = import_author_xchan(['url' => $AS->obj['actor']['id']]);
-				if (!$y) {
-					logger('FOF Activity: no object actor');
-					continue;
+				$ro = Activity::get_actor_hublocs($AS->obj['actor']['id']);
+				$ro = self::zot_record_preferred($ro);
+				if (!$ro) {
+					$y = import_author_xchan(['url' => $AS->obj['actor']['id']]);
+					if ($y) {
+						$ro = Activity::get_actor_hublocs($AS->obj['actor']['id']);
+						$ro = self::zot_record_preferred($ro);
+					}
+					if (!$ro) {
+						logger('FOF Activity: no obj actor');
+						continue;
+					}
 				}
 			}
 
 			$arr = Activity::decode_note($AS);
 
 			if (!$arr) {
+				logger('FOF Activity: could not decode');
 				continue;
 			}
 
-			if ($r) {
-				$arr['author_xchan'] = $r['hubloc_hash'];
-			}
+			$arr['author_xchan'] = $r['hubloc_hash'];
 
 			if ($signer) {
 				$arr['owner_xchan'] = $signer[0]['hubloc_hash'];
