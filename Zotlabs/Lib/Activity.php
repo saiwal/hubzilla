@@ -1333,7 +1333,8 @@ class Activity {
 			}
 		}
 
-		$x           = PermissionRoles::role_perms('personal');
+		$role = get_pconfig($channel['channel_id'], 'system', 'permissions_role', 'personal');
+		$x = PermissionRoles::role_perms($role);
 		$their_perms = Permissions::FilledPerms($x['perms_connect']);
 
 		if ($contact && $contact['abook_id']) {
@@ -1358,10 +1359,15 @@ class Activity {
 					return;
 
 				case 'Accept':
+					// They accepted our Follow request.
+					// Set default permissions except for send_stream and post_wall
 
-					// They accepted our Follow request - set default permissions
-
-					set_abconfig($channel['channel_id'], $contact['abook_xchan'], 'system', 'their_perms', $their_perms);
+					foreach ($their_perms as $k => $v) {
+						if(in_array($k, ['send_stream', 'post_wall'])) {
+							$v = 0; // Those will be set once we accept their follow request
+						}
+						set_abconfig($channel['channel_id'], $contact['abook_xchan'], 'their_perms', $k, $v);
+					}
 
 					$abook_instance = $contact['abook_instance'];
 
