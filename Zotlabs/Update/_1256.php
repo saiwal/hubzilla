@@ -18,8 +18,8 @@ class _1256 {
 		}
 
 		if(ACTIVE_DBTYPE == DBTYPE_MYSQL) {
-			$r2 = dbq("ALTER TABLE updates add ud_update tinyint(1) NOT NULL DEFAULT '',
-				KEY ud_update (ud_update)"
+			$r2 = dbq("ALTER TABLE updates add ud_update tinyint(1) NOT NULL DEFAULT '0',
+				ADD INDEX (ud_update);"
 			);
 		}
 
