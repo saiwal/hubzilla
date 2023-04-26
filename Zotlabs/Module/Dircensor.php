@@ -47,7 +47,7 @@ class Dircensor extends Controller {
 			dbesc($xchan)
 		);
 
-		if($val) {
+		if($severity) {
 			info( t('Entry censored') . EOL);
 		}
 		else {
