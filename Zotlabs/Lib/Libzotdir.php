@@ -279,13 +279,13 @@ class Libzotdir {
 							continue;
 						}
 
-						q("UPDATE updates SET ud_flags = 1 WHERE ud_id = %d",
+						q("UPDATE updates SET ud_update = 1 WHERE ud_id = %d",
 							dbesc($r[0]['ud_id'])
 						);
 					}
 					else {
 						$t['transaction_id'] = strpos($t['transaction_id'], '@') === false ? $t['transaction_id'] : substr($t['transaction_id'], strpos($t['transaction_id'], '@') + 1);
-						q("insert into updates ( ud_hash, ud_guid, ud_date, ud_addr, ud_flags )
+						q("insert into updates ( ud_hash, ud_guid, ud_date, ud_addr, ud_update )
 							values ( '%s', '%s', '%s', '%s', 1 ) ",
 							dbesc($t['hash']),
 							dbesc($t['host'] ?? $t['transaction_id']), // 2023-04-12 transaction_id is deprecated

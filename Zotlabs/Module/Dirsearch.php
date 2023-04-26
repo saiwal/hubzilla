@@ -218,7 +218,7 @@ class Dirsearch extends Controller {
 		if($sync) {
 			$spkt = array('transactions' => array());
 
-			$r = q("SELECT * FROM updates WHERE ud_flags = 0 AND ud_last = '%s' AND ud_date >= '%s' ORDER BY ud_date DESC",
+			$r = q("SELECT * FROM updates WHERE ud_update = 0 AND ud_last = '%s' AND ud_date >= '%s' ORDER BY ud_date DESC",
 				dbesc(NULL_DATE),
 				dbesc($sync)
 			);
@@ -230,7 +230,8 @@ class Dirsearch extends Controller {
 						'address' => $rr['ud_addr'],
 						'host' => $rr['ud_guid'],
 						'transaction_id' => $rr['ud_guid'], // deprecated 2023-04-12
-						'timestamp' => $rr['ud_date']
+						'timestamp' => $rr['ud_date'],
+						'flags' => $rr['ud_flags']
 					];
 				}
 			}

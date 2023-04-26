@@ -170,7 +170,7 @@ class Poller {
 		$dirmode = intval(get_config('system', 'directory_mode'));
 
 		if ($dirmode == DIRECTORY_MODE_SECONDARY || $dirmode == DIRECTORY_MODE_PRIMARY) {
-			$r = q("SELECT * FROM updates WHERE ud_flags = 1 AND (ud_last = '%s' OR ud_last > %s - INTERVAL %s)",
+			$r = q("SELECT * FROM updates WHERE ud_update = 1 AND (ud_last = '%s' OR ud_last > %s - INTERVAL %s)",
 				dbesc(NULL_DATE),
 				db_utcnow(),
 				db_quoteinterval('7 DAY')
