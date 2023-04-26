@@ -233,6 +233,8 @@ class Libzotdir {
 		if (! $r)
 			return;
 
+		$dir_trusted_hosts = get_directory_fallback_servers();
+
 		foreach ($r as $rr) {
 			if (! $rr['site_directory'])
 				continue;
@@ -264,8 +266,7 @@ class Libzotdir {
 
 			if (is_array($j['transactions']) && count($j['transactions'])) {
 				foreach ($j['transactions'] as $t) {
-
-					if (empty($t['hash'])) {
+					if (empty($t['hash']) || empty($t['host']) || empty($t['address'])) {
 						continue;
 					}
 
@@ -274,23 +275,40 @@ class Libzotdir {
 					);
 
 					if ($r) {
+						$update = 0;
 
-						if ($r[0]['ud_date'] >= $t['timestamp']) {
+						// no need to look at updates that originated from our own site
+						if ($t['host'] === z_root()) {
 							continue;
 						}
 
-						q("UPDATE updates SET ud_update = 1 WHERE ud_id = %d",
+						// there is more recent xchan information
+						if ($r[0]['ud_date'] >= $t['timestamp']) {
+							$update = DIRECTORY_UPDATE_XCHAN;
+						}
+
+						// the host is trusted and flags have changed
+						if (in_array($t['host'], $dir_trusted_hosts) && intval($r[0]['ud_flags']) !== intval($t['flags'])) {
+							$update = (($update) ? DIRECTORY_UPDATE_BOTH : DIRECTORY_UPDATE_FLAGS);
+						}
+
+						if (!$update) {
+							continue;
+						}
+
+						q("UPDATE updates SET ud_update = %d WHERE ud_id = %d",
+							intval($update),
 							dbesc($r[0]['ud_id'])
 						);
 					}
 					else {
-						$t['transaction_id'] = strpos($t['transaction_id'], '@') === false ? $t['transaction_id'] : substr($t['transaction_id'], strpos($t['transaction_id'], '@') + 1);
-						q("insert into updates ( ud_hash, ud_guid, ud_date, ud_addr, ud_update )
-							values ( '%s', '%s', '%s', '%s', 1 ) ",
+						q("insert into updates ( ud_hash, ud_host, ud_date, ud_addr, ud_update, ud_flags )
+							values ( '%s', '%s', '%s', '%s', 1, %d) ",
 							dbesc($t['hash']),
-							dbesc($t['host'] ?? $t['transaction_id']), // 2023-04-12 transaction_id is deprecated
+							dbesc($t['host']),
 							dbesc($t['timestamp']),
-							dbesc($t['address'])
+							dbesc($t['address']),
+							dbesc(in_array($t['host'], $dir_trusted_hosts) ? $t['flags'] : 0)
 						);
 					}
 				}
@@ -318,15 +336,19 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		if (empty($ud['ud_hash']) || empty($ud['ud_addr'])) {
-			q("DELETE FROM updates WHERE ud_id = %d",
-				dbesc($ud['ud_id'])
+		// set the flag if requested?
+		if (in_array($ud['ud_flags'], [DIRECTORY_UPDATE_FLAGS, DIRECTORY_UPDATE_BOTH])) {
+			q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
+				intval($ud['ud_flags']),
+				dbesc($ud['ud_hash'])
 			);
-			return false;
+		}
+
+		if (intval($ud['ud_flags']) === DIRECTORY_UPDATE_FLAGS) {
+			return true;
 		}
 
 		$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
-
 		if($href) {
 			$zf = Zotfinger::exec($href);
 			if($zf && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
@@ -643,9 +665,11 @@ class Libzotdir {
 	 * @param bool $bump_date (optional) default true
 	 */
 
-	static function update($hash, $addr, $bump_date = true) {
+	static function update($hash, $addr, $bump_date = true, $flag = DIRECTORY_FLAG_OK) {
+hz_syslog('flag: '. print_r($flag, true));
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
+hz_syslog('gothere');
 
 		if($dirmode == DIRECTORY_MODE_NORMAL) {
 			return;
@@ -655,7 +679,7 @@ class Libzotdir {
 			return;
 		}
 
-		$u = q("SELECT ud_id FROM updates WHERE ud_hash = '%s' LIMIT 1",
+		$u = q("SELECT * FROM updates WHERE ud_hash = '%s' LIMIT 1",
 			dbesc($hash)
 		);
 
@@ -665,21 +689,23 @@ class Libzotdir {
 		}
 
 		if ($u) {
-			$x = q("UPDATE updates SET $date_sql ud_last = '%s', ud_guid = '%s', ud_addr = '%s', ud_flags = 0 WHERE ud_id = %d",
+			$x = q("UPDATE updates SET $date_sql ud_last = '%s', ud_host = '%s', ud_addr = '%s', ud_update = 0, ud_flags = %d WHERE ud_id = %d",
 				dbesc(NULL_DATE),
-				dbesc(\App::get_hostname()),
+				dbesc(z_root()),
 				dbesc($addr),
+				intval($flag),
 				intval($u[0]['ud_id'])
 			);
 
 			return;
 		}
 
-		q("INSERT INTO updates (ud_hash, ud_guid, ud_date, ud_addr ) VALUES ( '%s', '%s', '%s', '%s' )",
+		q("INSERT INTO updates (ud_hash, ud_host, ud_date, ud_addr, ud_flags) VALUES ( '%s', '%s', '%s', '%s', %d )",
 			dbesc($hash),
-			dbesc(\App::get_hostname()),
+			dbesc(z_root()),
 			dbesc(datetime_convert()),
-			dbesc($addr)
+			dbesc($addr),
+			intval($flag)
 		);
 
 		return;

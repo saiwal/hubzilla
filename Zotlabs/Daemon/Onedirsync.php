@@ -37,12 +37,13 @@ class Onedirsync {
 		$h = Libzot::zot_record_preferred($h);
 
 		if (($h) && (($h['hubloc_status'] & HUBLOC_OFFLINE) || $h['hubloc_deleted'] || $h['hubloc_error'])) {
-			q("update updates set ud_flags = 9 where ud_hash = '%s' and ud_flags != 9",
-				dbesc($r[0]['ud_hash'])
-			);
 
-			// 2023-04-12: Flag the entry deleted but try to update anyway since the info is not always correct
+			// 2023-04-12: Try to update anyway since the info is not always correct
 			// This might change after all directory servers run the new code.
+
+			// q("update updates set ud_flags = 9 where ud_hash = '%s' and ud_flags != 9",
+			//	dbesc($r[0]['ud_hash'])
+			//);
 
 			// return;
 		}

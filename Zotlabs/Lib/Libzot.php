@@ -965,7 +965,7 @@ class Libzot {
 		}
 
 		// update updates if anything changed bump the ud_date
-		Libzotdir::update($xchan_hash, $address, $changed);
+		Libzotdir::update($xchan_hash, $address, $changed, $r[0]['xchan_censored']);
 
 		if (empty($ret['message'])) {
 			$ret['success'] = true;

@@ -228,8 +228,8 @@ class Dirsearch extends Controller {
 					$spkt['transactions'][] = [
 						'hash' => $rr['ud_hash'],
 						'address' => $rr['ud_addr'],
-						'host' => $rr['ud_guid'],
-						'transaction_id' => $rr['ud_guid'], // deprecated 2023-04-12
+						'host' => $rr['ud_host'],
+						'transaction_id' => $rr['ud_host'], // deprecated 2023-04-12
 						'timestamp' => $rr['ud_date'],
 						'flags' => $rr['ud_flags']
 					];

@@ -84,6 +84,15 @@ define('DIRECTORY_MODE_PRIMARY', 0x0001); // There can only be *one* primary dir
 define('DIRECTORY_MODE_SECONDARY', 0x0002); // All other mirror directory servers
 define('DIRECTORY_MODE_STANDALONE', 0x0100); // A detached (off the grid) hub with itself as directory server.
 
+define('DIRECTORY_UPDATE_OK',    0);
+define('DIRECTORY_UPDATE_XCHAN', 1);
+define('DIRECTORY_UPDATE_FLAGS', 2);
+define('DIRECTORY_UPDATE_BOTH',  3);
+
+define('DIRECTORY_FLAG_OK',     0);
+define('DIRECTORY_FLAG_UNSAFE', 1);
+define('DIRECTORY_FLAG_HIDDEN', 2);
+
 // We will look for upstream directories whenever me make contact
 // with other sites, but if this is a new installation and isn't
 // a standalone hub, we need to seed the service with a starting
@@ -96,8 +105,7 @@ define('DIRECTORY_FALLBACK_MASTER', 'https://hub.netzgemeinde.eu');
 function get_directory_fallback_servers() {
 	$ret = [
 		'https://hub.netzgemeinde.eu',
-		'https://zotsite.net',
-		'https://hub.libranet.de'
+		'https://zotsite.net'
 	];
 
 	return $ret;
@@ -363,11 +371,6 @@ define('POLL_SIMPLE_RATING', 0x0001);  // 1-5
 define('POLL_TENSCALE', 0x0002);  // 1-10
 define('POLL_MULTIPLE_CHOICE', 0x0004);
 define('POLL_OVERWRITE', 0x8000);  // If you vote twice remove the prior entry
-
-
-define('UPDATE_FLAGS_UPDATED', 0x0001);
-define('UPDATE_FLAGS_FORCED', 0x0002);
-define('UPDATE_FLAGS_DELETED', 0x1000);
 
 define('HUBLOC_OFFLINE', 0x0001);
 
