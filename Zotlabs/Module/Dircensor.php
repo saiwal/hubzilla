@@ -15,7 +15,7 @@ class Dircensor extends Controller {
 
 		$dirmode = intval(get_config('system','directory_mode'));
 
-		if (! ($dirmode == DIRECTORY_MODE_PRIMARY || $dirmode == DIRECTORY_MODE_STANDALONE)) {
+		if(!in_array($dirmode, [DIRECTORY_MODE_PRIMARY, DIRECTORY_MODE_SECONDARY, DIRECTORY_MODE_STANDALONE])) {
 			return;
 		}
 
@@ -32,9 +32,18 @@ class Dircensor extends Controller {
 			return;
 		}
 
-		$val = (($r[0]['xchan_censored']) ? 0 : 1);
+		$severity = intval($_REQUEST['severity'] ?? 0);
 
-		q("update xchan set xchan_censored = $val where xchan_hash = '%s'",
+		if ($severity < 0) {
+			$severity = 0;
+		}
+
+		if ($severity > 2) {
+			$severity = 2;
+		}
+
+		q("update xchan set xchan_censored = %d where xchan_hash = '%s'",
+			intval($severity),
 			dbesc($xchan)
 		);
 
@@ -44,7 +53,7 @@ class Dircensor extends Controller {
 		else {
 			info( t('Entry uncensored') . EOL);
 		}
-		
+
 		goaway(z_root() . '/directory');
 
 	}

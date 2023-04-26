@@ -25,7 +25,6 @@ class Dirsearch extends Controller {
 			json_return_and_die($ret);
 		}
 
-
 		$access_token = $_REQUEST['t'] ?? '';
 
 		$token = get_config('system','realm_token');
@@ -41,7 +40,6 @@ class Dirsearch extends Controller {
 		}
 
 		$sql_extra = '';
-
 
 		$tables = array('name','address','locale','region','postcode','country','gender','marital','sexual','keywords');
 
@@ -85,9 +83,7 @@ class Dirsearch extends Controller {
 
 
 		// by default use a safe search
-		$safe     = ((x($_REQUEST,'safe')));    // ? intval($_REQUEST['safe'])  : 1 );
-		if ($safe === false)
-				$safe = 1;
+		$safe = $_REQUEST['safe'] ?? 1;
 
 		if(array_key_exists('sync',$_REQUEST)) {
 			if($_REQUEST['sync'])
@@ -177,9 +173,15 @@ class Dirsearch extends Controller {
 			$sql_extra .= " and xchan_addr like '%%" . \App::get_hostname() . "' ";
 		}
 
-		$safesql = (($safe > 0) ? " and xchan_censored = 0 and xchan_selfcensored = 0 " : '');
+		$safesql = '';
+		if($safe > 0)
+			$safesql = " and xchan_censored = 0 and xchan_selfcensored = 0 ";
+
+		if($safe < 1)
+			$safesql = " and xchan_censored < 2 and xchan_selfcensored < 2 ";
+
 		if($safe < 0)
-			$safesql = " and ( xchan_censored = 1 OR xchan_selfcensored = 1 ) ";
+			$safesql = " and xchan_censored < 3 and xchan_selfcensored < 2 ";
 
 		if($forums)
 			$safesql .= " and xchan_pubforum = " . ((intval($forums)) ? '1 ' : '0 ');

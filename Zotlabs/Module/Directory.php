@@ -151,7 +151,7 @@ class Directory extends Controller {
 
 		$url = '';
 
-		if(($dirmode == DIRECTORY_MODE_PRIMARY) || ($dirmode == DIRECTORY_MODE_STANDALONE)) {
+		if(in_array($dirmode, [DIRECTORY_MODE_PRIMARY, DIRECTORY_MODE_SECONDARY, DIRECTORY_MODE_STANDALONE])) {
 			$url = z_root() . '/dirsearch';
 			if (is_site_admin()) {
 				$directory_admin = true;
@@ -191,7 +191,10 @@ class Directory extends Controller {
 			if(get_config('system','disable_directory_keywords'))
 				$kw = 0;
 
-			$query = $url . '?f=&kw=' . $kw . (($safe_mode != 1) ? '&safe=' . $safe_mode : '');
+			if (intval($safe_mode) === 0 && $directory_admin)
+				$safe_mode = -1;
+
+			$query = $url . '?f=&kw=' . $kw . (($safe_mode < 1) ? '&safe=' . $safe_mode : '');
 
 			if($token)
 				$query .= '&t=' . $token;
@@ -351,8 +354,12 @@ class Directory extends Controller {
 								'gender'   => $gender,
 								'pdesc'	=> $pdesc,
 								'pdesc_label' => t('Description:'),
-								'censor' => (($directory_admin) ? 'dircensor/' . $rr['hash'] : ''),
-								'censor_label' => (($rr['censored']) ? t('Uncensor') : t('Censor')),
+								'censor' => (($directory_admin && intval($rr['censored']) < 2) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 0) ? 0 : 1) : ''),
+								'censor_label' => ((intval($rr['censored']) === 1) ? t('Flag safe') : t('Flag unsafe')),
+								'censor_class' => ((intval($rr['censored']) === 1) ? '' : '-outline'),
+								'censor_2' => (($directory_admin) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 1) ? 0 : 2) : ''),
+								'censor_2_label' => ((intval($rr['censored']) > 1) ? t('Show') : t('Hide')),
+								'censor_2_class' => ((intval($rr['censored']) > 1) ? '' : '-outline'),
 								'marital'  => $marital,
 								'homepage' => $homepage,
 								'homepageurl' => (($safe_mode) ? $homepageurl : linkify($homepageurl)),
