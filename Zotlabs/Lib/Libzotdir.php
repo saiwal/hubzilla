@@ -668,10 +668,8 @@ class Libzotdir {
 	 */
 
 	static function update($hash, $addr, $bump_date = true, $flag = DIRECTORY_FLAG_OK) {
-hz_syslog('flag: '. print_r($flag, true));
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
-hz_syslog('gothere');
 
 		if($dirmode == DIRECTORY_MODE_NORMAL) {
 			return;
