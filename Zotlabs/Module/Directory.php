@@ -356,7 +356,7 @@ class Directory extends Controller {
 								'pdesc'	=> $pdesc,
 								'pdesc_label' => t('Description:'),
 								'censor' => (($directory_admin && intval($rr['censored']) < 2) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 0) ? 0 : 1) : ''),
-								'censor_label' => ((intval($rr['censored']) === 1) ? t('Flag safe') : t('Flag unsafe')),
+								'censor_label' => ((intval($rr['censored']) === 1) ? t('Safe') : t('Unsafe')),
 								'censor_class' => ((intval($rr['censored']) === 1) ? '' : '-outline'),
 								'censor_2' => (($directory_admin) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 1) ? 0 : 2) : ''),
 								'censor_2_label' => ((intval($rr['censored']) > 1) ? t('Show') : t('Hide')),
