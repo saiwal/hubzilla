@@ -299,9 +299,10 @@ class Directory extends Controller {
 							$hometown = ((x($profile,'hometown') == 1) ? html2plain($profile['hometown'])  : False);
 
 							$about = ((x($profile,'about') == 1) ? zidify_links(bbcode($profile['about'], ['tryoembed' => false])) : False);
-							if ($about && $safe_mode) {
-								$about = html2plain($about);
+							if ($about && $safe_mode > 0) {
+								$about = strip_tags($about, '<br>');
 							}
+
 
 							$keywords = ((x($profile,'keywords')) ? $profile['keywords'] : '');
 
@@ -362,7 +363,7 @@ class Directory extends Controller {
 								'censor_2_class' => ((intval($rr['censored']) > 1) ? '' : '-outline'),
 								'marital'  => $marital,
 								'homepage' => $homepage,
-								'homepageurl' => (($safe_mode) ? $homepageurl : linkify($homepageurl)),
+								'homepageurl' => (($safe_mode  > 0) ? $homepageurl : linkify($homepageurl)),
 								'hometown' => $hometown,
 								'hometown_label' => t('Hometown:'),
 								'about' => $about,

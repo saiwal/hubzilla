@@ -172,13 +172,12 @@ class Libzotdir {
 	}
 
 	/**
-	 * @brief Checks the directory mode of this hub.
+	 * @brief fetches updates from known directories
 	 *
 	 * Checks the directory mode of this hub to see if it is some form of directory server. If it is,
 	 * get the directory realm of this hub. Fetch a list of all other directory servers in this realm and request
-	 * a directory sync packet. This will contain both directory updates and new ratings. Store these all in the DB.
-	 * In the case of updates, we will query each of them asynchronously from a poller task. Ratings are stored
-	 * directly if the rater's signature matches.
+	 * a directory sync packet. Store these all in the DB.
+	 * In the case of updates, we will query each of them asynchronously from a poller task.
 	 *
 	 * @param int $dirmode;
 	 */
