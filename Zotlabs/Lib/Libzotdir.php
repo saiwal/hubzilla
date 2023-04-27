@@ -288,7 +288,10 @@ class Libzotdir {
 						}
 
 						// the host is trusted and flags have changed
-						if (in_array($t['host'], $dir_trusted_hosts) && intval($r[0]['ud_flags']) !== intval($t['flags'])) {
+						if (in_array($t['host'], $dir_trusted_hosts) &&
+							$rr['site_directory'] === $t['host'] &&
+							intval($r[0]['ud_flags']) !== intval($t['flags'])) {
+
 							$update = (($update) ? DIRECTORY_UPDATE_BOTH : DIRECTORY_UPDATE_FLAGS);
 						}
 
