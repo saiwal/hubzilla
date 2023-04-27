@@ -282,7 +282,7 @@ class Libzotdir {
 						}
 
 						// there is more recent xchan information
-						if ($r[0]['ud_date'] >= $t['timestamp']) {
+						if ($r[0]['ud_date'] <= $t['timestamp']) {
 							$update = DIRECTORY_UPDATE_XCHAN;
 						}
 
@@ -347,6 +347,7 @@ class Libzotdir {
 		}
 
 		if (intval($ud['ud_flags']) === DIRECTORY_UPDATE_FLAGS) {
+			self::update($ud['ud_hash'], $ud['ud_addr'], $ud['ud_flags'], false);
 			return true;
 		}
 
@@ -355,6 +356,7 @@ class Libzotdir {
 			$zf = Zotfinger::exec($href);
 			if($zf && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
 				$xc = Libzot::import_xchan($zf['data']);
+
 				// This is a workaround for a missing xchan_updated column
 				// TODO: implement xchan_updated in the xchan table and update this column instead
 				if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
@@ -459,7 +461,7 @@ class Libzotdir {
 			);
 		}
 
-		self::update($hash, $p[0]['xchan_url']);
+		self::update($hash, $p[0]['xchan_url'], $p[0]['xchan_censored']);
 	}
 
 
@@ -667,7 +669,7 @@ class Libzotdir {
 	 * @param bool $bump_date (optional) default true
 	 */
 
-	static function update($hash, $addr, $bump_date = true, $flag = DIRECTORY_FLAG_OK) {
+	static function update($hash, $addr, $flag, $bump_date = true) {
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
 

@@ -45,7 +45,7 @@ class Dircensor extends Controller {
 			$flag = DIRECTORY_FLAG_HIDDEN;
 		}
 
-		Libzotdir::update($xchan, $r[0]['xchan_url'], true, $flag);
+		Libzotdir::update($xchan, $r[0]['xchan_url'], $flag);
 
 		q("update xchan set xchan_censored = %d where xchan_hash = '%s'",
 			intval($flag),
