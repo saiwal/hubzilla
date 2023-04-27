@@ -288,13 +288,22 @@ class Libzotdir {
 
 						// the host is trusted and flags have changed
 						if (in_array($t['host'], $dir_trusted_hosts) &&
-							$rr['site_directory'] === $t['host'] &&
+							$rr['site_url'] === $t['host'] &&
 							intval($r[0]['ud_flags']) !== intval($t['flags'])) {
 
 							$update = (($update) ? DIRECTORY_UPDATE_BOTH : DIRECTORY_UPDATE_FLAGS);
 						}
 
 						if (!$update) {
+							continue;
+						}
+
+						if (in_array($update, [DIRECTORY_UPDATE_FLAGS, DIRECTORY_UPDATE_BOTH])) {
+							q("UPDATE updates SET ud_update = %d, ud_flags = %d WHERE ud_id = %d",
+								intval($update),
+								intval($t['flags']),
+								dbesc($r[0]['ud_id'])
+							);
 							continue;
 						}
 
@@ -339,14 +348,15 @@ class Libzotdir {
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
 		// set the flag if requested?
-		if (in_array($ud['ud_flags'], [DIRECTORY_UPDATE_FLAGS, DIRECTORY_UPDATE_BOTH])) {
+		if (in_array($ud['ud_update'], [DIRECTORY_UPDATE_FLAGS, DIRECTORY_UPDATE_BOTH])) {
+
 			q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
 				intval($ud['ud_flags']),
 				dbesc($ud['ud_hash'])
 			);
 		}
 
-		if (intval($ud['ud_flags']) === DIRECTORY_UPDATE_FLAGS) {
+		if (intval($ud['ud_update']) === DIRECTORY_UPDATE_FLAGS) {
 			self::update($ud['ud_hash'], $ud['ud_addr'], $ud['ud_flags'], false);
 			return true;
 		}
