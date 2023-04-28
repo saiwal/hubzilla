@@ -698,7 +698,7 @@ class Libzotdir {
 
 		$flag_sql = '';
 		if ($flag !== null) {
-			$flag_sql = "ud_flag = '" . intval($flag) . "',";
+			$flag_sql = "ud_flags = '" . intval($flag) . "',";
 		}
 
 
