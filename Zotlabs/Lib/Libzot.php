@@ -674,7 +674,6 @@ class Libzot {
 		$arr['hash'] = $xchan_hash;
 
 		$import_photos = false;
-		$xchan_censored = 0;
 
 		$sig_methods = ((array_key_exists('signing', $arr) && is_array($arr['signing'])) ? $arr['signing'] : ['sha256']);
 		$verified    = false;
@@ -705,8 +704,6 @@ class Libzot {
 
 			if ($arr['photo'] && array_key_exists('updated', $arr['photo']) && $arr['photo']['updated'] > $r[0]['xchan_photo_date'])
 				$import_photos = true;
-
-			$xchan_censored = $r[0]['xchan_censored'] ?? 0;
 
 
 			// if we import an entry from a site that's not ours and either or both of us is off the grid - hide the entry.
@@ -969,7 +966,7 @@ class Libzot {
 		}
 
 		// update updates if anything changed bump the ud_date
-		Libzotdir::update($xchan_hash, $address, $xchan_censored, $changed);
+		Libzotdir::update($xchan_hash, $address, $changed);
 
 		if (empty($ret['message'])) {
 			$ret['success'] = true;

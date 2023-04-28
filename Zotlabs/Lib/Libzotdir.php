@@ -283,27 +283,29 @@ class Libzotdir {
 
 						// there is more recent xchan information
 						if ($r[0]['ud_date'] <= $t['timestamp']) {
-							$update = DIRECTORY_UPDATE_XCHAN;
+							$update = 1;
 						}
 
-						// the host is trusted and flags have changed
+						// the host is trusted and flags have changed - update flags immediately
 						if (in_array($t['host'], $dir_trusted_hosts) &&
 							$rr['site_url'] === $t['host'] &&
 							intval($r[0]['ud_flags']) !== intval($t['flags'])) {
 
-							$update = (($update) ? DIRECTORY_UPDATE_BOTH : DIRECTORY_UPDATE_FLAGS);
-						}
-
-						if (!$update) {
-							continue;
-						}
-
-						if (in_array($update, [DIRECTORY_UPDATE_FLAGS, DIRECTORY_UPDATE_BOTH])) {
 							q("UPDATE updates SET ud_update = %d, ud_flags = %d WHERE ud_id = %d",
 								intval($update),
 								intval($t['flags']),
 								dbesc($r[0]['ud_id'])
 							);
+
+							q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
+								intval($t['flags']),
+								dbesc($r[0]['ud_hash'])
+							);
+
+							continue;
+						}
+
+						if (!$update) {
 							continue;
 						}
 
@@ -347,20 +349,8 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		// set the flag if requested?
-		if (in_array($ud['ud_update'], [DIRECTORY_UPDATE_FLAGS, DIRECTORY_UPDATE_BOTH])) {
-
-			q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
-				intval($ud['ud_flags']),
-				dbesc($ud['ud_hash'])
-			);
-		}
-
-		if (intval($ud['ud_update']) === DIRECTORY_UPDATE_FLAGS) {
-			self::update($ud['ud_hash'], $ud['ud_addr'], $ud['ud_flags'], false);
-			return true;
-		}
-
+		// TODO: remove this check after all directory servers have version > 8.4
+		// ud_addr will always be the channel url at that time
 		$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
 		if($href) {
 			$zf = Zotfinger::exec($href);
@@ -477,7 +467,7 @@ class Libzotdir {
 			);
 		}
 
-		self::update($hash, $p[0]['xchan_url'], $p[0]['xchan_censored']);
+		self::update($hash, $p[0]['xchan_url']);
 	}
 
 
@@ -685,7 +675,7 @@ class Libzotdir {
 	 * @param bool $bump_date (optional) default true
 	 */
 
-	static function update($hash, $addr, $flag, $bump_date = true) {
+	static function update($hash, $addr, $bump_date = true, $flag = null) {
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
 
@@ -706,12 +696,17 @@ class Libzotdir {
 			$date_sql = "ud_date = '" . dbesc(datetime_convert()) . "',";
 		}
 
+		$flag_sql = '';
+		if ($flag !== null) {
+			$flag_sql = "ud_flag = '" . intval($flag) . "',";
+		}
+
+
 		if ($u) {
-			$x = q("UPDATE updates SET $date_sql ud_last = '%s', ud_host = '%s', ud_addr = '%s', ud_update = 0, ud_flags = %d WHERE ud_id = %d",
+			$x = q("UPDATE updates SET $date_sql $flag_sql ud_last = '%s', ud_host = '%s', ud_addr = '%s', ud_update = 0 WHERE ud_id = %d",
 				dbesc(NULL_DATE),
 				dbesc(z_root()),
 				dbesc($addr),
-				intval($flag),
 				intval($u[0]['ud_id'])
 			);
 
