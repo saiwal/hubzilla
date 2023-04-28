@@ -2419,7 +2419,7 @@ class Activity {
 		}
 
 		if (isset($act->obj['type'])) {
-			$s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
+			$s['obj_type'] = self::activity_obj_decode_mapper($act->obj['type']);
 		}
 
 		if ($s['obj_type'] === ACTIVITY_OBJ_NOTE && $s['mid'] !== $s['parent_mid']) {
