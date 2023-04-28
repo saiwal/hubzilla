@@ -44,7 +44,7 @@ class Dircensor extends Controller {
 		if ($severity === 2) {
 			$flag = DIRECTORY_FLAG_HIDDEN;
 		}
-hz_syslog('flag: '. print_r($flag, true));
+
 		Libzotdir::update($xchan, $r[0]['xchan_url'], true, $flag);
 
 		q("update xchan set xchan_censored = %d where xchan_hash = '%s'",

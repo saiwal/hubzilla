@@ -84,11 +84,6 @@ define('DIRECTORY_MODE_PRIMARY', 0x0001); // There can only be *one* primary dir
 define('DIRECTORY_MODE_SECONDARY', 0x0002); // All other mirror directory servers
 define('DIRECTORY_MODE_STANDALONE', 0x0100); // A detached (off the grid) hub with itself as directory server.
 
-define('DIRECTORY_UPDATE_OK',    0);
-define('DIRECTORY_UPDATE_XCHAN', 1);
-define('DIRECTORY_UPDATE_FLAGS', 2);
-define('DIRECTORY_UPDATE_BOTH',  3);
-
 define('DIRECTORY_FLAG_OK',     0);
 define('DIRECTORY_FLAG_UNSAFE', 1);
 define('DIRECTORY_FLAG_HIDDEN', 2);

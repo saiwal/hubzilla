@@ -282,16 +282,27 @@ class Libzotdir {
 						}
 
 						// there is more recent xchan information
-						if ($r[0]['ud_date'] >= $t['timestamp']) {
-							$update = DIRECTORY_UPDATE_XCHAN;
+						if ($r[0]['ud_date'] <= $t['timestamp']) {
+							$update = 1;
 						}
 
-						// the host is trusted and flags have changed
+						// the host is trusted and flags have changed - update flags immediately
 						if (in_array($t['host'], $dir_trusted_hosts) &&
-							$rr['site_directory'] === $t['host'] &&
+							$rr['site_url'] === $t['host'] &&
 							intval($r[0]['ud_flags']) !== intval($t['flags'])) {
 
-							$update = (($update) ? DIRECTORY_UPDATE_BOTH : DIRECTORY_UPDATE_FLAGS);
+							q("UPDATE updates SET ud_update = %d, ud_flags = %d WHERE ud_id = %d",
+								intval($update),
+								intval($t['flags']),
+								dbesc($r[0]['ud_id'])
+							);
+
+							q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
+								intval($t['flags']),
+								dbesc($r[0]['ud_hash'])
+							);
+
+							continue;
 						}
 
 						if (!$update) {
@@ -338,23 +349,27 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		// set the flag if requested?
-		if (in_array($ud['ud_flags'], [DIRECTORY_UPDATE_FLAGS, DIRECTORY_UPDATE_BOTH])) {
-			q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
-				intval($ud['ud_flags']),
-				dbesc($ud['ud_hash'])
-			);
-		}
-
-		if (intval($ud['ud_flags']) === DIRECTORY_UPDATE_FLAGS) {
-			return true;
-		}
-
+		// TODO: remove this check after all directory servers have version > 8.4
+		// ud_addr will always be the channel url at that time
 		$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
 		if($href) {
 			$zf = Zotfinger::exec($href);
 			if($zf && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
 				$xc = Libzot::import_xchan($zf['data']);
+
+				// xchan_hash mismatch - this can happen after a site re-install at the same url
+				if ($xc['success'] && $xc['hash'] !== $ud['ud_hash']) {
+					self::delete_by_hash($ud['ud_hash']);
+				}
+
+				// backwards compatibility: Libzot::import_xchan(), where self::update() is called,
+				// will fail with versions < 8.4 if the channel has been locally deleted.
+				// In this case we will update the updates record here without bumping the date
+				// since we could not verify if anything changed.
+				if (!$xc['success'] && !empty($zf['data']['deleted_locally'])) {
+					self::update($ud['ud_hash'], $ud['ud_addr'], false);
+				}
+
 				// This is a workaround for a missing xchan_updated column
 				// TODO: implement xchan_updated in the xchan table and update this column instead
 				if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
@@ -363,6 +378,7 @@ class Libzotdir {
 						dbesc($zf['data']['primary_location']['url'])
 					);
 				}
+
 				return true;
 			}
 		}
@@ -667,11 +683,9 @@ class Libzotdir {
 	 * @param bool $bump_date (optional) default true
 	 */
 
-	static function update($hash, $addr, $bump_date = true, $flag = DIRECTORY_FLAG_OK) {
-hz_syslog('flag: '. print_r($flag, true));
+	static function update($hash, $addr, $bump_date = true, $flag = null) {
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
-hz_syslog('gothere');
 
 		if($dirmode == DIRECTORY_MODE_NORMAL) {
 			return;
@@ -690,12 +704,17 @@ hz_syslog('gothere');
 			$date_sql = "ud_date = '" . dbesc(datetime_convert()) . "',";
 		}
 
+		$flag_sql = '';
+		if ($flag !== null) {
+			$flag_sql = "ud_flags = '" . intval($flag) . "',";
+		}
+
+
 		if ($u) {
-			$x = q("UPDATE updates SET $date_sql ud_last = '%s', ud_host = '%s', ud_addr = '%s', ud_update = 0, ud_flags = %d WHERE ud_id = %d",
+			$x = q("UPDATE updates SET $date_sql $flag_sql ud_last = '%s', ud_host = '%s', ud_addr = '%s', ud_update = 0 WHERE ud_id = %d",
 				dbesc(NULL_DATE),
 				dbesc(z_root()),
 				dbesc($addr),
-				intval($flag),
 				intval($u[0]['ud_id'])
 			);
 
@@ -712,6 +731,30 @@ hz_syslog('gothere');
 
 		return;
 
+	}
+
+
+	/**
+	 * @brief deletes a entry in updates by hash
+	 *
+	 * @param string $hash the channel hash
+	 * @return boolean
+	 */
+
+	static function delete_by_hash($hash) {
+		if (!$hash) {
+			return false;
+		}
+
+		$x = q("DELETE FROM updates WHERE ud_hash = '%s'",
+			dbesc($hash)
+		);
+
+		if ($x) {
+			return true;
+		}
+
+		return false;
 	}
 
 }
