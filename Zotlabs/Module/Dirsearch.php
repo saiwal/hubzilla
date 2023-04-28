@@ -229,7 +229,7 @@ class Dirsearch extends Controller {
 						'hash' => $rr['ud_hash'],
 						'address' => $rr['ud_addr'],
 						'host' => $rr['ud_host'],
-						'transaction_id' => $rr['ud_host'], // deprecated 2023-04-12
+						'transaction_id' => $rr['ud_host'], // deprecated 2023-04-12 - can be removed after dir servers at version >= 8.4
 						'timestamp' => $rr['ud_date'],
 						'flags' => $rr['ud_flags']
 					];

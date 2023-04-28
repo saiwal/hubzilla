@@ -362,6 +362,14 @@ class Libzotdir {
 					self::delete_by_hash($ud['ud_hash']);
 				}
 
+				// backwards compatibility: Libzot::import_xchan(), where self::update() is called,
+				// will fail with versions < 8.4 if the channel has been locally deleted.
+				// In this case we will update the updates record here without bumping the date
+				// since we could not verify if anything changed.
+				if (!$xc['success'] && !empty($zf['data']['deleted_locally'])) {
+					self::update($ud['ud_hash'], $ud['ud_addr'], false);
+				}
+
 				// This is a workaround for a missing xchan_updated column
 				// TODO: implement xchan_updated in the xchan table and update this column instead
 				if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
