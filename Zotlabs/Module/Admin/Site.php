@@ -60,6 +60,7 @@ class Site {
 		}
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
+		$trusted_directory_servers = ((!empty($_POST['trusted_directory_servers'])) ? trim($_POST['trusted_directory_servers']) : '');
 		$allowed_sites		=	((x($_POST,'allowed_sites'))	? notags(trim($_POST['allowed_sites']))		: '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
@@ -67,7 +68,6 @@ class Site {
 		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
 		$login_on_homepage	=	((x($_POST,'login_on_homepage'))		? True	:	False);
 		$enable_context_help = ((x($_POST,'enable_context_help'))		? True	:	False);
-		$global_directory     = ((x($_POST,'directory_submit_url'))	? notags(trim($_POST['directory_submit_url']))	: '');
 		$no_community_page    = !((x($_POST,'no_community_page'))	? True	:	False);
 		$default_expire_days  = ((array_key_exists('default_expire_days',$_POST)) ? intval($_POST['default_expire_days']) : 0);
 		$active_expire_days  = ((array_key_exists('active_expire_days',$_POST)) ? intval($_POST['active_expire_days']) : 7);
@@ -167,6 +167,10 @@ class Site {
 		if($directory_server)
 			set_config('system','directory_server',$directory_server);
 
+		if($trusted_directory_servers) {
+			set_config('system', 'trusted_directory_servers', $trusted_directory_servers);
+		}
+
 		if ($banner == '') {
 			del_config('system', 'banner');
 		} else {
@@ -181,7 +185,7 @@ class Site {
 			set_config('system', 'admininfo', $admininfo);
 		}
 		set_config('system','siteinfo',$siteinfo);
-		set_config('system', 'language', $language);
+		//set_config('system', 'language', $language);
 		set_config('system', 'theme', $theme);
 		//		if ( $theme_mobile === '---' ) {
 		//			del_config('system', 'mobile_theme');
@@ -206,11 +210,6 @@ class Site {
 		set_config('system','site_firehose', $site_firehose);
 		set_config('system','open_pubstream', $open_pubstream);
 		//set_config('system','force_queue_threshold', $force_queue);
-		if ($global_directory == '') {
-			del_config('system', 'directory_submit_url');
-		} else {
-			set_config('system', 'directory_submit_url', $global_directory);
-		}
 
 		set_config('system','no_community_page', $no_community_page);
 		set_config('system','no_utf', $no_utf);
@@ -283,7 +282,7 @@ class Site {
 		}
 
 		$dir_choices = null;
-		$dirmode = get_config('system','directory_mode');
+		$dirmode = get_config('system', 'directory_mode', DIRECTORY_MODE_NORMAL);
 		$realm = get_directory_realm();
 
 		// directory server should not be set or settable unless we are a directory client
@@ -299,6 +298,12 @@ class Site {
 				$dir_choices = array();
 				foreach($x as $xx) {
 					$dir_choices[$xx['site_url']] = $xx['site_url'];
+				}
+			}
+			if ($realm === DIRECTORY_REALM) {
+				$fallback_servers = get_directory_fallback_servers();
+				foreach ($fallback_servers as $fallback_server) {
+					$dir_choices[$fallback_server] = $fallback_server;
 				}
 			}
 		}
@@ -425,7 +430,7 @@ class Site {
 			'$banner'			=> array('banner', t("Banner/Logo"), $banner, t('Unfiltered HTML/CSS/JS is allowed')),
 			'$admininfo'		=> array('admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode can be used here")),
 			'$siteinfo'		=> array('siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode can be used here")),
-			'$language' 		=> array('language', t("System language"), get_config('system','language'), "", $lang_choices),
+			//'$language' 		=> array('language', t("System language"), get_config('system','language'), "", $lang_choices),
 			'$theme' 			=> array('theme', t("System theme"), get_config('system','theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices),
 		//			'$theme_mobile' 	=> array('theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile),
 		//			'$site_channel' 	=> array('site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel")),
@@ -524,6 +529,7 @@ class Site {
 			'$from_email_name' => [ 'from_email_name', t('Name of email sender for system generated email.'), get_config('system','from_email_name',\Zotlabs\Lib\System::get_site_name()),'' ],
 
 			'$directory_server' => (($dir_choices) ? array('directory_server', t("Directory Server URL"), get_config('system','directory_server'), t("Default directory server"), $dir_choices) : null),
+			'$trusted_directory_servers' => ((!$dir_choices) ? ['trusted_directory_servers', t('Additional trusted directory server URLs'), get_config('system','trusted_directory_servers'), t('Accept directory flags (spam, nsfw) from those servers. One per line like https://example.tld')] : ''),
 
 			'$sse_enabled'		=> array('sse_enabled', t('Enable SSE Notifications'), get_config('system', 'sse_enabled', 0), t('If disabled, traditional polling will be used. Warning: this setting might not be suited for shared hosting')),
 
