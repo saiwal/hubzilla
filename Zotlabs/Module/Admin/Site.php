@@ -60,7 +60,6 @@ class Site {
 		}
 		$mirror_frontpage	=	((x($_POST,'mirror_frontpage'))	? intval(trim($_POST['mirror_frontpage']))		: 0);
 		$directory_server	=	((x($_POST,'directory_server')) ? trim($_POST['directory_server']) : '');
-		$trusted_directory_servers = ((!empty($_POST['trusted_directory_servers'])) ? trim($_POST['trusted_directory_servers']) : '');
 		$allowed_sites		=	((x($_POST,'allowed_sites'))	? notags(trim($_POST['allowed_sites']))		: '');
 		$force_publish		=	((x($_POST,'publish_all'))		? True	: False);
 		$disable_discover_tab =	((x($_POST,'disable_discover_tab'))		? False	:	True);
@@ -166,10 +165,6 @@ class Site {
 
 		if($directory_server)
 			set_config('system','directory_server',$directory_server);
-
-		if($trusted_directory_servers) {
-			set_config('system', 'trusted_directory_servers', $trusted_directory_servers);
-		}
 
 		if ($banner == '') {
 			del_config('system', 'banner');
@@ -529,7 +524,6 @@ class Site {
 			'$from_email_name' => [ 'from_email_name', t('Name of email sender for system generated email.'), get_config('system','from_email_name',\Zotlabs\Lib\System::get_site_name()),'' ],
 
 			'$directory_server' => (($dir_choices) ? array('directory_server', t("Directory Server URL"), get_config('system','directory_server'), t("Default directory server"), $dir_choices) : null),
-			'$trusted_directory_servers' => ((!$dir_choices) ? ['trusted_directory_servers', t('Additional trusted directory server URLs'), get_config('system','trusted_directory_servers'), t('Accept directory flags (spam, nsfw) from those servers. One per line like https://example.tld')] : ''),
 
 			'$sse_enabled'		=> array('sse_enabled', t('Enable SSE Notifications'), get_config('system', 'sse_enabled', 0), t('If disabled, traditional polling will be used. Warning: this setting might not be suited for shared hosting')),
 

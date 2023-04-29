@@ -232,7 +232,7 @@ class Libzotdir {
 		if (! $r)
 			return;
 
-		$dir_trusted_hosts = get_directory_fallback_servers();
+		$dir_trusted_hosts = array_merge(get_directory_fallback_servers(), get_config('system', 'trusted_directory_servers'));
 
 		foreach ($r as $rr) {
 			if (! $rr['site_directory'])

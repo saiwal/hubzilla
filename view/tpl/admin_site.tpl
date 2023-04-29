@@ -24,9 +24,6 @@
 	{{if $directory_server}}
 		{{include file="field_select.tpl" field=$directory_server}}
 	{{/if}}
-	{{if $trusted_directory_servers}}
-		{{include file="field_textarea.tpl" field=$trusted_directory_servers}}
-	{{/if}}
 
 	<div class="submit">
 	    <input type="submit" name="page_site" class="btn btn-primary" value="{{$submit}}" />
