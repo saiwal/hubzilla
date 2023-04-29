@@ -1638,7 +1638,7 @@ dl.bb-dl > dd > li {
 .app-icon i {
 	color: #777;
 	font-size: 80px;
-	text-shadow: 3px 3px 3px lightgrey;
+	text-shadow: 3px 3px 3px rgba(0, 0, 0, .1);
 }
 
 .app-detail {
