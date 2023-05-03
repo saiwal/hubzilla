@@ -522,6 +522,10 @@ class Libzotdir {
 		if (array_key_exists('keywords', $profile) and is_array($profile['keywords'])) {
 			self::import_directory_keywords($hash,$profile['keywords']);
 			foreach ($profile['keywords'] as $kw) {
+				if (in_array($kw, $clean)) {
+					continue;
+				}
+
 				$kw = trim(htmlspecialchars($kw,ENT_COMPAT, 'UTF-8', false));
 				$kw = trim($kw, ',');
 				$clean[] = $kw;
@@ -652,6 +656,10 @@ class Libzotdir {
 
 		$clean = array();
 		foreach($keywords as $kw) {
+			if (in_array($kw, $clean)) {
+				continue;
+			}
+
 			$kw = trim(htmlspecialchars($kw,ENT_COMPAT, 'UTF-8', false));
 			$kw = trim($kw, ',');
 			$clean[] = $kw;

@@ -40,6 +40,8 @@ class Dirsearch extends Controller {
 		}
 
 		$sql_extra = '';
+		$keywords_query = '';
+		$hub_query = '';
 
 		$tables = array('name','address','locale','region','postcode','country','gender','marital','sexual','keywords');
 
@@ -98,10 +100,10 @@ class Dirsearch extends Controller {
 			$hub = \App::get_hostname();
 		}
 
-		if($hub)
+		if($hub) {
 			$hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
-		else
-			$hub_query = '';
+		}
+
 
 		$sort_order  = ((x($_REQUEST,'order')) ? $_REQUEST['order'] : '');
 
@@ -127,9 +129,12 @@ class Dirsearch extends Controller {
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_marital',$marital);
 		if($sexual)
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_sexual',$sexual);
-		if($keywords)
-			$sql_extra .= $this->dir_query_build($joiner,'xprof_keywords',$keywords);
 
+		if($keywords) {
+			$keywords_arr = explode(',', $keywords);
+			stringify_array_elms($keywords_arr, true);
+			$keywords_query = " AND xchan_hash IN (SELECT xtag_hash FROM xtag WHERE xtag_term IN (" . protect_sprintf(implode(',', $keywords_arr)) . ")) ";
+		}
 
 		// we only support an age range currently. You must set both agege
 		// (greater than or equal) and agele (less than or equal)
@@ -265,7 +270,7 @@ class Dirsearch extends Controller {
 				xprof.xprof_hometown as hometown,
 				xprof.xprof_keywords as keywords
 				from xchan left join xprof on xchan_hash = xprof_hash left join hubloc on (hubloc_id_url = xchan_url and hubloc_hash = xchan_hash)
-				where hubloc_primary = 1 and hubloc_updated > %s - INTERVAL %s and ( $logic $sql_extra ) $hub_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0
+				where hubloc_primary = 1 and hubloc_updated > %s - INTERVAL %s and ( $logic $sql_extra ) $hub_query $keywords_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0
 				$safesql $order $qlimit",
 				db_utcnow(),
 				db_quoteinterval('30 DAY')

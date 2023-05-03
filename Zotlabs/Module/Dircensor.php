@@ -47,7 +47,12 @@ class Dircensor extends Controller {
 
 		Libzotdir::update($xchan, $r[0]['xchan_url'], true, $flag);
 
-		q("update xchan set xchan_censored = %d where xchan_hash = '%s'",
+		q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
+			intval($flag),
+			dbesc($xchan)
+		);
+
+		q("UPDATE xtag SET xtag_flags = %d WHERE xtag_hash = '%s'",
 			intval($flag),
 			dbesc($xchan)
 		);
