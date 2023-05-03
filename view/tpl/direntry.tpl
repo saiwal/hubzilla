@@ -1,11 +1,11 @@
 <div class="directory-item{{if $entry.safe}} safe{{/if}}" id="directory-item-{{$entry.hash}}" >
 	<div class="section-subtitle-wrapper clearfix">
-		<div class="float-end">
+		<div class="directory-actions float-end">
 			{{if $entry.censor_2}}
-			<a class="directory-censor btn btn{{$entry.censor_2_class}}-danger btn-sm" href="{{$entry.censor_2}}"> {{$entry.censor_2_label}}</a>
+			<a class="directory-censor directory-censor-hide btn btn-outline-danger btn-sm {{$entry.censor_2_class}}" href="{{$entry.censor_2}}"> {{$entry.censor_2_label}}</a>
 			{{/if}}
 			{{if $entry.censor}}
-			<a class="directory-censor btn btn{{$entry.censor_class}}-warning btn-sm" href="{{$entry.censor}}"> {{$entry.censor_label}}</a>
+			<a class="directory-censor directory-censor-unsafe btn btn-outline-warning btn-sm {{$entry.censor_class}}" href="{{$entry.censor}}"> {{$entry.censor_label}}</a>
 			{{/if}}
 			{{if $entry.ignlink}}
 			<a class="directory-ignore btn btn-info btn-sm" href="{{$entry.ignlink}}"> {{$entry.ignore_label}}</a>

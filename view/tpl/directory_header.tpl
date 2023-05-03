@@ -19,7 +19,68 @@
 	{{** make sure this element is at the bottom - we rely on that in endless scroll **}}
 	<div id="page-end" class="float-start w-100"></div>
 </div>
-<script>$(document).ready(function() { loadingPage = false;});</script>
 <div id="page-spinner" class="spinner-wrapper">
 	<div class="spinner m"></div>
 </div>
+<script>
+	$(document).ready(function() {
+		loadingPage = false;
+		{{if $directory_admin}}
+		$(document).on('click', '.directory-censor', function (e) {
+			e.preventDefault();
+
+			let that = this;
+			let url;
+			let path;
+			let severity;
+			let parent = this.closest('.directory-actions');
+			let el;
+
+			url = new URL(that.href)
+
+			severity = url.searchParams.get('severity');
+			path = url.pathname;
+
+			console.log(url.searchParams.get('severity'));
+
+			$.get(
+				path,
+				{
+					aj: 1,
+					severity : severity
+				},
+				function(data) {
+					console.log(data)
+					if (data.success) {
+
+						if (that.classList.contains('directory-censor-unsafe')) {
+							severity = data.flag ? 0 : 1;
+							el = parent.getElementsByClassName('directory-censor-hide')[0];
+							if (el.classList.contains('active')) {
+								el.classList.toggle('active');
+								url.searchParams.set('severity', 2);
+								el.href = url.toString();
+							}
+						}
+
+						if (that.classList.contains('directory-censor-hide')) {
+							severity = data.flag ? 0 : 2;
+							el = parent.getElementsByClassName('directory-censor-unsafe')[0];
+							if (el.classList.contains('active')) {
+								el.classList.toggle('active');
+								url.searchParams.set('severity', 1);
+								el.href = url.toString();
+							}
+						}
+
+						url.searchParams.set('severity', severity);
+						that.href = url.toString();
+						that.classList.toggle('active');
+
+					}
+				}
+			);
+		});
+		{{/if}}
+	});
+</script>

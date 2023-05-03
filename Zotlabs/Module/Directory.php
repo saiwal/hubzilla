@@ -355,12 +355,12 @@ class Directory extends Controller {
 								'gender'   => $gender,
 								'pdesc'	=> $pdesc,
 								'pdesc_label' => t('Description:'),
-								'censor' => (($directory_admin && intval($rr['censored']) < 2) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 0) ? 0 : 1) : ''),
-								'censor_label' => ((intval($rr['censored']) === 1) ? t('Safe') : t('Unsafe')),
-								'censor_class' => ((intval($rr['censored']) === 1) ? '' : '-outline'),
+								'censor' => (($directory_admin) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 0) ? 0 : 1) : ''),
+								'censor_label' => t('Unsafe'),
+								'censor_class' => ((intval($rr['censored']) === 1) ? 'active' : ''),
 								'censor_2' => (($directory_admin) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 1) ? 0 : 2) : ''),
-								'censor_2_label' => ((intval($rr['censored']) > 1) ? t('Show') : t('Hide')),
-								'censor_2_class' => ((intval($rr['censored']) > 1) ? '' : '-outline'),
+								'censor_2_label' => t('Hidden'),
+								'censor_2_class' => ((intval($rr['censored']) > 1) ? 'active' : ''),
 								'marital'  => $marital,
 								'homepage' => $homepage,
 								'homepageurl' => (($safe_mode  > 0) ? $homepageurl : linkify($homepageurl)),
@@ -444,7 +444,8 @@ class Directory extends Controller {
 								'$reverse' => t('Reverse Alphabetic'),
 								'$date' => t('Newest to Oldest'),
 								'$reversedate' => t('Oldest to Newest'),
-								'$suggest' => $suggest ? '&suggest=1' : ''
+								'$suggest' => $suggest ? '&suggest=1' : '',
+								'$directory_admin' => $directory_admin
 							));
 
 

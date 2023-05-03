@@ -64,6 +64,13 @@ class Dircensor extends Controller {
 			info( t('Entry OK') . EOL);
 		}
 
+		if (isset($_REQUEST['aj'])) {
+			json_return_and_die([
+				'success' => 1,
+				'flag' => $flag
+			]);
+		}
+
 		goaway(z_root() . '/directory');
 
 	}
