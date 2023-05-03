@@ -521,6 +521,7 @@ class Libzotdir {
 		$clean = array();
 		if (array_key_exists('keywords', $profile) and is_array($profile['keywords'])) {
 			self::import_directory_keywords($hash,$profile['keywords']);
+
 			foreach ($profile['keywords'] as $kw) {
 				if (in_array($kw, $clean)) {
 					continue;
@@ -649,6 +650,10 @@ class Libzotdir {
 			dbesc($hash)
 		);
 
+		$xchan = q("select xchan_censored from xchan where xchan_hash = '%s'",
+			dbesc($hash)
+		);
+
 		if($r) {
 			foreach($r as $rr)
 				$existing[] = $rr['xtag_term'];
@@ -674,9 +679,10 @@ class Libzotdir {
 		}
 		foreach($clean as $x) {
 			if(! in_array($x, $existing)) {
-				$r = q("insert into xtag ( xtag_hash, xtag_term, xtag_flags) values ( '%s' ,'%s', 0 )",
+				$r = q("insert into xtag ( xtag_hash, xtag_term, xtag_flags) values ( '%s' ,'%s', %d )",
 					dbesc($hash),
-					dbesc($x)
+					dbesc($x),
+					intval($xchan[0]['xchan_censored'])
 				);
 			}
 		}
