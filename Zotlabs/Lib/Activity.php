@@ -4067,9 +4067,9 @@ class Activity {
 			if ($act->is_valid()) {
 				$content = self::get_content($act->obj);
 
-				$ret .= "[share author='" . urlencode($act->actor['name']) .
+				$ret .= "[share author='" . urlencode($act->actor['name'] ?? $act->actor['preferredUsername']) .
 					"' profile='" . $act->actor['id'] .
-					"' avatar='" . $act->actor['icon']['url'] .
+					"' avatar='" . ($act->actor['icon']['url'] ?? z_root() . '/' . get_default_profile_photo(80)) .
 					"' link='" . $act->obj['id'] .
 					"' auth='" . ((is_matrix_url($act->actor['id'])) ? 'true' : 'false') .
 					"' posted='" . $act->obj['published'] .
