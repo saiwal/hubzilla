@@ -5560,7 +5560,7 @@ msgstr "Seiten-Einrichtung und -Konfiguration"
 #: ../../Zotlabs/Module/New_channel.php:164
 #: ../../Zotlabs/Module/Defperms.php:254
 msgid "Loading"
-msgstr "Lädt..."
+msgstr "Lädt"
 
 #: ../../include/nav.php:325
 msgid "@name, #tag, ?doc, content"
@@ -5936,7 +5936,7 @@ msgstr "lösche"
 
 #: ../../include/conversation.php:949
 msgid "Loading..."
-msgstr "Lädt ..."
+msgstr "Lädt..."
 
 #: ../../include/conversation.php:950 ../../Zotlabs/Lib/ThreadItem.php:318
 msgid "Conversation Features"
