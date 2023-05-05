@@ -359,7 +359,7 @@ class Directory extends Controller {
 								'censor_label' => t('Unsafe'),
 								'censor_class' => ((intval($rr['censored']) === 1) ? 'active' : ''),
 								'censor_2' => (($directory_admin) ? 'dircensor/' . $rr['hash'] . '?severity=' . ((intval($rr['censored']) > 1) ? 0 : 2) : ''),
-								'censor_2_label' => t('Hidden'),
+								'censor_2_label' => t('Spam'),
 								'censor_2_class' => ((intval($rr['censored']) > 1) ? 'active' : ''),
 								'marital'  => $marital,
 								'homepage' => $homepage,
