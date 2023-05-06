@@ -9,7 +9,7 @@
 			{{/if}}
 			<div id="profile-cover-text" class="p-2 position-absolute bottom-0 w-100">
 				<div class="text-truncate h3 lh-sm">
-					<strong class="text-white fn p-name">{{$profile.fullname}}{{if $profile.online}}<i class="fa fa-fw fa-asterisk text-danger ps-2" title="{{$profile.online}}"></i>{{/if}}</strong>
+					<strong class="text-white fn p-name">{{$profile.fullname}}{{if $profile.online}}<i class="fa fa-fw fa-circle text-success ps-2" title="{{$profile.online}}"></i>{{/if}}</strong>
 				</div>
 				<div class="text-truncate">
 					<span class="text-white p-adr">{{$profile.reddress}}</span>
