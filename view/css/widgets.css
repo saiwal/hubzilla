@@ -231,6 +231,30 @@ a.wikilist {
 	display: none !important;
 }
 
+/* vcard */
+
+.vcard-card {
+	background-color: rgba(var(--bs-body-bg-rgb), .7);
+}
+
+.vcard {
+	word-wrap: break-word;
+}
+
+.profile-edit-side-link {
+	opacity: 0;
+	filter:alpha(opacity=0);
+}
+
+.card:hover .profile-edit-side-link {
+	opacity: 1;
+	filter:alpha(opacity=100);
+}
+
+#profile-cover-text {
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+}
+
 /* contact block */
 .contact-block-div .oneway-overlay {
 	font-size: .9rem;
