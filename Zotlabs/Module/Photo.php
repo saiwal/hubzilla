@@ -271,7 +271,6 @@ class Photo extends \Zotlabs\Web\Controller {
  		    $modified = time();
 
 		header_remove('Pragma');
-
 		if((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $etag) || (!isset($_SERVER['HTTP_IF_NONE_MATCH']) && isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] === gmdate("D, d M Y H:i:s", $modified) . " GMT")) {
 			header_remove('Expires');
 			header_remove('Cache-Control');
@@ -306,6 +305,8 @@ class Photo extends \Zotlabs\Web\Controller {
 			// of privacy where it affects the entire project may be affected.
 			// This has performance considerations but we highly recommend you
 			// leave it alone.
+
+
 
 			$maxage = $cache_mode['age'];
 
