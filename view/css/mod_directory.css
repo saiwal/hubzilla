@@ -21,6 +21,10 @@
 	padding-left: 10px;
 }
 
+.contact-info-element {
+	word-break: break-all;
+}
+
 .contact-info-label {
 	font-weight: bold;
 }
