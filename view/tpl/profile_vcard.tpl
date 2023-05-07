@@ -33,9 +33,9 @@
 			</div>
 			{{/if}}
 		</div>
-		<div class="d-flex justify-content-start">
-			<div class="rounded rounded-end-0 rounded-top-0">
-				<img class="rounded rounded-end-0 rounded-top-0 u-photo" src="{{$profile.photo}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 6rem; height:6rem;">
+		<div class="d-flex">
+			<div class="bg-body-tertiary rounded rounded-end-0 rounded-top-0" style="">
+				<img class="rounded rounded-end-0 rounded-top-0 u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height:5rem;">
 			</div>
 			{{if $profile.pdesc}}
 			<div class="m-2 text-break">{{$profile.pdesc}}</div>
