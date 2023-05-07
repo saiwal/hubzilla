@@ -100,7 +100,7 @@ class Dirsearch extends Controller {
 		}
 
 		if($hub) {
-			$hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
+			$hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_deleted = 0 and hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
 		}
 
 
