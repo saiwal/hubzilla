@@ -1,7 +1,9 @@
 <div class="rounded mb-3 vcard-card h-card">
 	<div class="card mb-2">
-		<div id="profile-cover-wrapper" class="position-relative">
-			<img class="img-fluid rounded-top" src="{{$cover.url}}" alt="" style="">
+		<div class="position-relative">
+			<div id="cover-photo-wrapper" class="overflow-hidden w-100 rounded-top">
+				<img class="img-fluid rounded-top" src="{{$cover.url}}" alt="" style="">
+			</div>
 			{{if $connect}}
 			<a href="{{$connect_url}}" class="btn btn-success btn-sm m-2 position-absolute end-0" rel="nofollow">
 				<i class="fa fa-plus"></i> {{$connect}}
@@ -34,13 +36,13 @@
 			{{/if}}
 		</div>
 		<div class="d-flex">
-			<div class="bg-body-secondary rounded rounded-end-0 rounded-top-0" style="">
+			<div id="profile-photo-wrapper" class="bg-body-secondary rounded rounded-end-0 rounded-top-0" style="min-width: 5rem; min-height: 5rem;">
 				<img class="rounded rounded-end-0 rounded-top-0 u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height: 5rem;">
 			</div>
 			{{if $profile.pdesc}}
 			<div class="m-2 small text-break">{{$profile.pdesc}}</div>
 			{{else}}
-			<div class="m-2">
+			<div class="m-2 small">
 				<span class="opacity-50">{{$no_pdesc}}</span>
 			</div>
 			{{/if}}
