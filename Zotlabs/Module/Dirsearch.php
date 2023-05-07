@@ -15,8 +15,7 @@ class Dirsearch extends Controller {
 
 		$ret = array('success' => false);
 
-	//	logger('request: ' . print_r($_REQUEST,true));
-
+		// logger('request: ' . print_r($_REQUEST,true));
 
 		$dirmode = intval(get_config('system','directory_mode'));
 
@@ -129,8 +128,12 @@ class Dirsearch extends Controller {
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_marital',$marital);
 		if($sexual)
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_sexual',$sexual);
-
-		if($keywords) {
+		if($keywords && $name) {
+			// this is a general search
+			$sql_extra .= $this->dir_query_build($joiner,'xprof_keywords',$keywords);
+		}
+		if($keywords && !$name) {
+			// this is a search for keywords only
 			$keywords_arr = explode(',', $keywords);
 			stringify_array_elms($keywords_arr, true);
 			$keywords_query = " AND xchan_hash IN (SELECT xtag_hash FROM xtag WHERE xtag_term IN (" . protect_sprintf(implode(',', $keywords_arr)) . ")) ";
