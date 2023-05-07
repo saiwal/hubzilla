@@ -34,14 +34,14 @@
 			{{/if}}
 		</div>
 		<div class="d-flex">
-			<div class="bg-body-tertiary rounded rounded-end-0 rounded-top-0" style="">
-				<img class="rounded rounded-end-0 rounded-top-0 u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height:5rem;">
+			<div class="bg-body-secondary rounded rounded-end-0 rounded-top-0" style="">
+				<img class="rounded rounded-end-0 rounded-top-0 u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height: 5rem;">
 			</div>
 			{{if $profile.pdesc}}
-			<div class="m-2 small lh-sm text-break">{{$profile.pdesc}}</div>
+			<div class="m-2 small text-break">{{$profile.pdesc}}</div>
 			{{else}}
 			<div class="m-2">
-			<span class="opacity-50">{{$no_pdesc}}</span>
+				<span class="opacity-50">{{$no_pdesc}}</span>
 			</div>
 			{{/if}}
 		</div>
