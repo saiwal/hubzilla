@@ -5,7 +5,7 @@
 				<img class="img-fluid rounded-top" src="{{$cover.url}}" alt="" style="">
 			</div>
 			{{if $connect}}
-			<a href="{{$connect_url}}" class="btn btn-success btn-sm m-2 position-absolute end-0" rel="nofollow">
+			<a href="{{$connect_url}}" class="btn btn-success btn-sm m-2 position-absolute top-0 end-0" rel="nofollow">
 				<i class="fa fa-plus"></i> {{$connect}}
 			</a>
 			{{/if}}
