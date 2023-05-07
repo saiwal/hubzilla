@@ -38,7 +38,7 @@
 				<img class="rounded rounded-end-0 rounded-top-0 u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height:5rem;">
 			</div>
 			{{if $profile.pdesc}}
-			<div class="m-2 text-break">{{$profile.pdesc}}</div>
+			<div class="m-2 small lh-sm text-break">{{$profile.pdesc}}</div>
 			{{else}}
 			<div class="m-2">
 			<span class="opacity-50">{{$no_pdesc}}</span>
