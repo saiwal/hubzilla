@@ -8,7 +8,7 @@
 			</a>
 			{{/if}}
 			<div id="profile-cover-text" class="p-2 position-absolute bottom-0 w-100">
-				<div class="text-truncate h3 lh-sm">
+				<div class="text-truncate h3 mb-0 lh-sm">
 					<strong class="text-white fn p-name">{{$profile.fullname}}{{if $profile.online}}<i class="fa fa-fw fa-circle text-success ps-2" title="{{$profile.online}}"></i>{{/if}}</strong>
 				</div>
 				<div class="text-truncate">
