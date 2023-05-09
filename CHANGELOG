@@ -17,7 +17,6 @@ Hubzilla 8.4 (2023-05-??)
 	- Improve potentially long running sql query finding the thread parent
 	- Implement option to override permission for posts with mentions
 
-
 	Bugfixes
 	- Fix OWA compatibility with friendica
 	- Fix regression in decoding the object type
@@ -27,6 +26,20 @@ Hubzilla 8.4 (2023-05-??)
 	- Fix % value in format_poll() not rounded
 	- Fix remove_all_xchan_resources() executed for local channels
 	- Fix likes not synced via libsync between clones
+
+	Addons
+	- Pubcrawl: fix xchan_url used as follow object instead of xchan_hash
+	- Channelreputation: moved to unmaintained repo due to duplication issues when storing data in pconfig
+	- Pubcrawl: add lemmy accept/reject follow quirks
+	- Diaspora: handle 4xx return codes in queue management
+	- Diaspora: fix fatal error in the case where parent_guid is set but empty
+	- Pubcrawl: if shared inbox delivery fails deliver to contacts instead of everybody we know from that site
+	- Articles: fix PHP error
+	- Diaspora: rewrite synced (from a clone) item author to primary
+	- Diaspora: improve reshare detection
+	- Diaspora: fix contact role not sets
+	- Pubcrawl: rewrite synced (from a clone) item author to primary
+	- Pubcrawl: if we receive a public message to the shared inbox deliver to following *and* directly addressed
 
 
 Hubzilla 8.2 (2023-03-19)
