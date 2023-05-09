@@ -1,3 +1,34 @@
+Hubzilla 8.4 (2023-05-??)
+	- Updated ES translations
+	- Updated RU translations
+	- Redesigned profile vcard to implement cover images
+	- Slightly improved discovery of AP quoted messages
+	- Updated bootstrap library
+	- Changed hashtag encoding to match mastodons expectations (issue #1750)
+	- Implement fedearted directory flags from trusted directory servers
+	- Use Activity::get_actor_hublocs() in Libzot::fetch_conversation() instead of custom queries
+	- Add the conversation endpoint
+	- Implement paginated fetch for zot requests in mod item
+	- Implement Zotconvo daemon to fetch conversations in the background
+	- Expose deleted channels to webfinger (otherwise we can not mark them deleted locally)
+	- Expire items in batches to prevent memory exhaustion
+	- Remove legacy zot compatibility tweaks
+	- Rewrite and simplify directory sync
+	- Improve potentially long running sql query finding the thread parent
+	- Implement option to override permission for posts with mentions
+
+
+	Bugfixes
+	- Fix OWA compatibility with friendica
+	- Fix regression in decoding the object type
+	- Fix xss vulnerability in justified gallery library
+	- Fix permissions not initialized after accepted follow request from AP
+	- Fix empty path passed to fopen()
+	- Fix % value in format_poll() not rounded
+	- Fix remove_all_xchan_resources() executed for local channels
+	- Fix likes not synced via libsync between clones
+
+
 Hubzilla 8.2 (2023-03-19)
 	- Remove redundant untranslated htconfig templates
 	- Implement workaround for friendica image/attachment construct
