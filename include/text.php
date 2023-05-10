@@ -3301,60 +3301,86 @@ function json_url_replace($old,$new,&$s) {
 	return $replaced;
 }
 
+function item_url_replace($channel, &$item, $old, $new, $oldnick = '') {
 
-function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
-
-	if($item['attach']) {
-		json_url_replace($old,$new,$item['attach']);
-		if($oldnick && ($oldnick !== $channel['channel_address']))
-			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['attach']);
-	}
-	if($item['object']) {
-		json_url_replace($old,$new,$item['object']);
-		if($oldnick && ($oldnick !== $channel['channel_address']))
-			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['object']);
-	}
-	if($item['target']) {
-		json_url_replace($old,$new,$item['target']);
-		if($oldnick && ($oldnick !== $channel['channel_address']))
-			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['target']);
-	}
-
-	$root_replaced = null;
-	$nick_replaced = null;
-
-	// FIXME: ignore anything in a share tag
-
-	$item['body'] = str_replace($old, $new, $item['body'], $root_replaced);
-
-	if($oldnick && ($oldnick !== $channel['channel_address'])) {
-		$item['body'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['body'], $nick_replaced);
-	}
-
-	if ($root_replaced || $nick_replaced) {
-		$item['sig'] = Libzot::sign($item['body'], $channel['channel_prvkey']);
-		$item['item_verified']  = 1;
-	}
-
-	$item['plink'] = str_replace($old,$new,$item['plink']);
-	if($oldnick && ($oldnick !== $channel['channel_address']))
-		$item['plink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['plink']);
-
-	$item['llink'] = str_replace($old,$new,$item['llink']);
-	if($oldnick && ($oldnick !== $channel['channel_address']))
-		$item['llink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['llink']);
-
-	if($item['term']) {
-		for($x = 0; $x < count($item['term']); $x ++) {
-			$item['term'][$x]['url'] =  str_replace($old,$new,$item['term'][$x]['url']);
-			if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-				$item['term'][$x]['url'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['term'][$x]['url']);
-			}
+	if (!empty($item['attach'])) {
+		$converted = false;
+		if (is_array($item['attach'])) {
+			$item['attach'] = item_json_encapsulate($item,'attach');
+			$converted = true;
+		}
+		json_url_replace($old, $new, $item['attach']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['attach']);
+		}
+		if ($converted) {
+			$item['attach'] = json_decode($item['attach'],true);
 		}
 	}
 
-}
+	if (!empty($item['obj'])) {
+		$converted = false;
+		if (is_array($item['obj'])) {
+			$item['obj'] = item_json_encapsulate($item,'obj');
+			$converted = true;
+		}
+		json_url_replace($old, $new, $item['obj']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['obj']);
+		}
+		if ($converted) {
+			$item['obj'] = json_decode($item['obj'],true);
+		}
+	}
 
+	if (!empty($item['target'])) {
+		$converted = false;
+		if (is_array($item['target'])) {
+			$item['target'] = item_json_encapsulate($item,'target');
+			$converted = true;
+		}
+		json_url_replace($old, $new, $item['target']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['target']);
+		}
+		if ($converted) {
+			$item['target'] = json_decode($item['target'],true);
+		}
+	}
+
+	// FIXME: ignore anything in a share tag
+	$item['body'] = str_replace($old, $new, $item['body']);
+
+	if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+		$item['body'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['body']);
+	}
+
+	$item['sig'] = Libzot::sign($item['body'], $channel['channel_prvkey']);
+	$item['item_verified'] = 1;
+
+	if (isset($item['plink'])) {
+		$item['plink'] = str_replace($old, $new, $item['plink']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			$item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
+		}
+	}
+
+	if (isset($item['llink'])) {
+		$item['llink'] = str_replace($old, $new, $item['llink']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			$item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
+		}
+	}
+
+	if (isset($item['term']) && is_array($item['term'])) {
+		for ($x = 0; $x < count($item['term']); $x++) {
+			$item['term'][$x]['url'] =  str_replace($old, $new, $item['term'][$x]['url']);
+			if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+				$item['term'][$x]['url'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['term'][$x]['url']);
+			}
+		}
+	}
+}
 
 /**
  * @brief Used to wrap ACL elements in angle brackets for storage.
