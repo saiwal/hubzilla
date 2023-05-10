@@ -2414,7 +2414,7 @@ class Activity {
 			$s['edited'] = datetime_convert();
 		}
 
-		if (in_array($act->type, ['Delete', 'Undo', 'Tombstone']) || ($act->type === 'Create' && $act->obj['type'] === 'Tombstone')) {
+		if (in_array($act->type, ['Delete', 'Undo', 'Tombstone']) || ($act->type === 'Create' && (isset($act->obj['type']) && $act->obj['type'] === 'Tombstone'))) {
 			$s['item_deleted'] = 1;
 		}
 
