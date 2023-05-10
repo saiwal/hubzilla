@@ -220,7 +220,7 @@ function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $
 		$sql_extra .= protect_sprintf(" and filetype like '%" . dbesc($filetype) . "%' ");
 
 	if($entries)
-		$limit = " limit " . intval($start) . ", " . intval($entries) . " ";
+		$limit = " LIMIT " . intval($entries) . " OFFSET " . intval($start) . " ";
 
 	if(! $since)
 		$since = NULL_DATE;
