@@ -719,12 +719,12 @@ function get_item_elements($x,$allow_code = false) {
 
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
-	$arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
-	$arr['obj']          = activity_sanitise($x['object']);
-	$arr['target']       = activity_sanitise($x['target']);
-	$arr['attach']       = activity_sanitise($x['attach']);
-	$arr['term']         = decode_tags($x['tags']);
-	$arr['iconfig']      = decode_item_meta($x['meta']);
+	$arr['sig']          = ((!empty($x['signature'])) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
+	$arr['obj']          = ((!empty($x['object'])) ? activity_sanitise($x['object']) : '');
+	$arr['target']       = ((!empty($x['target'])) ? activity_sanitise($x['target']) : '');
+	$arr['attach']       = ((!empty($x['attach'])) ? activity_sanitise($x['attach']) : '');
+	$arr['term']         = ((!empty($x['tags'])) ? decode_tags($x['tags']) : '');
+	$arr['iconfig']      = ((!empty($x['meta'])) ? decode_item_meta($x['meta']) : '');
 	$arr['item_flags']   = 0;
 
 	if(array_key_exists('flags',$x)) {
