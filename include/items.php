@@ -1539,6 +1539,39 @@ function item_sign(&$item) {
 	$item['item_verified'] = 1;
 }
 
+/**
+ * @brief packs json data for storage.
+ * if it is a string, check if it is already json encoded.
+ * Otherwise, json encode it
+ * If it is an array, sanitise it and  then json_encode it.
+ *
+ * @param array $arr
+ * @param string | intval $k
+ *
+ * @return string | null
+ */
+
+function item_json_encapsulate($arr, $k)  {
+	$retval = null;
+
+	if (isset($arr[$k])) {
+		if (is_string($arr[$k])) {
+			// determine if it is json encoded already
+			$test = json_decode($arr[$k]);
+			// assume it is json encoded already
+			$retval = $arr[$k];
+			if ($test === NULL) {
+				$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+			}
+		}
+		else {
+			activity_sanitise($arr[$k]);
+			$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+		}
+	}
+
+	return $retval;
+}
 
 /**
  * @brief Stores an item type record.
