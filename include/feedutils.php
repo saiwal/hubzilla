@@ -1829,11 +1829,11 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
  */
 function atom_render_author($tag, $xchan) {
 
-	$nick = xmlify(substr($xchan['xchan_addr'], 0, strpos($xchan['xchan_addr'], '@')));
-	$id   = xmlify($xchan['xchan_url']);
-	$name = xmlify($xchan['xchan_name']);
-	$photo = xmlify($xchan['xchan_photo_l']);
-	$type = xmlify($xchan['xchan_photo_mimetype']);
+	$nick = ((!empty($xchan['xchan_addr'])) ? xmlify(substr($xchan['xchan_addr'], 0, strpos($xchan['xchan_addr'], '@'))) : '');
+	$id   = ((!empty($xchan['xchan_url'])) ? xmlify($xchan['xchan_url']) : '');
+	$name = ((!empty($xchan['xchan_name'])) ? xmlify($xchan['xchan_name']) : '');
+	$photo = ((!empty($xchan['xchan_photo_l'])) ? xmlify($xchan['xchan_photo_l']) : '');
+	$type = ((!empty($xchan['xchan_photo_mimetype'])) ? xmlify($xchan['xchan_photo_mimetype']) : '');
 	$w = $h = 300;
 
 	$o = "<$tag>\r\n";
