@@ -69,7 +69,8 @@ class Connect {
 		$xchan_hash = '';
 		$sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
 
-		$r = q("SELECT * FROM xchan LEFT JOIN hubloc ON xchan_hash = hubloc_hash WHERE ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s') $sql_options ORDER BY hubloc_id DESC",
+		// We need both, the xchan and the hubloc here hence use JOIN instead of LEFT JOIN here
+		$r = q("SELECT * FROM xchan JOIN hubloc ON xchan_hash = hubloc_hash WHERE ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s') $sql_options ORDER BY hubloc_id DESC",
 			dbesc($url),
 			dbesc($url),
 			dbesc($url)
