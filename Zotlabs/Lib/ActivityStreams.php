@@ -154,7 +154,7 @@ class ActivityStreams {
 	 * @return mixed
 	 */
 	public function objprop(string $property, mixed $default = false): mixed {
-		$x = $this->get_property_obj($property,$this->obj);
+		$x = $this->get_property_obj($property, $this->obj);
 		return (isset($x)) ? $x : $default;
 	}
 

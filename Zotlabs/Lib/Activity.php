@@ -2233,9 +2233,7 @@ class Activity {
 
 		if (
 			in_array($act->type, ['Follow', 'Accept', 'Reject', 'Create', 'Update']) &&
-			is_array($act->obj) &&
-			array_key_exists('type', $act->obj) &&
-			($act->obj['type'] === 'Follow' || ActivityStreams::is_an_actor($act->obj['type']))
+			($act->objprop('type') === 'Follow' || ActivityStreams::is_an_actor($act->objprop('type')))
 		) {
 			return false;
 		}
@@ -2265,7 +2263,7 @@ class Activity {
 			$content = self::get_content($act->obj);
 		}
 
-		$s['mid'] = ((is_array($act->obj) && isset($act->obj['id'])) ? $act->obj['id'] : $act->obj);
+		$s['mid'] = $act->objprop('id') ?: $act->obj;
 
 		if (!$s['mid']) {
 			return false;
@@ -2273,7 +2271,7 @@ class Activity {
 
 		// Friendica sends the diaspora guid in a nonstandard field via AP
 		// If no uuid is provided we will create an uuid v5 from the mid
-		$s['uuid'] = ((is_array($act->obj) && isset($act->obj['diaspora:guid'])) ? $act->obj['diaspora:guid'] : uuid_from_url($s['mid']));
+		$s['uuid'] = (($act->objprop('diaspora:guid')) ?: uuid_from_url($s['mid']));
 
 		$s['parent_mid'] = $act->parent_id;
 
@@ -2281,24 +2279,24 @@ class Activity {
 			$s['created']   = datetime_convert('UTC', 'UTC', $act->data['published']);
 			$s['commented'] = $s['created'];
 		}
-		elseif (is_array($act->obj) && array_key_exists('published', $act->obj)) {
+		elseif ($act->objprop('published')) {
 			$s['created']   = datetime_convert('UTC', 'UTC', $act->obj['published']);
 			$s['commented'] = $s['created'];
 		}
 		if (array_key_exists('updated', $act->data)) {
 			$s['edited'] = datetime_convert('UTC', 'UTC', $act->data['updated']);
 		}
-		elseif (is_array($act->obj) && array_key_exists('updated', $act->obj)) {
+		elseif ($act->objprop('updated')) {
 			$s['edited'] = datetime_convert('UTC', 'UTC', $act->obj['updated']);
 		}
 		if (array_key_exists('expires', $act->data)) {
 			$s['expires'] = datetime_convert('UTC', 'UTC', $act->data['expires']);
 		}
-		elseif (is_array($act->obj) && array_key_exists('expires', $act->obj)) {
+		elseif ($act->objprop('expires')) {
 			$s['expires'] = datetime_convert('UTC', 'UTC', $act->obj['expires']);
 		}
 
-		if ($act->type === 'Invite' && is_array($act->obj) && array_key_exists('type', $act->obj) && $act->obj['type'] === 'Event') {
+		if ($act->type === 'Invite' && $act->objprop('type') === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
@@ -2307,9 +2305,9 @@ class Activity {
 			$response_activity = true;
 
 			$s['mid'] = $act->id;
-			$s['uuid'] = ((is_array($act->data) && isset($act->data['diaspora:guid'])) ? $act->data['diaspora:guid'] : uuid_from_url($s['mid']));
+			$s['uuid'] = ((is_array($act->data) && isset($act->data['diaspora:guid'])) ?: uuid_from_url($s['mid']));
 
-			$s['parent_mid'] = ((is_array($act->obj) && isset($act->obj['id'])) ? $act->obj['id'] : $act->obj);
+			$s['parent_mid'] = $act->objprop('id') ?: $act->obj;
 
 			// over-ride the object timestamp with the activity
 
@@ -2321,7 +2319,7 @@ class Activity {
 				$s['edited'] = datetime_convert('UTC', 'UTC', $act->data['updated']);
 			}
 
-			$obj_actor = ((isset($act->obj['actor'])) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj));
+			$obj_actor = $act->objprop('actor') ?: $act->get_actor('attributedTo', $act->obj);
 
 			if (!isset($obj_actor['id'])) {
 				return false;
@@ -2340,7 +2338,7 @@ class Activity {
 			}
 
 			// handle event RSVPs
-			if (($act->obj['type'] === 'Event') || ($act->obj['type'] === 'Invite' && array_path_exists('object/type', $act->obj) && $act->obj['object']['type'] === 'Event')) {
+			if (($act->objprop('type') === 'Event') || ($act->objprop('type') === 'Invite' && array_path_exists('object/type', $act->obj) && $act->obj['object']['type'] === 'Event')) {
 				if ($act->type === 'Accept') {
 					$content['content'] = sprintf(t('Will attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
 				}
@@ -2375,7 +2373,7 @@ class Activity {
 			$s['item_thread_top'] = 1;
 
 			// it is a parent node - decode the comment policy info if present
-			if (isset($act->obj['commentPolicy'])) {
+			if ($act->objprop('commentPolicy')) {
 				$until = strpos($act->obj['commentPolicy'], 'until=');
 				if ($until !== false) {
 					$s['comments_closed'] = datetime_convert('UTC', 'UTC', substr($act->obj['commentPolicy'], $until + 6));
@@ -2401,7 +2399,7 @@ class Activity {
 		$s['summary'] = self::bb_content($content, 'summary');
 		$s['body']    = ((self::bb_content($content, 'bbcode') && (!$response_activity)) ? self::bb_content($content, 'bbcode') : self::bb_content($content, 'content'));
 
-		if (isset($act->obj['quoteUrl'])) {
+		if ($act->objprop('quoteUrl')) {
 			$quote_bbcode = self::get_quote_bbcode($act->obj['quoteUrl']);
 
 			if ($s['body']) {
@@ -2414,7 +2412,7 @@ class Activity {
 		$s['verb'] = self::activity_decode_mapper($act->type);
 
 		// Mastodon does not provide update timestamps when updating poll tallies which means race conditions may occur here.
-		if ($act->type === 'Update' && $act->obj['type'] === 'Question' && $s['edited'] === $s['created']) {
+		if ($act->type === 'Update' && $act->objprop('type') === 'Question' && $s['edited'] === $s['created']) {
 			$s['edited'] = datetime_convert();
 		}
 
@@ -2431,7 +2429,7 @@ class Activity {
 		}
 
 		$s['obj'] = $act->obj;
-		if (is_array($s['obj']) && array_path_exists('actor/id', $s['obj'])) {
+		if (array_path_exists('actor/id', $s['obj'])) {
 			$s['obj']['actor'] = $s['obj']['actor']['id'];
 		}
 
@@ -2513,23 +2511,21 @@ class Activity {
 			}
 		}
 
-		if (array_key_exists('type', $act->obj)) {
 
-			// Objects that might have media attachments which aren't already provided in the content element.
-			// We'll check specific media objects separately.
+		// Objects that might have media attachments which aren't already provided in the content element.
+		// We'll check specific media objects separately.
 
-			if (in_array($act->obj['type'], ['Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question']) && isset($s['attach']) && $s['attach']) {
-				$s = self::bb_attach($s);
-			}
+		if (in_array($act->objprop('type',''), ['Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question']) && !empty($s['attach'])) {
+			$s = self::bb_attach($s);
+		}
 
-			if ($act->obj['type'] === 'Question' && in_array($act->type, ['Create', 'Update'])) {
-				if (array_key_exists('endTime', $act->obj)) {
-					$s['comments_closed'] = datetime_convert('UTC', 'UTC', $act->obj['endTime']);
-				}
+		if ($act->objprop('type') === 'Question' && in_array($act->type, ['Create', 'Update'])) {
+			if ($act->objprop['endTime']) {
+				$s['comments_closed'] = datetime_convert('UTC', 'UTC', $act->obj['endTime']);
 			}
 		}
 
-		if (array_key_exists('closed', $act->obj)) {
+		if ($act->objprop('closed')) {
 			$s['comments_closed'] = datetime_convert('UTC', 'UTC', $act->obj['closed']);
 		}
 
@@ -2548,7 +2544,7 @@ class Activity {
 			// right now just link to the largest mp4 we find that will fit in our
 			// standard content region
 
-			if ($act->obj['type'] === 'Video') {
+			if ($act->objprop('type') === 'Video') {
 
 				$vtypes = [
 					'video/mp4',
@@ -2562,7 +2558,7 @@ class Activity {
 
 				// try to find a poster to display on the video element
 
-				if (array_key_exists('icon',$act->obj)) {
+				if ($act->objprop('icon')) {
 					if (is_array($act->obj['icon'])) {
 						if (array_key_exists(0,$act->obj['icon'])) {
 							$ptr = $act->obj['icon'];
@@ -2583,7 +2579,7 @@ class Activity {
 				$tag = (($poster) ? '[video poster=&quot;' . $poster . '&quot;]' : '[video]' );
 				$ptr = null;
 
-				if (array_key_exists('url',$act->obj)) {
+				if ($act->objprop('url')) {
 					if (is_array($act->obj['url'])) {
 						if (array_key_exists(0,$act->obj['url'])) {
 							$ptr = $act->obj['url'];
@@ -2629,7 +2625,7 @@ class Activity {
 				}
 			}
 
-			if ($act->obj['type'] === 'Audio') {
+			if ($act->objprop('type') === 'Audio') {
 
 				$atypes = [
 					'audio/mpeg',
@@ -2661,7 +2657,7 @@ class Activity {
 
 			}
 
-			if ($act->obj['type'] === 'Image' && strpos($s['body'], 'zrl=') === false) {
+			if ($act->objprop('type') === 'Image' && strpos($s['body'], 'zrl=') === false) {
 
 				$ptr = null;
 
@@ -2690,7 +2686,7 @@ class Activity {
 			}
 
 
-			if ($act->obj['type'] === 'Page' && !$s['body']) {
+			if ($act->objprop('type') === 'Page' && !$s['body']) {
 
 				$ptr  = null;
 				$purl = EMPTY_STR;
@@ -2730,7 +2726,7 @@ class Activity {
 			}
 		}
 
-		if (in_array($act->obj['type'], ['Note', 'Article', 'Page'])) {
+		if (in_array($act->objprop('type', ''), ['Note', 'Article', 'Page'])) {
 			$ptr = null;
 
 			if (array_key_exists('url', $act->obj)) {
@@ -2765,10 +2761,8 @@ class Activity {
 			$s['item_private'] = 0;
 		}
 
-		if (is_array($act->obj)) {
-			if (array_key_exists('directMessage', $act->obj) && intval($act->obj['directMessage'])) {
-				$s['item_private'] = 2;
-			}
+		if ($act->objprop('directMessage')) {
+			$s['item_private'] = 2;
 		}
 
 		$ap_rawmsg = '';
