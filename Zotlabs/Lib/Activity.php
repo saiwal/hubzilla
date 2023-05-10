@@ -2520,7 +2520,7 @@ class Activity {
 		}
 
 		if ($act->objprop('type') === 'Question' && in_array($act->type, ['Create', 'Update'])) {
-			if ($act->objprop['endTime']) {
+			if ($act->objprop('endTime')) {
 				$s['comments_closed'] = datetime_convert('UTC', 'UTC', $act->obj['endTime']);
 			}
 		}
