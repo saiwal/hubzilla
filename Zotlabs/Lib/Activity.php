@@ -2869,8 +2869,6 @@ class Activity {
 		}
 
 		$allowed = false;
-
-		// TODO: not implemented
 		$permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system','permit_all_mentions') && i_am_mentioned($channel, $item));
 
 		if ($is_child_node) {
@@ -2928,6 +2926,7 @@ class Activity {
 			else {
 
 				$allowed = true;
+
 				// reject public stream comments that weren't sent by the conversation owner
 				if ($is_sys_channel && $item['owner_xchan'] !== $observer_hash && !$fetch_parents) {
 					$allowed = false;
@@ -2947,7 +2946,7 @@ class Activity {
 			if (perm_is_allowed($channel['channel_id'], ((!empty($item['item_fetched'])) ? $item['author_xchan'] : $observer_hash), 'send_stream') || $is_sys_channel) {
 				$allowed = true;
 			}
-			// TODO: not implemented
+
 			if ($permit_mentions) {
 				$allowed = true;
 			}
