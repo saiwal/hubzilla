@@ -36,8 +36,8 @@
 			{{/if}}
 		</div>
 		<div class="d-flex">
-			<div id="profile-photo-wrapper" class="bg-body-secondary rounded rounded-end-0 rounded-top-0" style="min-width: 5rem; min-height: 5rem;">
-				<img class="rounded rounded-end-0 rounded-top-0 u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height: 5rem;">
+			<div id="profile-photo-wrapper" class="bg-body-secondary rounded rounded-end-0 rounded-top-0 overflow-hidden" style="min-width: 5rem; min-height: 5rem;">
+				<img class="u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height: 5rem;">
 			</div>
 			{{if $profile.pdesc}}
 			<div class="m-2 small text-break">{{$profile.pdesc}}</div>
