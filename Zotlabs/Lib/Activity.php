@@ -2853,6 +2853,7 @@ class Activity {
 	static function store($channel, $observer_hash, $act, $item, $fetch_parents = true, $force = false) {
 		$is_sys_channel = is_sys_channel($channel['channel_id']);
 		$is_child_node  = false;
+		$parent = null;
 
 		// TODO: not implemented
 		// Pleroma scrobbles can be really noisy and contain lots of duplicate activities. Disable them by default.
@@ -2873,19 +2874,22 @@ class Activity {
 
 		if ($is_child_node) {
 
-			$p = q("select * from item where mid = '%s' and uid = %d and item_wall = 1",
+			$parent = q("select * from item where mid = '%s' and uid = %d",
 				dbesc($item['parent_mid']),
 				intval($channel['channel_id'])
 			);
-			if ($p) {
+
+			// TODO: if we do not have a parent stop here and move the fetch to background?
+
+			if ($parent && $parent[0]['item_wall']) {
 				// set the owner to the owner of the parent
-				$item['owner_xchan'] = $p[0]['owner_xchan'];
+				$item['owner_xchan'] = $parent[0]['owner_xchan'];
 
 				// quietly reject group comment boosts by group owner
 				// (usually only sent via ActivityPub so groups will work on microblog platforms)
 				// This catches those activities if they slipped in via a conversation fetch
 
-				if ($p[0]['parent_mid'] !== $item['parent_mid']) {
+				if ($parent[0]['parent_mid'] !== $item['parent_mid']) {
 					if ($item['verb'] === 'Announce' && $item['author_xchan'] === $item['owner_xchan']) {
 						logger('group boost activity by group owner rejected');
 						return;
@@ -2895,7 +2899,7 @@ class Activity {
 				// check permissions against the author, not the sender
 				$allowed = perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'post_comments');
 				if ((!$allowed) && $permit_mentions) {
-					if ($p[0]['owner_xchan'] === $channel['channel_hash']) {
+					if ($parent[0]['owner_xchan'] === $channel['channel_hash']) {
 						$allowed = false;
 					}
 					else {
@@ -2904,7 +2908,7 @@ class Activity {
 				}
 
 				// TODO: not implemented
-				/*if (absolutely_no_comments($p[0])) {
+				/*if (absolutely_no_comments($parent[0])) {
 					$allowed = false;
 				}*/
 
@@ -2933,7 +2937,7 @@ class Activity {
 				}
 			}
 
-			if ($p && $p[0]['obj_type'] === 'Question') {
+			if ($parent && $parent[0]['obj_type'] === 'Question') {
 				if ($item['obj_type'] === ACTIVITY_OBJ_COMMENT && $item['title'] && (!$item['body'])) {
 					$item['obj_type'] = 'Answer';
 				}
@@ -3062,34 +3066,25 @@ class Activity {
 			$item['item_verified'] = 1;
 		}
 
-		$parent = null;
-
 		if ($is_child_node) {
-
-			$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-				dbesc($item['parent_mid']),
-				intval($item['uid'])
-			);
-
 			if (!$parent) {
 				if (!plugin_is_installed('pubcrawl')) {
 					return;
 				}
-				else {
-					$fetch = false;
 
-					// TODO: debug
-					// if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce')) {
-					if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || $is_sys_channel) {
-						$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel, $observer_hash, $item, $force) : false);
-					}
+				$fetch = false;
 
-					if ($fetch) {
-						$parent = q("select * from item where mid = '%s' and uid = %d limit 1",
-							dbesc($item['parent_mid']),
-							intval($item['uid'])
-						);
-					}
+				// TODO: debug
+				// if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce')) {
+				if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || $is_sys_channel) {
+					$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel, $observer_hash, $item, $force) : false);
+				}
+
+				if ($fetch) {
+					$parent = q("select * from item where mid = '%s' and uid = %d",
+						dbesc($item['parent_mid']),
+						intval($item['uid'])
+					);
 				}
 			}
 
