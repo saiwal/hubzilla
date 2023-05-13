@@ -2226,7 +2226,6 @@ class Activity {
 
 	static function decode_note($act) {
 		$response_activity = false;
-
 		$s = [];
 
 		// These activities should have been handled separately in the Inbox module and should not be turned into posts
@@ -2305,7 +2304,7 @@ class Activity {
 			$response_activity = true;
 
 			$s['mid'] = $act->id;
-			$s['uuid'] = ((is_array($act->data) && isset($act->data['diaspora:guid'])) ?: uuid_from_url($s['mid']));
+			$s['uuid'] = (($act->data['diaspora:guid']) ?: uuid_from_url($s['mid']));
 
 			$s['parent_mid'] = $act->objprop('id') ?: $act->obj;
 
