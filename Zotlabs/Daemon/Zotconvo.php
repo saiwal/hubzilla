@@ -14,11 +14,12 @@ class Zotconvo {
 			return;
 		}
 
-		$channel_id = intval($argv[1]);
 		$mid = $argv[2];
+		if (!$mid) {
+			return;
+		}
 
-		$channel = channelx_by_n($channel_id);
-
+		$channel = channelx_by_n(intval($argv[1]));
 		if (!$channel) {
 			return;
 		}
