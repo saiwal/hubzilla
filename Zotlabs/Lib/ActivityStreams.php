@@ -126,6 +126,7 @@ class ActivityStreams {
 			if ((!$this->parent_id) && is_array($this->obj) && isset($this->obj['inReplyTo'])) {
 				$this->parent_id = $this->obj['inReplyTo'];
 			}
+
 			if ((!$this->parent_id) && is_array($this->obj) && isset($this->obj['id'])) {
 				$this->parent_id = $this->obj['id'];
 			}
