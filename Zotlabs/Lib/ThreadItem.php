@@ -197,7 +197,7 @@ class ThreadItem {
 		$response_verbs = array('like');
 		if(feature_enabled($conv->get_profile_owner(),'dislike'))
 			$response_verbs[] = 'dislike';
-		if($item['obj_type'] === ACTIVITY_OBJ_EVENT) {
+		if(in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) {
 			$response_verbs[] = 'attendyes';
 			$response_verbs[] = 'attendno';
 			$response_verbs[] = 'attendmaybe';
@@ -299,7 +299,7 @@ class ThreadItem {
 		}
 
 		$has_event = false;
-		if(($item['obj_type'] === ACTIVITY_OBJ_EVENT) && $conv->get_profile_owner() == local_channel())
+		if((in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) && $conv->get_profile_owner() == local_channel())
 			$has_event = true;
 
 		$like = [];

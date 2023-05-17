@@ -11,9 +11,16 @@ class Mp3audio {
 	}
 
 	function Thumb($attach,$preview_style,$height = 300, $width = 300) {
+
+		$file = dbunescbin($attach['content']);
+		if (!$file) {
+			return;
+		}
+
+		$photo = false;
 		$p = new ID3Parser();
 
-        $id = $p->analyze(dbunescbin($attach['content']));
+        $id = $p->analyze($file);
 
         $photo = isset($id['id3v2']['APIC'][0]['data']) ? $id['id3v2']['APIC'][0]['data'] : null;
         if(is_null($photo) && isset($id['id3v2']['PIC'][0]['data'])) {

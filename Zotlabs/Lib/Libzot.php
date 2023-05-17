@@ -328,7 +328,7 @@ class Libzot {
 
 		logger('zot-info: ' . print_r($record, true), LOGGER_DATA, LOG_DEBUG);
 
-		$x = self::import_xchan($record['data'], (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+		$x = self::import_xchan($record['data']);
 
 		if (!$x['success']) {
 			return false;
@@ -635,23 +635,18 @@ class Libzot {
 	 *   all internal data structures which need to be updated as a result.
 	 *
 	 * @param array $arr => json_decoded discovery packet
-	 * @param int $ud_flags
-	 *    Determines whether to create a directory update record if any changes occur, default is UPDATE_FLAGS_UPDATED
-	 *    $ud_flags = UPDATE_FLAGS_FORCED indicates a forced refresh where we unconditionally create a directory update record
-	 *      this typically occurs once a month for each channel as part of a scheduled ping to notify the directory
-	 *      that the channel still exists
-	 * @param array $ud_arr
-	 *    If set [typically by update_directory_entry()] indicates a specific update table row and more particularly
-	 *    contains a particular address (ud_addr) which needs to be updated in that table.
-	 *
+
 	 * @return array An associative array with:
 	 *   * \e boolean \b success boolean true or false
 	 *   * \e string \b message (optional) error string only if success is false
 	 */
 
-	static function import_xchan($arr, $ud_flags = UPDATE_FLAGS_UPDATED, $ud_arr = null) {
+	static function import_xchan($arr) {
 
-		$ret     = ['success' => false];
+		$ret = [
+			'success' => false,
+			'message' => ''
+		];
 
 		if (!is_array($arr)) {
 			logger('Not an array: ' . print_r($arr, true), LOGGER_DEBUG);
@@ -665,7 +660,7 @@ class Libzot {
 		 */
 		call_hooks('import_xchan', $arr);
 
-		$dirmode = intval(get_config('system', 'directory_mode'));
+		$dirmode = intval(get_config('system', 'directory_mode', DIRECTORY_MODE_NORMAL));
 
 		$changed = false;
 		$what    = '';
@@ -683,15 +678,11 @@ class Libzot {
 		$sig_methods = ((array_key_exists('signing', $arr) && is_array($arr['signing'])) ? $arr['signing'] : ['sha256']);
 		$verified    = false;
 
-		if (!self::verify($arr['id'], $arr['id_sig'], $arr['public_key'])) {
-			logger('Unable to verify channel signature for ' . $arr['primary_location']['address']);
-			return $ret;
-		}
-		else {
+		if (self::verify($arr['id'], $arr['id_sig'], $arr['public_key'])) {
 			$verified = true;
 		}
-
-		if (!$verified) {
+		else {
+			logger('Unable to verify channel signature for ' . $xchan_hash . ' (' . $arr['primary_location']['address']) . ')';
 			$ret['message'] = t('Unable to verify channel signature');
 			return $ret;
 		}
@@ -714,6 +705,7 @@ class Libzot {
 			if ($arr['photo'] && array_key_exists('updated', $arr['photo']) && $arr['photo']['updated'] > $r[0]['xchan_photo_date'])
 				$import_photos = true;
 
+
 			// if we import an entry from a site that's not ours and either or both of us is off the grid - hide the entry.
 			/** @TODO: check if we're the same directory realm, which would mean we are allowed to see it */
 
@@ -730,7 +722,7 @@ class Libzot {
 				$hidden_changed = 1;
 			if (isset($arr['adult_content']) && intval($r[0]['xchan_selfcensored']) != intval($arr['adult_content']))
 				$adult_changed = 1;
-			if (isset($arr['xchan_deleted']) && intval($r[0]['xchan_deleted']) != intval($arr['deleted']))
+			if (isset($arr['deleted']) && intval($r[0]['xchan_deleted']) != intval($arr['deleted']))
 				$deleted_changed = 1;
 
 			// new style 6-MAR-2019
@@ -920,30 +912,26 @@ class Libzot {
 		$s = Libsync::sync_locations($arr, $arr);
 
 		if ($s) {
-			if (isset($s['change_message']))
+			if (!empty($s['change_message']))
 				$what .= $s['change_message'];
-			if (isset($s['changed']))
-				$changed = $s['changed'];
-			if (isset($s['message']))
+			if (!empty($s['changed']))
+				$changed .= $s['changed'];
+			if (!empty($s['message']))
 				$ret['message'] .= $s['message'];
 		}
 
-		// Which entries in the update table are we interested in updating?
-
-		$address = (($ud_arr && $ud_arr['ud_addr']) ? $ud_arr['ud_addr'] : $arr['primary_location']['address']);
-
-
-		// Are we a directory server of some kind?
 
 		$other_realm = false;
 		$realm       = get_directory_realm();
-		if (array_key_exists('site', $arr)
-			&& array_key_exists('realm', $arr['site'])
-			&& (strpos($arr['site']['realm'], $realm) === false))
+		if (array_key_exists('site', $arr) && array_key_exists('realm', $arr['site']) && (strpos($arr['site']['realm'], $realm) === false)) {
 			$other_realm = true;
+		}
 
+		$address = $arr['primary_location']['url'];
 
-		if ($dirmode != DIRECTORY_MODE_NORMAL) {
+		// Are we a directory server of some kind?
+
+		if ($dirmode !== DIRECTORY_MODE_NORMAL) {
 
 			// We're some kind of directory server. However we can only add directory information
 			// if the entry is in the same realm (or is a sub-realm). Sub-realms are denoted by
@@ -951,7 +939,7 @@ class Libzot {
 			// be in directories for the local realm (foo) and also the RED_GLOBAL realm.
 
 			if (array_key_exists('profile', $arr) && is_array($arr['profile']) && (!$other_realm)) {
-				$profile_changed = Libzotdir::import_directory_profile($xchan_hash, $arr['profile'], $address, $ud_flags, 1);
+				$profile_changed = Libzotdir::import_directory_profile($xchan_hash, $arr['profile']);
 				if ($profile_changed) {
 					$what    .= 'profile ';
 					$changed = true;
@@ -977,21 +965,10 @@ class Libzot {
 			}
 		}
 
-		if (($changed) || ($ud_flags == UPDATE_FLAGS_FORCED)) {
-			$guid = random_string() . '@' . \App::get_hostname();
-			Libzotdir::update_modtime($xchan_hash, $guid, $address, $ud_flags);
-			logger('Changed: ' . $what, LOGGER_DEBUG);
-		}
-		elseif (!$ud_flags) {
-			// nothing changed but we still need to update the updates record
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and (ud_flags & %d) = 0 ",
-				intval(UPDATE_FLAGS_UPDATED),
-				dbesc($address),
-				intval(UPDATE_FLAGS_UPDATED)
-			);
-		}
+		// update updates if anything changed bump the ud_date
+		Libzotdir::update($xchan_hash, $address, $changed);
 
-		if (!x($ret, 'message')) {
+		if (empty($ret['message'])) {
 			$ret['success'] = true;
 			$ret['hash']    = $xchan_hash;
 		}
@@ -1398,7 +1375,7 @@ class Libzot {
 				$uids = ids_to_querystr($uids, 'uid');
 
 				$z = q("SELECT channel_hash FROM channel WHERE channel_hash != '%s' AND channel_id IN ($uids)",
-					dbesc($msg['sender'])
+					dbesc($env['sender'])
 				);
 
 				if ($z) {
@@ -1746,7 +1723,7 @@ class Libzot {
 					// this is just an exercise in futility.
 
 					if (perm_is_allowed($channel['channel_id'], $sender, 'send_stream')) {
-						self::fetch_conversation($channel, $arr['parent_mid']);
+						Master::Summon(['Zotconvo', $channel['channel_id'], $arr['parent_mid']]);
 					}
 
 					continue;
@@ -2037,18 +2014,12 @@ class Libzot {
 				continue;
 			}
 
-			$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s' order by hubloc_id desc",
-				dbesc($AS->actor['id'])
-			);
-
+			$r = Activity::get_actor_hublocs($AS->actor['id']);
 			$r = self::zot_record_preferred($r);
-
 			if (!$r) {
 				$y = import_author_xchan(['url' => $AS->actor['id']]);
 				if ($y) {
-					$r = q("select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s'",
-						dbesc($AS->actor['id'])
-					);
+					$r = Activity::get_actor_hublocs($AS->actor['id']);
 					$r = self::zot_record_preferred($r);
 				}
 				if (!$r) {
@@ -2058,22 +2029,29 @@ class Libzot {
 			}
 
 			if (isset($AS->obj['actor']['id']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
-				$y = import_author_xchan(['url' => $AS->obj['actor']['id']]);
-				if (!$y) {
-					logger('FOF Activity: no object actor');
-					continue;
+				$ro = Activity::get_actor_hublocs($AS->obj['actor']['id']);
+				$ro = self::zot_record_preferred($ro);
+				if (!$ro) {
+					$y = import_author_xchan(['url' => $AS->obj['actor']['id']]);
+					if ($y) {
+						$ro = Activity::get_actor_hublocs($AS->obj['actor']['id']);
+						$ro = self::zot_record_preferred($ro);
+					}
+					if (!$ro) {
+						logger('FOF Activity: no obj actor');
+						continue;
+					}
 				}
 			}
 
 			$arr = Activity::decode_note($AS);
 
 			if (!$arr) {
+				logger('FOF Activity: could not decode');
 				continue;
 			}
 
-			if ($r) {
-				$arr['author_xchan'] = $r['hubloc_hash'];
-			}
+			$arr['author_xchan'] = $r['hubloc_hash'];
 
 			if ($signer) {
 				$arr['owner_xchan'] = $signer[0]['hubloc_hash'];
@@ -2376,19 +2354,6 @@ class Libzot {
 					'sitekey'  => $hub['hubloc_sitekey'],
 					'deleted'  => (intval($hub['hubloc_deleted']) ? true : false)
 				];
-
-				// version compatibility tweaks
-
-				if (!strpos($z['url_sig'], '.')) {
-					$z['url_sig'] = 'sha256.' . $z['url_sig'];
-				}
-
-				if (!$z['id_url']) {
-					$z['id_url'] = $z['url'] . '/channel/' . substr($z['address'], 0, strpos($z['address'], '@'));
-				}
-				if (!$z['site_id']) {
-					$z['site_id'] = Libzot::make_xchan_hash($z['url'], $z['sitekey']);
-				}
 
 				$ret[] = $z;
 			}
@@ -2761,12 +2726,12 @@ class Libzot {
 		$e = $r[0];
 		$id = $e['channel_id'];
 
-		$sys_channel     = (intval($e['channel_system']) ? true : false);
+		$sys_channel     = ((empty($e['channel_system'])) ? false : true);
 		$special_channel = (($e['channel_pageflags'] & PAGE_PREMIUM) ? true : false);
 		$adult_channel   = (($e['channel_pageflags'] & PAGE_ADULT) ? true : false);
 		$censored        = (($e['channel_pageflags'] & PAGE_CENSORED) ? true : false);
 		$searchable      = (($e['channel_pageflags'] & PAGE_HIDDEN) ? false : true);
-		$deleted         = (intval($e['xchan_deleted']) ? true : false);
+		$deleted         = ((empty($e['xchan_deleted'])) ? false : true);
 
 		if ($deleted || $censored || $sys_channel)
 			$searchable = false;
@@ -2818,8 +2783,8 @@ class Libzot {
 
 		// Communication details
 
-		$ret['id']     = $e['xchan_guid'];
-		$ret['id_sig'] = self::sign($e['xchan_guid'], $e['channel_prvkey']);
+		$ret['id']     = $e['channel_guid'];
+		$ret['id_sig'] = self::sign($e['channel_guid'], $e['channel_prvkey']);
 
 		$ret['primary_location'] = [
 			'address'         => $e['xchan_addr'],
@@ -2828,10 +2793,10 @@ class Libzot {
 			'follow_url'      => $e['xchan_follow'],
 		];
 
-		$ret['public_key']   = $e['xchan_pubkey'];
+		$ret['public_key']   = $e['channel_pubkey'];
 		$ret['signing_algorithm'] = 'rsa-sha256';
 		$ret['username']     = $e['channel_address'];
-		$ret['name']         = $e['xchan_name'];
+		$ret['name']         = $e['channel_name'];
 		$ret['name_updated'] = $e['xchan_name_date'];
 		$ret['photo']        = [
 			'url'     => $e['xchan_photo_l'],

@@ -11,11 +11,12 @@ class Text {
 
 	function Thumb($attach,$preview_style,$height = 300, $width = 300) {
 
-		if (empty($attach['content'])) {
+		$file = dbunescbin($attach['content']);
+		if (!$file) {
 			return;
 		}
 
-		$stream = @fopen(dbunescbin($attach['content']),'rb');
+		$stream = @fopen($file,'rb');
 		if($stream) {
 			$content = trim(stream_get_contents($stream,4096));
 			$content = str_replace("\r",'',$content);

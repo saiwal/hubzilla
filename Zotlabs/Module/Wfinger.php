@@ -76,7 +76,10 @@ class Wfinger extends \Zotlabs\Web\Controller {
 				}
 			}
 			else {
-				$r = channelx_by_nick($channel);
+				// Also provide already deleted channels info here.
+				// This is required in the case where we need to verify keys
+				// of updates which we have got via directory sync.
+				$r = channelx_by_nick($channel, true);
 			}
 		}
 
@@ -94,10 +97,6 @@ class Wfinger extends \Zotlabs\Web\Controller {
 					'href' => z_root() . '/owa',
 				],
 			];
-
-
-
-
 		}
 
 		if($resource && $r) {

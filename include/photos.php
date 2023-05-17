@@ -64,7 +64,6 @@ function photo_upload($channel, $observer, $args) {
 	}
 
 	$ac = $acl->get();
-hz_syslog(print_r($ac,true));
 	$width = $height = 0;
 
 	if ($args['getimagesize']) {

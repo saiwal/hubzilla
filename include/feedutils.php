@@ -598,12 +598,13 @@ function get_atom_elements($feed, $item) {
 	// uses the OStatus stack. We need a more generalised way for the calling
 	// function to specify this behaviour or for plugins to alter it.
 
+	$terms = [];
+
 	if($ostatus_protocol) {
 		$res['title'] = '';
 	}
 	elseif($res['plink'] && $res['title']) {
 		$res['body'] = '#^[url=' . $res['plink'] . ']' . $res['title'] . '[/url]' . "\n\n" . $res['body'];
-		$terms = array();
 		$terms[] = array(
 			'otype' => TERM_OBJ_POST,
 			'ttype' => TERM_BOOKMARK,
@@ -613,7 +614,6 @@ function get_atom_elements($feed, $item) {
 	}
 	elseif($res['plink']) {
 		$res['body'] = '#^[url]' . $res['plink'] . '[/url]' . "\n\n" . $res['body'];
-		$terms = array();
 		$terms[] = array(
 			'otype' => TERM_OBJ_POST,
 			'ttype' => TERM_BOOKMARK,
@@ -698,7 +698,7 @@ function get_atom_elements($feed, $item) {
 		}
 	}
 
-	if(! is_null($terms))
+	if($terms)
 		$res['term'] =  $terms;
 
 	$attach = $item->get_enclosures();
@@ -1829,11 +1829,11 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo) {
  */
 function atom_render_author($tag, $xchan) {
 
-	$nick = xmlify(substr($xchan['xchan_addr'], 0, strpos($xchan['xchan_addr'], '@')));
-	$id   = xmlify($xchan['xchan_url']);
-	$name = xmlify($xchan['xchan_name']);
-	$photo = xmlify($xchan['xchan_photo_l']);
-	$type = xmlify($xchan['xchan_photo_mimetype']);
+	$nick = ((!empty($xchan['xchan_addr'])) ? xmlify(substr($xchan['xchan_addr'], 0, strpos($xchan['xchan_addr'], '@'))) : '');
+	$id   = ((!empty($xchan['xchan_url'])) ? xmlify($xchan['xchan_url']) : '');
+	$name = ((!empty($xchan['xchan_name'])) ? xmlify($xchan['xchan_name']) : '');
+	$photo = ((!empty($xchan['xchan_photo_l'])) ? xmlify($xchan['xchan_photo_l']) : '');
+	$type = ((!empty($xchan['xchan_photo_mimetype'])) ? xmlify($xchan['xchan_photo_mimetype']) : '');
 	$w = $h = 300;
 
 	$o = "<$tag>\r\n";

@@ -11,16 +11,19 @@ class Video {
 
 	function Thumb($attach,$preview_style,$height = 300, $width = 300) {
 
+		$file = dbunescbin($attach['content']);
+		if (!$file) {
+			return;
+		}
+
 		$photo = false;
 
 		$t = explode('/',$attach['filetype']);
 		if($t[1])
 			$extension = '.' . $t[1];
 		else
-			return; 
+			return;
 
-
-		$file = dbunescbin($attach['content']);
 		$tmpfile = $file . $extension;
 		$outfile = $file . '.jpg';
 
@@ -40,7 +43,7 @@ class Video {
 
 
 		$ffmpeg = trim(shell_exec('which ffmpeg'));
-		if($ffmpeg) { 
+		if($ffmpeg) {
 			logger('ffmpeg not found in path. Video thumbnails may fail.');
 		}
 
@@ -59,7 +62,7 @@ class Video {
 				@rename($outfile,$file . '.thumb');
 			}
 		}
-	
+
 		@unlink($tmpfile);
 	}
 }

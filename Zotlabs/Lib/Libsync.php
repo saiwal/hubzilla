@@ -141,7 +141,7 @@ class Libsync {
 
 		$total = count($synchubs);
 		foreach ($synchubs as $hub) {
-			$hash = random_string();
+			$hash = new_uuid();
 			$n    = Libzot::build_packet($channel, 'sync', $env_recips, json_encode($info), 'hz', $hub['hubloc_sitekey'], $hub['site_crypto']);
 			Queue::insert([
 				'hash'       => $hash,
@@ -771,7 +771,12 @@ class Libsync {
 
 	static function sync_locations($sender, $arr) {
 
-		$ret = [];
+		$ret = [
+			'change_message' => '',
+			'changed' => false,
+			'message' => ''
+		];
+
 		$what = '';
 		$changed = false;
 
@@ -786,7 +791,7 @@ class Libsync {
 
 		if (isset($arr['locations']) && $arr['locations']) {
 
-			$xisting = q("select * from hubloc where hubloc_hash = '%s'",
+			$xisting = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
 				dbesc($sender['hash'])
 			);
 

@@ -172,13 +172,12 @@ class Libzotdir {
 	}
 
 	/**
-	 * @brief Checks the directory mode of this hub.
+	 * @brief fetches updates from known directories
 	 *
 	 * Checks the directory mode of this hub to see if it is some form of directory server. If it is,
 	 * get the directory realm of this hub. Fetch a list of all other directory servers in this realm and request
-	 * a directory sync packet. This will contain both directory updates and new ratings. Store these all in the DB.
-	 * In the case of updates, we will query each of them asynchronously from a poller task. Ratings are stored
-	 * directly if the rater's signature matches.
+	 * a directory sync packet. Store these all in the DB.
+	 * In the case of updates, we will query each of them asynchronously from a poller task.
 	 *
 	 * @param int $dirmode;
 	 */
@@ -233,6 +232,8 @@ class Libzotdir {
 		if (! $r)
 			return;
 
+		$dir_trusted_hosts = array_merge(get_directory_fallback_servers(), get_config('system', 'trusted_directory_servers', []));
+
 		foreach ($r as $rr) {
 			if (! $rr['site_directory'])
 				continue;
@@ -264,31 +265,65 @@ class Libzotdir {
 
 			if (is_array($j['transactions']) && count($j['transactions'])) {
 				foreach ($j['transactions'] as $t) {
-
-					if (empty($t['hash']) || empty($t['transaction_id']) || empty($t['address'])) {
+					if (empty($t['hash']) || empty($t['host']) || empty($t['address'])) {
 						continue;
 					}
 
-					$r = q("select * from updates where ud_guid = '%s' limit 1",
-						dbesc($t['transaction_id'])
+					$r = q("select * from updates where ud_hash = '%s' limit 1",
+						dbesc($t['hash'])
 					);
-					if($r)
-						continue;
 
-					$ud_flags = 0;
-					if (is_array($t['flags']) && in_array('deleted',$t['flags']))
-						$ud_flags |= UPDATE_FLAGS_DELETED;
-					if (is_array($t['flags']) && in_array('forced',$t['flags']))
-						$ud_flags |= UPDATE_FLAGS_FORCED;
+					if ($r) {
+						$update = 0;
 
-					$z = q("insert into updates ( ud_hash, ud_guid, ud_date, ud_flags, ud_addr )
-						values ( '%s', '%s', '%s', %d, '%s' ) ",
-						dbesc($t['hash']),
-						dbesc($t['transaction_id']),
-						dbesc($t['timestamp']),
-						intval($ud_flags),
-						dbesc($t['address'])
-					);
+						// no need to look at updates that originated from our own site
+						if ($t['host'] === z_root()) {
+							continue;
+						}
+
+						// there is more recent xchan information
+						if ($r[0]['ud_date'] <= $t['timestamp']) {
+							$update = 1;
+						}
+
+						// the host is trusted and flags have changed - update flags immediately
+						if (in_array($t['host'], $dir_trusted_hosts) &&
+							$rr['site_url'] === $t['host'] &&
+							intval($r[0]['ud_flags']) !== intval($t['flags'])) {
+
+							q("UPDATE updates SET ud_update = %d, ud_flags = %d WHERE ud_id = %d",
+								intval($update),
+								intval($t['flags']),
+								dbesc($r[0]['ud_id'])
+							);
+
+							q("UPDATE xchan SET xchan_censored = %d WHERE xchan_hash = '%s'",
+								intval($t['flags']),
+								dbesc($r[0]['ud_hash'])
+							);
+
+							continue;
+						}
+
+						if (!$update) {
+							continue;
+						}
+
+						q("UPDATE updates SET ud_update = %d WHERE ud_id = %d",
+							intval($update),
+							dbesc($r[0]['ud_id'])
+						);
+					}
+					else {
+						q("insert into updates ( ud_hash, ud_host, ud_date, ud_addr, ud_update, ud_flags )
+							values ( '%s', '%s', '%s', '%s', 1, %d) ",
+							dbesc($t['hash']),
+							dbesc($t['host']),
+							dbesc($t['timestamp']),
+							dbesc($t['address']),
+							dbesc(in_array($t['host'], $dir_trusted_hosts) ? $t['flags'] : 0)
+						);
+					}
 				}
 			}
 		}
@@ -303,8 +338,9 @@ class Libzotdir {
 	 *
 	 * Ignore updating records marked as deleted.
 	 *
-	 * If successful, sets ud_last in the DB to the current datetime for this
+	 * If successful, sets ud_updated in the DB to the current datetime for this
 	 * reddress/webbie.
+	 * Else update ud_last so we can stop trying after 7 days (Daemon/Poller.php)
 	 *
 	 * @param array $ud Entry from update table
 	 */
@@ -313,31 +349,47 @@ class Libzotdir {
 
 		logger('update_directory_entry: ' . print_r($ud,true), LOGGER_DATA);
 
-		if ($ud['ud_addr'] && (! ($ud['ud_flags'] & UPDATE_FLAGS_DELETED))) {
-			$success = false;
-			$zf = [];
+		// TODO: remove this check after all directory servers have version > 8.4
+		// ud_addr will always be the channel url at that time
+		$href = ((strpos($ud['ud_addr'], '://') === false) ? Webfinger::zot_url(punify($ud['ud_addr'])) : punify($ud['ud_addr']));
+		if($href) {
+			$zf = Zotfinger::exec($href);
+			if($zf && array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
+				$xc = Libzot::import_xchan($zf['data']);
 
-			$href = Webfinger::zot_url(punify($ud['ud_addr']));
-			if($href) {
-				$zf = Zotfinger::exec($href);
-			}
-			if(array_path_exists('signature/signer',$zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
-				$xc = Libzot::import_xchan($zf['data'], 0, $ud);
+				// xchan_hash mismatch - this can happen after a site re-install at the same url
+				if ($xc['success'] && $xc['hash'] !== $ud['ud_hash']) {
+					self::delete_by_hash($ud['ud_hash']);
+				}
+
+				// backwards compatibility: Libzot::import_xchan(), where self::update() is called,
+				// will fail with versions < 8.4 if the channel has been locally deleted.
+				// In this case we will update the updates record here without bumping the date
+				// since we could not verify if anything changed.
+				if (!$xc['success'] && !empty($zf['data']['deleted_locally'])) {
+					self::update($ud['ud_hash'], $ud['ud_addr'], false);
+				}
+
 				// This is a workaround for a missing xchan_updated column
 				// TODO: implement xchan_updated in the xchan table and update this column instead
-				if($zf['data']['primary_location']['address'] && $zf['data']['primary_location']['url']) {
+				if(!empty($zf['data']['primary_location']['url'])) {
 					q("UPDATE hubloc SET hubloc_updated = '%s' WHERE hubloc_id_url = '%s' AND hubloc_primary = 1",
 						dbesc(datetime_convert()),
 						dbesc($zf['data']['primary_location']['url'])
 					);
 				}
 
-				q("update updates set ud_last = '%s' where ud_addr = '%s'",
-					dbesc(datetime_convert()),
-					dbesc($ud['ud_addr'])
-				);
+				return true;
 			}
 		}
+
+		q("UPDATE updates SET ud_addr = '%s', ud_last = '%s' WHERE ud_hash = '%s'",
+			dbesc($href ? $href : $ud['ud_addr']),
+			dbesc(datetime_convert()),
+			dbesc($ud['ud_hash'])
+		);
+
+		return false;
 	}
 
 
@@ -352,85 +404,78 @@ class Libzotdir {
 	 */
 
 	static function local_dir_update($uid, $force) {
+		logger('local_dir_update uid: ' . $uid, LOGGER_DEBUG);
 
-
-		logger('local_dir_update: uid: ' . $uid, LOGGER_DEBUG);
-
-		$p = q("select channel.channel_hash, channel_address, channel_timezone, profile.* from profile left join channel on channel_id = uid where uid = %d and is_default = 1",
+		$p = q("select channel.channel_hash, channel_address, channel_timezone, profile.*, xchan.xchan_hidden, xchan.xchan_url from profile left join channel on channel_id = uid left join xchan on channel_hash = xchan_hash where profile.uid = %d and profile.is_default = 1",
 			intval($uid)
 		);
 
-		$profile = array();
-		$profile['encoding'] = 'zot';
-
-		if ($p) {
-			$hash = $p[0]['channel_hash'];
-
-			$profile['description'] = $p[0]['pdesc'];
-			$profile['birthday']    = $p[0]['dob'];
-			if ($age = age($p[0]['dob'],$p[0]['channel_timezone'],''))
-				$profile['age'] = $age;
-
-			$profile['gender']      = $p[0]['gender'];
-			$profile['marital']     = $p[0]['marital'];
-			$profile['sexual']      = $p[0]['sexual'];
-			$profile['locale']      = $p[0]['locality'];
-			$profile['region']      = $p[0]['region'];
-			$profile['postcode']    = $p[0]['postal_code'];
-			$profile['country']     = $p[0]['country_name'];
-			$profile['about']       = $p[0]['about'];
-			$profile['homepage']    = $p[0]['homepage'];
-			$profile['hometown']    = $p[0]['hometown'];
-
-			if ($p[0]['keywords']) {
-				$tags = array();
-				$k = explode(' ', $p[0]['keywords']);
-				if ($k)
-					foreach ($k as $kk)
-						if (trim($kk))
-							$tags[] = trim($kk);
-
-				if ($tags)
-					$profile['keywords'] = $tags;
-			}
-
-			$hidden = (1 - intval($p[0]['publish']));
-
-			logger('hidden: ' . $hidden);
-
-			$r = q("select xchan_hidden from xchan where xchan_hash = '%s'",
-				dbesc($p[0]['channel_hash'])
-			);
-
-			if(intval($r[0]['xchan_hidden']) != $hidden) {
-				$r = q("update xchan set xchan_hidden = %d where xchan_hash = '%s'",
-					intval($hidden),
-					dbesc($hash)
-				);
-			}
-
-			$arr = [ 'channel_id' => $uid, 'hash' => $hash, 'profile' => $profile ];
-			call_hooks('local_dir_update', $arr);
-
-			$address = channel_reddress($p[0]);
-
-			if (perm_is_allowed($uid, '', 'view_profile')) {
-				self::import_directory_profile($hash, $arr['profile'], $address, 0);
-			}
-			else {
-				// they may have made it private
-				q("delete from xprof where xprof_hash = '%s'",
-					dbesc($hash)
-				);
-				q("delete from xtag where xtag_hash = '%s'",
-					dbesc($hash)
-				);
-			}
-
+		if (!$p) {
+			logger('profile not found');
+			return;
 		}
 
-		$ud_hash = random_string() . '@' . \App::get_hostname();
-		self::update_modtime($hash, $ud_hash, channel_reddress($p[0]),(($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+		$profile = [];
+		$profile['encoding'] = 'zot';
+
+		$hash = $p[0]['channel_hash'];
+
+		$profile['description'] = $p[0]['pdesc'];
+		$profile['birthday']    = $p[0]['dob'];
+		if ($age = age($p[0]['dob'],$p[0]['channel_timezone'],''))
+			$profile['age'] = $age;
+
+		$profile['gender']      = $p[0]['gender'];
+		$profile['marital']     = $p[0]['marital'];
+		$profile['sexual']      = $p[0]['sexual'];
+		$profile['locale']      = $p[0]['locality'];
+		$profile['region']      = $p[0]['region'];
+		$profile['postcode']    = $p[0]['postal_code'];
+		$profile['country']     = $p[0]['country_name'];
+		$profile['about']       = $p[0]['about'];
+		$profile['homepage']    = $p[0]['homepage'];
+		$profile['hometown']    = $p[0]['hometown'];
+
+		if ($p[0]['keywords']) {
+			$tags = array();
+			$k = explode(' ', $p[0]['keywords']);
+			if ($k)
+				foreach ($k as $kk)
+					if (trim($kk))
+						$tags[] = trim($kk);
+
+			if ($tags)
+				$profile['keywords'] = $tags;
+		}
+
+		$hidden = (1 - intval($p[0]['publish']));
+
+		logger('hidden: ' . $hidden);
+
+		if(intval($p[0]['xchan_hidden']) !== $hidden) {
+			q("update xchan set xchan_hidden = %d where xchan_hash = '%s'",
+				intval($hidden),
+				dbesc($hash)
+			);
+		}
+
+		$arr = [ 'channel_id' => $uid, 'hash' => $hash, 'profile' => $profile ];
+		call_hooks('local_dir_update', $arr);
+
+		if (perm_is_allowed($uid, '', 'view_profile')) {
+			self::import_directory_profile($hash, $arr['profile']);
+		}
+		else {
+			// they may have made it private
+			q("delete from xprof where xprof_hash = '%s'",
+				dbesc($hash)
+			);
+			q("delete from xtag where xtag_hash = '%s'",
+				dbesc($hash)
+			);
+		}
+
+		self::update($hash, $p[0]['xchan_url']);
 	}
 
 
@@ -440,13 +485,10 @@ class Libzotdir {
 	 *
 	 * @param string $hash
 	 * @param array $profile
-	 * @param string $addr
-	 * @param number $ud_flags (optional) UPDATE_FLAGS_UPDATED
-	 * @param number $suppress_update (optional) default 0
 	 * @return boolean $updated if something changed
 	 */
 
-	static function import_directory_profile($hash, $profile, $addr, $ud_flags = UPDATE_FLAGS_UPDATED, $suppress_update = 0) {
+	static function import_directory_profile($hash, $profile) {
 
 		logger('import_directory_profile', LOGGER_DEBUG);
 		if (! $hash)
@@ -479,7 +521,12 @@ class Libzotdir {
 		$clean = array();
 		if (array_key_exists('keywords', $profile) and is_array($profile['keywords'])) {
 			self::import_directory_keywords($hash,$profile['keywords']);
+
 			foreach ($profile['keywords'] as $kw) {
+				if (in_array($kw, $clean)) {
+					continue;
+				}
+
 				$kw = trim(htmlspecialchars($kw,ENT_COMPAT, 'UTF-8', false));
 				$kw = trim($kw, ',');
 				$clean[] = $kw;
@@ -586,9 +633,6 @@ class Libzotdir {
 		 */
 		call_hooks('import_directory_profile', $d);
 
-		if (($d['update']) && (! $suppress_update))
-			self::update_modtime($arr['xprof_hash'],random_string() . '@' . \App::get_hostname(), $addr, $ud_flags);
-
 		return $d['update'];
 	}
 
@@ -606,6 +650,10 @@ class Libzotdir {
 			dbesc($hash)
 		);
 
+		$xchan = q("select xchan_censored from xchan where xchan_hash = '%s'",
+			dbesc($hash)
+		);
+
 		if($r) {
 			foreach($r as $rr)
 				$existing[] = $rr['xtag_term'];
@@ -613,6 +661,10 @@ class Libzotdir {
 
 		$clean = array();
 		foreach($keywords as $kw) {
+			if (in_array($kw, $clean)) {
+				continue;
+			}
+
 			$kw = trim(htmlspecialchars($kw,ENT_COMPAT, 'UTF-8', false));
 			$kw = trim($kw, ',');
 			$clean[] = $kw;
@@ -627,9 +679,10 @@ class Libzotdir {
 		}
 		foreach($clean as $x) {
 			if(! in_array($x, $existing)) {
-				$r = q("insert into xtag ( xtag_hash, xtag_term, xtag_flags) values ( '%s' ,'%s', 0 )",
+				$r = q("insert into xtag ( xtag_hash, xtag_term, xtag_flags) values ( '%s' ,'%s', %d )",
 					dbesc($hash),
-					dbesc($x)
+					dbesc($x),
+					intval($xchan[0]['xchan_censored'])
 				);
 			}
 		}
@@ -639,13 +692,12 @@ class Libzotdir {
 	/**
 	 * @brief
 	 *
-	 * @param string $hash
-	 * @param string $guid
-	 * @param string $addr
-	 * @param int $flags (optional) default 0
+	 * @param string $hash the channel hash
+	 * @param string $addr the channel url
+	 * @param bool $bump_date (optional) default true
 	 */
 
-	static function update_modtime($hash, $guid, $addr, $flags = 0) {
+	static function update($hash, $addr, $bump_date = true, $flag = null) {
 
 		$dirmode = intval(get_config('system', 'directory_mode'));
 
@@ -653,26 +705,70 @@ class Libzotdir {
 			return;
 		}
 
-		if (empty($hash) || empty($guid) || empty($addr)) {
+		if (empty($hash) || empty($addr)) {
 			return;
 		}
 
-		if($flags) {
-			q("insert into updates (ud_hash, ud_guid, ud_date, ud_flags, ud_addr ) values ( '%s', '%s', '%s', %d, '%s' )",
-				dbesc($hash),
-				dbesc($guid),
-				dbesc(datetime_convert()),
-				intval($flags),
-				dbesc($addr)
-			);
+		$u = q("SELECT * FROM updates WHERE ud_hash = '%s' LIMIT 1",
+			dbesc($hash)
+		);
+
+		$date_sql = '';
+		if ($bump_date) {
+			$date_sql = "ud_date = '" . dbesc(datetime_convert()) . "',";
 		}
-		else {
-			q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and not (ud_flags & %d)>0 ",
-				intval(UPDATE_FLAGS_UPDATED),
+
+		$flag_sql = '';
+		if ($flag !== null) {
+			$flag_sql = "ud_flags = '" . intval($flag) . "',";
+		}
+
+
+		if ($u) {
+			$x = q("UPDATE updates SET $date_sql $flag_sql ud_last = '%s', ud_host = '%s', ud_addr = '%s', ud_update = 0 WHERE ud_id = %d",
+				dbesc(NULL_DATE),
+				dbesc(z_root()),
 				dbesc($addr),
-				intval(UPDATE_FLAGS_UPDATED)
+				intval($u[0]['ud_id'])
 			);
+
+			return;
 		}
+
+		q("INSERT INTO updates (ud_hash, ud_host, ud_date, ud_addr, ud_flags) VALUES ( '%s', '%s', '%s', '%s', %d )",
+			dbesc($hash),
+			dbesc(z_root()),
+			dbesc(datetime_convert()),
+			dbesc($addr),
+			intval($flag)
+		);
+
+		return;
+
+	}
+
+
+	/**
+	 * @brief deletes a entry in updates by hash
+	 *
+	 * @param string $hash the channel hash
+	 * @return boolean
+	 */
+
+	static function delete_by_hash($hash) {
+		if (!$hash) {
+			return false;
+		}
+
+		$x = q("DELETE FROM updates WHERE ud_hash = '%s'",
+			dbesc($hash)
+		);
+
+		if ($x) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

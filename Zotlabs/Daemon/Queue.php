@@ -14,7 +14,7 @@ class Queue {
 		// delete all queue items more than 3 days old
 		// but first mark these sites dead if we haven't heard from them in a month
 
-		$oldqItems = q("select outq_posturl from outq where outq_created < %s - INTERVAL %s",
+		$oldqItems = q("select outq_posturl, outq_hash from outq where outq_created < %s - INTERVAL %s",
 			db_utcnow(),
 			db_quoteinterval('3 DAY')
 		);
@@ -29,13 +29,13 @@ class Queue {
 					db_quoteinterval('1 MONTH')
 				);
 			}
-		}
 
-		logger('Removing ' . count($oldqItems) . ' old queue entries');
-		q("DELETE FROM outq WHERE outq_created < %s - INTERVAL %s",
-			db_utcnow(),
-			db_quoteinterval('3 DAY')
-		);
+			$old_hashes = ids_to_querystr($oldqItems, 'outq_hash', true);
+
+			logger('Removing ' . count($oldqItems) . ' old queue entries');
+			dbq("DELETE FROM outq WHERE outq_hash IN ($old_hashes)");
+
+		}
 
 		$deliveries = [];
 
@@ -47,9 +47,10 @@ class Queue {
 			LibQueue::deliver($qItems[0]);
 		}
 		else {
-			$qItems = q("SELECT * FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s ",
+			$qItems = q("SELECT outq_hash FROM outq WHERE outq_scheduled < %s ",
 				db_utcnow()
 			);
+
 			if ($qItems) {
 				foreach ($qItems as $qItem) {
 					$deliveries[] = $qItem['outq_hash'];

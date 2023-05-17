@@ -1,3 +1,53 @@
+Hubzilla 8.4 (2023-05-17)
+	- Slightly rewrite Activity::store() to save a query
+	- Use act->objprop() in decode_note() to get activity values
+	- Make sure to re-discover a channel upon connecting if we have just an xchan but no hubloc
+	- Updated ES translations
+	- Updated RU translations
+	- Redesigned profile vcard to implement cover images
+	- Slightly improved discovery of AP quoted messages
+	- Updated bootstrap library
+	- Changed hashtag encoding to match mastodons expectations (issue #1750)
+	- Implement fedearted directory flags from trusted directory servers
+	- Use Activity::get_actor_hublocs() in Libzot::fetch_conversation() instead of custom queries
+	- Add the conversation endpoint
+	- Implement paginated fetch for zot requests in mod item
+	- Implement Zotconvo daemon to fetch conversations in the background
+	- Expose deleted channels to webfinger (otherwise we can not mark them deleted locally)
+	- Expire items in batches to prevent memory exhaustion
+	- Remove legacy zot compatibility tweaks
+	- Rewrite and simplify directory sync
+	- Improve potentially long running sql query finding the thread parent
+	- Implement option to override permissions for posts with mentions
+
+	Bugfixes
+	- Fix parent_mid and thr_parent not set correctly for response activities
+	- Fix query for postgres in attach_list_files()
+	- Fix item_url_replace() failing on arrays
+	- Fix OWA compatibility with friendica
+	- Fix regression in decoding the object type
+	- Fix xss vulnerability in justified gallery library
+	- Fix permissions not initialized after accepted follow request from AP
+	- Fix empty path passed to fopen()
+	- Fix % value in format_poll() not rounded
+	- Fix remove_all_xchan_resources() executed for local channels
+	- Fix likes not synced via libsync between clones
+
+	Addons
+	- Pubcrawl: fix xchan_url used as follow object instead of xchan_hash
+	- Channelreputation: moved to unmaintained repo due to duplication issues when storing data in pconfig
+	- Pubcrawl: add lemmy accept/reject follow quirks
+	- Diaspora: handle 4xx return codes in queue management
+	- Diaspora: fix fatal error in the case where parent_guid is set but empty
+	- Pubcrawl: if shared inbox delivery fails deliver to contacts instead of everybody we know from that site
+	- Articles: fix PHP error
+	- Diaspora: rewrite synced (from a clone) item author to primary
+	- Diaspora: improve reshare detection
+	- Diaspora: fix contact role not sets
+	- Pubcrawl: rewrite synced (from a clone) item author to primary
+	- Pubcrawl: if we receive a public message to the shared inbox deliver to following *and* directly addressed
+
+
 Hubzilla 8.2 (2023-03-19)
 	- Remove redundant untranslated htconfig templates
 	- Implement workaround for friendica image/attachment construct

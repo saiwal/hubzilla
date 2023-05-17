@@ -404,29 +404,6 @@ footer {
 	margin-bottom: 10px;
 }
 
-.fn {
-	font-weight: bold;
-	font-size: 1rem;
-}
-
-.vcard-card {
-	background-color: rgba(var(--bs-body-bg-rgb), .7);
-}
-
-.vcard {
-	word-wrap: break-word;
-}
-
-.profile-edit-side-link {
-	opacity: 0;
-	filter:alpha(opacity=0);
-}
-
-.card:hover .profile-edit-side-link {
-	opacity: 1;
-	filter:alpha(opacity=100);
-}
-
 #hide-friends-yes-label,
 #hide-friends-no-label {
 	margin-left: 125px;
@@ -550,8 +527,8 @@ footer {
 }
 
 .contact-block-img {
-	width: 2.95rem;
-	height: 2.95rem;
+	width: 2.94rem;
+	height: 2.94rem;
 	margin-bottom: 3px;
 }
 
@@ -1638,7 +1615,7 @@ dl.bb-dl > dd > li {
 .app-icon i {
 	color: #777;
 	font-size: 80px;
-	text-shadow: 3px 3px 3px lightgrey;
+	text-shadow: 3px 3px 3px rgba(0, 0, 0, .1);
 }
 
 .app-detail {

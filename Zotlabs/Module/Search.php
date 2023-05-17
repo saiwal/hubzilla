@@ -58,7 +58,7 @@ class Search extends Controller {
 
 		$o .= search($search, 'search-box', '/search', ((local_channel()) ? true : false));
 
-		if (local_channel() && strpos($search, 'https://') === 0 && !$update && !$load) {
+		if (local_channel() && str_starts_with($search, 'https://') && !$update && !$load) {
 
 			$url = htmlspecialchars_decode($search);
 
@@ -75,7 +75,7 @@ class Search extends Controller {
 			if ($f) {
 				$mid = $f[0]['message_id'];
 				foreach ($f as $m) {
-					if (strpos($search, $m['message_id']) === 0) {
+					if (str_starts_with($url, $m['message_id'])) {
 						$mid = $m['message_id'];
 						break;
 					}

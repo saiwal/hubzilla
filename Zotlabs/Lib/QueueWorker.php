@@ -24,7 +24,8 @@ class QueueWorker {
 	// Exceptions for processtimeout ($workermaxage) value.
 	// Currently the value is overriden with 3600 seconds (1h).
 	public static $long_running_cmd = [
-		'Queue'
+		'Queue',
+		'Expire'
 	];
 
 	private static function qstart() {
@@ -147,6 +148,10 @@ class QueueWorker {
 		);
 
 		if ($r) {
+			// TODO: some long running services store their pid in config.procid.daemon
+			// we could possibly check if a pid exist and check if the process is still alive
+			// prior to reseting workerq_reservationid
+
 			$ids = ids_to_querystr($r, 'workerq_id');
 			$u = dbq("update workerq set workerq_reservationid = null where workerq_id in ($ids)");
 		}

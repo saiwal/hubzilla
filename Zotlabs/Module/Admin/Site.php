@@ -67,7 +67,6 @@ class Site {
 		$open_pubstream     =   ((x($_POST,'open_pubstream')) ? True : False);
 		$login_on_homepage	=	((x($_POST,'login_on_homepage'))		? True	:	False);
 		$enable_context_help = ((x($_POST,'enable_context_help'))		? True	:	False);
-		$global_directory     = ((x($_POST,'directory_submit_url'))	? notags(trim($_POST['directory_submit_url']))	: '');
 		$no_community_page    = !((x($_POST,'no_community_page'))	? True	:	False);
 		$default_expire_days  = ((array_key_exists('default_expire_days',$_POST)) ? intval($_POST['default_expire_days']) : 0);
 		$active_expire_days  = ((array_key_exists('active_expire_days',$_POST)) ? intval($_POST['active_expire_days']) : 7);
@@ -181,7 +180,7 @@ class Site {
 			set_config('system', 'admininfo', $admininfo);
 		}
 		set_config('system','siteinfo',$siteinfo);
-		set_config('system', 'language', $language);
+		//set_config('system', 'language', $language);
 		set_config('system', 'theme', $theme);
 		//		if ( $theme_mobile === '---' ) {
 		//			del_config('system', 'mobile_theme');
@@ -206,11 +205,6 @@ class Site {
 		set_config('system','site_firehose', $site_firehose);
 		set_config('system','open_pubstream', $open_pubstream);
 		//set_config('system','force_queue_threshold', $force_queue);
-		if ($global_directory == '') {
-			del_config('system', 'directory_submit_url');
-		} else {
-			set_config('system', 'directory_submit_url', $global_directory);
-		}
 
 		set_config('system','no_community_page', $no_community_page);
 		set_config('system','no_utf', $no_utf);
@@ -283,7 +277,7 @@ class Site {
 		}
 
 		$dir_choices = null;
-		$dirmode = get_config('system','directory_mode');
+		$dirmode = get_config('system', 'directory_mode', DIRECTORY_MODE_NORMAL);
 		$realm = get_directory_realm();
 
 		// directory server should not be set or settable unless we are a directory client
@@ -299,6 +293,12 @@ class Site {
 				$dir_choices = array();
 				foreach($x as $xx) {
 					$dir_choices[$xx['site_url']] = $xx['site_url'];
+				}
+			}
+			if ($realm === DIRECTORY_REALM) {
+				$fallback_servers = get_directory_fallback_servers();
+				foreach ($fallback_servers as $fallback_server) {
+					$dir_choices[$fallback_server] = $fallback_server;
 				}
 			}
 		}
@@ -425,7 +425,7 @@ class Site {
 			'$banner'			=> array('banner', t("Banner/Logo"), $banner, t('Unfiltered HTML/CSS/JS is allowed')),
 			'$admininfo'		=> array('admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode can be used here")),
 			'$siteinfo'		=> array('siteinfo', t('Site Information'), get_config('system','siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode can be used here")),
-			'$language' 		=> array('language', t("System language"), get_config('system','language'), "", $lang_choices),
+			//'$language' 		=> array('language', t("System language"), get_config('system','language'), "", $lang_choices),
 			'$theme' 			=> array('theme', t("System theme"), get_config('system','theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices),
 		//			'$theme_mobile' 	=> array('theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile),
 		//			'$site_channel' 	=> array('site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel")),

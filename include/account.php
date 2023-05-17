@@ -1117,6 +1117,7 @@ function account_service_class_allows($aid, $property, $usage = false) {
  */
 function service_class_fetch($uid, $property) {
 
+	$service_class = null;
 
 	if($uid == local_channel()) {
 		$service_class = App::$account['account_service_class'];
@@ -1127,7 +1128,7 @@ function service_class_fetch($uid, $property) {
 				where c.channel_account_id=a.account_id and c.channel_id= %d limit 1",
 				intval($uid)
 		);
-		if($r !== false and count($r)) {
+		if($r) {
 			$service_class = $r[0]['service_class'];
 		}
 	}
@@ -1161,7 +1162,7 @@ function account_service_class_fetch($aid, $property) {
 	$r = q("select account_service_class as service_class from account where account_id = %d limit 1",
 		intval($aid)
 	);
-	if($r !== false && count($r)) {
+	if($r) {
 		$service_class = $r[0]['service_class'];
 	}
 

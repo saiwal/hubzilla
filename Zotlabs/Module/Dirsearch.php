@@ -15,8 +15,7 @@ class Dirsearch extends Controller {
 
 		$ret = array('success' => false);
 
-	//	logger('request: ' . print_r($_REQUEST,true));
-
+		// logger('request: ' . print_r($_REQUEST,true));
 
 		$dirmode = intval(get_config('system','directory_mode'));
 
@@ -24,7 +23,6 @@ class Dirsearch extends Controller {
 			$ret['message'] = t('This site is not a directory server');
 			json_return_and_die($ret);
 		}
-
 
 		$access_token = $_REQUEST['t'] ?? '';
 
@@ -41,7 +39,8 @@ class Dirsearch extends Controller {
 		}
 
 		$sql_extra = '';
-
+		$keywords_query = '';
+		$hub_query = '';
 
 		$tables = array('name','address','locale','region','postcode','country','gender','marital','sexual','keywords');
 
@@ -85,9 +84,7 @@ class Dirsearch extends Controller {
 
 
 		// by default use a safe search
-		$safe     = ((x($_REQUEST,'safe')));    // ? intval($_REQUEST['safe'])  : 1 );
-		if ($safe === false)
-				$safe = 1;
+		$safe = $_REQUEST['safe'] ?? 1;
 
 		if(array_key_exists('sync',$_REQUEST)) {
 			if($_REQUEST['sync'])
@@ -102,10 +99,10 @@ class Dirsearch extends Controller {
 			$hub = \App::get_hostname();
 		}
 
-		if($hub)
-			$hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
-		else
-			$hub_query = '';
+		if($hub) {
+			$hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_deleted = 0 and hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
+		}
+
 
 		$sort_order  = ((x($_REQUEST,'order')) ? $_REQUEST['order'] : '');
 
@@ -131,9 +128,16 @@ class Dirsearch extends Controller {
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_marital',$marital);
 		if($sexual)
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_sexual',$sexual);
-		if($keywords)
+		if($keywords && $name) {
+			// this is a general search
 			$sql_extra .= $this->dir_query_build($joiner,'xprof_keywords',$keywords);
-
+		}
+		if($keywords && !$name) {
+			// this is a search for keywords only
+			$keywords_arr = explode(',', $keywords);
+			stringify_array_elms($keywords_arr, true);
+			$keywords_query = " AND xchan_hash IN (SELECT xtag_hash FROM xtag WHERE xtag_term IN (" . protect_sprintf(implode(',', $keywords_arr)) . ")) ";
+		}
 
 		// we only support an age range currently. You must set both agege
 		// (greater than or equal) and agele (less than or equal)
@@ -177,9 +181,15 @@ class Dirsearch extends Controller {
 			$sql_extra .= " and xchan_addr like '%%" . \App::get_hostname() . "' ";
 		}
 
-		$safesql = (($safe > 0) ? " and xchan_censored = 0 and xchan_selfcensored = 0 " : '');
+		$safesql = '';
+		if($safe > 0)
+			$safesql = " and xchan_censored = 0 and xchan_selfcensored = 0 ";
+
+		if($safe < 1)
+			$safesql = " and xchan_censored < 2 and xchan_selfcensored < 2 ";
+
 		if($safe < 0)
-			$safesql = " and ( xchan_censored = 1 OR xchan_selfcensored = 1 ) ";
+			$safesql = " and xchan_censored < 3 and xchan_selfcensored < 2 ";
 
 		if($forums)
 			$safesql .= " and xchan_pubforum = " . ((intval($forums)) ? '1 ' : '0 ');
@@ -215,26 +225,25 @@ class Dirsearch extends Controller {
 
 		if($sync) {
 			$spkt = array('transactions' => array());
-			$r = q("select * from updates where ud_date >= '%s' and ud_guid != '' and ud_addr != '' order by ud_date desc",
+
+			$r = q("SELECT * FROM updates WHERE ud_update = 0 AND ud_last = '%s' AND ud_date >= '%s' ORDER BY ud_date DESC",
+				dbesc(NULL_DATE),
 				dbesc($sync)
 			);
+
 			if($r) {
 				foreach($r as $rr) {
-					$flags = array();
-					if($rr['ud_flags'] & UPDATE_FLAGS_DELETED)
-						$flags[] = 'deleted';
-					if($rr['ud_flags'] & UPDATE_FLAGS_FORCED)
-						$flags[] = 'forced';
-
-					$spkt['transactions'][] = array(
+					$spkt['transactions'][] = [
 						'hash' => $rr['ud_hash'],
 						'address' => $rr['ud_addr'],
-						'transaction_id' => $rr['ud_guid'],
+						'host' => $rr['ud_host'],
+						'transaction_id' => $rr['ud_host'], // deprecated 2023-04-12 - can be removed after dir servers at version >= 8.4
 						'timestamp' => $rr['ud_date'],
-						'flags' => $flags
-					);
+						'flags' => $rr['ud_flags']
+					];
 				}
 			}
+
 			json_return_and_die($spkt);
 		}
 		else {
@@ -264,7 +273,7 @@ class Dirsearch extends Controller {
 				xprof.xprof_hometown as hometown,
 				xprof.xprof_keywords as keywords
 				from xchan left join xprof on xchan_hash = xprof_hash left join hubloc on (hubloc_id_url = xchan_url and hubloc_hash = xchan_hash)
-				where hubloc_primary = 1 and hubloc_updated > %s - INTERVAL %s and ( $logic $sql_extra ) $hub_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0
+				where hubloc_primary = 1 and hubloc_updated > %s - INTERVAL %s and ( $logic $sql_extra ) $hub_query $keywords_query and xchan_network = 'zot6' and xchan_system = 0 and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0
 				$safesql $order $qlimit",
 				db_utcnow(),
 				db_quoteinterval('30 DAY')

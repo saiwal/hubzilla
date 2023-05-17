@@ -17,7 +17,7 @@
 	{{include file="field_checkbox.tpl" field=$inline_pdf}}
 
 	{{include file="field_textarea.tpl" field=$allowed_email}}
-	{{include file="field_textarea.tpl" field=$not_allowed_email}}	
+	{{include file="field_textarea.tpl" field=$not_allowed_email}}
 
 	{{include file="field_textarea.tpl" field=$whitelisted_sites}}
 	{{include file="field_textarea.tpl" field=$blacklisted_sites}}
@@ -27,6 +27,9 @@
 
 	{{include file="field_textarea.tpl" field=$embed_allow}}
 	{{include file="field_textarea.tpl" field=$embed_deny}}
+	{{if $trusted_directory_servers}}
+		{{include file="field_textarea.tpl" field=$trusted_directory_servers}}
+	{{/if}}
 
 
 	<div class="admin-submit-wrapper">

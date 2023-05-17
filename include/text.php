@@ -1794,7 +1794,8 @@ function prepare_body(&$item,$attach = false,$opts = false) {
 		$s = $poll;
 	}
 
-	$event = (($item['obj_type'] === ACTIVITY_OBJ_EVENT) ? format_event_obj($item['obj']) : []);
+	$event = (in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT]) ? format_event_obj($item['obj']) : []);
+
 	$prep_arr = [
 		'item' => $item,
 		'html' => $event ? $event['content'] : $s,
@@ -1929,18 +1930,18 @@ function format_poll($item,$s,$opts) {
 
 						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
 						$output .= '<div class="progress bg-secondary bg-opacity-25" style="height: 3px;">';
-						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
 						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
 						$output .= EOL;
 					}
 					else {
 						//$output .= '[ ] ' . $text . ' (' . $total . ')' . EOL;
 						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
 						$output .= '<div class="progress bg-secondary bg-opacity-25" style="height: 3px;">';
-						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
 						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
 						$output .= EOL;
 					}
 				}
@@ -1965,18 +1966,18 @@ function format_poll($item,$s,$opts) {
 					if ($activated && $commentable) {
 						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
 						$output .= '<div class="progress bg-secondary bg-opacity-25" style="height: 3px;">';
-						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
 						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
 						$output .= EOL;
 					}
 
 					else {
 						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
 						$output .= '<div class="progress bg-secondary bg-opacity-25" style="height: 3px;">';
-						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '<div class="progress-bar bg-info" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
 						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
 						$output .= EOL;
 					}
 				}
@@ -3300,60 +3301,86 @@ function json_url_replace($old,$new,&$s) {
 	return $replaced;
 }
 
+function item_url_replace($channel, &$item, $old, $new, $oldnick = '') {
 
-function item_url_replace($channel,&$item,$old,$new,$oldnick = '') {
-
-	if($item['attach']) {
-		json_url_replace($old,$new,$item['attach']);
-		if($oldnick && ($oldnick !== $channel['channel_address']))
-			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['attach']);
-	}
-	if($item['object']) {
-		json_url_replace($old,$new,$item['object']);
-		if($oldnick && ($oldnick !== $channel['channel_address']))
-			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['object']);
-	}
-	if($item['target']) {
-		json_url_replace($old,$new,$item['target']);
-		if($oldnick && ($oldnick !== $channel['channel_address']))
-			json_url_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['target']);
-	}
-
-	$root_replaced = null;
-	$nick_replaced = null;
-
-	// FIXME: ignore anything in a share tag
-
-	$item['body'] = str_replace($old, $new, $item['body'], $root_replaced);
-
-	if($oldnick && ($oldnick !== $channel['channel_address'])) {
-		$item['body'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['body'], $nick_replaced);
-	}
-
-	if ($root_replaced || $nick_replaced) {
-		$item['sig'] = Libzot::sign($item['body'], $channel['channel_prvkey']);
-		$item['item_verified']  = 1;
-	}
-
-	$item['plink'] = str_replace($old,$new,$item['plink']);
-	if($oldnick && ($oldnick !== $channel['channel_address']))
-		$item['plink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['plink']);
-
-	$item['llink'] = str_replace($old,$new,$item['llink']);
-	if($oldnick && ($oldnick !== $channel['channel_address']))
-		$item['llink'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['llink']);
-
-	if($item['term']) {
-		for($x = 0; $x < count($item['term']); $x ++) {
-			$item['term'][$x]['url'] =  str_replace($old,$new,$item['term'][$x]['url']);
-			if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-				$item['term'][$x]['url'] = str_replace('/' . $oldnick . '/' ,'/' . $channel['channel_address'] . '/' ,$item['term'][$x]['url']);
-			}
+	if (!empty($item['attach'])) {
+		$converted = false;
+		if (is_array($item['attach'])) {
+			$item['attach'] = item_json_encapsulate($item,'attach');
+			$converted = true;
+		}
+		json_url_replace($old, $new, $item['attach']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['attach']);
+		}
+		if ($converted) {
+			$item['attach'] = json_decode($item['attach'],true);
 		}
 	}
 
-}
+	if (!empty($item['obj'])) {
+		$converted = false;
+		if (is_array($item['obj'])) {
+			$item['obj'] = item_json_encapsulate($item,'obj');
+			$converted = true;
+		}
+		json_url_replace($old, $new, $item['obj']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['obj']);
+		}
+		if ($converted) {
+			$item['obj'] = json_decode($item['obj'],true);
+		}
+	}
 
+	if (!empty($item['target'])) {
+		$converted = false;
+		if (is_array($item['target'])) {
+			$item['target'] = item_json_encapsulate($item,'target');
+			$converted = true;
+		}
+		json_url_replace($old, $new, $item['target']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['target']);
+		}
+		if ($converted) {
+			$item['target'] = json_decode($item['target'],true);
+		}
+	}
+
+	// FIXME: ignore anything in a share tag
+	$item['body'] = str_replace($old, $new, $item['body']);
+
+	if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+		$item['body'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['body']);
+	}
+
+	$item['sig'] = Libzot::sign($item['body'], $channel['channel_prvkey']);
+	$item['item_verified'] = 1;
+
+	if (isset($item['plink'])) {
+		$item['plink'] = str_replace($old, $new, $item['plink']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			$item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
+		}
+	}
+
+	if (isset($item['llink'])) {
+		$item['llink'] = str_replace($old, $new, $item['llink']);
+		if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+			$item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
+		}
+	}
+
+	if (isset($item['term']) && is_array($item['term'])) {
+		for ($x = 0; $x < count($item['term']); $x++) {
+			$item['term'][$x]['url'] =  str_replace($old, $new, $item['term'][$x]['url']);
+			if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+				$item['term'][$x]['url'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['term'][$x]['url']);
+			}
+		}
+	}
+}
 
 /**
  * @brief Used to wrap ACL elements in angle brackets for storage.

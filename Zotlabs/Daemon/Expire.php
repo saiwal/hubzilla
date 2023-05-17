@@ -32,7 +32,6 @@ class Expire {
 		}
 
 		// physically remove anything that has been deleted for more than two months
-		/** @FIXME - this is a wretchedly inefficient query */
 
 		q("delete from item where item_pending_remove = 1 and changed < %s - INTERVAL %s",
 			db_utcnow(),
@@ -59,8 +58,8 @@ class Expire {
 					continue;
 
 				// service class default (if non-zero) over-rides the site default
-
 				$service_class_expire = service_class_fetch($rr['channel_id'], 'expire_days');
+
 				if (intval($service_class_expire))
 					$channel_expire = $service_class_expire;
 				else
@@ -85,7 +84,6 @@ class Expire {
 
 			// this should probably just fetch the channel_expire_days from the sys channel,
 			// but there's no convenient way to set it.
-
 			$expire_days = get_config('system', 'sys_expire_days');
 			if ($expire_days === false)
 				$expire_days = 30;
@@ -96,8 +94,9 @@ class Expire {
 
 			logger('Expire: sys interval: ' . $expire_days, LOGGER_DEBUG);
 
-			if ($expire_days)
+			if ($expire_days) {
 				item_expire($x['channel_id'], $expire_days, $commented_days);
+			}
 
 			logger('Expire: sys: done', LOGGER_DEBUG);
 		}

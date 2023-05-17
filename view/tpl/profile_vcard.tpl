@@ -1,49 +1,55 @@
 <div class="rounded mb-3 vcard-card h-card">
 	<div class="card mb-2">
-		<div class="row">
-			<div class="col-4" style="width: fit-content;">
-				<div id="profile-photo-wrapper">
-					<img class="rounded-start u-photo" src="{{$profile.photo}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 6rem; height:6rem;">
-				</div>
+		<div class="position-relative">
+			<div id="cover-photo-wrapper" class="overflow-hidden w-100 rounded-top">
+				<img class="img-fluid rounded-top" src="{{$cover.url}}" alt="" style="">
 			</div>
-			<div class="col-7 m-1 p-0">
-				{{if $editmenu.multi}}
-				<div class="dropdown float-end">
-					<a class="profile-edit-side-link float-end" data-bs-toggle="dropdown" href="#" ><i class="fa fa-pencil" title="{{$editmenu.edit.1}}"></i></a>
-					<div class="dropdown-menu dropdown-menu-end" role="menu">
-						{{foreach $editmenu.menu.entries as $e}}
-						<a href="profiles/{{$e.id}}" class="dropdown-item"><img class="menu-img-1" src='{{$e.photo}}'> {{$e.profile_name}}</a>
-						{{/foreach}}
-						{{if $editmenu.menu.cr_new}}
-						<a href="profiles/new" id="profile-listing-new-link" class="dropdown-item">{{$editmenu.menu.cr_new}}</a>
-						{{/if}}
-					</div>
-				</div>
-				{{elseif $editmenu}}
-				<a class="profile-edit-side-link float-end" href="{{$editmenu.edit.0}}" ><i class="fa fa-pencil" title="{{$editmenu.edit.1}}"></i></a>
-				{{/if}}
-
-				<div class="text-truncate lh-sm">
-					<strong class="fn p-name">{{$profile.fullname}}{{if $profile.online}}<i class="fa fa-fw fa-asterisk text-danger ps-2" title="{{$profile.online}}"></i>{{/if}}</strong>
+			{{if $connect}}
+			<a href="{{$connect_url}}" class="btn btn-success btn-sm m-2 position-absolute top-0 end-0" rel="nofollow">
+				<i class="fa fa-plus"></i> {{$connect}}
+			</a>
+			{{/if}}
+			<div id="profile-cover-text" class="p-2 position-absolute bottom-0 w-100">
+				<div class="text-truncate h3 mb-0 lh-sm">
+					<strong class="text-white fn p-name">{{$profile.fullname}}{{if $profile.online}}<i class="fa fa-fw fa-circle text-success ps-2" title="{{$profile.online}}"></i>{{/if}}</strong>
 				</div>
 				<div class="text-truncate">
-					<span class="text-muted p-adr">{{$profile.reddress}}</span>
+					<span class="text-white p-adr">{{$profile.reddress}}</span>
 				</div>
-				{{if $connect}}
-				<div class="mt-2">
-					<a href="{{$connect_url}}" class="btn btn-success btn-sm" rel="nofollow">
-						<i class="fa fa-plus"></i> {{$connect}}
-					</a>
-				</div>
-				{{/if}}
 			</div>
+			{{if $editmenu.multi}}
+			<div class="dropdown position-absolute bottom-0 end-0 m-2">
+				<a class="profile-edit-side-link text-white" data-bs-toggle="dropdown" href="#" ><i class="fa fa-pencil" title="{{$editmenu.edit.1}}"></i></a>
+				<div class="dropdown-menu dropdown-menu-end" role="menu">
+					{{foreach $editmenu.menu.entries as $e}}
+					<a href="profiles/{{$e.id}}" class="dropdown-item"><img class="menu-img-1" src='{{$e.photo}}'> {{$e.profile_name}}</a>
+					{{/foreach}}
+					{{if $editmenu.menu.cr_new}}
+					<a href="profiles/new" id="profile-listing-new-link" class="dropdown-item">{{$editmenu.menu.cr_new}}</a>
+					{{/if}}
+				</div>
+			</div>
+			{{elseif $editmenu}}
+			<div class="position-absolute bottom-0 end-0 m-2">
+				<a class="profile-edit-side-link text-white" href="{{$editmenu.edit.0}}" ><i class="fa fa-pencil" title="{{$editmenu.edit.1}}"></i></a>
+			</div>
+			{{/if}}
+		</div>
+		<div class="d-flex">
+			<div id="profile-photo-wrapper" class="bg-body-secondary rounded rounded-end-0 rounded-top-0 overflow-hidden" style="min-width: 5rem; min-height: 5rem;">
+				<img class="u-photo" src="{{$profile.thumb}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}" style="width: 5rem; height: 5rem;">
+			</div>
+			{{if $profile.pdesc}}
+			<div class="m-2 small text-break">{{$profile.pdesc}}</div>
+			{{else}}
+			<div class="m-2 small">
+				<span class="opacity-50">{{$no_pdesc}}</span>
+			</div>
+			{{/if}}
 		</div>
 	</div>
 	{{if $details}}
 	<div class="vcard ps-2 pe-2">
-		{{if $profile.pdesc}}
-		<div class="mb-2">{{$profile.pdesc}}</div>
-		{{/if}}
 		{{if $location}}
 		<dl class="mb-0 pb-1">
 			<dt class="location-label">{{$location}}</dt>

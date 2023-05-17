@@ -30,9 +30,14 @@ class Epubthumb {
 	 */
 	function Thumb($attach, $preview_style, $height = 300, $width = 300) {
 
+		$file = dbunescbin($attach['content']);
+		if (!$file) {
+			return;
+		}
+
 		$photo = false;
 
-		$ep = new \EPub(dbunescbin($attach['content']));
+		$ep = new \EPub($file);
 		$data = $ep->Cover();
 
 		if($data['found']) {

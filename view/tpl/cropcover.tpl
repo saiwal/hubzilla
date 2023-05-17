@@ -15,8 +15,8 @@ var image = document.getElementById('croppa');
 var cropper = new Cropper(image, {
 	aspectRatio: 2.75 / 1,
 	viewMode: 1,
-	preview: '.crop-preview',
-	  crop: function(e) {
+	preview: '#cover-photo-wrapper, .crop-preview',
+	crop: function(e) {
 		$( '#x1' ).val(e.detail.x);
 		$( '#y1' ).val(e.detail.y);
 		$( '#x2' ).val(e.detail.x + e.detail.width);

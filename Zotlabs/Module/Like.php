@@ -451,7 +451,7 @@ class Like extends Controller {
 		}
 		else {
 			$post_type = (($item['resource_type'] === 'photo') ? t('photo') : t('status'));
-			if ($item['obj_type'] === ACTIVITY_OBJ_EVENT)
+			if (in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT]))
 				$post_type = t('event');
 
 			$obj_type = (($item['resource_type'] === 'photo') ? ACTIVITY_OBJ_PHOTO : ACTIVITY_OBJ_NOTE);
@@ -507,7 +507,7 @@ class Like extends Controller {
 			$private = (($public) ? 0 : 1);
 		}
 		else {
-			$arr['parent']     = $item['id'];
+			$arr['parent']     = $item['parent'];
 			$arr['thr_parent'] = $item['mid'];
 			$ulink             = '[zrl=' . $item_author['xchan_url'] . '][bdi]' . $item_author['xchan_name'] . '[/bdi][/zrl]';
 			$alink             = '[zrl=' . $observer['xchan_url'] . '][bdi]' . $observer['xchan_name'] . '[/bdi][/zrl]';
@@ -524,7 +524,7 @@ class Like extends Controller {
 		$arr['uid']          = $owner_uid;
 		$arr['item_flags']   = $item['item_flags'];
 		$arr['item_wall']    = $item['item_wall'];
-		$arr['parent_mid']   = (($extended_like) ? $arr['mid'] : $item['mid']);
+		$arr['parent_mid']   = (($extended_like) ? $arr['mid'] : $item['parent_mid']);
 		$arr['owner_xchan']  = (($extended_like) ? $ch[0]['xchan_hash'] : $thread_owner['xchan_hash']);
 		$arr['author_xchan'] = $observer['xchan_hash'];
 		$arr['body']         = sprintf($bodyverb, $alink, $ulink, $plink);

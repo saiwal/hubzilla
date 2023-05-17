@@ -1583,6 +1583,10 @@ function profile_sidebar($profile, $block = 0, $show_connect = true, $details = 
 	$reddress = true;
 	$connect_url = '';
 	$connect = '';
+	$default_cover = get_config('system', 'default_cover_photo', 'hubzilla');
+	$default_cover_url = z_root() . '/images/default_cover_photos/' . $default_cover . '/425.png';
+
+
 
 	if(! perm_is_allowed($profile['uid'], $observer_hash, 'view_profile')) {
 		$block = true;
@@ -1681,9 +1685,11 @@ function profile_sidebar($profile, $block = 0, $show_connect = true, $details = 
 		'$homepage'      => $homepage,
 		'$chanmenu'      => $channel_menu,
 		'$reddress'      => $reddress,
+		'$no_pdesc'      => t('This channel has not added a profile description yet'),
 		'$contact_block' => $contact_block,
 		'$change_photo'  => t('Change your profile photo'),
-		'$editmenu'      => profile_edit_menu($profile['uid'])
+		'$editmenu'      => profile_edit_menu($profile['uid']),
+		'$cover'         => get_cover_photo($profile['uid'], 'array', PHOTO_RES_COVER_425) ?: ['url' => $default_cover_url]
 	));
 
 	$arr = [
@@ -2404,7 +2410,7 @@ function get_zcard($channel, $observer_hash = '', $args = array()) {
 		$cover = $r[0];
 		$cover['href'] = z_root() . '/photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];
 	} else {
-		$default_cover = get_config('system','default_cover_photo','bggenerator');
+		$default_cover = get_config('system', 'default_cover_photo', 'hubzilla');
 		$cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.png' ];
 	}
 
@@ -2478,7 +2484,7 @@ function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
 		$cover['href'] = z_root() . '/photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];
 	}
 	else {
-		$default_cover = get_config('system','default_cover_photo','bggenerator');
+		$default_cover = get_config('system', 'default_cover_photo', 'hubzilla');
 		$cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.png' ];
 	}
 
@@ -2855,7 +2861,6 @@ function channel_remove($channel_id, $local = true, $unset_session = false) {
 	q("DELETE FROM app WHERE app_channel = %d", intval($channel_id));
 	q("DELETE FROM atoken WHERE atoken_uid = %d", intval($channel_id));
 	q("DELETE FROM chatroom WHERE cr_uid = %d", intval($channel_id));
-	q("DELETE FROM conv WHERE uid = %d", intval($channel_id));
 
 	q("DELETE FROM pgrp WHERE uid = %d", intval($channel_id));
 	q("DELETE FROM pgrp_member WHERE uid = %d", intval($channel_id));

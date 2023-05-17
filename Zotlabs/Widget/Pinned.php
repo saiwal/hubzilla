@@ -67,7 +67,7 @@ class Pinned {
 
 			$conv_responses = [];
 
-			if($item['obj_type'] === ACTIVITY_OBJ_EVENT) {
+			if(in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) {
 				$conv_responses['attendyes'] = [ 'title' => t('Attending','title') ];
 				$conv_responses['attendno'] = [ 'title' => t('Not attending','title') ];
 				$conv_responses['attendmaybe'] = [ 'title' => t('Might attend','title') ];

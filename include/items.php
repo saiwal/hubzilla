@@ -719,12 +719,12 @@ function get_item_elements($x,$allow_code = false) {
 
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
-	$arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
-	$arr['obj']          = activity_sanitise($x['object']);
-	$arr['target']       = activity_sanitise($x['target']);
-	$arr['attach']       = activity_sanitise($x['attach']);
-	$arr['term']         = decode_tags($x['tags']);
-	$arr['iconfig']      = decode_item_meta($x['meta']);
+	$arr['sig']          = ((!empty($x['signature'])) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
+	$arr['obj']          = ((!empty($x['object'])) ? activity_sanitise($x['object']) : '');
+	$arr['target']       = ((!empty($x['target'])) ? activity_sanitise($x['target']) : '');
+	$arr['attach']       = ((!empty($x['attach'])) ? activity_sanitise($x['attach']) : '');
+	$arr['term']         = ((!empty($x['tags'])) ? decode_tags($x['tags']) : '');
+	$arr['iconfig']      = ((!empty($x['meta'])) ? decode_item_meta($x['meta']) : '');
 	$arr['item_flags']   = 0;
 
 	if(array_key_exists('flags',$x)) {
@@ -1539,6 +1539,39 @@ function item_sign(&$item) {
 	$item['item_verified'] = 1;
 }
 
+/**
+ * @brief packs json data for storage.
+ * if it is a string, check if it is already json encoded.
+ * Otherwise, json encode it
+ * If it is an array, sanitise it and  then json_encode it.
+ *
+ * @param array $arr
+ * @param string | intval $k
+ *
+ * @return string | null
+ */
+
+function item_json_encapsulate($arr, $k)  {
+	$retval = null;
+
+	if (isset($arr[$k])) {
+		if (is_string($arr[$k])) {
+			// determine if it is json encoded already
+			$test = json_decode($arr[$k]);
+			// assume it is json encoded already
+			$retval = $arr[$k];
+			if ($test === NULL) {
+				$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+			}
+		}
+		else {
+			activity_sanitise($arr[$k]);
+			$retval = json_encode($arr[$k], JSON_UNESCAPED_SLASHES);
+		}
+	}
+
+	return $retval;
+}
 
 /**
  * @brief Stores an item type record.
@@ -3755,45 +3788,34 @@ function item_expire($uid,$days,$comment_days = 7) {
 
 	$sql_extra = ((intval($expire_network_only)) ? " AND item_wall = 0 " : "");
 
-	$expire_limit = get_config('system','expire_limit');
-	if(! intval($expire_limit))
-		$expire_limit = 5000;
+	$expire_limit = get_config('system','expire_limit', 1000);
 
 	$item_normal = item_normal();
 
-	$r = q("SELECT id FROM item
-		WHERE uid = %d
-		AND created < %s - INTERVAL %s
-		AND commented < %s - INTERVAL %s
-		AND item_retained = 0
-		AND item_thread_top = 1
-		AND resource_type = ''
-		AND item_starred = 0
-		$sql_extra $item_normal LIMIT $expire_limit ",
-		intval($uid),
-		db_utcnow(),
-		db_quoteinterval(intval($days) . ' DAY'),
-		db_utcnow(),
-		db_quoteinterval(intval($comment_days) . ' DAY')
-	);
+	do {
+		$r = q("SELECT id FROM item
+			WHERE uid = %d
+			AND created < %s - INTERVAL %s
+			AND commented < %s - INTERVAL %s
+			AND item_retained = 0
+			AND item_thread_top = 1
+			AND resource_type = ''
+			AND item_starred = 0
+			$sql_extra $item_normal LIMIT $expire_limit",
+			intval($uid),
+			db_utcnow(),
+			db_quoteinterval(intval($days) . ' DAY'),
+			db_utcnow(),
+			db_quoteinterval(intval($comment_days) . ' DAY')
+		);
 
-	if(! $r)
-		return;
-
-	$r = fetch_post_tags($r,true);
-
-	foreach($r as $item) {
-
-		// don't expire filed items
-
-		if (isset($item['term']) && get_terms_oftype($item['term'], TERM_FILE)) {
-			retain_item($item['id']);
-			continue;
+		if ($r) {
+			foreach ($r as $item) {
+				drop_item($item['id'], false);
+			}
 		}
 
-		drop_item($item['id'],false);
-	}
-
+	} while ($r);
 }
 
 function retain_item($id) {

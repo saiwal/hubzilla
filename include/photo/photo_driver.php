@@ -142,7 +142,7 @@ function guess_image_type($filename, $data = '') {
 
 		if(is_null($type) && strpos($filename, 'http') === 0) {
 			$size = getimagesize($filename);
-			if (array_key_exists($size['mime'], $types))
+			if ($size && array_key_exists($size['mime'], $types))
 				$type = $size['mime'];
 		}
 

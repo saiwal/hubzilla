@@ -126,6 +126,7 @@ class ActivityStreams {
 			if ((!$this->parent_id) && is_array($this->obj) && isset($this->obj['inReplyTo'])) {
 				$this->parent_id = $this->obj['inReplyTo'];
 			}
+
 			if ((!$this->parent_id) && is_array($this->obj) && isset($this->obj['id'])) {
 				$this->parent_id = $this->obj['id'];
 			}
@@ -154,7 +155,7 @@ class ActivityStreams {
 	 * @return mixed
 	 */
 	public function objprop(string $property, mixed $default = false): mixed {
-		$x = $this->get_property_obj($property,$this->obj);
+		$x = $this->get_property_obj($property, $this->obj);
 		return (isset($x)) ? $x : $default;
 	}
 

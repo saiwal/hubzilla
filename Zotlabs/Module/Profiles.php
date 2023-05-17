@@ -217,7 +217,6 @@ class Profiles extends \Zotlabs\Web\Controller {
 
 			check_form_security_token_redirectOnErr('/profiles', 'profile_edit');
 
-
 			$is_default = (($orig[0]['is_default']) ? 1 : 0);
 
 			$profile_name = notags(trim($_POST['profile_name']));
@@ -579,12 +578,12 @@ class Profiles extends \Zotlabs\Web\Controller {
 			$channel = \App::get_channel();
 
 			if($namechanged && $is_default) {
-				// change name on all associated xchans by matching the url
-				q("UPDATE xchan SET xchan_name = '%s', xchan_name_date = '%s' WHERE xchan_url = '%s'",
+				q("UPDATE xchan SET xchan_name = '%s', xchan_name_date = '%s' WHERE xchan_hash = '%s'",
 					dbesc($name),
 					dbesc(datetime_convert()),
-					dbesc(z_root() . '/channel/' . $channel['channel_address'])
+					dbesc($channel['xchan_hash'])
 				);
+
 				q("UPDATE channel SET channel_name = '%s' WHERE channel_hash = '%s'",
 					dbesc($name),
 					dbesc($channel['xchan_hash'])
