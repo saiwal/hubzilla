@@ -1,4 +1,4 @@
-Hubzilla 8.4 (2023-05-??)
+Hubzilla 8.4 (2023-05-17)
 	- Slightly rewrite Activity::store() to save a query
 	- Use act->objprop() in decode_note() to get activity values
 	- Make sure to re-discover a channel upon connecting if we have just an xchan but no hubloc
