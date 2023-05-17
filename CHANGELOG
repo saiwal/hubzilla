@@ -1,4 +1,7 @@
-Hubzilla 8.4 (2023-05-??)
+Hubzilla 8.4 (2023-05-17)
+	- Slightly rewrite Activity::store() to save a query
+	- Use act->objprop() in decode_note() to get activity values
+	- Make sure to re-discover a channel upon connecting if we have just an xchan but no hubloc
 	- Updated ES translations
 	- Updated RU translations
 	- Redesigned profile vcard to implement cover images
@@ -15,9 +18,12 @@ Hubzilla 8.4 (2023-05-??)
 	- Remove legacy zot compatibility tweaks
 	- Rewrite and simplify directory sync
 	- Improve potentially long running sql query finding the thread parent
-	- Implement option to override permission for posts with mentions
+	- Implement option to override permissions for posts with mentions
 
 	Bugfixes
+	- Fix parent_mid and thr_parent not set correctly for response activities
+	- Fix query for postgres in attach_list_files()
+	- Fix item_url_replace() failing on arrays
 	- Fix OWA compatibility with friendica
 	- Fix regression in decoding the object type
 	- Fix xss vulnerability in justified gallery library
