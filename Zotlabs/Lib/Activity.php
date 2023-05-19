@@ -1368,7 +1368,7 @@ class Activity {
 
 					foreach ($their_perms as $k => $v) {
 						if(in_array($k, ['send_stream', 'post_wall'])) {
-							$v = 0; // Those will be set once we accept their follow request
+							continue; // Those will be set once we accept their follow request
 						}
 						set_abconfig($channel['channel_id'], $contact['abook_xchan'], 'their_perms', $k, $v);
 					}
