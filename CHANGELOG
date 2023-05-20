@@ -1,3 +1,8 @@
+Hubzilla 8.4.1 (2023-05-20)
+	- Fix issue where accepting AP contacts would reset send stream permission
+	- Fix link to release page in upgrade info addon
+
+
 Hubzilla 8.4 (2023-05-17)
 	- Slightly rewrite Activity::store() to save a query
 	- Use act->objprop() in decode_note() to get activity values
