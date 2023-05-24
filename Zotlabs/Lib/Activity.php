@@ -841,7 +841,7 @@ class Activity {
 		if (isset($i['app']) && $i['app']) {
 			$ret['generator'] = ['type' => 'Application', 'name' => $i['app']];
 		}
-		if (isset($i['location']) || isset($i['coord'])) {
+		if (!empty($i['location']) || !empty($i['coord'])) {
 			$ret['location'] = ['type' => 'Place'];
 			if ($i['location']) {
 				$ret['location']['name'] = $i['location'];
@@ -929,7 +929,6 @@ class Activity {
 		];
 
 		call_hooks('encode_activity', $hookinfo);
-
 		return $hookinfo['encoded'];
 	}
 
@@ -974,10 +973,14 @@ class Activity {
 			$tmp  = expand_acl($i['allow_cid']);
 			$list = stringify_array($tmp, true);
 			if ($list) {
-				$details = q("select hubloc_id_url from hubloc where hubloc_hash in (" . $list . ") and hubloc_id_url != '' and hubloc_deleted = 0");
+				$details = q("select hubloc_id_url, hubloc_hash, hubloc_network from hubloc where hubloc_hash in (" . $list . ") and hubloc_id_url != '' and hubloc_deleted = 0");
 				if ($details) {
 					foreach ($details as $d) {
-						$ret[] = $d['hubloc_id_url'];
+						if ($d['hubloc_network'] === 'activitypub') {
+							$ret[] = $d['hubloc_hash'];
+						} else {
+							$ret[] = $d['hubloc_id_url'];
+						}
 					}
 				}
 			}
