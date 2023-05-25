@@ -1,7 +1,7 @@
 <?php
 /**
  *   * Name: default
- *   * Description: Hubzilla 2-column layout with left adside wrapper based on default template by Mario Vavti
+ *   * Description: Hubzilla 2-column layout with right aside
  *   * Version: 1
  *   * Author: zlax
  *   * Maintainer: zlax
