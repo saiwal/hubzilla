@@ -12,13 +12,13 @@ class Rmagic extends \Zotlabs\Web\Controller {
 
 		$me = get_my_address();
 		if($me) {
-			$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0",
+			$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 				dbesc($me)
 			);
 			if(! $r) {
 				$w = discover_by_webbie($me);
 				if($w) {
-					$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0",
+					$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 						dbesc($me)
 					);
 				}
@@ -57,13 +57,13 @@ class Rmagic extends \Zotlabs\Web\Controller {
 
 			$r = null;
 			if($address) {
-				$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0",
+				$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 					dbesc($address)
 				);
 				if(! $r) {
 					$w = discover_by_webbie($address);
 					if($w) {
-						$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0",
+						$r = q("select hubloc_url, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 							dbesc($address)
 						);
 					}
