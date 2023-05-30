@@ -586,29 +586,23 @@ class Sse_bs extends Controller {
 				$p_str = ids_to_querystr($p, 'parent');
 				$p_sql = (($p_str) ? "OR parent IN ( $p_str )" : '');
 
-				$r = q("select mid from item
+				$r = q("select count(*) as total from item
 					where uid = %d and ( owner_xchan = '%s' OR author_xchan = '%s' $p_sql ) and item_unseen = 1 $sql_extra $item_normal",
 					intval(self::$uid),
 					dbesc($forums[$x]['xchan_hash']),
 					dbesc($forums[$x]['xchan_hash'])
 				);
 
-				if($r) {
-					$mids = flatten_array_recursive($r);
-					$b64mids = [];
-
-					foreach($mids as $mid)
-						$b64mids[] =  gen_link_id($mid);
+				if($r[0]['total']) {
 
 					$forums[$x]['notify_link'] = z_root() . '/network/?f=&pf=1&unseen=1&cid=' . $forums[$x]['abook_id'];
 					$forums[$x]['name'] = $forums[$x]['xchan_name'];
 					$forums[$x]['addr'] = $forums[$x]['xchan_addr'] ?? $forums[$x]['xchan_url'];
 					$forums[$x]['url'] = $forums[$x]['xchan_url'];
 					$forums[$x]['photo'] = $forums[$x]['xchan_photo_s'];
-					$forums[$x]['unseen'] = count($b64mids);
+					$forums[$x]['unseen'] = $r[0]['total'];
 					$forums[$x]['private_forum'] = ((isset($forums[$x]['private_forum']) && $forums[$x]['private_forum']) ? 'lock' : '');
 					$forums[$x]['message'] = ((isset($forums[$x]['private_forum']) && $forums[$x]['private_forum']) ? t('Private forum') : t('Public forum'));
-					$forums[$x]['mids'] = json_encode($b64mids);
 
 					unset($forums[$x]['abook_id']);
 					unset($forums[$x]['xchan_hash']);
@@ -616,7 +610,7 @@ class Sse_bs extends Controller {
 					unset($forums[$x]['xchan_url']);
 					unset($forums[$x]['xchan_photo_s']);
 
-					$i = $i + count($mids);
+					$i = $i + $r[0]['total'];
 
 				}
 				else {
