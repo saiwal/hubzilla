@@ -3909,11 +3909,10 @@ class Activity {
 		}
 
 		if (array_path_exists('source/mediaType', $act) && array_path_exists('source/content', $act)) {
-			if (in_array($act['source']['mediaType'], ['text/bbcode', 'text/x-multicode'])) {
+			if (in_array($act['source']['mediaType'], ['text/bbcode'])) {
 				$content['bbcode'] = purify_html($act['source']['content']);
 			}
 		}
-
 
 		return $content;
 	}
