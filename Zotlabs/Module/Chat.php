@@ -212,7 +212,7 @@ class Chat extends Controller {
 				'$online' => t('I am online'),
 				'$bookmark_link' => $bookmark_link,
 				'$bookmark' => t('Bookmark this room'),
-				'$feature_encrypt' => ((feature_enabled(local_channel(),'content_encrypt')) ? true : false),
+				'$feature_encrypt' => ((feature_enabled(App::$profile['profile_uid'], 'content_encrypt')) ? true : false),
 				'$cipher' => $cipher,
 				'$linkurl' => t('Please enter a link URL:'),
 				'$encrypt' => t('Encrypt text'),

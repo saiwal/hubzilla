@@ -47,6 +47,10 @@ class Owa extends Controller {
 					}
 					if ($r) {
 						foreach ($r as $hubloc) {
+							// fix friendica accept header for nginx
+							if (str_starts_with($keyId, 'acct:') && $_SERVER['HTTP_ACCEPT'] === 'application/x-zot+json')
+								$_SERVER['HTTP_ACCEPT'] = 'application/x-dfrn+json, application/x-zot+json';
+
 							$verified = HTTPSig::verify(file_get_contents('php://input'), $hubloc['xchan_pubkey']);
 							if ($verified && $verified['header_signed'] && $verified['header_valid'] && ($verified['content_valid'] || (! $verified['content_signed']))) {
 								logger('OWA header: ' . print_r($verified,true),LOGGER_DATA);
