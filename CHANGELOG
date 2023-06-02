@@ -1,3 +1,12 @@
+Hubzilla 8.4.2 (2023-06-02)
+	- Fix hubloc confusion in mod rmagic
+	- Improved unseen forums notification
+	- Add workaround for friendica accept header bug for nginx
+	- Fix acl not set correctly in attach_store()
+	- Fix attachment name parsing
+	- Fix display issue in oembed video template
+
+
 Hubzilla 8.4.1 (2023-05-20)
 	- Fix issue where accepting AP contacts would reset send stream permission
 	- Fix link to release page in upgrade info addon
