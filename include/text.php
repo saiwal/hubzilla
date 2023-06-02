@@ -1543,7 +1543,6 @@ function link_compare($a, $b) {
 
 function theme_attachments(&$item) {
 
-
 	$s = '';
 	$arr = json_decode($item['attach'],true);
 
@@ -1557,15 +1556,25 @@ function theme_attachments(&$item) {
 
 			$label = '';
 
-			if(isset($r['title']))
-				$label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
+			if(isset($r['name'])) {
+				$label = urldecode(htmlspecialchars($r['name'], ENT_COMPAT, 'UTF-8'));
+			}
 
-			if(! $label && isset($r['href']))
-				$label = basename($r['href']);
+			if(! $label && isset($r['title'])) {
+				$label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
+			}
+
+			if(!$label && isset($r['href'])) {
+				$m = parse_url($r['href']);
+				if ($m && $m['path']) {
+					$label = basename($m['path']);
+				}
+			}
 
 			//some feeds provide an attachment where title an empty space
-			if(! $label || $label  == ' ')
-				$label = t('Unknown Attachment');
+			if(!trim($label)) {
+				$label = t('Unknown attachment');
+			}
 
 			$title = t('Size') . ' ' . (isset($r['length']) ? userReadableSize($r['length']) : t('unknown'));
 
@@ -1593,7 +1602,6 @@ function theme_attachments(&$item) {
 
 	return $s;
 }
-
 
 function format_categories(&$item,$writeable) {
 	$s = '';
