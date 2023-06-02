@@ -459,6 +459,27 @@ class Activity {
 		$ret['id']            = ((strpos($i['mid'], 'http') === 0) ? $i['mid'] : z_root() . '/item/' . urlencode($i['mid']));
 		$ret['diaspora:guid'] = $i['uuid'];
 
+		$images = [];
+		$has_images = preg_match_all('/\[[zi]mg(.*?)](.*?)\[/ism', $i['body'], $images, PREG_SET_ORDER);
+
+		// provide ocap access token for private media.
+		// set this for descendants even if the current item is not private
+		// because it may have been relayed from a private item.
+
+		$token = get_iconfig($i, 'ocap', 'relay');
+		if ($token && $has_images) {
+			for ($n = 0; $n < count($images); $n++) {
+				$match = $images[$n];
+				if (str_starts_with($match[1], '=http') && str_contains($match[1], z_root() . '/photo/')) {
+					$i['body'] = str_replace($match[1], $match[1] . '?token=' . $token, $i['body']);
+					$images[$n][2] = substr($match[1], 1) . '?token=' . $token;
+				} elseif (str_contains($match[2], z_root() . '/photo/')) {
+					$i['body'] = str_replace($match[2], $match[2] . '?token=' . $token, $i['body']);
+					$images[$n][2] = $match[2] . '?token=' . $token;
+				}
+			}
+		}
+
 		if ($i['title'])
 			$ret['name'] = $i['title'];
 
@@ -627,10 +648,10 @@ class Activity {
 					}
 
 					if (isset($att['type']) && strpos($att['type'], 'image')) {
-						$ret[] = ['type' => 'Image', 'url' => $att['href']];
+						$ret[] = ['type' => 'Image', 'mediaType' => $att['type'], 'name' => $att['title'], 'url' => $att['href']];
 					}
 					else {
-						$ret[] = ['type' => 'Link', 'mediaType' => $att['type'], 'href' => $att['href']];
+						$ret[] = ['type' => 'Link', 'mediaType' => $att['type'], 'name' => $att['title'], 'href' => $att['href']];
 					}
 				}
 			}

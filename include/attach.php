@@ -338,36 +338,46 @@ function attach_by_id($id, $observer_hash) {
 	return $ret;
 }
 
-function attach_can_view($uid,$ob_hash,$resource) {
+function attach_can_view($uid, $ob_hash, $resource, $token = EMPTY_STR) {
 
-	$sql_extra = permissions_sql($uid,$ob_hash);
+	$sql_extra = permissions_sql($uid, $ob_hash, '', $token);
 	$hash = $resource;
 
-	if(! perm_is_allowed($uid,$ob_hash,'view_storage')) {
-		return false;
+	if (!$token) {
+		if(! perm_is_allowed($uid, $ob_hash, 'view_storage')) {
+			return false;
+		}
 	}
 
 	$r = q("select folder from attach where hash = '%s' and uid = %d $sql_extra",
 		dbesc($hash),
 		intval($uid)
 	);
-	if(! $r) {
+
+	if(!$r) {
 		return false;
 	}
 
-	return attach_can_view_folder($uid,$ob_hash,$r[0]['folder']);
+	// don't perform recursive folder check when using OCAP. Only when using ACL access.
+	// For OCAP if the token is valid they can see the thing.
+
+	if ($token) {
+		return true;
+	}
+
+	return attach_can_view_folder($uid, $ob_hash, $r[0]['folder'], $token);
 
 }
 
 
 
-function attach_can_view_folder($uid,$ob_hash,$folder_hash) {
+function attach_can_view_folder($uid, $ob_hash, $folder_hash, $token = EMPTY_STR) {
 
-	$sql_extra = permissions_sql($uid,$ob_hash);
+	$sql_extra = permissions_sql($uid, $ob_hash, '', $token);
 	$hash = $folder_hash;
 
-	if(! $folder_hash) {
-		return perm_is_allowed($uid,$ob_hash,'view_storage');
+	if(!$folder_hash && !$token) {
+		return perm_is_allowed($uid, $ob_hash, 'view_storage');
 	}
 
 
@@ -508,7 +518,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 	$upload_path = $arr['directory'] ?? '';
 	$visible = $arr['visible'] ?? 0;
 	$notify = $arr['notify'] ?? 0;
-
+	$flags = (($arr && array_key_exists('flags', $arr)) ? intval($arr['flags']) : 0);
 	$observer = array();
 
 	$dosync = ((array_key_exists('nosync',$arr) && $arr['nosync']) ? 0 : 1);
@@ -933,8 +943,8 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		);
 	}
 	else {
-		$r = q("INSERT INTO attach ( aid, uid, hash, creator, filename, filetype, folder, filesize, revision, os_storage, is_photo, content, created, edited, os_path, display_path, allow_cid, allow_gid,deny_cid, deny_gid )
-			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
+		$r = q("INSERT INTO attach ( aid, uid, hash, creator, filename, filetype, folder, filesize, revision, os_storage, is_photo, flags, content, created, edited, os_path, display_path, allow_cid, allow_gid,deny_cid, deny_gid )
+			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
 			intval($channel['channel_account_id']),
 			intval($channel_id),
 			dbesc($hash),
@@ -946,6 +956,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 			intval(0),
 			intval(1),
 			intval($is_photo),
+			intval($flags),
 			dbescbin($os_basepath . $os_relpath),
 			dbesc($created),
 			dbesc($created),
@@ -1412,6 +1423,23 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
 
 	if(! $r)
 		return;
+
+	$private = $allow_cid || $allow_gid || $deny_cid || $deny_gid;
+
+	// preserve any existing tokens that may have been set for this file
+	// @fixme - we need a way to unconditionally clear these if desired.
+
+	if ($private) {
+		$token_matches = null;
+		if (preg_match_all('/\<token:(.*?)\>/', $r[0]['allow_cid'], $token_matches, PREG_SET_ORDER)) {
+			foreach ($token_matches as $m) {
+				$tok = '<token:' . $m[1] . '>';
+				if (!str_contains($allow_cid, $tok)) {
+					$allow_cid .= $tok;
+				}
+			}
+		}
+	}
 
 	if(intval($r[0]['is_dir'])) {
 		if($recurse) {

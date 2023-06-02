@@ -330,7 +330,7 @@ function change_channel($change_channel) {
  * @return string additional SQL where statement
  */
 
-function permissions_sql($owner_id, $remote_observer = null, $table = '') {
+function permissions_sql($owner_id, $remote_observer = null, $table = '', $token = EMPTY_STR) {
 
 	$local_channel = local_channel();
 
@@ -412,6 +412,16 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '') {
 				dbesc($gs)
 			);
 		}
+
+		/*
+		 * OCAP token access
+		 */
+
+		elseif ($token) {
+			$sql = " AND ( {$table}allow_cid like '" . protect_sprintf('%<token:' . $token . '>%') .
+			"' OR ( {$table}allow_cid = '' AND {$table}allow_gid = '' AND {$table}deny_cid = '' AND {$table}deny_gid = '' ) )";
+		}
+
 	}
 
 	return $sql;

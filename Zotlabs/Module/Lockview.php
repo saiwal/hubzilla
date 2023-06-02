@@ -15,6 +15,7 @@ class Lockview extends Controller {
 		$atoken_xchans     = [];
 		$access_list       = [];
 		$guest_access_list = [];
+		$ocap_access_list  = [];
 
 		if (local_channel()) {
 			$at = q("select * from atoken where atoken_uid = %d",
@@ -166,6 +167,24 @@ class Lockview extends Controller {
 					}
 				}
 			}
+			$ocap_tokens = [];
+			foreach ($allowed_users as $allowed_user) {
+				$allowed_user = trim($allowed_user, '\'');
+				if (str_starts_with($allowed_user, 'token:')) {
+					$ocap_tokens[] = str_replace('token:', '', $allowed_user);
+				}
+			}
+
+			if ($ocap_tokens) {
+				stringify_array_elms($ocap_tokens, true);
+				$ocap_mids = dbq("select id, mid from item where id in (select iid from iconfig where cat = 'ocap' and k = 'relay' and v in (" . implode(', ', $ocap_tokens) . "))");
+
+				foreach ($ocap_mids as $ocap) {
+					$ocap_access_list[] = '<a href="' . $ocap['mid'] . '" class="dropdown-item-text" target="_blank">' . t('Item') . ' ' . $ocap['id'] . '</a>';
+				}
+
+			}
+
 		}
 
 		$profile_groups = [];
@@ -205,9 +224,6 @@ class Lockview extends Controller {
 		}
 
 		if ($atokens && $allowed_xchans && $url) {
-
-			$guest_access_list = [];
-
 			$allowed_xchans = array_unique($allowed_xchans);
 			foreach ($atokens as $atoken) {
 				if (in_array($atoken['xchan_hash'], $allowed_xchans)) {
@@ -216,22 +232,25 @@ class Lockview extends Controller {
 			}
 		}
 
-		$access_list_header = '';
+		$access_list_header = '<div class="dropdown-header text-uppercase h6">' . t('Access') . '</div>';
+		$guest_access_list_header = '<div class="dropdown-header text-uppercase h6">' . t('Guest access') . '</div>';
+		$ocap_access_list_header = '<div class="dropdown-header text-uppercase h6">' . t('OCAP access') . '</div>';
+		$divider = '<div class="dropdown-divider"></div>';
+		$str = '';
+
 		if ($access_list) {
-			$access_list_header = '<div class="dropdown-header text-uppercase h6">' . t('Access') . '</div>';
+			$str .= $access_list_header . implode($access_list);
 		}
 
-		$guest_access_list_header = '';
 		if ($guest_access_list) {
-			$guest_access_list_header = '<div class="dropdown-header text-uppercase h6">' . t('Guest access') . '</div>';
+			$str .= $divider . $guest_access_list_header . implode($guest_access_list);
 		}
 
-		$divider = '';
-		if ($access_list && $guest_access_list) {
-				$divider = '<div class="dropdown-divider"></div>';
+		if ($ocap_access_list) {
+			$str .= $divider . $ocap_access_list_header . implode($ocap_access_list);
 		}
 
-		echo $access_list_header . implode($access_list) . $divider . $guest_access_list_header . implode($guest_access_list);
+		echo $str;
 		killme();
 
 	}

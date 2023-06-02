@@ -5009,6 +5009,136 @@ function fix_attached_file_permissions($channel,$observer_hash,$body,
 	}
 }
 
+function list_attached_local_files($body) {
+
+	$files = [];
+	$match = [];
+
+	// match img and zmg image links
+	if (preg_match_all("/\[[zi]mg(.*?)](.*?)\[\/[zi]mg]/", $body, $match)) {
+		$images = array_merge($match[1], $match[2]);
+		if ($images) {
+			foreach ($images as $image) {
+				if (!stristr($image, z_root() . '/photo/')) {
+					continue;
+				}
+				$image_uri = substr($image,strrpos($image,'/') + 1);
+				if (str_contains($image_uri, '-')) {
+					$image_uri = substr($image_uri,0, strrpos($image_uri,'-'));
+				}
+				if (str_contains($image_uri, '.')) {
+					$image_uri = substr($image_uri,0, strpos($image_uri,'.'));
+				}
+				if ($image_uri && !in_array($image_uri, $files)) {
+					$files[] = $image_uri;
+				}
+			}
+		}
+	}
+	if (preg_match_all("/\[attachment](.*?)\[\/attachment]/",$body,$match)) {
+		$attaches = $match[1];
+		if ($attaches) {
+			foreach ($attaches as $attach) {
+				$hash = substr($attach,0,strpos($attach,','));
+				if ($hash && !in_array($hash, $files)) {
+					$files[] = $hash;
+				}
+			}
+		}
+	}
+
+	return $files;
+}
+
+function fix_attached_permissions($uid, $body, $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny, $token = EMPTY_STR) {
+
+	$files = list_attached_local_files($body);
+
+	if (! $files) {
+		return;
+	}
+
+	foreach ($files as $file) {
+		$attach_q = q("select id, hash, flags, is_photo, allow_cid, allow_gid, deny_cid, deny_gid from attach where hash = '%s' and uid = %d",
+			dbesc($file),
+			intval($uid)
+		);
+
+		if (! $attach_q) {
+			continue;
+		}
+
+		$attach = array_shift($attach_q);
+
+		$new_public = !(($str_contact_allow || $str_group_allow || $str_contact_deny || $str_group_deny));
+		$existing_public = !(($attach['allow_cid'] || $attach['allow_gid'] || $attach['deny_cid'] || $attach['deny_gid']));
+
+		if ($existing_public) {
+			// permissions have already been fixed and they are public. There's nothing for us to do.
+			continue;
+		}
+
+		// if flags & 1, the attachment was uploaded directly into a post and needs to have permissions corrected
+		// or - if it is a private file and a new token was generated, we'll need to add the token to the ACL.
+
+		if (((intval($attach['flags']) & 1) !== 1) && (! $token)) {
+			continue;
+		}
+
+		$item_private = 0;
+
+		if ($new_public === false) {
+			$item_private = (($str_group_allow || ($str_contact_allow && substr_count($str_contact_allow,'<') > 2)) ? 1 : 2);
+
+			// preserve any existing tokens that may have been set for this file
+			$token_matches = null;
+			if (preg_match_all('/<token:(.*?)>/',$attach['allow_cid'],$token_matches, PREG_SET_ORDER)) {
+				foreach ($token_matches as $m) {
+					$tok = '<token:' . $m[1] . '>';
+					if (!str_contains($str_contact_allow, $tok)) {
+						$str_contact_allow .= $tok;
+					}
+				}
+			}
+			if ($token && !str_contains($str_contact_allow, $token)) {
+				$str_contact_allow .= '<token:' . $token . '>';
+			}
+		}
+
+		q("update attach SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', flags = 0
+			WHERE id = %d AND uid = %d",
+			dbesc($str_contact_allow),
+			dbesc($str_group_allow),
+			dbesc($str_contact_deny),
+			dbesc($str_group_deny),
+			intval($attach['id']),
+			intval($uid)
+		);
+
+		if ($attach['is_photo']) {
+			$r = q("UPDATE photo SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
+				WHERE resource_id = '%s' AND uid = %d ",
+				dbesc($str_contact_allow),
+				dbesc($str_group_allow),
+				dbesc($str_contact_deny),
+				dbesc($str_group_deny),
+				dbesc($file),
+				intval($uid)
+			);
+
+			$r = q("UPDATE item SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', item_private = %d
+				WHERE resource_id = '%s' AND 'resource_type' = 'photo'  AND uid = %d",
+				dbesc($str_contact_allow),
+				dbesc($str_group_allow),
+				dbesc($str_contact_deny),
+				dbesc($str_group_deny),
+				intval($item_private),
+				dbesc($file),
+				intval($uid)
+			);
+		}
+	}
+}
 
 function item_create_edit_activity($post) {
 
