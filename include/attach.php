@@ -974,7 +974,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		$args = array( 'source' => $source, 'visible' => $visible, 'resource_id' => $hash, 'album' => $pathname, 'os_syspath' => $os_basepath . $os_relpath, 'os_path' => $os_path, 'display_path' => $display_path, 'filename' => $filename, 'getimagesize' => $gis, 'directory' => $direct, 'options' => $options );
 		if (array_key_exists('contact_allow', $arr))
 			$args['contact_allow'] = $arr['contact_allow'];
-		if (array_key_exists('contact_deny', $arr))
+		if (array_key_exists('group_allow', $arr))
 			$args['group_allow'] = $arr['group_allow'];
 		if (array_key_exists('contact_deny', $arr))
 			$args['contact_deny'] = $arr['contact_deny'];
