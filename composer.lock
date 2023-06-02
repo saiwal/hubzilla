@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3bb482c195c6645e16e005862dbf09d2",
+    "content-hash": "8a674d97a7a0bca4e94bc825ed4840b9",
     "packages": [
         {
             "name": "blueimp/jquery-file-upload",
@@ -1949,16 +1949,16 @@
         },
         {
             "name": "twbs/bootstrap",
-            "version": "v5.3.0-alpha3",
+            "version": "v5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "ac576614a5515e429f27e756fad81d5aa05e95a6"
+                "reference": "60098ac499d30aa50575b0b7137391c06ef25429"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/ac576614a5515e429f27e756fad81d5aa05e95a6",
-                "reference": "ac576614a5515e429f27e756fad81d5aa05e95a6",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/60098ac499d30aa50575b0b7137391c06ef25429",
+                "reference": "60098ac499d30aa50575b0b7137391c06ef25429",
                 "shasum": ""
             },
             "replace": {
@@ -1993,9 +1993,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twbs/bootstrap/issues",
-                "source": "https://github.com/twbs/bootstrap/tree/v5.3.0-alpha3"
+                "source": "https://github.com/twbs/bootstrap/tree/v5.3.0"
             },
-            "time": "2023-04-03T07:26:50+00:00"
+            "time": "2023-05-30T15:15:55+00:00"
         },
         {
             "name": "voku/portable-ascii",
@@ -7385,7 +7385,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "twbs/bootstrap": 15,
         "behat/behat": 0,
         "behat/mink-extension": 0,
         "behat/mink-goutte-driver": 0
