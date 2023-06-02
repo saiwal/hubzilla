@@ -6,6 +6,8 @@ Hubzilla 8.4.2 (2023-06-02)
 	- Fix acl not set correctly in attach_store()
 	- Fix attachment name parsing
 	- Fix display issue in oembed video template
+	- content_import: fix crash in post handler
+	- pubcrawl: move addressing to separate function
 
 
 Hubzilla 8.4.1 (2023-05-20)
