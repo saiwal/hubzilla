@@ -129,7 +129,7 @@ class Privacy {
 			'$index_opt_out' => ['index_opt_out', t('Opt-out of search engine indexing'), $index_opt_out, '', [t('No'), t('Yes')]],
 			'$group_actor' => ['group_actor', t('Group actor'), $group_actor, t('Allow this channel to act as a forum'), [t('No'), t('Yes')]],
 			'$permit_all_mentions' => ['permit_all_mentions', t('Accept all messages which mention you'), $permit_all_mentions, t('This setting bypasses normal permissions'), [t('No'), t('Yes')]],
-			'$ocap_enabled' => ['ocap_enabled', t('Enable OCAP access'), $ocap_enabled, t('Allow limited posts access to linked private media'), [t('No'), t('Yes')]],
+			'$ocap_enabled' => ['ocap_enabled', t('Enable OCAP access'), $ocap_enabled, t('Grant access to linked private media in access limited posts'), [t('No'), t('Yes')]],
 		]);
 
 		return $o;
