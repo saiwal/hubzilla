@@ -55,6 +55,9 @@ class Queue {
 				foreach ($qItems as $qItem) {
 					$deliveries[] = $qItem['outq_hash'];
 				}
+				shuffle($deliveries);
+				hz_syslog(print_r($deliveries, true));
+
 				do_delivery($deliveries, true);
 			}
 		 }
