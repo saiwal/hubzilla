@@ -152,7 +152,7 @@ function poco_load($xchan = '', $url = null) {
 
 		// We've never seen this person before. Import them.
 
-		if(($x !== false) && (! count($x))) {
+		if(!$x) {
 			if($address) {
 				if($network === 'zot6') {
 					$j = Zotfinger::exec($profile_url);
@@ -173,7 +173,6 @@ function poco_load($xchan = '', $url = null) {
 		}
 
 		$total ++;
-
 
 		$r = q("select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 0 limit 1",
 			dbesc($xchan),
@@ -431,7 +430,7 @@ function poco() {
 			intval($startIndex)
 		);
 	} else {
-		$r = q("SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d
+		$r = q("SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and xchan_deleted = 0
 			$sql_extra LIMIT %d OFFSET %d",
 			intval($channel_id),
 			intval($itemsPerPage),
