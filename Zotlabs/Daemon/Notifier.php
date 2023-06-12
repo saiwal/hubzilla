@@ -409,7 +409,7 @@ class Notifier {
 				self::$private    = false;
 				self::$recipients = collect_recipients($parent_item, self::$private);
 
-				if ($top_level_post) {
+				if ($top_level_post && intval($target_item['item_wall'])) {
 					// remove clones who will receive the post via sync
 					self::$recipients = array_values(array_diff(self::$recipients, [$target_item['owner_xchan']]));
 				}

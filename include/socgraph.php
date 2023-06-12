@@ -112,12 +112,8 @@ function poco_load($xchan = '', $url = null) {
 		$profile_url = '';
 		$profile_photo = '';
 		$address = '';
-		$name = '';
-		$hash = '';
-		$rating = 0;
-
-		$name   = $entry['displayName'];
-		$hash   = $entry['hash'];
+		$name   = $entry['displayName'] ?? '';
+		$hash   = $entry['hash'] ?? '';
 
 		if(x($entry,'urls') && is_array($entry['urls'])) {
 			foreach($entry['urls'] as $url) {
