@@ -468,14 +468,17 @@ class Activity {
 
 		$token = get_iconfig($i, 'ocap', 'relay');
 		if ($token && $has_images) {
+			$matches_processed = [];
 			for ($n = 0; $n < count($images); $n++) {
 				$match = $images[$n];
-				if (str_starts_with($match[1], '=http') && str_contains($match[1], z_root() . '/photo/')) {
+				if (str_starts_with($match[1], '=http') && str_contains($match[1], z_root() . '/photo/') && !in_array($match[1], $matches_processed)) {
 					$i['body'] = str_replace($match[1], $match[1] . '?token=' . $token, $i['body']);
 					$images[$n][2] = substr($match[1], 1) . '?token=' . $token;
-				} elseif (str_contains($match[2], z_root() . '/photo/')) {
+					$matches_processed[] = $match[1];
+				} elseif (str_contains($match[2], z_root() . '/photo/') && !in_array($match[2], $matches_processed)) {
 					$i['body'] = str_replace($match[2], $match[2] . '?token=' . $token, $i['body']);
 					$images[$n][2] = $match[2] . '?token=' . $token;
+					$matches_processed[] = $match[2];
 				}
 			}
 		}
