@@ -50,6 +50,25 @@ class Activity {
 
 	}
 
+	public static function fetch_local($url, $portable_id) {
+		$sql_extra = item_permissions_sql(0, $portable_id);
+		$item_normal = item_normal();
+
+		// Find the original object
+		$j = q(
+			"select *, id as item_id from item where mid = '%s' and item_wall = 1 $item_normal $sql_extra",
+			dbesc($url)
+		);
+		if ($j) {
+			xchan_query($j, true);
+			$items = fetch_post_tags($j);
+		}
+		if ($items) {
+			return self::encode_item(array_shift($items), true);
+		}
+		return false;
+	}
+
 	static function fetch($url, $channel = null) {
 		$redirects = 0;
 		if (!check_siteallowed($url)) {
@@ -2962,7 +2981,6 @@ class Activity {
 				}*/
 			}
 			else {
-
 				$allowed = true;
 
 				// reject public stream comments that weren't sent by the conversation owner
@@ -3180,7 +3198,6 @@ class Activity {
 
 		// TODO: not implemented
 		// self::rewrite_mentions($item);
-
 		$r = q("select id, created, edited from item where mid = '%s' and uid = %d limit 1",
 			dbesc($item['mid']),
 			intval($item['uid'])

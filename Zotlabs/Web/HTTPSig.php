@@ -4,7 +4,7 @@ namespace Zotlabs\Web;
 
 use DateTime;
 use DateTimeZone;
-use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Crypto;
 use Zotlabs\Lib\Keyutils;
 use Zotlabs\Lib\Webfinger;
@@ -324,7 +324,7 @@ class HTTPSig {
 		}
 
 		// The record wasn't in cache. Fetch it now.
-		$r = ActivityStreams::fetch($id);
+		$r = Activity::fetch($id);
 		$signatureAlgorithm = EMPTY_STR;
 
 		if ($r) {
