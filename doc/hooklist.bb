@@ -443,7 +443,7 @@ Hooks allow plugins/addons to "hook into" the code at many points and alter the 
 	Called when a magic-auth was successful
 
 [zrl=[baseurl]/help/hook/main_slider]main_slider[/zrl]
-	Called whne generating the affinity tool
+	Called when generating the affinity tool
 
 [zrl=[baseurl]/help/hook/marital_selector]marital_selector[/zrl]
 	Called when generating the list of choices for the 'marital status' profile dropdown (advanced profile)

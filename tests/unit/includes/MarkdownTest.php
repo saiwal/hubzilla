@@ -62,9 +62,9 @@ class MarkdownTest extends UnitTestCase {
 						'text1 <b></b> text2 <i></i>',
 						'text1  text2'
 				],
-				'HTML entities, lt does not work' => [
+				'HTML entities' => [
 						'& gt > lt <',
-						'&amp; gt &gt; lt'
+						'&amp; gt &gt; lt &lt;'
 				],
 				'escaped HTML entities' => [
 						'&amp; lt &lt; gt &gt;',
