@@ -306,10 +306,13 @@ class ActivityStreams {
 	 */
 
 	function fetch_property($url, $channel = null) {
+		$x = null;
+
 		if (str_starts_with($url, z_root() . '/item/')) {
 			$x = Activity::fetch_local($url, $this->portable_id ?? '');
 			logger('local: ' . print_r($x,true));
 		}
+
 		if (!$x) {
 			$x = Activity::fetch($url, $channel);
 			if ($x === null && strpos($url, '/channel/')) {
@@ -320,6 +323,7 @@ class ActivityStreams {
 				$x = Activity::fetch($url, $channel);
 			}
 		}
+
 		return $x;
 	}
 

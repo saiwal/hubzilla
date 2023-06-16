@@ -66,7 +66,7 @@ class Activity {
 		if ($items) {
 			return self::encode_item(array_shift($items), true);
 		}
-		return false;
+		return null;
 	}
 
 	static function fetch($url, $channel = null) {
