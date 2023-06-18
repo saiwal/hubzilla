@@ -1054,14 +1054,17 @@ class Activity {
 
 	static function encode_person($p, $extended = true) {
 
-		if (!$p['xchan_url'])
-			return [];
+		$id = ((filter_var($p['xchan_hash'], FILTER_VALIDATE_URL)) ? $p['xchan_hash'] : $p['xchan_url']);
 
 		if (!$extended) {
-			return $p['xchan_url'];
+			return $id;
 		}
 
 		$ret = [];
+
+		if (!$id) {
+			return $ret;
+		}
 
 		$c = ((array_key_exists('channel_id', $p)) ? $p : channelx_by_hash($p['xchan_hash']));
 
@@ -1079,7 +1082,7 @@ class Activity {
 			$ret['id'] = channel_url($c);
 		}
 		else {
-			$ret['id'] = ((strpos($p['xchan_hash'], 'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
+			$ret['id'] = $id;
 		}
 
 		if ($p['xchan_addr'] && strpos($p['xchan_addr'], '@'))
