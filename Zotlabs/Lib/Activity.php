@@ -70,6 +70,7 @@ class Activity {
 	}
 
 	static function fetch($url, $channel = null) {
+
 		$redirects = 0;
 		if (!check_siteallowed($url)) {
 			logger('blacklisted: ' . $url);
