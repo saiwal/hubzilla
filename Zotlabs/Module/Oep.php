@@ -28,7 +28,6 @@ class Oep extends \Zotlabs\Web\Controller {
 		$format = $_REQUEST['format'] ?? '';
 		if($format && $format !== 'json')
 			http_status_exit(501, 'Not implemented');
-
 		if(fnmatch('*/photos/*/album/*',$url))
 			$arr = $this->oep_album_reply($_REQUEST);
 		elseif(fnmatch('*/photos/*/image/*',$url))
@@ -95,12 +94,12 @@ class Oep extends \Zotlabs\Web\Controller {
 
 		$c = channelx_by_n($p[0]['uid']);
 
-
 		if(! ($c && $res))
 			return;
 
-		if(! perm_is_allowed($c[0]['channel_id'],get_observer_hash(),'view_stream'))
+		if(! perm_is_allowed($c['channel_id'], get_observer_hash(), 'view_stream')) {
 			return;
+		}
 
 		$sql_extra = item_permissions_sql($c['channel_id']);
 
@@ -336,32 +335,51 @@ class Oep extends \Zotlabs\Web\Controller {
 		$maxwidth  = ((isset($args['maxwidth'])) ? $args['maxwidth']  : 0);
 		$maxheight = ((isset($args['maxheight'])) ? $args['maxheight']  : 0);
 
-		if(preg_match('#//(.*?)/(.*?)/(.*?)/(.*?)mid\=(.*?)(&|$)#',$url,$matches)) {
-			$chn = $matches[3];
-			$res = $matches[5];
+		$parsed = parse_url($url);
+		if (empty($parsed['path'])) {
+			return;
 		}
 
-		if(! ($chn && $res))
+		$nick = basename($parsed['path']);
+		if (!$nick) {
 			return;
+		}
 
-		$c = q("select * from channel where channel_address = '%s' limit 1",
-			dbesc($chn)
+		if (empty($parsed['query'])) {
+			return;
+		}
+
+		parse_str($parsed['query'], $query);
+
+		if (empty($query['mid'])) {
+			return;
+		}
+
+		$mid = unpack_link_id($query['mid']);
+		if (!$mid) {
+			return;
+		}
+
+		$c = channelx_by_nick($nick);
+		if(! $c) {
+			return;
+		}
+
+		if(! perm_is_allowed($c['channel_id'], get_observer_hash(), 'view_stream')) {
+			return;
+		}
+
+		$sql_extra = item_permissions_sql($c['channel_id']);
+		$item_normal = item_normal();
+
+		$p = q("select * from item where mid = '%s' and uid = %d $sql_extra $item_normal limit 1",
+			dbesc($mid),
+			intval($c['channel_id'])
 		);
 
-		if(! $c)
+		if(! $p) {
 			return;
-
-		if(! perm_is_allowed($c[0]['channel_id'],get_observer_hash(),'view_stream'))
-			return;
-
-		$sql_extra = item_permissions_sql($c[0]['channel_id']);
-
-		$p = q("select * from item where mid = '%s' and uid = %d $sql_extra limit 1",
-	  		dbesc($res),
-			intval($c[0]['channel_id'])
-		);
-		if(! $p)
-			return;
+		}
 
 		xchan_query($p,true);
 		$p = fetch_post_tags($p,true);
