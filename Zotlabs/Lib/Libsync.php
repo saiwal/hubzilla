@@ -328,7 +328,7 @@ class Libsync {
 				$remote_channel               = $arr['channel'];
 				$remote_channel['channel_id'] = $channel['channel_id'];
 
-				if (array_key_exists('channel_pageflags', $arr['channel']) && intval($arr['channel']['channel_pageflags'])) {
+				if (array_key_exists('channel_pageflags', $arr['channel'])) {
 
 					// Several pageflags are site-specific and cannot be sync'd.
 					// Only allow those bits which are shareable from the remote and then
