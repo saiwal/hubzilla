@@ -1797,7 +1797,7 @@ msgstr "Insertar enlace web"
 
 #: ../../addon/hsse/hsse.php:99 ../../include/conversation.php:1352
 msgid "Embed (existing) photo from your photo albums"
-msgstr "Insertar una foto de sus álbumes"
+msgstr "Insertar una foto (existente) de sus álbumes"
 
 #: ../../addon/hsse/hsse.php:134 ../../include/conversation.php:1385
 #: ../../Zotlabs/Module/Chat.php:217
