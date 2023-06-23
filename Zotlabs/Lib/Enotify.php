@@ -158,10 +158,10 @@ class Enotify {
 				}
 
 				if(activity_match($params['verb'], ACTIVITY_LIKE))
-					$action = t('liked');
+					$action = (($moderated) ? t('requests to like') : t('liked'));
 
 				if(activity_match($params['verb'], ACTIVITY_DISLIKE))
-					$action = t('disliked');
+					$action = (($moderated) ? t('requests to dislike') : t('disliked'));
 
 			}
 
@@ -307,7 +307,14 @@ class Enotify {
 
 		$parent_item = $p[0];
 
-		$verb = ((activity_match($params['item']['verb'], ACTIVITY_DISLIKE)) ? t('disliked') : t('liked'));
+		//$verb = ((activity_match($params['item']['verb'], ACTIVITY_DISLIKE)) ? t('disliked') : t('liked'));
+		$moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
+
+		if(activity_match($params['item']['verb'], ACTIVITY_LIKE))
+			$verb = (($moderated) ? t('requests to like') : t('liked'));
+
+		if(activity_match($params['item']['verb'], ACTIVITY_DISLIKE))
+			$verb = (($moderated) ? t('requests to dislike') : t('disliked'));
 
 		// "your post"
 		if($p[0]['owner']['xchan_name'] === $p[0]['author']['xchan_name'] && intval($p[0]['item_wall']))

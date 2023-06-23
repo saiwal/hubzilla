@@ -1591,10 +1591,17 @@ class Activity {
 		}
 
 		if (in_array($observer, [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
-			drop_item($r[0]['id'], false);
+			drop_item($r[0]['id'], false, (($r[0]['item_wall']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
 		} elseif (in_array($act->actor['id'], [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
-			drop_item($r[0]['id'], false);
+			drop_item($r[0]['id'], false, (($r[0]['item_wall']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
 		}
+
+		sync_an_item($channel['channel_id'], $r[0]['id']);
+
+		if ($r[0]['item_wall']) {
+			Master::Summon(['Notifier', 'drop', $r[0]['id']]);
+		}
+
 	}
 
 
@@ -2970,7 +2977,6 @@ class Activity {
 				}*/
 
 				if (!$allowed) {
-
 					if (get_pconfig($channel['channel_id'], 'system', 'moderate_unsolicited_comments')) {
 						$item['item_blocked'] = intval(ITEM_MODERATED);
 						$allowed = true;

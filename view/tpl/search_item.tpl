@@ -107,6 +107,10 @@
 							<div class="spinner s"></div>
 						</div>
 					</div>
+					{{if $item.mode === 'moderate'}}
+					<a href="moderate/{{$item.id}}/approve" class="btn btn-outline-success btn-sm">{{$item.approve}}</a>
+					<a href="moderate/{{$item.id}}/drop" class="btn btn-outline-danger btn-sm">{{$item.delete}}</a>
+					{{else}}
 					{{if $item.star || $item.thread_action_menu || $item.drop.dropping}}
 					<div class="btn-group">
 						<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
@@ -127,6 +131,7 @@
 						</div>
 					</div>
 					{{/if}}
+					{{/if}}
 				</div>
 				{{if $item.star && $item.star.isstarred}}
 				<div class="btn-group" id="star-button-{{$item.id}}">
@@ -139,14 +144,6 @@
 					<div class="dropdown-menu">{{$item.attachments}}</div>
 				</div>
 				{{/if}}
-
-				<div class="wall-item-tools-left btn-group" id="wall-item-tools-left-{{$item.id}}">
-					{{if $item.mode === 'moderate'}}
-					<a href="moderate/{{$item.id}}/approve" class="btn btn-success btn-sm">{{$item.approve}}</a>
-					<a href="moderate/{{$item.id}}/drop" class="btn btn-danger btn-sm">{{$item.delete}}</a>
-					{{/if}}
-				</div>
-
 			</div>
 		</div>
 		{{if $item.conv}}

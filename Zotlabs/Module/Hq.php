@@ -67,9 +67,10 @@ class Hq extends \Zotlabs\Web\Controller {
 				}
 			}
 
-			//if the item is to be moderated redirect to /moderate
-			if($target_item['item_blocked'] == ITEM_MODERATED) {
-			//	goaway(z_root() . '/moderate/' . $target_item['id']);
+			// if the item is to be moderated redirect to /moderate
+			// comments can be moderated inline
+			if(intval($target_item['item_blocked']) === ITEM_MODERATED && in_array($target_item['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE, ACTIVITY_ATTEND, ACTIVITY_ATTENDMAYBE, ACTIVITY_ATTENDNO])) {
+				goaway(z_root() . '/moderate/' . $target_item['id']);
 			}
 
 			$simple_update = '';
