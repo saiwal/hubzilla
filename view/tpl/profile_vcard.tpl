@@ -48,10 +48,10 @@
 			{{/if}}
 		</div>
 	</div>
-	{{if $details}}
-	<div class="vcard ps-2 pe-2">
+	{{if $details && ($location || $hometown || $gender || $marital || $homepage)}}
+	<div class="vcard rounded ps-2 pe-2">
 		{{if $location}}
-		<dl class="mb-0 pb-1">
+		<dl class="mb-0 pb-1 rounded">
 			<dt class="location-label">{{$location}}</dt>
 			<dd class="adr h-adr">
 				{{if $profile.address}}
@@ -71,30 +71,30 @@
 		</dl>
 		{{/if}}
 		{{if $hometown}}
-		<dl class="mb-0 pb-1">
+		<dl class="mb-0 pb-1 rounded">
 			<dt class="hometown-label">{{$hometown}}</dt>
 			<dd class="p-hometown">{{$profile.hometown}}</dd>
 		</dl>
 		{{/if}}
 		{{if $gender}}
-		<dl class="mb-0 pb-1">
+		<dl class="mb-0 pb-1 rounded">
 			<dt class="gender-label">{{$gender}}</dt>
 			<dd class="p-gender">{{if $profile.gender_icon}}<i class="fa fa-{{$profile.gender_icon}}"></i>&nbsp;{{/if}}{{$profile.gender}}</dd>
 		</dl>
 		{{/if}}
 		{{if $marital}}
-		<dl class="mb-0 pb-1">
+		<dl class="mb-0 pb-1 rounded">
 			<dt class="marital-label"><span class="heart"><i class="fa fa-heart"></i>&nbsp;</span>{{$marital}}</dt>
 			<dd class="marital-text">{{$profile.marital}}</dd>
 		</dl>
 		{{/if}}
 		{{if $homepage}}
-		<dl class="mb-0 pb-1">
+		<dl class="mb-0 pb-1 rounded">
 			<dt class="homepage-label">{{$homepage}}</dt>
 			<dd class="homepage-url u-url">{{$profile.homepage}}</dd>
 		</dl>
 		{{/if}}
-		<div class="hcard-addon"></div>
+		<div class="hcard-addon rounded"></div>
 	</div>
 	{{/if}}
 </div>

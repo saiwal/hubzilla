@@ -2970,13 +2970,23 @@ class Activity {
 				}*/
 
 				if (!$allowed) {
-					logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
-					logger('rejected: ' . print_r($item, true), LOGGER_DATA);
 
-					// TODO: not implemented
-					// let the sender know we received their comment but we don't permit spam here.
-					// self::send_rejection_activity($channel,$item['author_xchan'],$item);
-					return;
+					if (get_pconfig($channel['channel_id'], 'system', 'moderate_unsolicited_comments')) {
+						$item['item_blocked'] = intval(ITEM_MODERATED);
+						$allowed = true;
+					}
+					else {
+						hz_syslog('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
+						logger('rejected: ' . print_r($item, true), LOGGER_DATA);
+
+						// TODO: not implemented
+						// let the sender know we received their comment but we don't permit spam here.
+						// self::send_rejection_activity($channel,$item['author_xchan'],$item);
+
+						return;
+					}
+
+
 				}
 
 				// TODO: not implemented

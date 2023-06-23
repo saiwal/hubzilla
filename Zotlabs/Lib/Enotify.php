@@ -145,7 +145,7 @@ class Enotify {
 
 		$itemlink = $params['link'];
 
-		$action = t('commented on');
+		$action = (($moderated) ? t('requests to comment on') : t('commented on'));
 
 		if(array_key_exists('item',$params)) {
 

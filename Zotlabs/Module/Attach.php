@@ -95,7 +95,7 @@ class Attach extends Controller {
 			killme();
 		}
 
-		$r = attach_by_hash(argv(1), get_observer_hash(), ((argc() > 2) ? intval(argv(2)) : 0));
+		$r = attach_by_hash(argv(1), get_observer_hash(), ((argc() > 2) ? intval(argv(2)) : 0), $token);
 
 		if (!$r['success']) {
 			notice($r['message'] . EOL);

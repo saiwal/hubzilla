@@ -326,6 +326,7 @@ function change_channel($change_channel) {
  * @param int $owner_id
  * @param bool $remote_observer (optional) use current observer if unset
  * @param $table (optional)
+ * @param $token (optional)
  *
  * @return string additional SQL where statement
  */

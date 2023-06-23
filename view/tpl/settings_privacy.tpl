@@ -11,6 +11,7 @@
 			{{include file="field_checkbox.tpl" field=$index_opt_out}}
 			{{include file="field_checkbox.tpl" field=$autoperms}}
 			{{include file="field_checkbox.tpl" field=$permit_all_mentions}}
+			{{include file="field_checkbox.tpl" field=$moderate_unsolicited_comments}}
 			{{include file="field_checkbox.tpl" field=$ocap_enabled}}
 
 			{{if $sec_addon}}

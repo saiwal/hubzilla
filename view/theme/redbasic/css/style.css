@@ -1380,7 +1380,6 @@ blockquote {
 	overflow: auto;
 }
 
-.dropdown-item.active,
 .textcomplete-item.active {
 	color: #fff;
 	background-color: var(--bs-tertiary-bg);

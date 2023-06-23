@@ -7,7 +7,7 @@
 	<div id="thread-wrapper-{{$item.id}}" class="thread-wrapper{{if $item.toplevel}} {{$item.toplevel}} generic-content-wrapper h-entry {{else}} u-comment h-cite{{/if}}" data-b64mids='{{$item.mids}}'>
 		<a name="item_{{$item.id}}" ></a>
 		<div class="wall-item-outside-wrapper{{if $item.is_comment}} comment{{/if}}{{if $item.previewing}} preview{{/if}}" id="wall-item-outside-wrapper-{{$item.id}}" >
-			<div class="clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
+			<div class="rounded clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
 				{{if $item.photo}}
 				<div class="wall-photo-item" id="wall-photo-item-{{$item.id}}">
 					{{$item.photo}}
@@ -120,6 +120,10 @@
 							</div>
 						</div>
 						{{/if}}
+						{{if $item.moderate}}
+						<a href="#" onclick="moderate_approve({{$item.id}}); return false;" class="btn btn-sm btn-outline-success"><i class="fa fa-check" ></i> {{$item.moderate_approve}}</a>
+						<a href="#" onclick="moderate_drop({{$item.id}}); return false;" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash-o" ></i> {{$item.moderate_delete}}</a>
+						{{else}}
 						<div class="btn-group">
 							{{if $item.like}}
 							<button type="button" title="{{$item.like.0}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$item.id}},'like'); return false;">
@@ -230,6 +234,7 @@
 								</div>
 							</div>
 						</div>
+						{{/if}}
 					</div>
 
 					{{if $item.responses || $item.attachments}}

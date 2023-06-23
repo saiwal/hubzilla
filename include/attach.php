@@ -254,7 +254,7 @@ function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $
  * @param int $rev (optional) Revision default 0
  * @return array
  */
-function attach_by_hash($hash, $observer_hash, $rev = 0) {
+function attach_by_hash($hash, $observer_hash, $rev = 0, $token = EMPTY_STR) {
 
 	$ret = array('success' => false);
 
@@ -274,7 +274,7 @@ function attach_by_hash($hash, $observer_hash, $rev = 0) {
 		return $ret;
 	}
 
-	if(! attach_can_view($r[0]['uid'], $observer_hash, $hash)) {
+	if(! attach_can_view($r[0]['uid'], $observer_hash, $hash, $token)) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
@@ -311,7 +311,7 @@ function attach_by_hash($hash, $observer_hash, $rev = 0) {
  * @param string $observer_hash
  * @return array
  */
-function attach_by_id($id, $observer_hash) {
+function attach_by_id($id, $observer_hash, $token = EMPTY_STR) {
 
 	$ret = array('success' => false);
 
@@ -325,7 +325,7 @@ function attach_by_id($id, $observer_hash) {
 		return $ret;
 	}
 
-	if(! attach_can_view($r[0]['uid'], $observer_hash, $r[0]['hash'])) {
+	if(! attach_can_view($r[0]['uid'], $observer_hash, $r[0]['hash'], $token)) {
 		$ret['message'] = t('Permission denied.');
 		return $ret;
 	}
@@ -340,17 +340,16 @@ function attach_by_id($id, $observer_hash) {
 
 function attach_can_view($uid, $ob_hash, $resource, $token = EMPTY_STR) {
 
-	$sql_extra = permissions_sql($uid, $ob_hash, '', $token);
-	$hash = $resource;
-
 	if (!$token) {
 		if(! perm_is_allowed($uid, $ob_hash, 'view_storage')) {
 			return false;
 		}
 	}
 
+	$sql_extra = permissions_sql($uid, $ob_hash, '', $token);
+
 	$r = q("select folder from attach where hash = '%s' and uid = %d $sql_extra",
-		dbesc($hash),
+		dbesc($resource),
 		intval($uid)
 	);
 
@@ -373,24 +372,22 @@ function attach_can_view($uid, $ob_hash, $resource, $token = EMPTY_STR) {
 
 function attach_can_view_folder($uid, $ob_hash, $folder_hash, $token = EMPTY_STR) {
 
-	$sql_extra = permissions_sql($uid, $ob_hash, '', $token);
-	$hash = $folder_hash;
-
 	if(!$folder_hash && !$token) {
 		return perm_is_allowed($uid, $ob_hash, 'view_storage');
 	}
 
+	$sql_extra = permissions_sql($uid, $ob_hash, '', $token);
 
 	do {
 		$r = q("select folder from attach where hash = '%s' and uid = %d $sql_extra",
-			dbesc($hash),
+			dbesc($folder_hash),
 			intval($uid)
 		);
 		if(! $r)
 			return false;
 
-		$hash = $r[0]['folder'];
-	} while($hash);
+		$folder_hash = $r[0]['folder'];
+	} while($folder_hash);
 
 	return true;
 }
@@ -410,7 +407,7 @@ function attach_can_view_folder($uid, $ob_hash, $folder_hash, $token = EMPTY_STR
  *  * \e string \b message (optional) only when success is false
  *  * \e array \b data array of attach DB entry without data component
  */
-function attach_by_hash_nodata($hash, $observer_hash, $rev = 0) {
+function attach_by_hash_nodata($hash, $observer_hash, $rev = 0, $token = EMPTY_STR) {
 
 	$ret = array('success' => false);
 
@@ -435,7 +432,7 @@ function attach_by_hash_nodata($hash, $observer_hash, $rev = 0) {
 		return $ret;
 	}
 
-	$sql_extra = permissions_sql($r[0]['uid'], $observer_hash);
+	$sql_extra = permissions_sql($r[0]['uid'], $observer_hash, '', $token);
 
 	// Now we'll see if we can access the attachment
 
@@ -450,7 +447,7 @@ function attach_by_hash_nodata($hash, $observer_hash, $rev = 0) {
 	}
 
 	if($r[0]['folder']) {
-		$x = attach_can_view_folder($r[0]['uid'], $observer_hash, $r[0]['folder']);
+		$x = attach_can_view_folder($r[0]['uid'], $observer_hash, $r[0]['folder'], $token);
 		if(! $x) {
 			$ret['message'] = t('Permission denied.');
 			return $ret;

@@ -242,9 +242,21 @@ function comments_are_now_closed($item) {
 }
 
 function item_normal() {
-	return " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
-		and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
-		and item.item_blocked = 0 ";
+	$profile_uid = App::$profile['profile_uid'] ?? App::$profile_uid ?? null;
+	$uid = local_channel();
+	$is_owner = ($uid && intval($profile_uid) === $uid);
+
+	$sql = " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
+		and item.item_unpublished = 0 and item.item_pending_remove = 0";
+
+	if ($is_owner) {
+		$sql .= " and item.item_blocked IN (0, " . intval(ITEM_MODERATED) . ") and item.item_delayed IN (0, 1) ";
+	}
+	else {
+		$sql .= " and item.item_blocked = 0 and item.item_delayed = 0 ";
+	}
+
+	return $sql;
 }
 
 function item_normal_search() {

@@ -503,7 +503,10 @@ class ThreadItem {
 			'thread_level' => $thread_level,
 			'settings' => $settings,
 			'thr_parent' => (($item['parent_mid'] != $item['thr_parent']) ? gen_link_id($item['thr_parent']) : ''),
-			'contact_id' => (($contact) ? $contact['abook_id'] : '')
+			'contact_id' => (($contact) ? $contact['abook_id'] : ''),
+			'moderate' => ($item['item_blocked'] == ITEM_MODERATED),
+			'moderate_approve' => t('Approve'),
+			'moderate_delete' => t('Delete')
 
 		);
 
