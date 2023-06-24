@@ -2982,7 +2982,7 @@ class Activity {
 						$allowed = true;
 					}
 					else {
-						hz_syslog('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
+						logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
 						logger('rejected: ' . print_r($item, true), LOGGER_DATA);
 
 						// TODO: not implemented
@@ -2991,8 +2991,6 @@ class Activity {
 
 						return;
 					}
-
-
 				}
 
 				// TODO: not implemented
