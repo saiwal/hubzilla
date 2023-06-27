@@ -67,7 +67,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 
 					$item['item_blocked'] = 0;
 					item_update_parent_commented($item);
-					notice( t('Comment approved') . EOL);
+					notice( t('Item approved') . EOL);
 				}
 				elseif($action === 'drop') {
 					// TODO: not implemented
@@ -75,7 +75,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 					// Activity::send_rejection_activity(App::get_channel(), $item['author_xchan'], $item);
 
 					drop_item($post_id,false);
-					notice( t('Comment deleted') . EOL);
+					notice( t('Item deleted') . EOL);
 				}
 
 				// refetch the item after changes have been made

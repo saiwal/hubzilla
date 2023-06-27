@@ -145,7 +145,7 @@ class Enotify {
 
 		$itemlink = $params['link'];
 
-		$action = (($moderated) ? t('requests to comment on') : t('commented on'));
+		$action = (($moderated) ? t('requested to comment on') : t('commented on'));
 
 		if(array_key_exists('item',$params)) {
 
@@ -158,10 +158,10 @@ class Enotify {
 				}
 
 				if(activity_match($params['verb'], ACTIVITY_LIKE))
-					$action = (($moderated) ? t('requests to like') : t('liked'));
+					$action = (($moderated) ? t('requested to like') : t('liked'));
 
 				if(activity_match($params['verb'], ACTIVITY_DISLIKE))
-					$action = (($moderated) ? t('requests to dislike') : t('disliked'));
+					$action = (($moderated) ? t('requested to dislike') : t('disliked'));
 
 			}
 
@@ -311,10 +311,10 @@ class Enotify {
 		$moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
 
 		if(activity_match($params['item']['verb'], ACTIVITY_LIKE))
-			$verb = (($moderated) ? t('requests to like') : t('liked'));
+			$verb = (($moderated) ? t('requested to like') : t('liked'));
 
 		if(activity_match($params['item']['verb'], ACTIVITY_DISLIKE))
-			$verb = (($moderated) ? t('requests to dislike') : t('disliked'));
+			$verb = (($moderated) ? t('requested to dislike') : t('disliked'));
 
 		// "your post"
 		if($p[0]['owner']['xchan_name'] === $p[0]['author']['xchan_name'] && intval($p[0]['item_wall']))

@@ -121,8 +121,8 @@
 						</div>
 						{{/if}}
 						{{if $item.moderate}}
-						<a href="#" onclick="moderate_approve({{$item.id}}); return false;" class="btn btn-sm btn-outline-success"><i class="fa fa-check" ></i> {{$item.moderate_approve}}</a>
-						<a href="#" onclick="moderate_drop({{$item.id}}); return false;" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash-o" ></i> {{$item.moderate_delete}}</a>
+						<a href="moderate/{{$item.id}}/approve" onclick="moderate_approve({{$item.id}}); return false;" class="btn btn-sm btn-outline-success"><i class="fa fa-check" ></i> {{$item.moderate_approve}}</a>
+						<a href="moderate/{{$item.id}}/drop" onclick="moderate_drop({{$item.id}}); return false;" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash-o" ></i> {{$item.moderate_delete}}</a>
 						{{else}}
 						<div class="btn-group">
 							{{if $item.like}}
