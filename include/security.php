@@ -237,21 +237,6 @@ function atoken_abook($uid, $xchan_hash) {
 }
 
 
-function pseudo_abook($xchan) {
-	if (!$xchan)
-		return false;
-
-	// set abook_pseudo to flag that we aren't really connected.
-
-	$xchan['abook_pseudo'] = 1;
-	$xchan['abook_blocked'] = 0;
-	$xchan['abook_ignored'] = 0;
-	$xchan['abook_pending'] = 0;
-
-	return $xchan;
-}
-
-
 /**
  * @brief Change to another channel with current logged-in account.
  *

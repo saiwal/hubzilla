@@ -175,7 +175,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 
 		// They are in your address book, but haven't been approved
 
-		if($channel_perm & PERMS_PENDING && (! intval($x[0]['abook_pseudo']))) {
+		if($channel_perm & PERMS_PENDING) {
 			$ret[$perm_name] = 1;
 			continue;
 		}
@@ -188,12 +188,6 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
 		// They're a contact, so they have permission
 
 		if($channel_perm & PERMS_CONTACTS) {
-			// it was a fake abook entry, not really a connection
-			if(array_key_exists('abook_pseudo',$x[0]) && intval($x[0]['abook_pseudo'])) {
-				$ret[$perm_name] = 0;
-				continue;
-			}
-
 			$ret[$perm_name] = 1;
 			continue;
 		}
@@ -340,7 +334,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 		return false;
 	}
 
-	// From here on we require that the observer be a connection or pseudo connection
+	// From here on we require that the observer be a connection
 
 	if(! $x) {
 		return false;
@@ -348,7 +342,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 
 	// They are in your address book, but haven't been approved
 
-	if($channel_perm & PERMS_PENDING && (! intval($x[0]['abook_pseudo']))) {
+	if($channel_perm & PERMS_PENDING) {
 		return true;
 	}
 
@@ -359,10 +353,6 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 	// They're a contact, so they have permission
 
 	if($channel_perm & PERMS_CONTACTS) {
-		// it was a fake abook entry, not really a connection
-		if(array_key_exists('abook_pseudo',$x[0]) && intval($x[0]['abook_pseudo'])) {
-			return false;
-		}
 		return true;
 	}
 
