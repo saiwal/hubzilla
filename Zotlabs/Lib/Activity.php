@@ -2170,6 +2170,10 @@ class Activity {
 			return false;
 		}
 
+		if (intval($post['item_blocked']) === ITEM_MODERATED) {
+			return false;
+		}
+
 		dbq("START TRANSACTION");
 
 		$item = q("SELECT * FROM item WHERE id = %d FOR UPDATE",
@@ -2945,6 +2949,12 @@ class Activity {
 
 			// TODO: if we do not have a parent stop here and move the fetch to background?
 
+			if ($parent && $parent[0]['obj_type'] === 'Question') {
+				if ($item['obj_type'] === ACTIVITY_OBJ_COMMENT && $item['title'] && (!$item['body'])) {
+					$item['obj_type'] = 'Answer';
+				}
+			}
+
 			if ($parent && $parent[0]['item_wall']) {
 				// set the owner to the owner of the parent
 				$item['owner_xchan'] = $parent[0]['owner_xchan'];
@@ -2977,8 +2987,8 @@ class Activity {
 				}*/
 
 				if (!$allowed) {
-					if (get_pconfig($channel['channel_id'], 'system', 'moderate_unsolicited_comments')) {
-						$item['item_blocked'] = intval(ITEM_MODERATED);
+					if (get_pconfig($channel['channel_id'], 'system', 'moderate_unsolicited_comments') && $item['obj_type'] !== 'Answer') {
+						$item['item_blocked'] = ITEM_MODERATED;
 						$allowed = true;
 					}
 					else {
@@ -3004,12 +3014,6 @@ class Activity {
 				// reject public stream comments that weren't sent by the conversation owner
 				if ($is_sys_channel && $item['owner_xchan'] !== $observer_hash && !$fetch_parents) {
 					$allowed = false;
-				}
-			}
-
-			if ($parent && $parent[0]['obj_type'] === 'Question') {
-				if ($item['obj_type'] === ACTIVITY_OBJ_COMMENT && $item['title'] && (!$item['body'])) {
-					$item['obj_type'] = 'Answer';
 				}
 			}
 		}
