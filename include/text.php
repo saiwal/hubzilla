@@ -2529,26 +2529,26 @@ function check_webbie($arr) {
 	return '';
 }
 
-function ids_to_array($arr,$idx = 'id') {
-	$t = array();
+function ids_to_array($arr, $idx = 'id') {
+	$t = [];
 	if($arr) {
 		foreach($arr as $x) {
-			if(array_key_exists($idx,$x) && strlen($x[$idx]) && (! in_array($x[$idx],$t))) {
+			if(array_key_exists($idx, $x) && strlen($x[$idx]) && (! in_array($x[$idx], $t))) {
 				$t[] = $x[$idx];
 			}
 		}
 	}
-	return($t);
+	return $t;
 }
 
 
 
 
-function ids_to_querystr($arr,$idx = 'id',$quote = false) {
-	$t = array();
+function ids_to_querystr($arr, $idx = 'id', $quote = false) {
+	$t = [];
 	if($arr) {
 		foreach($arr as $x) {
-			if(! in_array($x[$idx],$t)) {
+			if(!in_array($x[$idx], $t)) {
 				if($quote)
 					$t[] = "'" . dbesc($x[$idx]) . "'";
 				else
@@ -2556,7 +2556,7 @@ function ids_to_querystr($arr,$idx = 'id',$quote = false) {
 			}
 		}
 	}
-	return(implode(',', $t));
+	return implode(',', $t);
 }
 
 /**
@@ -2700,7 +2700,7 @@ function stringify_array_elms(&$arr, $escape = false) {
 function stringify_array($arr, $escape = false) {
 	if($arr) {
 		stringify_array_elms($arr, $escape);
-		return(implode(',',$arr));
+		return(implode(',', $arr));
 	}
 	return EMPTY_STR;
 }

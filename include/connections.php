@@ -67,6 +67,35 @@ function rconnect_url($channel_id,$xchan) {
 
 }
 
+function deliverable_abook_xchans($channel_id, $filter = [], $flatten = true) {
+	$filter_sql = '';
+
+	if ($filter) {
+		$filter_sql = " AND abook_xchan IN (" . protect_sprintf(stringify_array($filter, true)) . ") ";
+	}
+
+	$r = q("SELECT abook_xchan, xchan_network FROM abook LEFT JOIN xchan ON abook_xchan = xchan_hash WHERE
+		abook_channel = %d $filter_sql
+		AND abook_self = 0
+		AND abook_pending = 0
+		AND abook_archived = 0
+		AND abook_not_here = 0
+		AND xchan_network NOT IN ('anon', 'token', 'rss')",
+		intval($channel_id)
+	);
+
+	if (!$r) {
+		return [];
+	}
+
+	if ($flatten) {
+		return ids_to_array($r, 'abook_xchan');
+	}
+
+	return $r;
+}
+
+
 function abook_connections($channel_id, $sql_conditions = '') {
 	$r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d
 		and abook_self = 0 $sql_conditions",
