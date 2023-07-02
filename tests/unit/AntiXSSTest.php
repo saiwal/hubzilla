@@ -1,6 +1,6 @@
 <?php
 /**
- * tests several functions which are used to prevent xss attacks
+ * Tests several functions which are used to prevent xss attacks
  *
  * @package test.util
  */
@@ -12,7 +12,7 @@ require_once('include/text.php');
 class AntiXSSTest extends TestCase {
 
 	/**
-	 * test, that tags are escaped
+	 * Test, that tags are escaped
 	 */
 	public function testEscapeTags() {
 		$invalidstring='<submit type="button" onclick="alert(\'failed!\');" />';
@@ -24,28 +24,30 @@ class AntiXSSTest extends TestCase {
 		$this->assertEquals("&lt;submit type=&quot;button&quot; onclick=&quot;alert('failed!');&quot; /&gt;", $escapedString);
 	}
 
-  /**
-   * @dataProvider urlTestProvider
-   */
-  public function testEscapeURL($url, $expected) : void {
-    $this->assertEquals($expected, escape_url($url));
-  }
+	/**
+	 * Test escaping URL's to make them safe for use in html and attributes.
+	 *
+	 * @dataProvider urlTestProvider
+	 */
+	public function testEscapeURL($url, $expected) : void {
+		$this->assertEquals($expected, escape_url($url));
+	}
 
-  public function urlTestProvider() : array {
-    return [
-      [
-        "https://example.com/settings/calendar/?f=&rpath=https://example.com/cdav/calendar'><script>alert('boom')</script>",
-        "https://example.com/settings/calendar/?f=&amp;rpath=https://example.com/cdav/calendar&apos;&gt;&lt;script&gt;alert(&apos;boom&apos;)&lt;/script&gt;"
-      ],
-      [
-        "settings/calendar/?f=&rpath=https://example.com'+accesskey=x+onclick=alert(/boom/);a='",
-        "settings/calendar/?f=&amp;rpath=https://example.com&apos;+accesskey=x+onclick=alert(/boom/);a=&apos;"
-      ],
-    ];
-  }
+	public function urlTestProvider() : array {
+		return [
+			[
+				"https://example.com/settings/calendar/?f=&rpath=https://example.com/cdav/calendar'><script>alert('boom')</script>",
+				"https://example.com/settings/calendar/?f=&amp;rpath=https://example.com/cdav/calendar&apos;&gt;&lt;script&gt;alert(&apos;boom&apos;)&lt;/script&gt;"
+			],
+			[
+				"settings/calendar/?f=&rpath=https://example.com'+accesskey=x+onclick=alert(/boom/);a='",
+				"settings/calendar/?f=&amp;rpath=https://example.com&apos;+accesskey=x+onclick=alert(/boom/);a=&apos;"
+			],
+		];
+	}
 
 	/**
-	 *xmlify and unxmlify
+	 * Test xmlify and unxmlify
 	 */
 	public function testXmlify() {
 		$text="<tag>I want to break\n this!11!<?hard?></tag>";
@@ -56,7 +58,7 @@ class AntiXSSTest extends TestCase {
 	}
 
 	/**
-	 * xmlify and put in a document
+	 * Test xmlify and put in a document
 	 */
 	public function testXmlifyDocument() {
 		$tag="<tag>I want to break</tag>";
@@ -65,7 +67,9 @@ class AntiXSSTest extends TestCase {
 
 		$xml_parser=xml_parser_create();
 		//should be possible to parse it
-		$values=array(); $index=array();
+		$values=array();
+		$index=array();
+
 		$this->assertEquals(1, xml_parse_into_struct($xml_parser, $text, $values, $index));
 
 		$this->assertEquals(array('TEXT'=>array(0)),
@@ -77,7 +81,7 @@ class AntiXSSTest extends TestCase {
 	}
 
 	/**
-	 * test hex2bin and reverse
+	 * Test hex2bin and reverse
 	 */
 	public function testHex2Bin() {
 		$this->assertEquals(-3, hex2bin(bin2hex(-3)));
