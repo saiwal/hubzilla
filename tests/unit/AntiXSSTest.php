@@ -80,16 +80,6 @@ class AntiXSSTest extends TestCase {
 		xml_parser_free($xml_parser);
 	}
 
-	/**
-	 * Test hex2bin and reverse
-	 */
-	public function testHex2Bin() {
-		$this->assertEquals(-3, hex2bin(bin2hex(-3)));
-		$this->assertEquals(0, hex2bin(bin2hex(0)));
-		$this->assertEquals(12, hex2bin(bin2hex(12)));
-		$this->assertEquals(PHP_INT_MAX, hex2bin(bin2hex(PHP_INT_MAX)));
-	}
-
 	//function qp, quick and dirty??
 	//get_mentions
 	//get_contact_block, bis Zeile 538
