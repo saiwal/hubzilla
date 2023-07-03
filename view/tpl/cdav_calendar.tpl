@@ -357,8 +357,16 @@ $(document).ready(function() {
 
 		$('#calendar_select').val('channel_calendar').attr('disabled', true);
 		$('#id_title').val(resource.summary);
-		$('#id_dtstart').val(new Date(resource.dtstart).toUTCString().slice(0, -4));
-		$('#id_dtend').val(new Date(resource.dtend).toUTCString().slice(0, -4));
+
+		// A hack to match with internal workings of fullcalendar.
+		// See https://fullcalendar.io/docs/timeZone#UTC-coercion
+		let start_d = new Date(resource.dtstart);
+		let start_o = start_d.getTimezoneOffset();
+		let end_d = new Date(resource.dtend);
+		let end_o = start_d.getTimezoneOffset();
+		$('#id_dtstart').val(new Date(start_d - start_o * 60000).toUTCString().slice(0, -4));
+		$('#id_dtend').val(new Date(end_d - end_o * 60000).toUTCString().slice(0, -4));
+
 		$('#id_categories').tagsinput('add', '{{$categories}}'),
 		$('#id_description').val(resource.description);
 		$('#id_location').val(resource.location);
