@@ -1054,19 +1054,19 @@ class Activity {
 
 	static function encode_person($p, $extended = true) {
 
-		$id = ((filter_var($p['xchan_hash'], FILTER_VALIDATE_URL)) ? $p['xchan_hash'] : $p['xchan_url']);
+		$c = ((array_key_exists('channel_id', $p)) ? $p : channelx_by_hash($p['xchan_hash']));
 
-		if (!$extended) {
-			return $id;
-		}
+		$id = (($c) ? channel_url($c) : $p['xchan_url']);
 
-		$ret = [];
+		$ret = (($extended) ? [] : '');
 
 		if (!$id) {
 			return $ret;
 		}
 
-		$c = ((array_key_exists('channel_id', $p)) ? $p : channelx_by_hash($p['xchan_hash']));
+		if (!$extended) {
+			return $id;
+		}
 
 		$ret['type'] = 'Person';
 
@@ -1078,15 +1078,9 @@ class Activity {
 			$ret['manuallyApprovesFollowers'] = ((get_pconfig($c['channel_id'], 'system', 'autoperms')) ? false : true);
 		}
 
-		if ($c) {
-			$ret['id'] = channel_url($c);
-		}
-		else {
-			$ret['id'] = $id;
-		}
+		$ret['id'] = $id;
 
-		if ($p['xchan_addr'] && strpos($p['xchan_addr'], '@'))
-			$ret['preferredUsername'] = substr($p['xchan_addr'], 0, strpos($p['xchan_addr'], '@'));
+		$ret['preferredUsername'] = (($c) ? $c['channel_address'] : substr($p['xchan_addr'], 0, strpos($p['xchan_addr'], '@')));
 
 		$ret['name']    = $p['xchan_name'];
 		$ret['updated'] = datetime_convert('UTC', 'UTC', $p['xchan_name_date'], ATOM_TIME);
@@ -1124,11 +1118,11 @@ class Activity {
 		];
 */
 
-		$ret['url'] = $p['xchan_url'];
+		$ret['url'] = $id;
 
 		$ret['publicKey'] = [
-			'id'                 => $p['xchan_url'],
-			'owner'              => $p['xchan_url'],
+			'id'                 => $id,
+			'owner'              => $id,
 			'signatureAlgorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
 			'publicKeyPem'       => $p['xchan_pubkey']
 		];
@@ -1151,6 +1145,7 @@ class Activity {
 		call_hooks('encode_person', $arr);
 
 		$ret = $arr['encoded'];
+
 		return $ret;
 	}
 
