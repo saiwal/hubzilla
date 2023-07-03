@@ -2451,13 +2451,17 @@ function send_status_notifications($post_id,$item) {
 			intval($item['uid'])
 		);
 
-		$thr_parent_id = $r[0]['id'];
+		if ($r) {
+			$thr_parent_id = $r[0]['id'];
+		}
+
 	}
 
 	$r = q("select channel_hash from channel where channel_id = %d limit 1",
 		intval($item['uid'])
 	);
-	if(! $r)
+
+	if(!$r)
 		return;
 
 	// my own post - no notification needed
