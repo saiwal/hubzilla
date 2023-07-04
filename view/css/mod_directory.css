@@ -22,7 +22,7 @@
 }
 
 .contact-info-element {
-	word-break: break-all;
+	word-break: break-word;
 }
 
 .contact-info-label {
