@@ -7,8 +7,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/text.php');
-
 class AntiXSSTest extends TestCase {
 
 	/**
