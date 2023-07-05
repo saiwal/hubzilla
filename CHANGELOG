@@ -1,3 +1,42 @@
+Hubzilla 8.6 (2023-07-??)
+	- Update fullcalendar library
+	- Improve and unify selection of deliverable abook xchans
+	- Remove unused pseudo_abook()
+	- Implement optional moderation for unsolicited items
+	- Hardened comment permission handling for unsolicited items
+	- Remove unused templates
+	- Deprecate ActivityStreams::fetch() and provide the possibility to fetch local items directly
+	- Add simplified version of automated install script
+	- Shuffle queue deliveries for more randomness
+	- Update composer libraries
+	- Add new 2-column templates
+	- Implement optional OCAP for items to allow access to restricted media without OWA
+
+	Bugfixes
+	- Fix content in nobb and noparse text linkified - issue #1776
+	- Fix editing an event changes the set time - issue #1771
+	- Fix person object with mixed up hubloc info - issue #1770
+	- Fix $escape variable not passed on to stringify_array_elms()
+	- Fix relaying and syncing in Activity::drop()
+	- Fix allow code not sticking after channel sync - issue #1769
+	- Fix channel oembed regressions
+
+	Addons
+	- Diaspora: fix signature check for likes
+	- Diaspora: fix relaying retractions
+	- Diaspora: port to core unsolicited comments option
+	- Gallery: add an exception for streams reshares
+	- Pubcrawl: dismiss comments that are expected to arrive via owner relay
+	- Pubcrawl: improved inbox handling
+	- Pubcrawl: catch gup.pe updates to followers collection
+	- Pubcrawl: fix follow allow hook
+	- Diaspora: fix follow allow hook
+	- Content_import: fix crash in post handler
+	- Pubcrawl: store follow url when fetching webfinger
+	- Diaspora: store follow url when fetching webfinger
+	- Pubcrawl: move addressing to separate function
+
+
 Hubzilla 8.4.2 (2023-06-02)
 	- Update bootstrap to stable version 5.3.0
 	- Fix hubloc confusion in mod rmagic
