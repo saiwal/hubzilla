@@ -1056,7 +1056,7 @@ class Activity {
 
 		$c = ((array_key_exists('channel_id', $p)) ? $p : channelx_by_hash($p['xchan_hash']));
 
-		$id = (($c) ? channel_url($c) : $p['xchan_url']);
+		$id = (($c) ? channel_url($c) : ((filter_var($p['xchan_hash'], FILTER_VALIDATE_URL)) ? $p['xchan_hash'] : $p['xchan_url']));
 
 		$ret = (($extended) ? [] : '');
 
