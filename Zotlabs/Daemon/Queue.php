@@ -55,6 +55,8 @@ class Queue {
 				foreach ($qItems as $qItem) {
 					$deliveries[] = $qItem['outq_hash'];
 				}
+
+				shuffle($deliveries);
 				do_delivery($deliveries, true);
 			}
 		 }

@@ -43,6 +43,8 @@ class Network extends \Zotlabs\Web\Controller {
 			return login(false);
 		}
 
+		App::$profile_uid = local_channel();
+
 		$o = '';
 
 		$arr = array('query' => App::$query_string);

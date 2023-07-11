@@ -12,7 +12,6 @@ class Wall_upload extends \Zotlabs\Web\Controller {
 
 	function post() {
 
-
 		$using_api = ((x($_FILES,'media')) ? true : false);
 
 		if($using_api) {

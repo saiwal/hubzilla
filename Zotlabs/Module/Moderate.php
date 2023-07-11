@@ -17,7 +17,7 @@ class Moderate extends \Zotlabs\Web\Controller {
 		}
 
 		\App::set_pager_itemspage(30);
-		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));               
+		$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
 
 		//show all items
 		if(argc() == 1) {
@@ -40,8 +40,13 @@ class Moderate extends \Zotlabs\Web\Controller {
 
 		if(argc() > 2) {
 			$post_id = intval(argv(1));
-			if(! $post_id)
+			if(! $post_id) {
+				if (is_ajax()) {
+					killme();
+				}
+
 				goaway(z_root() . '/moderate');
+			}
 
 			$action = argv(2);
 
@@ -61,18 +66,20 @@ class Moderate extends \Zotlabs\Web\Controller {
 					);
 
 					$item['item_blocked'] = 0;
-
 					item_update_parent_commented($item);
-
-					notice( t('Comment approved') . EOL);
+					notice( t('Item approved') . EOL);
 				}
 				elseif($action === 'drop') {
+					// TODO: not implemented
+					// let the sender know we received their comment but we don't permit spam here.
+					// Activity::send_rejection_activity(App::get_channel(), $item['author_xchan'], $item);
+
 					drop_item($post_id,false);
-					notice( t('Comment deleted') . EOL);
-				} 
+					notice( t('Item deleted') . EOL);
+				}
 
 				// refetch the item after changes have been made
-			
+
 				$r = q("select * from item where id = %d",
 					intval($post_id)
 				);
@@ -84,6 +91,11 @@ class Moderate extends \Zotlabs\Web\Controller {
 				if($action === 'approve') {
 					\Zotlabs\Daemon\Master::Summon(array('Notifier', 'comment-new', $post_id));
 				}
+
+				if (is_ajax()) {
+					killme();
+				}
+
 				goaway(z_root() . '/moderate');
 			}
 		}

@@ -13,7 +13,7 @@ class IConfig {
 	static public function Get(&$item, $family, $key, $default = false) {
 
 		$is_item = false;
-	
+
 		if(is_array($item)) {
 			$is_item = true;
 			if((! array_key_exists('iconfig',$item)) || (! is_array($item['iconfig'])))
@@ -22,7 +22,7 @@ class IConfig {
 			if(array_key_exists('item_id',$item))
 				$iid = $item['item_id'];
 			else
-				$iid = $item['id'];
+				$iid = $item['id'] ?? 0;
 		}
 		elseif(intval($item))
 			$iid = $item;
@@ -36,7 +36,7 @@ class IConfig {
 					return $c['v'];
 			}
 		}
-		 
+
 		$r = q("select * from iconfig where iid = %d and cat = '%s' and k = '%s' limit 1",
 			intval($iid),
 			dbesc($family),
@@ -63,11 +63,11 @@ class IConfig {
 	 * $value - value of meta variable
 	 * $sharing - boolean (default false); if true the meta information is propagated with the item
 	 *   to other sites/channels, mostly useful when $item is an array and has not yet been stored/delivered.
-	 *   If the meta information is added after delivery and you wish it to be shared, it may be necessary to 
-	 *   alter the item edited timestamp and invoke the delivery process on the updated item. The edited 
+	 *   If the meta information is added after delivery and you wish it to be shared, it may be necessary to
+	 *   alter the item edited timestamp and invoke the delivery process on the updated item. The edited
 	 *   timestamp needs to be altered in order to trigger an item_store_update() at the receiving end.
 	 */
- 
+
 
 	static public function Set(&$item, $family, $key, $value, $sharing = false) {
 

@@ -169,16 +169,8 @@ class Rpost extends \Zotlabs\Web\Controller {
 
 		$channel = \App::get_channel();
 
-		if(isset($_REQUEST['acl']) && $_REQUEST['acl']) {
-				$acl = new \Zotlabs\Access\AccessList([]);
-				$acl->set($_REQUEST['acl']);
-				$channel_acl = $acl->get();
-		}
-		else {
-				$acl = new \Zotlabs\Access\AccessList($channel);
-				$channel_acl = $acl->get();
-		}
-
+		$acl = new \Zotlabs\Access\AccessList($channel);
+		$channel_acl = $acl->get();
 
 		if(isset($_REQUEST['url']) && $_REQUEST['url']) {
 			$x = z_fetch_url(z_root() . '/linkinfo?f=&url=' . urlencode($_REQUEST['url']));

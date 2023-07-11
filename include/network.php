@@ -1729,12 +1729,14 @@ function deliverable_singleton($channel_id,$xchan) {
 		intval($channel_id),
 		dbesc($xchan_hash)
 	);
+
 	if($r) {
 		if(! $r[0]['abook_instance'])
 			return true;
 		if(strpos($r[0]['abook_instance'],z_root()) !== false)
 			return true;
 	}
+
 	return false;
 }
 

@@ -24,6 +24,12 @@ namespace Zotlabs\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 
+/*
+ * Make sure global constants and the global App object is available to the
+ * tests.
+ */
+require_once __DIR__ . '/../../boot.php';
+
 /**
  * @brief Base class for our Unit Tests.
  *

@@ -46,7 +46,7 @@ class Photo extends \Zotlabs\Web\Controller {
 				dbesc(argv(1))
 			);
 			if ($r) {
-				$allowed = attach_can_view($r[0]['uid'],$observer_xchan,argv(1)/*,$bear*/);
+				$allowed = attach_can_view($r[0]['uid'], $observer_xchan, argv(1), $bear);
 			}
 			if (! $allowed) {
 				http_status_exit(404,'Permission denied.');
@@ -154,6 +154,11 @@ class Photo extends \Zotlabs\Web\Controller {
 		}
 		else {
 
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+			}
+
 			/**
 			 * Other photos
 			 */
@@ -223,7 +228,7 @@ class Photo extends \Zotlabs\Web\Controller {
 				}
 
 				if($allowed === (-1))
-					$allowed = attach_can_view($r[0]['uid'],$observer_xchan,$photo);
+					$allowed = attach_can_view($r[0]['uid'], $observer_xchan, $photo, $bear);
 
 				$channel = channelx_by_n($r[0]['uid']);
 
@@ -262,13 +267,13 @@ class Photo extends \Zotlabs\Web\Controller {
 				http_status_exit(404,'not found');
 		}
 
- 		if(! $data)
- 			killme();
+		if(! $data)
+			killme();
 
- 		$etag = '"' . md5($data . $modified) . '"';
+		$etag = '"' . md5($data . $modified) . '"';
 
- 		if($modified == 0)
- 		    $modified = time();
+		if($modified == 0)
+		    $modified = time();
 
 		header_remove('Pragma');
 		if((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $etag) || (!isset($_SERVER['HTTP_IF_NONE_MATCH']) && isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] === gmdate("D, d M Y H:i:s", $modified) . " GMT")) {

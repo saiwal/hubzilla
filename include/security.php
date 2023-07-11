@@ -237,21 +237,6 @@ function atoken_abook($uid, $xchan_hash) {
 }
 
 
-function pseudo_abook($xchan) {
-	if (!$xchan)
-		return false;
-
-	// set abook_pseudo to flag that we aren't really connected.
-
-	$xchan['abook_pseudo'] = 1;
-	$xchan['abook_blocked'] = 0;
-	$xchan['abook_ignored'] = 0;
-	$xchan['abook_pending'] = 0;
-
-	return $xchan;
-}
-
-
 /**
  * @brief Change to another channel with current logged-in account.
  *
@@ -326,11 +311,12 @@ function change_channel($change_channel) {
  * @param int $owner_id
  * @param bool $remote_observer (optional) use current observer if unset
  * @param $table (optional)
+ * @param $token (optional)
  *
  * @return string additional SQL where statement
  */
 
-function permissions_sql($owner_id, $remote_observer = null, $table = '') {
+function permissions_sql($owner_id, $remote_observer = null, $table = '', $token = EMPTY_STR) {
 
 	$local_channel = local_channel();
 
@@ -412,6 +398,16 @@ function permissions_sql($owner_id, $remote_observer = null, $table = '') {
 				dbesc($gs)
 			);
 		}
+
+		/*
+		 * OCAP token access
+		 */
+
+		elseif ($token) {
+			$sql = " AND ( {$table}allow_cid like '" . protect_sprintf('%<token:' . $token . '>%') .
+			"' OR ( {$table}allow_cid = '' AND {$table}allow_gid = '' AND {$table}deny_cid = '' AND {$table}deny_gid = '' ) )";
+		}
+
 	}
 
 	return $sql;
@@ -490,12 +486,19 @@ function item_permissions_sql($owner_id, $remote_observer = null) {
 				$gs = '<<>>'; // should be impossible to match
 			}
 
+			// This function is often called without an $owner_id in places where this could not be
+			// determined in advance. The ACL fields will usually not contain the original author or owner
+			// so we will also check for author_xchan and owner_xchan to account for this ACL deficiency.
+
 			$regexop = db_getfunc('REGEXP');
 			$sql = sprintf(
-				" AND (( NOT (deny_cid $regexop '%s' OR deny_gid $regexop '%s')
-				  AND ( allow_cid $regexop '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ))
-				  ) OR ( item_private = 1 $scope ))
+				" AND ( author_xchan = '%s' OR owner_xchan = '%s' OR
+				(( NOT (deny_cid $regexop '%s' OR deny_gid $regexop '%s')
+				AND ( allow_cid $regexop '%s' OR allow_gid $regexop '%s' OR ( allow_cid = '' AND allow_gid = '' AND item_private = 0 ))
+				)))
 				",
+				dbesc($observer),
+				dbesc($observer),
 				dbesc($cs),
 				dbesc($gs),
 				dbesc($cs),

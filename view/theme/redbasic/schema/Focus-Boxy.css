@@ -25,6 +25,7 @@
 }
 
 .vcard-card .card {
+	border: 1px solid var(--bs-border-color);
 	border-top: 0;
 	border-right: 0;
 	border-left: 0;

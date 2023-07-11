@@ -357,8 +357,16 @@ $(document).ready(function() {
 
 		$('#calendar_select').val('channel_calendar').attr('disabled', true);
 		$('#id_title').val(resource.summary);
-		$('#id_dtstart').val(new Date(resource.dtstart).toUTCString().slice(0, -4));
-		$('#id_dtend').val(new Date(resource.dtend).toUTCString().slice(0, -4));
+
+		// A hack to match with internal workings of fullcalendar.
+		// See https://fullcalendar.io/docs/timeZone#UTC-coercion
+		let start_d = new Date(resource.dtstart);
+		let start_o = start_d.getTimezoneOffset();
+		let end_d = new Date(resource.dtend);
+		let end_o = start_d.getTimezoneOffset();
+		$('#id_dtstart').val(new Date(start_d - start_o * 60000).toUTCString().slice(0, -4));
+		$('#id_dtend').val(new Date(end_d - end_o * 60000).toUTCString().slice(0, -4));
+
 		$('#id_categories').tagsinput('add', '{{$categories}}'),
 		$('#id_description').val(resource.description);
 		$('#id_location').val(resource.location);
@@ -572,17 +580,17 @@ function exportDate() {
 			<div class="dropdown">
 				<button id="view_selector" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown"></button>
 				<div class="dropdown-menu">
-					<a class="dropdown-item" href="#" onclick="changeView('dayGridMonth'); return false;">{{$month}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('timeGridWeek'); return false;">{{$week}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('timeGridDay'); return false;">{{$day}}</a></li>
+					<a class="dropdown-item" href="#" onclick="changeView('dayGridMonth'); return false;">{{$month}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('timeGridWeek'); return false;">{{$week}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('timeGridDay'); return false;">{{$day}}</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#" onclick="changeView('listMonth'); return false;">{{$list_month}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('listWeek'); return false;">{{$list_week}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('listDay'); return false;">{{$list_day}}</a></li>
+					<a class="dropdown-item" href="#" onclick="changeView('listMonth'); return false;">{{$list_month}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('listWeek'); return false;">{{$list_week}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('listDay'); return false;">{{$list_day}}</a>
 				</div>
 				<div class="btn-group">
 					<button id="prev-btn" class="btn btn-outline-secondary btn-sm" title="{{$prev}}"><i class="fa fa-backward"></i></button>
-					<button id="today-btn" class="btn btn-outline-secondary btn-sm" title="{{$today}}"><div id="events-spinner" class="spinner s"></div><i class="fa fa-bullseye" style="display: none; width: 1rem;"></i></button>
+					<button id="today-btn" class="btn btn-outline-secondary btn-sm" title="{{$today}}"><span id="events-spinner" class="spinner s"></span><i class="fa fa-bullseye" style="display: none; width: 1rem;"></i></button>
 					<button id="next-btn" class="btn btn-outline-secondary btn-sm" title="{{$next}}"><i class="fa fa-forward"></i></button>
 				</div>
 				<button id="fullscreen-btn" type="button" class="btn btn-outline-secondary btn-sm" onclick="makeFullScreen();"><i class="fa fa-expand"></i></button>

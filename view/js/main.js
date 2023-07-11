@@ -1314,6 +1314,18 @@ function dounsubthread(ident) {
 	liking = 1;
 }
 
+function moderate_approve(ident) {
+	$('#like-rotator-' + ident.toString()).show();
+	$.get('moderate/' + ident.toString() + '/approve', updateInit );
+	liking = 1;
+}
+
+function moderate_drop(ident) {
+	$('#like-rotator-' + ident.toString()).show();
+	$.get('moderate/' + ident.toString() + '/drop', $('#thread-wrapper-' + ident.toString()).fadeOut(function() { this.remove(); }));
+	liking = 1;
+}
+
 function dostar(ident) {
 	ident = ident.toString();
 	$('#like-rotator-' + ident).show();

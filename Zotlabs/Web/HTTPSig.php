@@ -4,7 +4,7 @@ namespace Zotlabs\Web;
 
 use DateTime;
 use DateTimeZone;
-use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Crypto;
 use Zotlabs\Lib\Keyutils;
 use Zotlabs\Lib\Webfinger;
@@ -303,7 +303,8 @@ class HTTPSig {
 
 		// $force is used to ignore the local cache and only use the remote data; for instance the cached key might be stale
 		if (!$force) {
-			$x = q("select * from xchan join hubloc on xchan_hash = hubloc_hash where (hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_network in ('zot6', 'activitypub') order by hubloc_id desc",
+			$x = q("select * from xchan join hubloc on xchan_hash = hubloc_hash where (hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_network in ('zot6', 'activitypub') order by hubloc_id desc",
+				dbesc(str_replace('acct:', '', $url)),
 				dbesc($url),
 				dbesc($url)
 			);
@@ -323,7 +324,7 @@ class HTTPSig {
 		}
 
 		// The record wasn't in cache. Fetch it now.
-		$r = ActivityStreams::fetch($id);
+		$r = Activity::fetch($id);
 		$signatureAlgorithm = EMPTY_STR;
 
 		if ($r) {
@@ -378,7 +379,9 @@ class HTTPSig {
 		$best = [];
 
 		if (!$force) {
-			$x = q("select * from xchan join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_network in ('zot6', 'activitypub') order by hubloc_id desc",
+			$x = q("select * from xchan join hubloc on xchan_hash = hubloc_hash where (hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_network in ('zot6', 'activitypub') order by hubloc_id desc",
+				dbesc(str_replace('acct:', '', $id)),
+				dbesc($id),
 				dbesc($id)
 			);
 

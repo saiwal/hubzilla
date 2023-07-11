@@ -18,10 +18,10 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 
 
 	function post() {
-	
+
 		$using_api = false;
 
-		$result = [];	
+		$result = [];
 
 		if($_REQUEST['api_source'] && array_key_exists('media',$_FILES)) {
 			$using_api = true;
@@ -69,7 +69,7 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 				];
 			}
 		}
-		else {	
+		else {
 			if(! array_key_exists('userfile',$_FILES)) {
 				$_FILES['userfile'] = [
 					'name'     => $_FILES['files']['name'],
@@ -82,18 +82,18 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 		}
 
 		$observer = \App::get_observer();
-	
-	
+
+
 		$def_album  = get_pconfig($channel['channel_id'],'system','photo_path');
 		$def_attach = get_pconfig($channel['channel_id'],'system','attach_path');
-	
-		$r = attach_store($channel,(($observer) ? $observer['xchan_hash'] : ''),'', array('source' => 'editor', 'visible' => 0, 'album' => $def_album, 'directory' => $def_attach, 'allow_cid' => '<' . $channel['channel_hash'] . '>'));
+
+		$r = attach_store($channel,(($observer) ? $observer['xchan_hash'] : ''),'', array('source' => 'editor', 'visible' => 0, 'album' => $def_album, 'directory' => $def_attach, 'flags' => 1, 'allow_cid' => '<' . $channel['channel_hash'] . '>'));
 
 		if(! $r['success']) {
 			notice( $r['message'] . EOL);
 			killme();
 		}
-	
+
 		if(intval($r['data']['is_photo'])) {
 			$s = "\n\n" . $r['body'] . "\n\n";
 		}
@@ -130,7 +130,7 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 					logger('unable to read svg data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
 				}
 			}
-						
+
 			$s .=  "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 		}
 
@@ -144,8 +144,8 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 
 		$result['message'] = $s;
 		json_return_and_die($result);
-		
+
 	}
-	
+
 
 }

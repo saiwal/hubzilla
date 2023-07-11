@@ -17,8 +17,6 @@ class Hq extends \Zotlabs\Web\Controller {
 	function init() {
 		if(! local_channel())
 			return;
-
-		App::$profile_uid = local_channel();
 	}
 
 	function get($update = 0, $load = false) {
@@ -26,6 +24,8 @@ class Hq extends \Zotlabs\Web\Controller {
 		if(!local_channel()) {
 			return;
 		}
+
+		App::$profile_uid = local_channel();
 
 		$item_hash = '';
 
@@ -65,11 +65,6 @@ class Hq extends \Zotlabs\Web\Controller {
 				if (intval($target_item['uid']) === intval($sys['channel_id'])) {
 					$sys_item = true;
 				}
-			}
-
-			//if the item is to be moderated redirect to /moderate
-			if($target_item['item_blocked'] == ITEM_MODERATED) {
-				goaway(z_root() . '/moderate/' . $target_item['id']);
 			}
 
 			$simple_update = '';

@@ -53,35 +53,28 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			$allow_groups = [];
 		}
 
-		$recipients = array_unique(array_merge($allow_people,$allow_groups));
+		$raw_recipients = array_unique(array_merge($allow_people, $allow_groups));
+		$recipients = deliverable_abook_xchans($item['uid'], $raw_recipients);
 
 		// if you specifically deny somebody but haven't allowed anybody, we'll allow everybody in your
 		// address book minus the denied connections. The post is still private and can't be seen publicly
 		// as that would allow the denied person to see the post by logging out.
 
-		if((! $item['allow_cid']) && (! $item['allow_gid'])) {
-			$r = q("select * from abook where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
-				intval($item['uid'])
-			);
-
-			if($r) {
-				foreach($r as $rr) {
-					$recipients[] = $rr['abook_xchan'];
-				}
-			}
+		if(!$item['allow_cid'] && !$item['allow_gid']) {
+			$recipients = deliverable_abook_xchans($item['uid']);
 		}
 
 		$deny_people  = expand_acl($item['deny_cid']);
 		$deny_groups  = AccessList::expand(expand_acl($item['deny_gid']));
 
-		$deny = array_unique(array_merge($deny_people,$deny_groups));
+		$deny = array_unique(array_merge($deny_people, $deny_groups));
 
 		// Don't deny anybody if nobody was allowed (e.g. they were all filtered out)
 		// That would lead to array_diff doing the wrong thing.
 		// This will result in a private post that won't be delivered to anybody.
 
 		if($recipients && $deny)
-			$recipients = array_diff($recipients,$deny);
+			$recipients = array_diff($recipients, $deny);
 
 		$private_envelope = true;
 	}
@@ -112,9 +105,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			if ($hookinfo['recipients']) {
 				$r = $hookinfo['recipients'];
 			} else {
-				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 and abook_not_here = 0 and xchan_network not in ('anon', 'token', 'rss')",
-					intval($item['uid'])
-				);
+				$r = deliverable_abook_xchans($item['uid'], [], false);
 			}
 
 			if($r) {
@@ -242,9 +233,21 @@ function comments_are_now_closed($item) {
 }
 
 function item_normal() {
-	return " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
-		and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_pending_remove = 0
-		and item.item_blocked = 0 ";
+	$profile_uid = App::$profile['profile_uid'] ?? App::$profile_uid ?? null;
+	$uid = local_channel();
+	$is_owner = ($uid && intval($profile_uid) === $uid);
+
+	$sql = " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
+		and item.item_unpublished = 0 and item.item_pending_remove = 0";
+
+	if ($is_owner) {
+		$sql .= " and item.item_blocked IN (0, " . intval(ITEM_MODERATED) . ") and item.item_delayed IN (0, 1) ";
+	}
+	else {
+		$sql .= " and item.item_blocked = 0 and item.item_delayed = 0 ";
+	}
+
+	return $sql;
 }
 
 function item_normal_search() {
@@ -2448,13 +2451,17 @@ function send_status_notifications($post_id,$item) {
 			intval($item['uid'])
 		);
 
-		$thr_parent_id = $r[0]['id'];
+		if ($r) {
+			$thr_parent_id = $r[0]['id'];
+		}
+
 	}
 
 	$r = q("select channel_hash from channel where channel_id = %d limit 1",
 		intval($item['uid'])
 	);
-	if(! $r)
+
+	if(!$r)
 		return;
 
 	// my own post - no notification needed
@@ -5009,6 +5016,136 @@ function fix_attached_file_permissions($channel,$observer_hash,$body,
 	}
 }
 
+function list_attached_local_files($body) {
+
+	$files = [];
+	$match = [];
+
+	// match img and zmg image links
+	if (preg_match_all("/\[[zi]mg(.*?)](.*?)\[\/[zi]mg]/", $body, $match)) {
+		$images = array_merge($match[1], $match[2]);
+		if ($images) {
+			foreach ($images as $image) {
+				if (!stristr($image, z_root() . '/photo/')) {
+					continue;
+				}
+				$image_uri = substr($image,strrpos($image,'/') + 1);
+				if (str_contains($image_uri, '-')) {
+					$image_uri = substr($image_uri,0, strrpos($image_uri,'-'));
+				}
+				if (str_contains($image_uri, '.')) {
+					$image_uri = substr($image_uri,0, strpos($image_uri,'.'));
+				}
+				if ($image_uri && !in_array($image_uri, $files)) {
+					$files[] = $image_uri;
+				}
+			}
+		}
+	}
+	if (preg_match_all("/\[attachment](.*?)\[\/attachment]/",$body,$match)) {
+		$attaches = $match[1];
+		if ($attaches) {
+			foreach ($attaches as $attach) {
+				$hash = substr($attach,0,strpos($attach,','));
+				if ($hash && !in_array($hash, $files)) {
+					$files[] = $hash;
+				}
+			}
+		}
+	}
+
+	return $files;
+}
+
+function fix_attached_permissions($uid, $body, $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny, $token = EMPTY_STR) {
+
+	$files = list_attached_local_files($body);
+
+	if (! $files) {
+		return;
+	}
+
+	foreach ($files as $file) {
+		$attach_q = q("select id, hash, flags, is_photo, allow_cid, allow_gid, deny_cid, deny_gid from attach where hash = '%s' and uid = %d",
+			dbesc($file),
+			intval($uid)
+		);
+
+		if (! $attach_q) {
+			continue;
+		}
+
+		$attach = array_shift($attach_q);
+
+		$new_public = !(($str_contact_allow || $str_group_allow || $str_contact_deny || $str_group_deny));
+		$existing_public = !(($attach['allow_cid'] || $attach['allow_gid'] || $attach['deny_cid'] || $attach['deny_gid']));
+
+		if ($existing_public) {
+			// permissions have already been fixed and they are public. There's nothing for us to do.
+			continue;
+		}
+
+		// if flags & 1, the attachment was uploaded directly into a post and needs to have permissions corrected
+		// or - if it is a private file and a new token was generated, we'll need to add the token to the ACL.
+
+		if (((intval($attach['flags']) & 1) !== 1) && (! $token)) {
+			continue;
+		}
+
+		$item_private = 0;
+
+		if ($new_public === false) {
+			$item_private = (($str_group_allow || ($str_contact_allow && substr_count($str_contact_allow,'<') > 2)) ? 1 : 2);
+
+			// preserve any existing tokens that may have been set for this file
+			$token_matches = null;
+			if (preg_match_all('/<token:(.*?)>/',$attach['allow_cid'],$token_matches, PREG_SET_ORDER)) {
+				foreach ($token_matches as $m) {
+					$tok = '<token:' . $m[1] . '>';
+					if (!str_contains($str_contact_allow, $tok)) {
+						$str_contact_allow .= $tok;
+					}
+				}
+			}
+			if ($token && !str_contains($str_contact_allow, $token)) {
+				$str_contact_allow .= '<token:' . $token . '>';
+			}
+		}
+
+		q("update attach SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', flags = 0
+			WHERE id = %d AND uid = %d",
+			dbesc($str_contact_allow),
+			dbesc($str_group_allow),
+			dbesc($str_contact_deny),
+			dbesc($str_group_deny),
+			intval($attach['id']),
+			intval($uid)
+		);
+
+		if ($attach['is_photo']) {
+			$r = q("UPDATE photo SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s'
+				WHERE resource_id = '%s' AND uid = %d ",
+				dbesc($str_contact_allow),
+				dbesc($str_group_allow),
+				dbesc($str_contact_deny),
+				dbesc($str_group_deny),
+				dbesc($file),
+				intval($uid)
+			);
+
+			$r = q("UPDATE item SET allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', item_private = %d
+				WHERE resource_id = '%s' AND 'resource_type' = 'photo'  AND uid = %d",
+				dbesc($str_contact_allow),
+				dbesc($str_group_allow),
+				dbesc($str_contact_deny),
+				dbesc($str_group_deny),
+				intval($item_private),
+				dbesc($file),
+				intval($uid)
+			);
+		}
+	}
+}
 
 function item_create_edit_activity($post) {
 

@@ -255,6 +255,10 @@ input[type=text], textarea {
 	display: none;
 }
 
+span.spinner {
+	display: block;
+}
+
 .spinner.s {
 	height: 1rem;
 	width: 1rem;
@@ -1015,14 +1019,10 @@ img.mail-conv-sender-photo {
 
 .wall-item-content-wrapper {
 	background-color: var(--bs-tertiary-bg);
-	border-top-right-radius: var(--bs-border-radius);
-	border-top-left-radius: var(--bs-border-radius);
 }
 
 .wall-item-content-wrapper.comment {
 	background-color: var(--bs-body-bg);
-	border-top-right-radius: 0px;
-	border-top-left-radius: 0px;
 }
 
 .hide-comments-outer {
@@ -1199,6 +1199,7 @@ img.mail-conv-sender-photo {
 }
 
 .generic-content-wrapper {
+	background-color: var(--bs-body-bg);
 	border: 1px solid var(--bs-border-color);
 	border-radius: var(--bs-border-radius);
 	margin-bottom: 1.5rem;
@@ -1376,7 +1377,6 @@ blockquote {
 	overflow: auto;
 }
 
-.dropdown-item.active,
 .textcomplete-item.active {
 	color: #fff;
 	background-color: var(--bs-tertiary-bg);

@@ -25,6 +25,12 @@ class Privacy {
 		$permit_all_mentions = (((x($_POST, 'permit_all_mentions')) && (intval($_POST['permit_all_mentions']) == 1)) ? 1 : 0);
 		set_pconfig(local_channel(), 'system', 'permit_all_mentions', $permit_all_mentions);
 
+		$moderate_unsolicited_comments = (((x($_POST, 'moderate_unsolicited_comments')) && (intval($_POST['moderate_unsolicited_comments']) == 1)) ? 1 : 0);
+		set_pconfig(local_channel(), 'system', 'moderate_unsolicited_comments', $moderate_unsolicited_comments);
+
+		$ocap_enabled = (((x($_POST, 'ocap_enabled')) && (intval($_POST['ocap_enabled']) == 1)) ? 1 : 0);
+		set_pconfig(local_channel(), 'system', 'ocap_enabled', $ocap_enabled);
+
 		$role = get_pconfig(local_channel(), 'system', 'permissions_role');
 		if ($role === 'custom') {
 
@@ -103,6 +109,8 @@ class Privacy {
 		$index_opt_out = get_pconfig(local_channel(), 'system', 'index_opt_out');
 		$group_actor = get_pconfig(local_channel(), 'system', 'group_actor');
 		$permit_all_mentions = get_pconfig(local_channel(), 'system', 'permit_all_mentions');
+		$moderate_unsolicited_comments = get_pconfig(local_channel(), 'system', 'moderate_unsolicited_comments');
+		$ocap_enabled = get_pconfig(local_channel(), 'system', 'ocap_enabled');
 
 		$permissions_role   = get_pconfig(local_channel(), 'system', 'permissions_role', 'custom');
 		$permission_limits  = ($permissions_role === 'custom');
@@ -125,6 +133,8 @@ class Privacy {
 			'$index_opt_out' => ['index_opt_out', t('Opt-out of search engine indexing'), $index_opt_out, '', [t('No'), t('Yes')]],
 			'$group_actor' => ['group_actor', t('Group actor'), $group_actor, t('Allow this channel to act as a forum'), [t('No'), t('Yes')]],
 			'$permit_all_mentions' => ['permit_all_mentions', t('Accept all messages which mention you'), $permit_all_mentions, t('This setting bypasses normal permissions'), [t('No'), t('Yes')]],
+			'$moderate_unsolicited_comments' => ['moderate_unsolicited_comments', t('Accept unsolicited comments for moderation'), $moderate_unsolicited_comments, t('Otherwise they will be silently dropped'), [t('No'), t('Yes')]],
+			'$ocap_enabled' => ['ocap_enabled', t('Enable OCAP access'), $ocap_enabled, t('Grant limited posts the right to access linked private media'), [t('No'), t('Yes')]],
 		]);
 
 		return $o;

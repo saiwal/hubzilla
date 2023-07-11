@@ -187,7 +187,7 @@
 			{{if $name}}
 			<img src="{{$thumb}}" class="menu-img-3">
 			<div class="p-1">
-				<div class="fn text-truncate">{{$name}}</div>
+				<div class="fw-bold text-truncate">{{$name}}</div>
 				<div class="text-muted text-truncate">{{$sitelocation}}</div>
 			</div>
 			{{/if}}

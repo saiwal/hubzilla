@@ -105,13 +105,13 @@ class Magic extends Controller {
 				$headers['Accept'] = 'application/x-zot+json' ;
 				$headers['Content-Type'] = 'application/x-zot+json' ;
 				$headers['X-Open-Web-Auth'] = random_string();
-				$headers['Digest'] = HTTPSig::generate_digest_header($data);
 				$headers['Host'] = $parsed['host'];
-				$headers['(request-target)'] = 'post ' . '/owa';
+				$headers['(request-target)'] = 'get ' . '/owa';
 
 				$headers = HTTPSig::create_sig($headers,$channel['channel_prvkey'], channel_url($channel),true,'sha512');
 				$redirects = 0;
-				$x = z_post_url($owapath,$data,$redirects,[ 'headers' => $headers ]);
+				$x = z_fetch_url($owapath, false, $redirects, ['headers' => $headers]);
+
 				logger('owa fetch returned: ' . print_r($x,true),LOGGER_DATA);
 				if ($x['success']) {
 					$j = json_decode($x['body'],true);

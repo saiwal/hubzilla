@@ -218,6 +218,22 @@ class Item extends Controller {
 				);
 			}
 
+			$bear = Activity::token_from_request();
+			if ($bear) {
+				logger('bear: ' . $bear, LOGGER_DEBUG);
+				if (!$i) {
+					$t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+						dbesc($bear)
+					);
+					if ($t) {
+						$i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+							dbesc($item_id),
+							intval($t[0]['iid'])
+						);
+					}
+				}
+			}
+
 			if (!$i) {
 				http_status_exit(403, 'Forbidden');
 			}
@@ -286,7 +302,9 @@ class Item extends Controller {
 		if ((!local_channel()) && (!remote_channel()) && (!x($_REQUEST, 'anonname')))
 			return;
 
-		$uid      = local_channel();
+		$uid = local_channel();
+		$token = '';
+
 		$channel  = null;
 		$observer = null;
 		$datarray = [];
@@ -809,7 +827,6 @@ class Item extends Controller {
 
 			require_once('include/text.php');
 
-
 			// BBCODE alert: the following functions assume bbcode input
 			// and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
 			// we may need virtual or template classes to implement the possible alternatives
@@ -845,6 +862,21 @@ class Item extends Controller {
 				$private = 2;
 			}
 
+			if ($private && get_pconfig($profile_uid, 'system', 'ocap_enabled')) {
+				// for edited posts, re-use any existing OCAP token (if found).
+				// Otherwise generate a new one.
+
+				if ($iconfig) {
+					foreach ($iconfig as $cfg) {
+						if ($cfg['cat'] === 'ocap' && $cfg['k'] === 'relay') {
+							$token = $cfg['v'];
+						}
+					}
+				}
+				if (!$token) {
+					$token = new_token();
+				}
+			}
 
 			/**
 			 *
@@ -866,9 +898,9 @@ class Item extends Controller {
 			 */
 
 			if (!$preview) {
-				fix_attached_photo_permissions($profile_uid, $owner_xchan['xchan_hash'], ((strpos($body, '[/crypt]')) ? $_POST['media_str'] : $body), $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny);
-				fix_attached_photo_permissions($profile_uid, $owner_xchan['xchan_hash'], ((strpos($summary, '[/crypt]')) ? $_POST['media_str'] : $summary), $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny);
-				fix_attached_file_permissions($channel, $observer['xchan_hash'], ((strpos($body, '[/crypt]')) ? $_POST['media_str'] : $body), $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny);
+				fix_attached_permissions($profile_uid, ((strpos($body, '[/crypt]')) ? $_POST['media_str'] : $body), $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny, $token);
+				//fix_attached_photo_permissions($profile_uid, $owner_xchan['xchan_hash'], ((strpos($body, '[/crypt]')) ? $_POST['media_str'] : $body), $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny, $token);
+				//fix_attached_file_permissions($channel, $observer['xchan_hash'], ((strpos($body, '[/crypt]')) ? $_POST['media_str'] : $body), $str_contact_allow, $str_group_allow, $str_contact_deny, $str_group_deny, $token);
 			}
 
 			$attachments = '';
@@ -951,13 +983,11 @@ class Item extends Controller {
 			}
 		}
 
-
 		$item_unseen    = ((local_channel() != $profile_uid) ? 1 : 0);
 		$item_wall      = ((isset($_REQUEST['type']) && ($_REQUEST['type'] === 'wall' || $_REQUEST['type'] === 'wall-comment')) ? 1 : 0);
 		$item_origin    = (($origin) ? 1 : 0);
 		$item_consensus = (($consensus) ? 1 : 0);
 		$item_nocomment = (($nocomment) ? 1 : 0);
-
 
 		// determine if this is a wall post
 
@@ -1107,8 +1137,13 @@ class Item extends Controller {
 		if (!empty_acl($datarray))
 			$datarray['public_policy'] = '';
 
-		if ($iconfig)
+		if ($iconfig) {
 			$datarray['iconfig'] = $iconfig;
+		}
+
+		if ($token) {
+			IConfig::set($datarray, 'ocap', 'relay', $token);
+		}
 
 		// preview mode - prepare the body for display and send it via json
 

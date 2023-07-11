@@ -14,6 +14,7 @@ class ActivityStreams {
 	public $meta = null;
 	public $valid = false;
 	public $deleted = false;
+	public $portable_id = null;
 	public $id = '';
 	public $parent_id = '';
 	public $type = '';
@@ -35,12 +36,13 @@ class ActivityStreams {
 	 *
 	 * @param string $string
 	 */
-	function __construct($string) {
+	function __construct($string, $portable_id = null) {
 
 		if(!$string)
 			return;
 
 		$this->raw = $string;
+		$this->portable_id = $portable_id;
 
 		if (is_array($string)) {
 			$this->data = $string;
@@ -123,13 +125,14 @@ class ActivityStreams {
 
 			$this->parent_id = $this->get_property_obj('inReplyTo');
 
-			if ((!$this->parent_id) && is_array($this->obj) && isset($this->obj['inReplyTo'])) {
+			if (!$this->parent_id && is_array($this->obj) && isset($this->obj['inReplyTo'])) {
 				$this->parent_id = $this->obj['inReplyTo'];
 			}
 
-			if ((!$this->parent_id) && is_array($this->obj) && isset($this->obj['id'])) {
+			if (!$this->parent_id && is_array($this->obj) && isset($this->obj['id'])) {
 				$this->parent_id = $this->obj['id'];
 			}
+
 		}
 	}
 
@@ -302,12 +305,26 @@ class ActivityStreams {
 	 * @return NULL|mixed
 	 */
 
-	function fetch_property($url) {
-		return self::fetch($url);
-	}
+	function fetch_property($url, $channel = null) {
+		$x = null;
 
-	static function fetch($url, $channel = null) {
-		return Activity::fetch($url, $channel);
+		if (str_starts_with($url, z_root() . '/item/')) {
+			$x = Activity::fetch_local($url, $this->portable_id ?? '');
+			logger('local: ' . print_r($x,true));
+		}
+
+		if (!$x) {
+			$x = Activity::fetch($url, $channel);
+			if ($x === null && strpos($url, '/channel/')) {
+				// look for other nomadic channels which might be alive
+				$zf = Zotfinger::exec($url, $channel);
+
+				$url = $zf['signature']['signer'];
+				$x = Activity::fetch($url, $channel);
+			}
+		}
+
+		return $x;
 	}
 
 	static function is_an_actor($s) {
