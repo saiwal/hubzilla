@@ -1,4 +1,4 @@
-Hubzilla 8.6 (2023-07-??)
+Hubzilla 8.6 (2023-07-11)
 	- Update fullcalendar library
 	- Improve and unify selection of deliverable abook xchans
 	- Remove unused pseudo_abook()
