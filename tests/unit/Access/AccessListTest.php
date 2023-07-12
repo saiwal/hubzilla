@@ -34,10 +34,9 @@ use Zotlabs\Access\AccessList;
 class AccessListTest extends UnitTestCase {
 
 	/**
-	 * @brief Expected result for most tests.
-	 * @var array
+	 * Expected result for most tests.
 	 */
-	protected $expectedResult = [
+	protected array $expectedResult = [
 			'allow_cid' => '<acid><acid2>',
 			'allow_gid' => '<agid>',
 			'deny_cid'  => '',
