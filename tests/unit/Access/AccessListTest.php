@@ -69,23 +69,24 @@ class AccessListTest extends UnitTestCase {
 		// Causes: "Illegal string offset 'channel_allow_cid'"
 	}
 */
-	public function testDefaultGetExplicit() {
+	/**
+	 * Test that the defaults are as expected when constructed with
+	 * an empty array.
+	 */
+	public function testDefaults() {
 		$accessList = new AccessList([]);
 
 		$this->assertFalse($accessList->get_explicit());
-	}
+		$this->assertFalse($accessList->is_private());
 
-	public function testDefaultGet() {
-		$arr = [
+		$expected = [
 				'allow_cid' => '',
 				'allow_gid' => '',
 				'deny_cid'  => '',
 				'deny_gid'  => ''
 		];
 
-		$accessList = new AccessList([]);
-
-		$this->assertEquals($arr, $accessList->get());
+		$this->assertEquals($expected, $accessList->get());
 	}
 
 	public function testSet() {
@@ -161,9 +162,6 @@ class AccessListTest extends UnitTestCase {
 	 * @dataProvider isprivateProvider
 	 */
 	public function testIsPrivate($channel) {
-		$accessListPublic = new AccessList([]);
-		$this->assertFalse($accessListPublic->is_private());
-
 		$accessListPrivate = new AccessList($channel);
 		$this->assertTrue($accessListPrivate->is_private());
 	}
