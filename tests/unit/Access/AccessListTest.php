@@ -160,6 +160,8 @@ class AccessListTest extends UnitTestCase {
 	}
 
 	/**
+	 * The AccessList should be private if any of the fields are set,
+	 *
 	 * @dataProvider isprivateProvider
 	 */
 	public function testIsPrivate($channel) {
@@ -175,11 +177,29 @@ class AccessListTest extends UnitTestCase {
 						'channel_deny_cid'  => '<dcid>',
 						'channel_deny_gid'  => '<dgid>'
 				]],
-				'only one set' => [[
+				'only allow_cid set' => [[
 						'channel_allow_cid' => '<acid>',
 						'channel_allow_gid' => '',
 						'channel_deny_cid'  => '',
 						'channel_deny_gid'  => ''
+				]],
+				'only allow_gid set' => [[
+						'channel_allow_cid' => '',
+						'channel_allow_gid' => '<agid>',
+						'channel_deny_cid'  => '',
+						'channel_deny_gid'  => ''
+				]],
+				'only deny_cid set' => [[
+						'channel_allow_cid' => '',
+						'channel_allow_gid' => '',
+						'channel_deny_cid'  => '<dcid>',
+						'channel_deny_gid'  => ''
+				]],
+				'only deny_gid set' => [[
+						'channel_allow_cid' => '',
+						'channel_allow_gid' => '',
+						'channel_deny_cid'  => '',
+						'channel_deny_gid'  => '<dgid>'
 				]],
 				'acid+null' => [[
 						'channel_allow_cid' => '<acid>',
