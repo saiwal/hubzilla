@@ -124,7 +124,9 @@ class AccessListTest extends UnitTestCase {
 */
 
 	/**
-	 * set_from_array() calls some other functions, too which are not yet unit tested.
+	 * The set_from_array() function calls some other functions, too which are
+	 * not yet unit tested.
+	 *
 	 * @uses ::perms2str
 	 * @uses ::sanitise_acl
 	 * @uses ::notags
