@@ -506,7 +506,8 @@ class ThreadItem {
 			'contact_id' => (($contact) ? $contact['abook_id'] : ''),
 			'moderate' => ($item['item_blocked'] == ITEM_MODERATED),
 			'moderate_approve' => t('Approve'),
-			'moderate_delete' => t('Delete')
+			'moderate_delete' => t('Delete'),
+			'rtl' => in_array($item['lang'], rtl_languages())
 
 		);
 

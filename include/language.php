@@ -451,3 +451,20 @@ function lang_selector() {
 	return $o;
 }
 
+function rtl_languages() {
+	return [
+		'ar',
+		'arc',
+		'ckb',
+		'dv',
+		'fa',
+		'ha',
+		'he',
+		'khw',
+		'ks',
+		'ps',
+		'sd',
+		'ur',
+		'yi'
+	];
+}
