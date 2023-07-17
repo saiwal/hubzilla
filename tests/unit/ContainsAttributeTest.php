@@ -1,24 +1,21 @@
 <?php
 /**
- * this test tests the contains_attribute function
+ * This test tests the contains_attribute function
  *
  * @package test.util
  */
 
 use PHPUnit\Framework\TestCase;
 
-/** required, it is the file under test */
-require_once('include/text.php');
-
 /**
  * TestCase for the contains_attribute function
  *
- * @author Alexander Kampmann
+ * @author  Alexander Kampmann
  * @package test.util
  */
 class ContainsAttributeTest extends TestCase {
 	/**
-	 * test attribute contains
+	 * Test attribute contains
 	 */
 	public function testAttributeContains1() {
 		$testAttr="class1 notclass2 class3";
@@ -27,7 +24,7 @@ class ContainsAttributeTest extends TestCase {
 	}
 
 	/**
-	 * test attribute contains
+	 * Test attribute contains
 	 */
 	public function testAttributeContains2() {
 		$testAttr="class1 not-class2 class3";
@@ -36,7 +33,7 @@ class ContainsAttributeTest extends TestCase {
 	}
 
 	/**
-	 * test with empty input
+	 * Test with empty input
 	 */
 	public function testAttributeContainsEmpty() {
 		$testAttr="";
@@ -44,7 +41,7 @@ class ContainsAttributeTest extends TestCase {
 	}
 
 	/**
-	 * test input with special chars
+	 * Test input with special chars
 	 */
 	public function testAttributeContainsSpecialChars() {
 		$testAttr="--... %\$ä() /(=?}";
