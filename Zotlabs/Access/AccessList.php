@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Access;
 
+
 /**
  * @brief AccessList class which represents individual content ACLs.
  *
@@ -40,6 +41,25 @@ class AccessList {
 	 */
 	private $explicit;
 
+	/**
+	 * @brief Keys required by the constructor if the channel array is given.
+	 */
+	private const REQUIRED_KEYS_CONSTRUCTOR = [
+		'channel_allow_cid',
+		'channel_allow_gid',
+		'channel_deny_cid',
+		'channel_deny_gid'
+	];
+
+	/**
+	 * @brief Keys required by the set method.
+	 */
+	private const REQUIRED_KEYS_SET = [
+		'allow_cid',
+		'allow_gid',
+		'deny_cid',
+		'deny_gid'
+	];
 
 	/**
 	 * @brief Constructor for AccessList class.
@@ -53,8 +73,9 @@ class AccessList {
 	 *   * \e string \b channel_deny_cid => string of denied cids
 	 *   * \e string \b channel_deny_gid => string of denied gids
 	 */
-	function __construct($channel) {
+	function __construct(array $channel) {
 		if ($channel) {
+			$this->validate_input_array($channel, self::REQUIRED_KEYS_CONSTRUCTOR);
 			$this->allow_cid = $channel['channel_allow_cid'];
 			$this->allow_gid = $channel['channel_allow_gid'];
 			$this->deny_cid  = $channel['channel_deny_cid'];
@@ -68,6 +89,17 @@ class AccessList {
 		}
 
 		$this->explicit = false;
+	}
+
+	private function validate_input_array(array $arr, array $required_keys) {
+		$missing_keys = array_diff($required_keys, array_keys($arr));
+
+		if (!empty($missing_keys)) {
+			throw new \Exception(
+				'Invalid AccessList object: Expected array with keys: '
+				. implode(', ', $missing_keys)
+			);
+		}
 	}
 
 	/**
@@ -94,7 +126,9 @@ class AccessList {
 	 *   * \e string \b deny_gid  => string of denied gids
 	 * @param boolean $explicit (optional) default true
 	 */
-	function set($arr, $explicit = true) {
+	function set(array $arr, bool $explicit = true) {
+		$this->validate_input_array($arr, self::REQUIRED_KEYS_SET);
+
 		$this->allow_cid = $arr['allow_cid'];
 		$this->allow_gid = $arr['allow_gid'];
 		$this->deny_cid  = $arr['deny_cid'];
@@ -138,7 +172,7 @@ class AccessList {
 	 *   * \e array|string \b group_deny    => array with gids or comma-seperated string
 	 * @param boolean $explicit (optional) default true
 	 */
-	function set_from_array($arr, $explicit = true) {
+	function set_from_array(array $arr, bool $explicit = true) {
 		$arr['contact_allow'] = $arr['contact_allow'] ?? [];
 		$arr['group_allow'] = $arr['group_allow'] ?? [];
 		$arr['contact_deny'] = $arr['contact_deny'] ?? [];
