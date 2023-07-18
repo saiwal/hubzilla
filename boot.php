@@ -942,7 +942,8 @@ class App {
 			'ttf'   => 'font/ttf',
 			'woff'  => 'font/woff',
 			'woff2' => 'font/woff2',
-			'svg'   => 'image/svg+xml'
+			'svg'   => 'image/svg+xml',
+			'jsonld' => 'application/ld+json'
 		];
 
 		if (array_key_exists($filext, $serve_rawfiles) && file_exists(self::$cmd)) {
