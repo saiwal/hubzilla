@@ -12,16 +12,18 @@
 </script>
 <div class = "generic-content-wrapper-styled" id='adminpage'>
 	<h1>{{$title}} - {{$page}}</h1>
-	
+
 	<form action="{{$baseurl}}/admin/channels" method="post">
         <input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
-		
+
 		<h3>{{$h_channels}}</h3>
 		{{if $channels}}
-			<table id='channels'>
+			<table id="channels" class="table table-hover">
 				<thead>
 				<tr>
 					{{foreach $th_channels as $th}}<th><a href="{{$base}}&key={{$th.1}}&dir={{$odir}}">{{$th.0}}</a></th>{{/foreach}}
+					<th></th>
+					<th></th>
 					<th></th>
 					<th></th>
 				</tr>
@@ -32,11 +34,15 @@
 						<td class='channel_id'>{{$c.channel_id}}</td>
 						<td class='channel_name'><a href="channel/{{$c.channel_address}}">{{$c.channel_name}}</a></td>
 						<td class='channel_address'>{{$c.channel_address}}</td>
-						<td class="checkbox_bulkedit"><input type="checkbox" class="channels_ckbx" id="id_channel_{{$c.channel_id}}" name="channel[]" value="{{$c.channel_id}}"/></td>
+						<td class="checkbox_bulkedit"><input type="checkbox" class="channels_ckbx p-1" id="id_channel_{{$c.channel_id}}" name="channel[]" value="{{$c.channel_id}}"/></td>
 						<td class="tools">
-							<a href="{{$baseurl}}/admin/channels/block/{{$c.channel_id}}?t={{$form_security_token}}" class="btn btn-default btn-xs" title='{{if ($c.blocked)}}{{$unblock}}{{else}}{{$block}}{{/if}}'><i class='fa fa-ban admin-icons {{if ($c.blocked)}}dim{{/if}}'></i></a>
-							<a href="{{$baseurl}}/admin/channels/code/{{$c.channel_id}}?t={{$form_security_token}}" class="btn btn-default btn-xs{{if ($c.allowcode)}} btn-danger{{/if}}" title='{{if ($c.allowcode)}}{{$uncode}}{{else}}{{$code}}{{/if}}'><i class='fa fa-terminal admin-icons {{if ($c.allowcode)}}dim{{/if}}'></i></a>
-							<a href="{{$baseurl}}/admin/channels/delete/{{$c.channel_id}}?t={{$form_security_token}}" class="btn btn-default btn-xs" title='{{$delete}}' onclick="return confirm_delete('{{$c.channel_name}}')"><i class='fa fa-trash-o admin-icons'></i></a>
+							<a href="{{$baseurl}}/admin/channels/block/{{$c.channel_id}}?t={{$form_security_token}}" class="p-1 text-reset" title='{{if ($c.blocked)}}{{$unblock}}{{else}}{{$block}}{{/if}}'><i class='fa fa-ban admin-icons {{if ($c.blocked)}}text-danger{{/if}}'></i></a>
+						</td>
+						<td class="tools">
+							<a href="{{$baseurl}}/admin/channels/code/{{$c.channel_id}}?t={{$form_security_token}}" class="p-1 text-reset" title='{{if ($c.allowcode)}}{{$uncode}}{{else}}{{$code}}{{/if}}'><i class='fa fa-terminal admin-icons {{if ($c.allowcode)}}text-danger{{/if}}'></i></a>
+						</td>
+						<td class="tools">
+							<a href="{{$baseurl}}/admin/channels/delete/{{$c.channel_id}}?t={{$form_security_token}}" class="p-1 text-reset" title='{{$delete}}' onclick="return confirm_delete('{{$c.channel_name}}')"><i class='fa fa-trash-o admin-icons'></i></a>
 						</td>
 					</tr>
 				{{/foreach}}
@@ -44,10 +50,10 @@
 			</table>
 			<div class='selectall'><a href='#' onclick="return selectall('channels_ckbx');">{{$select_all}}</a></div>
 			<div class="submit">
-                <input type="submit" name="page_channels_block" class="btn btn-primary" value="{{$block}}/{{$unblock}}" /> 
-                <input type="submit" name="page_channels_code" class="btn btn-primary" value="{{$code}}/{{$uncode}}" /> 
+                <input type="submit" name="page_channels_block" class="btn btn-primary" value="{{$block}}/{{$unblock}}" />
+                <input type="submit" name="page_channels_code" class="btn btn-primary" value="{{$code}}/{{$uncode}}" />
                 <input type="submit" name="page_channels_delete" class="btn btn-primary" onclick="return confirm_delete_multi()" value="{{$delete}}" />
-            </div>						
+            </div>
 		{{else}}
 			NO CHANNELS?!?
 		{{/if}}

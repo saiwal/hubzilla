@@ -924,10 +924,6 @@ a .drop-icons:hover {
 	list-style-type: none;
 }
 
-#adminpage table tr:hover {
-	background-color: #BBC7D7;
-}
-
 table {
 	border-spacing: 2px;
 	max-width: 100%;

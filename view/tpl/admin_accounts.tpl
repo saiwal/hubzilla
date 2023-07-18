@@ -7,7 +7,7 @@
 		<h3>{{$h_pending}}</h3>
 		{{if $debug}}<div>{{$debug}}</div>{{/if}}
 		{{if $pending}}
-		<table id="pending">
+		<table id="pending" class="table table-hover">
 			<thead>
 			<tr>
 				{{foreach $th_pending as $th}}<th>{{$th}}</th>{{/foreach}}
@@ -53,10 +53,11 @@
 		<br><br>
 		<h3>{{$h_users}}</h3>
 		{{if $users}}
-			<table id="users">
+			<table id="users" class="table table-hover">
 				<thead>
 				<tr>
 					{{foreach $th_users as $th}}<th><a href="{{$base}}&key={{$th.1}}&dir={{$odir}}">{{$th.0}}</a></th>{{/foreach}}
+					<th></th>
 					<th></th>
 					<th></th>
 				</tr>
@@ -75,10 +76,12 @@
 						<td class="login_date">{{$u.account_lastlog}}</td>
 						<td class="account_expires">{{$u.account_expires}}</td>
 						<td class="service_class">{{$u.account_service_class}}</td>
-						<td class="checkbox_bulkedit"><input type="checkbox" class="users_ckbx" id="id_user_{{$u.account_id}}" name="user[]" value="{{$u.account_id}}"><input type="hidden" name="blocked[]" value="{{$u.blocked}}"></td>
+						<td class="checkbox_bulkedit"><input type="checkbox" class="users_ckbx p-1" id="id_user_{{$u.account_id}}" name="user[]" value="{{$u.account_id}}"><input type="hidden" name="blocked[]" value="{{$u.blocked}}"></td>
 						<td class="tools">
-							<a href="{{$baseurl}}/admin/accounts/{{if ($u.blocked)}}un{{/if}}block/{{$u.account_id}}?t={{$form_security_token}}" class="btn btn-default btn-xs" title='{{if ($u.blocked)}}{{$unblock}}{{else}}{{$block}}{{/if}}'><i class="fa fa-ban admin-icons{{if ($u.blocked)}} dim{{/if}}"></i></a>
-							<a href="{{$baseurl}}/admin/accounts/delete/{{$u.account_id}}?t={{$form_security_token}}" class="btn btn-default btn-xs" title='{{$delete}}' onclick="return confirm_delete('{{$u.name}}')"><i class="fa fa-trash-o admin-icons"></i></a>
+							<a href="{{$baseurl}}/admin/accounts/delete/{{$u.account_id}}?t={{$form_security_token}}" class="p-1 text-reset" title='{{$delete}}' onclick="return confirm_delete('{{$u.name}}')"><i class="fa fa-trash-o admin-icons"></i></a>
+						</td>
+						<td class="tools">
+							<a href="{{$baseurl}}/admin/accounts/{{if ($u.blocked)}}un{{/if}}block/{{$u.account_id}}?t={{$form_security_token}}" class="p-1 text-reset" title='{{if ($u.blocked)}}{{$unblock}}{{else}}{{$block}}{{/if}}'><i class="fa fa-ban admin-icons{{if ($u.blocked)}} dim{{/if}}"></i></a>
 						</td>
 					</tr>
 				{{/foreach}}
