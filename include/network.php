@@ -456,13 +456,14 @@ function as_return_and_die($obj,$channel) {
  * @param string $msg
  *    optional message
  */
-function http_status($val, $msg = '') {
+function http_status($val, $msg = '',$skiplog = 0) {
 	if ($val >= 400)
 		$msg = (($msg) ? $msg : 'Error');
 	if ($val >= 200 && $val < 300)
 		$msg = (($msg) ? $msg : 'OK');
 
-	logger(\App::$query_string . ':' . $val . ' ' . $msg);
+	if (!$skiplog) 
+		logger(\App::$query_string . ':' . $val . ' ' . $msg);
 	header($_SERVER['SERVER_PROTOCOL'] . ' ' . $val . ' ' . $msg);
 }
 
@@ -476,8 +477,8 @@ function http_status($val, $msg = '') {
  *    optional message
  * @return void does not return, process is terminated
  */
-function http_status_exit($val, $msg = '') {
-	http_status($val, $msg);
+function http_status_exit($val, $msg = '',$skiplog = 0) {
+	http_status($val, $msg, $skiplog);
 	killme();
 }
 
