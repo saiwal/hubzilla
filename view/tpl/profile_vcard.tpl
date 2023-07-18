@@ -94,8 +94,8 @@
 			<dd class="homepage-url u-url">{{$profile.homepage}}</dd>
 		</dl>
 		{{/if}}
-		<div class="hcard-addon rounded"></div>
 	</div>
+	<div class="hcard-addon"></div>
 	{{/if}}
 </div>
 {{if $details}}
