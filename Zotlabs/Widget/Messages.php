@@ -60,8 +60,10 @@ class Messages {
 		}
 
 		$channel = App::get_channel();
-		$item_normal_i = str_replace('item.', 'i.', item_normal());
-		$item_normal_c = str_replace('item.', 'c.', item_normal());
+		$item_normal = item_normal();
+		$item_normal .= " and item.verb != '" . ACTIVITY_FOLLOW . "'";
+		$item_normal_i = str_replace('item.', 'i.', $item_normal);
+		$item_normal_c = str_replace('item.', 'c.', $item_normal);
 		$entries = [];
 		$limit = 30;
 		$dummy_order_sql = '';

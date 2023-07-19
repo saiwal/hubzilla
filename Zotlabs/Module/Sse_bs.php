@@ -169,12 +169,12 @@ class Sse_bs extends Controller {
 
 		$sql_extra2 = '';
 		if(self::$xchans)
-			$sql_extra2 = " AND CASE WHEN verb = '" . ACTIVITY_SHARE . "' THEN owner_xchan ELSE author_xchan END IN (" . self::$xchans . ") ";
+			$sql_extra2 = " AND CASE WHEN verb = '" . dbesc(ACTIVITY_SHARE) . "' THEN owner_xchan ELSE author_xchan END IN (" . self::$xchans . ") ";
 
 		$item_normal = item_normal();
 
-		// FEP-5624 filter approvals for comments
-		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+		// Filter FEP-5624 approvals for comments and internal follow activities
+		$item_normal .= " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject', '" . dbesc(ACTIVITY_FOLLOW) . "') ";
 
 		if ($notifications) {
 			$items = q("SELECT * FROM item
@@ -184,7 +184,6 @@ class Sse_bs extends Controller {
 				AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 				AND author_xchan != '%s'
 				$item_normal
-				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
@@ -258,8 +257,8 @@ class Sse_bs extends Controller {
 
 		$item_normal = item_normal();
 
-		// FEP-5624 filter approvals for comments
-		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+		// Filter FEP-5624 approvals for comments and internal follow activities
+		$item_normal .= " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject', '" . dbesc(ACTIVITY_FOLLOW) . "') ";
 
 		if ($notifications) {
 			$items = q("SELECT * FROM item
@@ -269,7 +268,6 @@ class Sse_bs extends Controller {
 				AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 				AND author_xchan != '%s'
 				$item_normal
-				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
@@ -343,8 +341,8 @@ class Sse_bs extends Controller {
 
 		$item_normal = item_normal();
 
-		// FEP-5624 filter approvals for comments
-		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+		// Filter FEP-5624 approvals for comments and internal follow activities
+		$item_normal .= " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject', '" . dbesc(ACTIVITY_FOLLOW) . "') ";
 
 		if ($notifications) {
 			$items = q("SELECT * FROM item
@@ -445,8 +443,8 @@ class Sse_bs extends Controller {
 
 		$item_normal = item_normal();
 
-		// FEP-5624 filter approvals for comments
-		$approvals = " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject') ";
+		// Filter FEP-5624 approvals for comments and internal follow activities
+		$item_normal .= " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject', '" . dbesc(ACTIVITY_FOLLOW) . "') ";
 
 		if ($notifications) {
 			$items = q("SELECT * FROM item
@@ -640,6 +638,10 @@ class Sse_bs extends Controller {
 			return $result;
 
 		$item_normal = item_normal();
+
+		// Filter FEP-5624 approvals for comments and internal follow activities
+		$item_normal .= " AND verb NOT IN ('" . dbesc(ACTIVITY_ATTEND) . "', 'Accept', '" . dbesc(ACTIVITY_ATTENDNO) . "', 'Reject', '" . dbesc(ACTIVITY_FOLLOW) . "') ";
+
 
 		$r = q("SELECT * FROM item
 			WHERE verb = '%s'
