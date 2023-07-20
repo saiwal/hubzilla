@@ -60,14 +60,24 @@ class AccessListTest extends UnitTestCase {
 	}
 
 	/**
-	 * @expectedException PHPUnit\Framework\Error\Error
+	 * AccessList constructor should throw an exception if input is not
+	 * an array.
 	 */
-/*
-	public function testPHPErrorOnInvalidConstructor() {
+	public function testConstructorThrowsOnInvalidInputType() {
+		$this->expectException("TypeError");
 		$accessList = new AccessList('invalid');
-		// Causes: "Illegal string offset 'channel_allow_cid'"
 	}
-*/
+
+	/**
+	 * AccessList constructor should throw an exception on
+	 * invalid input.
+	 */
+	public function testConstructorThrowsOnMissingKeysInArray() {
+		$this->expectException("Exception");
+		$this->expectExceptionMessage("Invalid AccessList object");
+		$accessList = new AccessList(['something_else' => 'should_this_fail?']);
+	}
+
 	/**
 	 * Test that the defaults are as expected when constructed with
 	 * an empty array.
@@ -111,16 +121,22 @@ class AccessListTest extends UnitTestCase {
 	}
 
 	/**
-	 * @expectedException PHPUnit\Framework\Error\Error
+	 * The set method should throw an exception if input is not an array.
 	 */
-/*
-	public function testPHPErrorOnInvalidSet() {
+	public function testSetThrowsOnInvalidInputType() {
+		$this->expectException('TypeError');
 		$accessList = new AccessList([]);
 
 		$accessList->set('invalid');
-		// Causes: "Illegal string offset 'allow_cid'"
 	}
-*/
+
+	public function testSetThrowsOnMissingKeysInArray() {
+		$this->expectException('Exception');
+		$this->expectExceptionMessage('Invalid AccessList object');
+
+		$accessList = new AccessList([]);
+		$accessList->set(['something_else' => 'should_this_fail?']);
+	}
 
 	/**
 	 * The set_from_array() function calls some other functions, too which are
