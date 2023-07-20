@@ -181,7 +181,7 @@ class Chat extends Controller {
 			);
 
 			if($x) {
-				$acl = new AccessList(false);
+				$acl = new AccessList([]);
 				$acl->set($x[0]);
 
 				$private = $acl->is_private();

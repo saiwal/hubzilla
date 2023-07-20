@@ -101,7 +101,7 @@ class ThreadItem {
  		$conv = $this->get_conversation();
 		$observer = $conv->get_observer();
 
-		$acl = new AccessList(false);
+		$acl = new AccessList([]);
 		$acl->set($item);
 
 		$lock = ((intval($item['item_private']) || ($item['uid'] == local_channel() && $acl->is_private()))
