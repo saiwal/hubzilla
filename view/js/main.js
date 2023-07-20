@@ -646,7 +646,8 @@ function updatePageItems(mode, data) {
 
 
 function updateConvItems(mode,data) {
-	var scroll_position = $(window).scrollTop();
+	let scroll_position = $(window).scrollTop();
+	let b64mids = [];
 
 	if(mode !== 'update')
 		$(document).trigger('hz:updateConvItems');
@@ -660,12 +661,12 @@ function updateConvItems(mode,data) {
 
 	$('.thread-wrapper', data).each(function() {
 		if(this.classList.contains('toplevel_item')) {
-			var ident = this.id;
-			var convId = ident.replace('thread-wrapper-','');
-			var commentWrap = $('#'+ident+' .collapsed-comments').attr('id');
+			let ident = this.id;
+			let convId = ident.replace('thread-wrapper-','');
+			let commentWrap = $('#'+ident+' .collapsed-comments').attr('id');
 
-			var itmId = 0;
-			var isVisible = false;
+			let itmId = 0;
+			let isVisible = false;
 
 			// figure out the comment state
 			if(typeof commentWrap !== 'undefined')
@@ -695,7 +696,7 @@ function updateConvItems(mode,data) {
 			if(isVisible)
 				showHideComments(itmId);
 
-			var commentBody = localStorage.getItem("comment_body-" + convId);
+			let commentBody = localStorage.getItem("comment_body-" + convId);
 
 			if(commentBody) {
 				var commentElm = $('#comment-edit-text-' + convId);
@@ -723,7 +724,7 @@ function updateConvItems(mode,data) {
 
 			if(mode === 'replace') {
 				if (window.location.search.indexOf("mid=") != -1 || window.location.pathname.indexOf("display") != -1) {
-					var title = $(".wall-item-title").text();
+					let title = $(".wall-item-title").text();
 					title.replace(/^\s+/, '');
 					title.replace(/\s+$/, '');
 					if (title) {
@@ -734,9 +735,13 @@ function updateConvItems(mode,data) {
 			}
 		}
 
-		$(document).trigger('hz:sse_setNotificationsStatus', [$(this).data('b64mids')]);
+		$(this).data('b64mids').forEach((b64mid) => {
+			b64mids.push(b64mid);
+		});
 
 	});
+
+	$(document).trigger('hz:sse_setNotificationsStatus', [b64mids]);
 
 	$(window).scrollTop(scroll_position);
 
