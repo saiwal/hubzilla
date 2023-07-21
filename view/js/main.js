@@ -807,7 +807,7 @@ function updateConvItems(mode,data) {
 	}
 
 	// reset rotators and cursors we may have set before reaching this place
-	$('.like-rotator').hide();
+
 	$("#page-spinner").hide();
 	$("#profile-jot-text-loading").hide();
 
@@ -842,8 +842,7 @@ function scrollToItem() {
 }
 
 function collapseHeight() {
-
-	$(".wall-item-content, .directory-collapse").each(function() {
+	$(".wall-item-content:not('.divmore_checked'), .directory-collapse:not('.divmore_checked')").each(function(i) {
 		var orgHeight = $(this).outerHeight(true);
 		var id = $(this).attr('id')
 		var open = ((expanded_items.indexOf($(this).attr('id')) === -1) ? false : true);
@@ -871,6 +870,7 @@ function collapseHeight() {
 				$(this).addClass('divmore');
 			}
 		}
+		$(this).addClass('divmore_checked');
 	});
 
 }
