@@ -462,7 +462,7 @@ function http_status($val, $msg = '',$skiplog = 0) {
 	if ($val >= 200 && $val < 300)
 		$msg = (($msg) ? $msg : 'OK');
 
-	if (!$skiplog) 
+	if (!$skiplog)
 		logger(\App::$query_string . ':' . $val . ' ' . $msg);
 	header($_SERVER['SERVER_PROTOCOL'] . ' ' . $val . ' ' . $msg);
 }
@@ -2041,68 +2041,85 @@ function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false) {
 	return null;
 }
 
+
 /**
  * @brief Perform caching for jsonld normaliser.
  *
  * @param string $url
- * @return mixed|boolean|array
+ * @return mixed|bool|array
  */
 function jsonld_document_loader($url) {
-
-	switch ($url) {
-		case 'https://www.w3.org/ns/activitystreams':
-			$url = z_root() . '/library/w3org/activitystreams.jsonld';
-			break;
-		case 'https://w3id.org/identity/v1':
-			$url = z_root() . '/library/w3org/identity-v1.jsonld';
-			break;
-		case 'https://w3id.org/security/v1':
-			$url = z_root() . '/library/w3org/security-v1.jsonld';
-			break;
-		default:
-			logger('URL: ' . $url, LOGGER_DEBUG);
-			break;
-	}
-
-	require_once('library/jsonld/jsonld.php');
+	$doc = (object) [
+		'contextUrl' => null,
+		'document' => null,
+		'documentUrl' => $url
+	];
 
 	$recursion = 0;
 
+	$builtins = [
+		'https://www.w3.org/ns/activitystreams' => 'library/w3org/activitystreams.jsonld',
+		'https://w3id.org/identity/v1' => 'library/w3org/identity-v1.jsonld',
+		'https://w3id.org/security/v1' => 'library/w3org/security-v1.jsonld',
+	];
+
 	$x = debug_backtrace();
-	if($x) {
-		foreach($x as $n) {
-			if($n['function'] === __FUNCTION__)  {
-				$recursion ++;
+	if ($x) {
+		foreach ($x as $n) {
+			if ($n['function'] === __FUNCTION__) {
+				$recursion++;
 			}
 		}
 	}
 
-	if($recursion > 5) {
+	if ($recursion > 5) {
 		logger('jsonld bomb detected at: ' . $url);
 		killme();
 	}
 
+	foreach ($builtins as $key => $value) {
+		if ($url === $key) {
+			$doc->document = file_get_contents($value);
+			return $doc;
+		}
+	}
+
 	$cachepath = 'store/[data]/ldcache';
-	if(! is_dir($cachepath))
+	if(!is_dir($cachepath)) {
 		os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
+	}
 
 	$filename = $cachepath . '/' . urlencode($url);
-	if(file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
-		return json_decode(file_get_contents($filename));
+
+	if (file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
+		logger('loading ' . $filename . ' from recent cache');
+
+		$doc->document = file_get_contents($filename);
+		return $doc;
 	}
 
 	$r = jsonld_default_document_loader($url);
-	if($r) {
-		file_put_contents($filename, json_encode($r));
+	if ($r) {
+		if (!in_array($url, $builtins)) {
+			$cache_obj = $r;
+			// To prevent double encoding we need to decode $cache_obj->document
+			// before encoding the whole object for storage.
+			$cache_obj->document = json_decode($cache_obj->document);
+			file_put_contents($filename, json_encode($cache_obj));
+		}
 		return $r;
 	}
 
-	logger('not found');
-	if(file_exists($filename)) {
-		return json_decode(file_get_contents($filename));
+	if (file_exists($filename)) {
+		logger('loading ' . $filename . ' from longterm cache');
+		$doc->document = file_get_contents($filename);
+		return $doc;
+	}
+	else {
+		logger($filename . ' does not exist and cannot be loaded');
 	}
 
-	return [];
+	return $doc;
 }
 
 /**
