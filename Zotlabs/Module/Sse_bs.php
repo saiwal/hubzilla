@@ -213,7 +213,6 @@ class Sse_bs extends Controller {
 			AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 			AND author_xchan != '%s'
 			$item_normal
-			$approvals
 			$sql_extra LIMIT 100",
 			intval(self::$uid),
 			dbesc(self::$ob_hash)
@@ -295,7 +294,6 @@ class Sse_bs extends Controller {
 		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_private = 2
 			$item_normal
-			$approvals
 			$sql_extra
 			AND author_xchan != '%s' LIMIT 100",
 			intval(self::$uid),
@@ -352,7 +350,6 @@ class Sse_bs extends Controller {
 				AND obj_type NOT IN ('Document', 'Video', 'Audio', 'Image')
 				AND author_xchan != '%s'
 				$item_normal
-				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
@@ -380,7 +377,6 @@ class Sse_bs extends Controller {
 		$r = q("SELECT id FROM item
 			WHERE uid = %d and item_unseen = 1 AND item_wall = 1 AND item_private IN (0, 1)
 			$item_normal
-			$approvals
 			$sql_extra
 			AND author_xchan != '%s' LIMIT 100",
 			intval(self::$uid),
@@ -454,7 +450,6 @@ class Sse_bs extends Controller {
 				AND author_xchan != '%s'
 				AND created > '%s'
 				$item_normal
-				$approvals
 				$sql_extra
 				$sql_extra2
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
@@ -482,7 +477,6 @@ class Sse_bs extends Controller {
 			WHERE true $uids
 			AND created > '%s'
 			$item_normal
-			$approvals
 			$sql_extra
 			AND author_xchan != '%s' LIMIT 100",
 			dbescdate($_SESSION['static_loadtime']),
