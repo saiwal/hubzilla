@@ -1697,7 +1697,7 @@ class Activity {
 			$webfinger_addr = escape_tags($person_obj['preferredUsername']) . '@' . $hostname;
 		}
 
-		$icon = z_root() . '/' . get_default_profile_photo(300);
+		$icon = null;
 		if (isset($person_obj['icon'])) {
 			if (is_array($person_obj['icon'])) {
 				if (array_key_exists('url', $person_obj['icon'])) {
@@ -1807,6 +1807,9 @@ class Activity {
 					'xchan_addr'      => $webfinger_addr,
 					'xchan_url'       => $profile,
 					'xchan_name'      => escape_tags($name),
+					'xchan_photo_l' => z_root() . '/' . get_default_profile_photo(),
+					'xchan_photo_m' => z_root() . '/' . get_default_profile_photo(80),
+					'xchan_photo_s' => z_root() . '/' . get_default_profile_photo(48),
 					'xchan_name_date' => datetime_convert(),
 					'xchan_network'   => 'activitypub',
 					'xchan_pubforum'  => intval($group_actor)
@@ -1846,8 +1849,9 @@ class Activity {
 			}
 		}
 
-		Master::Summon(['Xchan_photo', bin2hex($icon), bin2hex($url)]);
-
+		if ($icon) {
+			Master::Summon(['Xchan_photo', bin2hex($icon), bin2hex($url)]);
+		}
 	}
 
 	static function create_action($channel, $observer_hash, $act) {
