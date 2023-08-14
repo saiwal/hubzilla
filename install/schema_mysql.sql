@@ -1629,4 +1629,4 @@ CREATE TABLE IF NOT EXISTS workerq (
 	KEY workerq_reservationid (workerq_reservationid),
 	KEY workerq_processtimeout (workerq_uuid),
 	KEY workerq_uuid (workerq_processtimeout)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4
+) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
