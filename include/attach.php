@@ -1180,7 +1180,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null) {
 		return $ret;
 	}
 
-	if(! $arr['filename']) {
+	if(isset($arr['filename']) && !strlen($arr['filename'])) {
 		$ret['message'] = t('Empty pathname');
 		return $ret;
 	}

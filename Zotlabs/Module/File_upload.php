@@ -35,7 +35,7 @@ class File_upload extends \Zotlabs\Web\Controller {
 		$_REQUEST['deny_cid']  = ((isset($_REQUEST['contact_deny'])) ? perms2str($_REQUEST['contact_deny']) : '');
 		$_REQUEST['deny_gid']  = ((isset($_REQUEST['group_deny'])) ? perms2str($_REQUEST['group_deny']) : '');
 
-		if(isset($_REQUEST['filename']) && $_REQUEST['filename']) {
+		if(isset($_REQUEST['filename']) && strlen($_REQUEST['filename'])) {
 			$r = attach_mkdir($channel, get_observer_hash(), $_REQUEST);
 			if($r['success']) {
 				$hash = $r['data']['hash'];
