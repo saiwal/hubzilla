@@ -1627,6 +1627,6 @@ CREATE TABLE IF NOT EXISTS workerq (
 	workerq_cmd varchar(191) NOT NULL DEFAULT '',
 	KEY workerq_priority (workerq_priority),
 	KEY workerq_reservationid (workerq_reservationid),
-	KEY workerq_processtimeout (workerq_uuid),
-	KEY workerq_uuid (workerq_processtimeout)
+	KEY workerq_processtimeout (workerq_processtimeout),
+	KEY workerq_uuid (workerq_uuid)
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
