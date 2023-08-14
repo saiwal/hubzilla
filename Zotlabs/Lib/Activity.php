@@ -1846,15 +1846,7 @@ class Activity {
 			}
 		}
 
-		$photos = import_xchan_photo($icon, $url);
-		q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
-			dbescdate(datetime_convert('UTC', 'UTC', $photos[5])),
-			dbesc($photos[0]),
-			dbesc($photos[1]),
-			dbesc($photos[2]),
-			dbesc($photos[3]),
-			dbesc($url)
-		);
+		Master::Summon(['Xchan_photo', bin2hex($icon), bin2hex($url)]);
 
 	}
 
