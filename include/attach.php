@@ -691,7 +691,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		$type = $gis['mime'];
 	}
 
-	$pathname = '';
+	$pathname = null;
 
 	if($source === 'photos') {
 		if($newalbum) {
@@ -708,7 +708,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
 		$pathname = find_path_by_hash($channel['channel_id'], $arr['folder']);
 	}
 
-	if(! $pathname) {
+	if($pathname === null) {
 		$pathname = filepath_macro($upload_path);
 	}
 
