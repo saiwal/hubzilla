@@ -108,6 +108,8 @@ function localize_item(&$item){
 			$author_link = ((is_array($obj['actor']['url'])) ? $obj['actor']['url'][0]['href'] : $obj['actor']['url']);
 		elseif (isset($obj['actor']) && is_string($obj['actor']))
 			$author_link = $obj['actor'];
+		elseif (isset($obj['attributedTo']) && is_string($obj['attributedTo']) && $obj['attributedTo'])
+			$author_link = $obj['attributedTo'];
 		else
 			$author_link = '';
 
@@ -118,6 +120,13 @@ function localize_item(&$item){
 
 		if(!$author_name && isset($obj['actor']) && is_string($obj['actor'])) {
 			$cached_actor = Activity::get_cached_actor($obj['actor']);
+			if (is_array($cached_actor)) {
+				$author_name = $cached_actor['name'] ?? $cached_actor['preferredUsername'];
+			}
+		}
+
+		if(!$author_name && isset($obj['attributedTo']) && is_string($obj['attributedTo'])) {
+			$cached_actor = Activity::get_cached_actor($obj['attributedTo']);
 			if (is_array($cached_actor)) {
 				$author_name = $cached_actor['name'] ?? $cached_actor['preferredUsername'];
 			}
