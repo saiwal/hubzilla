@@ -2363,6 +2363,9 @@ class Activity {
 			$s['mid'] = $act->id;
 			$s['uuid'] = ((!empty($act->data['diaspora:guid'])) ? $act->data['diaspora:guid'] : uuid_from_url($s['mid']));
 
+			$s['parent_mid'] = $act->objprop('id') ?: $act->obj;
+
+/*
 			if ($act->objprop('inReplyTo')) {
 				$s['parent_mid'] = $act->objprop('inReplyTo');
 			}
@@ -2373,7 +2376,7 @@ class Activity {
 				logger('response activity without parent_mid or thr_parent');
 				return;
 			}
-
+*/
 			// over-ride the object timestamp with the activity
 
 			if (isset($act->data['published'])) {
@@ -3161,7 +3164,7 @@ class Activity {
 				return;
 			}
 
-/*
+
 			if ($parent[0]['parent_mid'] !== $item['parent_mid']) {
 				$item['thr_parent'] = $item['parent_mid'];
 			}
@@ -3169,7 +3172,7 @@ class Activity {
 				$item['thr_parent'] = $parent[0]['parent_mid'];
 			}
 			$item['parent_mid'] = $parent[0]['parent_mid'];
-*/
+
 
 			/*
 			 *
@@ -3288,7 +3291,7 @@ class Activity {
 		$current_item = $item;
 
 		while ($current_item['parent_mid'] !== $current_item['mid']) {
-			$n = self::fetch(((in_array($current_item['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) ? $current_item['thr_parent'] : $current_item['parent_mid']), $channel);
+			$n = self::fetch($current_item['parent_mid'], $channel);
 
 			if (!$n) {
 				break;
