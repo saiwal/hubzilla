@@ -2281,6 +2281,7 @@ class Activity {
 	}
 
 	static function decode_note($act) {
+
 		$response_activity = false;
 		$s = [];
 
@@ -3007,7 +3008,7 @@ class Activity {
 				$allowed = true;
 
 				// reject public stream comments that weren't sent by the conversation owner
-				if ($is_sys_channel && $item['owner_xchan'] !== $observer_hash && !$fetch_parents) {
+				if ($is_sys_channel && $item['owner_xchan'] !== $observer_hash && !$fetch_parents && empty($item['item_fetched'])) {
 					$allowed = false;
 				}
 			}
@@ -3143,8 +3144,6 @@ class Activity {
 
 				$fetch = false;
 
-				// TODO: debug
-				// if (perm_is_allowed($channel['channel_id'],$observer_hash,'send_stream') && (PConfig::Get($channel['channel_id'],'system','hyperdrive',true) || $act->type === 'Announce')) {
 				if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || $is_sys_channel) {
 					$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel, $observer_hash, $item, $force) : false);
 				}
@@ -3289,7 +3288,7 @@ class Activity {
 		$current_item = $item;
 
 		while ($current_item['parent_mid'] !== $current_item['mid']) {
-			$n = self::fetch($current_item['parent_mid'], $channel);
+			$n = self::fetch(((in_array($current_item['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) ? $current_item['thr_parent'] : $current_item['parent_mid']), $channel);
 
 			if (!$n) {
 				break;
