@@ -1937,7 +1937,7 @@ function zid_init() {
 		call_hooks('zid_init', $arr);
 
 		if(! local_channel()) {
-			$r = q("select hubloc_url, hubloc_hash, hubloc_network from hubloc where hubloc_addr = '%s' order by hubloc_connected desc",
+			$r = q("select hubloc_url, hubloc_hash, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 				dbesc($tmp_str)
 			);
 			if(! $r) {
