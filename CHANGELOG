@@ -1,3 +1,20 @@
+Hubzilla 8.6.2
+	- Fix public stream comments/reactions fetching
+	- Fix notification text for likes in cases where obj.actor is not set
+	- Fix missing pdl file for mod cover_photo
+	- Fix unable to create folders with name 0
+	- Fix index name mixup in mysql schema file
+	- Fix missing semicolon in mysql schema file
+	- Removed unused variable
+	- Fix typo in manifest
+	- Fix cached jsonld files fetched via network
+	- Page rendering performance improvements
+	- Fix internal follow activity possibly creating notification items
+	- Fix admin table highlight color for dark mode
+	- Pubcrawl: do not handle not implemented listen activity
+	- Diaspora: fix unshare not implemented
+
+
 Hubzilla 8.6.1 (2023-07-18)
 	- Fix diaspora discovery
 
