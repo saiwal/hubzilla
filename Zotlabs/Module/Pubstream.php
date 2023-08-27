@@ -40,7 +40,7 @@ class Pubstream extends \Zotlabs\Web\Controller {
 
 		$site_firehose = ((intval(get_config('system','site_firehose',0))) ? true : false);
 
-		$mid = (($_REQUEST['mid']) ? unpack_link_id($_REQUEST['mid']) : '');
+		$mid = ((isset($_REQUEST['mid'])) ? unpack_link_id($_REQUEST['mid']) : '');
 
 		if ($mid === false) {
 			notice(t('Malformed message id.') . EOL);
