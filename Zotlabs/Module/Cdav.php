@@ -1087,7 +1087,11 @@ class Cdav extends Controller {
 
 			$filters['name'] = 'VCALENDAR';
 			$filters['prop-filters'][0]['name'] = 'VEVENT';
+			$filters['prop-filters'][0]['is-not-defined'] = null;
+			$filters['prop-filters'][0]['param-filters'] = null;
+			$filters['prop-filters'][0]['text-match'] = null;
 			$filters['comp-filters'][0]['name'] = 'VEVENT';
+			$filters['comp-filters'][0]['is-not-defined'] = null;
 			$filters['comp-filters'][0]['time-range']['start'] = $start;
 			$filters['comp-filters'][0]['time-range']['end'] = $end;
 
