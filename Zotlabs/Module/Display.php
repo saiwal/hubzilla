@@ -2,15 +2,13 @@
 namespace Zotlabs\Module;
 
 use App;
+use Zotlabs\Web\Controller;
 
-require_once("include/bbcode.php");
-require_once('include/security.php');
-require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
-require_once('include/items.php');
+class Display extends Controller {
 
+	function init() {
 
-class Display extends \Zotlabs\Web\Controller {
+	}
 
 	function get($update = 0, $load = false) {
 
