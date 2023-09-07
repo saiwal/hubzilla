@@ -608,7 +608,7 @@ nav .acpopup {
 	padding: 3px;
 	border: 0px solid var(--bs-border-color);
 	border-radius: var(--bs-border-radius);
-	background-color: #fff;
+	background-color: var(--bs-body-bg);
 	z-index: 1052;
 }
 
