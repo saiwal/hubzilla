@@ -34,7 +34,7 @@ class Item {
 		if($arr['title']) {
 			$r = q("select item.* from item left join iconfig on item.id = iconfig.iid
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s'
-				and iconfig.k = 'WEBPAGE' and item_type = %d $sql_options $revision limit 1",
+				and iconfig.k = 'WEBPAGE' and item_type = %d $sql_extra $revision limit 1",
 				intval($channel_id),
 				dbesc($arr['title']),
 				intval(ITEM_TYPE_WEBPAGE)
