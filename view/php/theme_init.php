@@ -10,8 +10,11 @@ head_add_css('/view/css/conversation.css');
 head_add_css('/view/css/widgets.css');
 head_add_css('/view/css/colorbox.css');
 head_add_css('/library/justifiedGallery/justifiedGallery.min.css');
+head_add_css('/library/datetimepicker/jquery.datetimepicker.css');
 
 head_add_js('jquery.js');
+head_add_js('/library/datetimepicker/jquery.datetimepicker.js');
+
 head_add_js('/library/justifiedGallery/jquery.justifiedGallery.min.js');
 head_add_js('/library/sprintf.js/dist/sprintf.min.js');
 

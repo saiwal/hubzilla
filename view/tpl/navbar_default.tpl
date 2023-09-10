@@ -4,7 +4,7 @@
 		<div class="d-flex" style="max-width: 50%">
 			<div class="dropdown">
 				<div class="cursor-pointer usermenu" data-bs-toggle="dropdown">
-					<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}">
+					<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}" class="rounded">
 					<i class="navbar-text fa fa-caret-down"></i>
 				</div>
 				{{if $is_owner}}

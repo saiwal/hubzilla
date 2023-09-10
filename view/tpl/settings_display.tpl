@@ -30,6 +30,7 @@
 				</div>
 			</div>
 			{{/if}}
+			{{if $theme_config}}
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="custom-settings-title">
 					<h3>
@@ -40,12 +41,11 @@
 				</div>
 				<div id="custom-settings-content" class="collapse{{if !$theme}} in{{/if}}" role="tabpanel" aria-labelledby="custom-settings" data-bs-parent="#settings" >
 					<div class="section-content-tools-wrapper">
-						{{if $theme_config}}
-							{{$theme_config}}
-						{{/if}}
+						{{$theme_config}}
 					</div>
 				</div>
 			</div>
+			{{/if}}
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="content-settings-title">
 					<h3>

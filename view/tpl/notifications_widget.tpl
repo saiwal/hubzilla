@@ -416,9 +416,10 @@
 
 	function sse_updateNotifications(type, mid) {
 
+	/*
 		if(type === 'pubs')
 			return true;
-
+	*/
 		if(type === 'notify' && (mid !== bParam_mid || sse_type !== 'notify'))
 			return true;
 	/*
@@ -533,9 +534,9 @@
 	<div id="no_notifications" class="d-xl-none">
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
-	<div id="nav-notifications-template" rel="template">
+	<div id="nav-notifications-template" rel="template" class="d-none">
 		<a class="list-group-item list-group-item-action notification {6}" href="{0}" title="{13}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-when="{5}">
-			<img data-src="{1}" loading="lazy" class="rounded menu-img-2">
+			<img data-src="{1}" loading="lazy" class="rounded float-start me-2 menu-img-2">
 			<div class="text-nowrap">
 				<div class="d-flex justify-content-between align-items-center lh-sm">
 					<div class="text-truncate pe-1">
@@ -547,7 +548,7 @@
 			</div>
 		</a>
 	</div>
-	<div id="nav-notifications-forums-template" rel="template">
+	<div id="nav-notifications-forums-template" rel="template" class="d-none">
 		<a class="list-group-item list-group-item-action justify-content-between align-items-center d-flex notification notification-forum" href="{0}" title="{4} - {3}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}" data-b64mids='{12}'>
 			<div>
 				<img class="menu-img-1" data-src="{1}" loading="lazy">

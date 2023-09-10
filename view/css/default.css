@@ -20,6 +20,7 @@ main {
 	position: relative;
 	order: 1;
 	padding: 4.5rem 7px 0px 7px;
+	width: 350px;
 }
 
 #region_2 {
@@ -34,4 +35,5 @@ main {
 	position: relative;
 	order: 3;
 	padding: 4.5rem 7px 0px 7px;
+	width: 350px;
 }
