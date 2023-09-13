@@ -14,7 +14,7 @@
  */
 
 
-function redbasic_init(&$a) {
+function redbasic_init() {
 
 	$mode = '';
 	$navbar_mode = '';
