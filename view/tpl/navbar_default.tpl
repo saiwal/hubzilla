@@ -1,4 +1,4 @@
-<nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" {{$navbar_color_mode}}>
+<nav id="navbar-top" class="navbar navbar-expand-lg sticky-top bg-body-tertiary mb-4" {{$navbar_color_mode}}>
 	<div class="container-fluid flex-nowrap">
 		{{if $userinfo}}
 		<div class="d-flex" style="max-width: 50%">

@@ -57,11 +57,11 @@ $(document).ready(function() {
 
 
 	if (document.querySelector('#region_1')) {
-		stickyScroll('.aside_spacer_left', '.aside_spacer_top_left', '.content', parseFloat(window.getComputedStyle(document.querySelector('#region_1')).getPropertyValue('padding-top')), 0);
+		stickyScroll('.aside_spacer_left', '.aside_spacer_top_left', 'section', parseFloat(document.querySelector('main').getBoundingClientRect().top), 20);
 	}
 
 	if (document.querySelector('#region_3')) {
-		stickyScroll('.aside_spacer_right', '.aside_spacer_top_right', '.content', parseFloat(window.getComputedStyle(document.querySelector('#region_3')).getPropertyValue('padding-top')), 20);
+		stickyScroll('.aside_spacer_right', '.aside_spacer_top_right', 'section', parseFloat(document.querySelector('main').getBoundingClientRect().top), 20);
 	}
 
 	$('.usermenu').click(function() {
@@ -211,12 +211,12 @@ function stickyScroll(sticky, stickyTop, container, topOffset, bottomOffset) {
 				setStyle(sticky, { position: 'sticky', top: Math.round(diff) - bottomOffset + 'px', bottom: '' });
 			} else {
 				// upscroll code
-				h = sticky.getBoundingClientRect().top - content.getBoundingClientRect().top - topOffset;
+				h = sticky.getBoundingClientRect().top - content.getBoundingClientRect().top;
 				if(Math.round(stickyTop.getBoundingClientRect().height) === lasth) {
 					setStyle(stickyTop, { height: Math.round(h) + 'px' });
 				}
 				lasth = Math.round(h);
-				setStyle(sticky, { position: 'sticky', top: '', bottom: Math.round(diff - topOffset) + 'px' });
+				setStyle(sticky, { position: 'sticky', top: '', bottom: Math.round(diff) - topOffset + 'px' });
 			}
 			lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
 		}

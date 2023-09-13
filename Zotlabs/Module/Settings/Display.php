@@ -163,7 +163,8 @@ class Display {
 		$title_tosource = get_pconfig(local_channel(),'system','title_tosource');
 		$title_tosource = (($title_tosource===false)? '0': $title_tosource); // default if not set: 0
 
-		$theme_config = "";
+		$theme_config = null;
+		$schemas = null;
 		if(($themeconfigfile = $this->get_theme_config_file($theme)) != null){
 			require_once($themeconfigfile);
 			if(class_exists('\\Zotlabs\\Theme\\' . ucfirst($theme) . 'Config')) {
@@ -188,7 +189,7 @@ class Display {
 			'$uid' => local_channel(),
 
 			'$theme'	=> (($themes) ? array('theme', t('Display Theme:'), $theme_selected, '', $themes, 'preview') : false),
-			'$schema'   => array('schema', t('Select scheme'), $existing_schema, '' , $schemas),
+			'$schema'   => (($schemas) ? array('schema', t('Select scheme'), $existing_schema, '' , $schemas) : false),
 
 			'$preload_images' => array('preload_images', t("Preload images before rendering the page"), $preload_images, t("The subjective page load time will be longer but the page will be ready when displayed"), $yes_no),
 			'$user_scalable' => array('user_scalable', t("Enable user zoom on mobile devices"), $user_scalable, '', $yes_no),
