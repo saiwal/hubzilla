@@ -8,19 +8,14 @@ let redbasic_theme_color = localStorage.getItem('redbasic_theme_color');
 if (redbasic_dark_mode == 1) {
 	$('html').attr('data-bs-theme', 'dark');
 }
+
 if (redbasic_dark_mode == 0) {
 	$('html').attr('data-bs-theme', 'light');
 }
 
-
-
-
-
 if (redbasic_theme_color) {
 	$('meta[name=theme-color]').attr('content', redbasic_theme_color);
 }
-
-
 
 $(document).ready(function() {
 	// provide a fake progress bar for pwa standalone mode
@@ -68,15 +63,6 @@ $(document).ready(function() {
 	if (document.querySelector('#region_3')) {
 		stickyScroll('.aside_spacer_right', '.aside_spacer_top_right', '.content', parseFloat(window.getComputedStyle(document.querySelector('#region_3')).getPropertyValue('padding-top')), 20);
 	}
-
-	$('#expand-aside').on('click', function() {
-		if($('main').hasClass('region_1-on')){
-			toggleAside('left');
-		}
-		else {
-			toggleAside('right');
-		}
-	});
 
 	$('.usermenu').click(function() {
 		if($('#navbar-collapse-1, #navbar-collapse-2').hasClass('show')){
@@ -168,7 +154,7 @@ $(document).ready(function() {
 			if (touch_end > (touch_start + touch_offset)) {
 				//a left -> right swipe
 				if (touch_start < touch_max) {
-					toggleAside('right');
+					toggleAside();
 				}
 			}
 			if (touch_end < (touch_start - touch_offset)) {
@@ -176,10 +162,6 @@ $(document).ready(function() {
 				//toggleAside('left');
 			}
 		}
-	});
-
-	$(document).on('hz:hqControlsClickAction', function(e) {
-		toggleAside('left');
 	});
 
 });
@@ -255,18 +237,4 @@ function makeFullScreen(full) {
 	}
 }
 
-function toggleAside(swipe) {
 
-	if ($('main').hasClass('region_1-on') && swipe === 'left') {
-		$('#expand-aside-icon').addClass('fa-arrow-circle-right').removeClass('fa-arrow-circle-left');
-		$('html, body').css({ 'position': '', left: '' });
-		$('main').removeClass('region_1-on');
-		$('#overlay').remove();
-	}
-	if (!$('main').hasClass('region_1-on') && swipe === 'right') {
-		$('#expand-aside-icon').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
-		$('html, body').css({ 'position': 'sticky',  'left': '0px'});
-		$('main').addClass('region_1-on');
-		$('<div id="overlay"></div>').appendTo('body').one('click', function() { toggleAside('left'); });
-	}
-}

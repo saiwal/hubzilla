@@ -1382,34 +1382,6 @@ blockquote {
 	z-index:1030;
 }
 
-
-
-@media screen and (max-width: 992px) {
-
-	main {
-		left: -$left_aside_widthrem;
-		width: calc( 100% + $left_aside_widthrem );
-	}
-
-	main.region_1-on {
-		left: 0px;
-	}
-
-	#nav-app-link-wrapper {
-		min-width: 0;
-	}
-
-	#nav-app-link-wrapper {
-		margin-right: 0.5rem;
-	}
-
-	#navbar-collapse-2 .navbar-app i {
-		font-size: 1rem;
-		margin-right: 0.5rem;
-	}
-
-}
-
 .shareable_element_text {
 	height: 300px;
 	width: 300px;

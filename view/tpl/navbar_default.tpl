@@ -48,7 +48,7 @@
 				{{/if}}
 			</div>
 			{{if $sel.name}}
-			<div id="nav-app-link-wrapper" class="navbar-nav{{if $sitelocation}} has_location{{/if}}">
+			<div id="nav-app-link-wrapper" class="navbar-nav{{if $sitelocation}} has_location{{/if}} p-1">
 				<a id="nav-app-link" href="{{$url}}" class="nav-link text-truncate" style="width: 100%">
 					{{$sel.name}}
 					{{if $sitelocation}}
@@ -57,7 +57,7 @@
 				</a>
 			</div>
 			{{if $settings_url}}
-			<div id="nav-app-settings-link-wrapper" class="navbar-nav">
+			<div id="nav-app-settings-link-wrapper" class="navbar-nav p-1">
 				<a id="nav-app-settings-link" href="{{$settings_url}}/?f=&rpath={{$url}}" class="nav-link">
 					<i class="fa fa-fw fa-cog"></i>
 				</a>
