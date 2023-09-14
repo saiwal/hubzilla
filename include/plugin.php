@@ -1074,6 +1074,7 @@ function theme_include($file, $root = '') {
 
 	$paths = array(
 		"{$root}view/theme/$thname/$ext/$file",
+		"{$root}view/theme/$thname/widget/$file",
 		"{$root}view/theme/$parent/$ext/$file",
 		"{$root}view/site/$ext/$file",
 		"{$root}view/$ext/$file",

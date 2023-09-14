@@ -268,7 +268,8 @@ class Pdledit_gui extends Controller {
 
 
 		$checkpaths = [
-			'Zotlabs/Widget/*.php'
+			'Zotlabs/Widget/*.php',
+			'view/theme/' . lcfirst(App::$theme_info['name']) . '/widget/*.php'
 		];
 
 		$addons = plugins_installed_list();
