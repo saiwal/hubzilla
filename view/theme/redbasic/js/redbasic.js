@@ -134,7 +134,7 @@ $(document).ready(function() {
 			//just one finger touched
 			touch_start = e.touches.item(0).clientX;
 			if (touch_start < touch_max) {
-				$('html, body').css('overflow-y', 'hidden');
+				$('body').css('overflow-y', 'hidden');
 			}
 		}
 		else {
@@ -144,7 +144,7 @@ $(document).ready(function() {
 	});
 
 	window.addEventListener('touchend', function(e) {
-		$('html, body').css('overflow-y', '');
+		$('body').css('overflow-y', '');
 
 		let touch_offset = 30; //at least 30px are a swipe
 		if (touch_start) {
@@ -159,7 +159,6 @@ $(document).ready(function() {
 			}
 			if (touch_end < (touch_start - touch_offset)) {
 				//a right -> left swipe
-				//toggleAside('left');
 			}
 		}
 	});
