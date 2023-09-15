@@ -2600,11 +2600,11 @@ class Activity {
 		if (!$response_activity) {
 			if ($act->type === 'Announce') {
 				$s['author_xchan'] = self::get_attributed_to_actor_url($act);
-				$s['mid'] = $act->obj['id'];
+				$s['mid'] = $act->objprop('id') ?: $act->obj;
 
 				// Do not force new thread if the announce is from a group actor
 				if ($act->actor['type'] !== 'Group') {
-					$s['parent_mid'] = $act->obj['id'];
+					$s['parent_mid'] = $act->objprop('id') ?: $act->obj;
 				}
 			}
 
