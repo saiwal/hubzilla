@@ -3920,16 +3920,19 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL) {
 
 		$notify_id = intval($item['id']);
 
-		$items = q("select * from item where parent = %d and uid = %d",
+		$items = q("select id, resource_id, uid, resource_type, mid from item where parent = %d and uid = %d",
 			intval($item['id']),
 			intval($item['uid'])
 		);
+
 		if($items) {
-			foreach($items as $i)
+			foreach($items as $i) {
 				delete_item_lowlevel($i, $stage);
+			}
 		}
-		else
+		else {
 			delete_item_lowlevel($item, $stage);
+		}
 
 		if(! $interactive)
 			return 1;
