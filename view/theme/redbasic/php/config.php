@@ -129,7 +129,15 @@ class RedbasicConfig {
 
 }
 
+function redbasic_theme_admin_enable() {
+	// This function is called once when the theme is being enabled by the admin
+	// It can be used to register hooks etc.
+}
 
+function redbasic_theme_admin_disable() {
+	// This function is called once when the theme is being disabled by the admin
+	// It can be used to unregister hooks etc.
+}
 
 
 
