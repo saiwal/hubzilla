@@ -80,10 +80,25 @@ class Themes {
 
 				$this->toggle_theme($themes, $theme, $result);
 				$s = $this->rebuild_theme_table($themes);
-				if($result)
-					info( sprintf('Theme %s enabled.', $theme));
-				else
-					info( sprintf('Theme %s disabled.', $theme));
+
+				if($result) {
+					if (is_file("view/theme/$theme/php/config.php")){
+						require_once("view/theme/$theme/php/config.php");
+						if (function_exists($theme . '_theme_admin_enable')){
+							call_user_func($theme . '_theme_admin_enable');
+						}
+					}
+					info(sprintf('Theme %s enabled.', $theme));
+				}
+				else {
+					if (is_file("view/theme/$theme/php/config.php")){
+						require_once("view/theme/$theme/php/config.php");
+						if (function_exists($theme . '_theme_admin_disable')){
+							call_user_func($theme . '_theme_admin_disable');
+						}
+					}
+					info(sprintf('Theme %s disabled.', $theme));
+				}
 
 				set_config('system', 'allowed_themes', $s);
 				goaway(z_root() . '/admin/themes' );

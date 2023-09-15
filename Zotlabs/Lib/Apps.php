@@ -419,11 +419,28 @@ class Apps {
 	static public function app_render($papp, $mode = 'view') {
 		$installed = false;
 
-		if(! $papp)
+		if(!$papp) {
 			return;
+		}
 
-		if(! $papp['photo'])
+		/**
+		 * @hooks app_render_before
+		 * Hook to manipulate the papp array before rendering
+		 */
+
+		$hookinfo = [
+			'name' => $papp['name'],
+			'photo' => $papp['photo']
+		];
+
+		call_hooks('app_render_manipulate_photo', $hookinfo);
+
+		// We will only allow to manipulate the photo
+		$papp['photo'] = $hookinfo['photo'];
+
+		if(!$papp['photo']) {
 			$papp['photo'] = 'icon:gear';
+		}
 
 		self::translate_system_apps($papp);
 
