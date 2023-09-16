@@ -2,6 +2,8 @@ Hubzilla 8.6.3 (2023-09-16)
 	- Fix regression in jsonld_document_loader()
 	- Improve type checking for announce activities
 	- Improve query in drop_item() to prevent possible memory exhaustion
+	- Addon gallery: only add gallery code if the module is supported
+	- Adon hsse: port to bootstrap 5 namespaces - core issue #1793
 
 
 Hubzilla 8.6.2 (2023-08-27)
