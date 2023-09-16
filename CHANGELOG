@@ -1,4 +1,10 @@
-Hubzilla 8.6.2
+Hubzilla 8.6.3 (2023-09-16)
+	- Fix regression in jsonld_document_loader()
+	- Improve type checking for announce activities
+	- Improve query in drop_item() to prevent possible memory exhaustion
+
+
+Hubzilla 8.6.2 (2023-08-27)
 	- Fix public stream comments/reactions fetching
 	- Fix notification text for likes in cases where obj.actor is not set
 	- Fix missing pdl file for mod cover_photo
