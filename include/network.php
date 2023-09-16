@@ -2093,9 +2093,7 @@ function jsonld_document_loader($url) {
 
 	if (file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
 		logger('loading ' . $filename . ' from recent cache');
-
-		$doc->document = file_get_contents($filename);
-		return $doc;
+		return file_get_contents($filename);
 	}
 
 	$r = jsonld_default_document_loader($url);
@@ -2112,8 +2110,7 @@ function jsonld_document_loader($url) {
 
 	if (file_exists($filename)) {
 		logger('loading ' . $filename . ' from longterm cache');
-		$doc->document = file_get_contents($filename);
-		return $doc;
+		return file_get_contents($filename);
 	}
 	else {
 		logger($filename . ' does not exist and cannot be loaded');
