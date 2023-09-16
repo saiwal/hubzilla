@@ -1378,10 +1378,6 @@ blockquote {
 	background-color: var(--bs-tertiary-bg);
 }
 
-.navbar {
-	z-index:1030;
-}
-
 .shareable_element_text {
 	height: 300px;
 	width: 300px;
