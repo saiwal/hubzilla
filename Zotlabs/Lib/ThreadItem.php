@@ -185,7 +185,7 @@ class ThreadItem {
 
 		$filer = ((($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid',$item))) ? t("Save to Folder") : false);
 
-		$profile_avatar = $item['author']['xchan_photo_m'];
+		$profile_avatar = $item['author']['xchan_photo_s'];
 		$profile_link   = chanlink_hash($item['author_xchan']);
 		$profile_name   = $item['author']['xchan_name'];
 
@@ -874,7 +874,7 @@ class ThreadItem {
 
 		if($this->is_toplevel() && ($this->get_data_value('author_xchan') != $this->get_data_value('owner_xchan'))) {
 			$this->owner_url = chanlink_hash($this->data['owner']['xchan_hash']);
-			$this->owner_photo = $this->data['owner']['xchan_photo_m'];
+			$this->owner_photo = $this->data['owner']['xchan_photo_s'];
 			$this->owner_name = $this->data['owner']['xchan_name'];
 			$this->wall_to_wall = true;
 		}
