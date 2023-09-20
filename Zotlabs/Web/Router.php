@@ -224,7 +224,7 @@ class Router {
 				}
 				elseif(function_exists(App::$module . '_init')) {
 					$func = App::$module . '_init';
-					$func($a);
+					$func();
 				}
 			}
 
@@ -257,13 +257,13 @@ class Router {
 
 			if(function_exists(str_replace('-', '_', $current_theme[0]) . '_init')) {
 				$func = str_replace('-', '_', $current_theme[0]) . '_init';
-				$func($a);
+				$func();
 			}
 			elseif (x(App::$theme_info, 'extends') && file_exists('view/theme/' . App::$theme_info['extends'] . '/php/theme.php')) {
 				require_once('view/theme/' . App::$theme_info['extends'] . '/php/theme.php');
 				if(function_exists(str_replace('-', '_', App::$theme_info['extends']) . '_init')) {
 					$func = str_replace('-', '_', App::$theme_info['extends']) . '_init';
-					$func($a);
+					$func();
 				}
 			}
 
@@ -275,7 +275,7 @@ class Router {
 				}
 				elseif(function_exists(App::$module . '_post')) {
 					$func = App::$module . '_post';
-					$func($a);
+					$func();
 				}
 			}
 
@@ -289,7 +289,7 @@ class Router {
 					}
 					elseif(function_exists(App::$module . '_content')) {
 						$func = App::$module . '_content';
-						$arr = array('content' => $func($a));
+						$arr = array('content' => $func());
 					}
 				}
 				call_hooks(App::$module . '_mod_aftercontent', $arr);

@@ -500,8 +500,6 @@ function call_hooks($name, &$data = null) {
 				$func = $hook[1];
 				if($hook[3])
 					$func($data);
-				else
-					$func($a, $data);
 			}
 			else {
 
