@@ -142,6 +142,7 @@ class Activity {
 			logger('returned: ' . json_encode($y, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOGGER_DEBUG);
 
 			if (isset($y['type']) && ActivityStreams::is_an_actor($y['type'])) {
+				$y['actor_cache_date'] = datetime_convert();
 				XConfig::Set($y['id'], 'system', 'actor_record', $y);
 			}
 
@@ -1667,11 +1668,6 @@ class Activity {
 		if (!$inbox || strpos($inbox, z_root()) !== false) {
 			return;
 		}
-
-		// store the actor record in XConfig
-
-		// we already store this in Activity::fetch()
-		// XConfig::Set($url, 'system', 'actor_record', $person_obj);
 
 		$name = $person_obj['name'] ?? '';
 		if (!$name) {
@@ -4033,7 +4029,8 @@ class Activity {
 		$cache_url = ((strpos($id, '#')) ? substr($id, 0, strpos($id, '#')) : $id);
 		$actor = XConfig::Get($cache_url, 'system', 'actor_record');
 
-		if ($actor) {
+		if ($actor && isset($actor['actor_cache_date']) && $actor['actor_cache_date'] > datetime_convert('UTC', 'UTC', ' now - 3 days')) {
+			unset($actor['actor_cache_date']);
 			return $actor;
 		}
 
