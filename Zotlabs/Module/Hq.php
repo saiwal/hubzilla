@@ -104,7 +104,7 @@ class Hq extends \Zotlabs\Web\Controller {
 			];
 
 			$a = '';
-			$o .= status_editor($a, $x, true);
+			$o .= status_editor($x, true, 'Hq');
 
 		}
 

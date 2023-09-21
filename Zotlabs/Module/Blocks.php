@@ -107,7 +107,7 @@ class Blocks extends \Zotlabs\Web\Controller {
 		$x['pagetitle'] = $_REQUEST['pagetitle'] ?? '';
 
 		$a = '';
-		$editor = status_editor($a,$x,false,'Blocks');
+		$editor = status_editor($x, false, 'Blocks');
 
 
 		$r = q("select iconfig.iid, iconfig.k, iconfig.v, mid, title, body, mimetype, created, edited from iconfig

@@ -139,7 +139,7 @@ class Layouts extends \Zotlabs\Web\Controller {
 		$x['pagetitle'] = $_REQUEST['pagetitle'] ?? '';
 
 		$a = '';
-		$editor = status_editor($a,$x,false,'Layouts');
+		$editor = status_editor($x, false, 'Layouts');
 
 		$r = q("select iconfig.iid, iconfig.v, mid, title, body, mimetype, created, edited, item_type from iconfig
 			left join item on iconfig.iid = item.id

@@ -205,7 +205,7 @@ class Rpost extends \Zotlabs\Web\Controller {
 		);
 
 		$a = '';
-		$editor = status_editor($a,$x,false,'Rpost');
+		$editor = status_editor($x, false, 'Rpost');
 
 		$o .= replace_macros(get_markup_template('edpost_head.tpl'), array(
 			'$title' => t('Edit post'),

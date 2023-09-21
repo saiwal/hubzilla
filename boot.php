@@ -872,7 +872,8 @@ class App {
 		date_default_timezone_set('UTC');
 
 		self::$config = ['system' => []];
-		self::$page   = [];
+		self::$page['htmlhead'] = '';
+
 		self::$pager  = [];
 
 		self::$query_string = '';

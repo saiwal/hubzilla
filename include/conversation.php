@@ -1306,11 +1306,11 @@ function format_like($cnt, $arr, $type, $id) {
 /**
  * Wrapper to allow addons to replace the status editor if desired.
  */
-function status_editor($a, $x, $popup = false, $module='') {
+function status_editor($x, $popup = false, $module='') {
 	$hook_info = ['editor_html' => '', 'x' => $x, 'popup' => $popup, 'module' => $module];
 	call_hooks('status_editor',$hook_info);
 	if ($hook_info['editor_html'] == '') {
-		return hz_status_editor($a, $x, $popup);
+		return hz_status_editor($x, $popup);
 	} else {
 		return $hook_info['editor_html'];
 	}
@@ -1322,7 +1322,7 @@ function status_editor($a, $x, $popup = false, $module='') {
  * They are referring to the content editor or components thereof.
  */
 
-function hz_status_editor($a, $x, $popup = false) {
+function hz_status_editor($x, $popup = false) {
 
 	$o = '';
 

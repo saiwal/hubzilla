@@ -268,7 +268,7 @@ class Channel extends Controller {
 				];
 
 				$a = '';
-				$o .= status_editor($a, $x, false, 'Channel');
+				$o .= status_editor($x, false, 'Channel');
 			}
 
 			// Add pinned content

@@ -528,9 +528,8 @@ function unxmlify($s) {
  * will limit the results to the correct items for the current page.
  * The actual page handling is then accomplished at the application layer.
  *
- * @param App &$a
  */
-function paginate(&$a) {
+function paginate() {
 	$o = '';
 	$stripped = preg_replace('/(&page=[0-9]*)/','',App::$query_string);
 
