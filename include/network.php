@@ -2084,7 +2084,7 @@ function jsonld_document_loader($url) {
 		}
 	}
 
-	$cachepath = 'store/[data]/ldcache';
+	$cachepath = 'store/[data]/[jsonld]';
 	if(!is_dir($cachepath)) {
 		os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
 	}
@@ -2093,7 +2093,7 @@ function jsonld_document_loader($url) {
 
 	if (file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
 		logger('loading ' . $filename . ' from recent cache');
-		return file_get_contents($filename);
+		return json_decode(file_get_contents($filename));
 	}
 
 	$r = jsonld_default_document_loader($url);
@@ -2110,7 +2110,7 @@ function jsonld_document_loader($url) {
 
 	if (file_exists($filename)) {
 		logger('loading ' . $filename . ' from longterm cache');
-		return file_get_contents($filename);
+		return json_decode(file_get_contents($filename));
 	}
 	else {
 		logger($filename . ' does not exist and cannot be loaded');
