@@ -1,7 +1,9 @@
 <?php
 namespace Zotlabs\Module; /** @file */
 
+use App;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Access\AccessList;
 
 require_once('include/acl_selectors.php');
 require_once('include/crypto.php');
@@ -43,9 +45,9 @@ class Rpost extends \Zotlabs\Web\Controller {
 				// by the wretched beast called 'suhosin'. All the browsers now allow long GET requests, but suhosin
 				// blocks them.
 
-				$url = Libzot::get_rpost_path(\App::get_observer());
+				$url = Libzot::get_rpost_path(App::get_observer());
 				// make sure we're not looping to our own hub
-				if(($url) && (! stristr($url, \App::get_hostname()))) {
+				if(($url) && (! stristr($url, App::get_hostname()))) {
 					foreach($_GET as $key => $arg) {
 						if($key === 'q')
 							continue;
@@ -80,7 +82,10 @@ class Rpost extends \Zotlabs\Web\Controller {
 				'album'     => $def_album,
 				'directory' => $def_attach,
 				'flags'     => 1, // indicates temporary permissions are created
-				'allow_cid' => '<' . $channel['channel_hash'] . '>'
+				'allow_cid' => '<' . $channel['channel_hash'] . '>',
+				'allow_gid' => '',
+				'deny_cid' => '',
+				'deny_gid' => ''
 			]);
 
 			if (! $r['success']) {
@@ -167,9 +172,9 @@ class Rpost extends \Zotlabs\Web\Controller {
 			$_REQUEST['body'] = html2bbcode($_REQUEST['body']);
 		}
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
-		$acl = new \Zotlabs\Access\AccessList($channel);
+		$acl = new AccessList($channel);
 		$channel_acl = $acl->get();
 
 		if(isset($_REQUEST['url']) && $_REQUEST['url']) {
