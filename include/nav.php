@@ -201,7 +201,10 @@ function nav($template = 'default') {
 		$nav['admin'] = ['admin/', t('Admin'), "", t('Site Setup and Configuration'), 'admin_nav_btn'];
 	}
 
-	$theme_switch_icon = ((App::$page['color_mode'] === 'dark') ? 'sun' : 'moon');
+	$theme_switch_icon = '';
+	if (isset(App::$page['color_mode'])) {
+		$theme_switch_icon = ((App::$page['color_mode'] === 'dark') ? 'sun' : 'moon');
+	}
 
 	$x = ['nav' => $nav, 'usermenu' => $userinfo];
 

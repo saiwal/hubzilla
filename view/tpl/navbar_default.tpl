@@ -195,7 +195,9 @@
 		<i id="app-bin-trash" class="fa fa-2x fa-fw fa-trash-o d-none"></i>
 		{{/if}}
 		<div class="hstack gap-1">
+			{{if $theme_switch_icon}}
 			<button id="theme-switch" type="button" class="btn btn-outline-secondary border-0"><i id="theme-switch-icon" class="fa fa-{{$theme_switch_icon}}-o"></i></button>
+			{{/if}}
 			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 
