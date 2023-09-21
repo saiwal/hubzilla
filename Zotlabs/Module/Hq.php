@@ -85,6 +85,7 @@ class Hq extends \Zotlabs\Web\Controller {
 
 			$x = [
 				'is_owner'            => true,
+				'profile_uid'         => $channel['channel_id'],
 				'allow_location'      => ((intval(get_pconfig($channel['channel_id'],'system','use_browser_location'))) ? '1' : ''),
 				'default_location'    => $channel['channel_location'],
 				'nickname'            => $channel['channel_address'],

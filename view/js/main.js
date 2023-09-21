@@ -1584,7 +1584,7 @@ function zFormError(elm,x) {
 $(window).scroll(function () {
 	if(typeof buildCmd == 'function') {
 		// This is a content page with items and/or conversations
-		if($(window).scrollTop() + $(window).height() > $('#conversation-end').position().top) {
+		if($('#conversation-end').length && ($(window).scrollTop() + $(window).height()) > $('#conversation-end').position().top) {
 			if((pageHasMoreContent) && (! loadingPage)) {
 				next_page++;
 				scroll_next = true;
@@ -1595,7 +1595,7 @@ $(window).scroll(function () {
 	}
 	else {
 		// This is some other kind of page - perhaps a directory
-		if($('#page-end').length && ($(window).scrollTop() + $(window).height() > $('#page-end').position().top)) {
+		if($('#page-end').length && ($(window).scrollTop() + $(window).height()) > $('#page-end').position().top) {
 			if((pageHasMoreContent) && (! loadingPage) && (! justifiedGalleryActive)) {
 				next_page++;
 				scroll_next = true;
