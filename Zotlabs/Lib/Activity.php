@@ -2391,25 +2391,25 @@ class Activity {
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
 			if ($act->type === 'Like') {
-				$content['content'] = sprintf(t('Likes %1$s\'s %2$s'), $mention, $act->obj['type']) . "\n\n" . $content['content'] ?? '';
+				$content['content'] = sprintf(t('Likes %1$s\'s %2$s'), $mention, $act->obj['type']) . EOL . EOL . ($content['content'] ?? '');
 			}
 			if ($act->type === 'Dislike') {
-				$content['content'] = sprintf(t('Doesn\'t like %1$s\'s %2$s'), $mention, $act->obj['type']) . "\n\n" . $content['content'] ?? '';
+				$content['content'] = sprintf(t('Doesn\'t like %1$s\'s %2$s'), $mention, $act->obj['type']) . EOL . EOL . ($content['content'] ?? '');
 			}
 
 			// handle event RSVPs
 			if (($act->objprop('type') === 'Event') || ($act->objprop('type') === 'Invite' && array_path_exists('object/type', $act->obj) && $act->obj['object']['type'] === 'Event')) {
 				if ($act->type === 'Accept') {
-					$content['content'] = sprintf(t('Will attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('Will attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 				if ($act->type === 'Reject') {
-					$content['content'] = sprintf(t('Will not attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('Will not attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 				if ($act->type === 'TentativeAccept') {
-					$content['content'] = sprintf(t('May attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('May attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 				if ($act->type === 'TentativeReject') {
-					$content['content'] = sprintf(t('May not attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('May not attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 			}
 
