@@ -4,16 +4,6 @@
 		--bs-navbar-padding-y: 1px;
 	}
 
-	.contextual-help-content-open {
-		top: 2.5rem;
-	}
-
-	#region_1,
-	#region_2,
-	#region_3 {
-		padding-top: 3.5rem;
-	}
-
 	#jGrowl.top-right {
 		top: 3.5rem;
 		right: 15px;
