@@ -26,7 +26,7 @@ class Activity_filter {
 		$starred_active = '';
 		$conv_active    = '';
 		$tabs           = [];
-		$cmd            = \App::$cmd;
+		$cmd            = 'network'; //\App::$cmd;
 
 		if(x($_GET,'dm')) {
 			$dm_active = (($_GET['dm'] == 1) ? 'active' : '');
