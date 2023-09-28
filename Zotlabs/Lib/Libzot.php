@@ -1871,8 +1871,9 @@ class Libzot {
 
 				// if it's a sourced post, call the post_local hooks as if it were
 				// posted locally so that crosspost connectors will be triggered.
+				$item_source = check_item_source($arr['uid'], $arr);
 
-				if (check_item_source($arr['uid'], $arr) || ($channel['xchan_pubforum'] == 1)) {
+				if ($item_source || ($channel['xchan_pubforum'] == 1)) {
 					/**
 					 * @hooks post_local
 					 *   Called when an item has been posted on this machine via mod/item.php (also via API).
@@ -1898,7 +1899,13 @@ class Libzot {
 				if (post_is_importable($arr['uid'], $arr, $abook)) {
 					$item_result = item_store($arr);
 					if ($item_result['success']) {
+
 						$item_id = $item_result['item_id'];
+
+						if ($item_source && in_array($item_result['item']['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) {
+							event_addtocal($item_id, $channel['channel_id']);
+						}
+
 						$parr = [
 							'item_id' => $item_id,
 							'item' => $arr,
