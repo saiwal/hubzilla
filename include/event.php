@@ -9,6 +9,7 @@ use Sabre\VObject;
 
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Access\AccessList;
 
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
@@ -718,56 +719,95 @@ function event_addtocal($item_id, $uid) {
 
 	$item = $r[0];
 
-	$ev = bbtoevent($r[0]['body']);
+	$ev = parse_event_object($item['obj']);
 
-	if(x($ev,'summary') && x($ev,'dtstart')) {
-		$ev['event_xchan'] = $item['author_xchan'];
-		$ev['uid']         = $channel['channel_id'];
-		$ev['account']     = $channel['channel_account_id'];
-		$ev['edited']      = $item['edited'];
-		$ev['mid']         = $item['mid'];
-		$ev['private']     = $item['item_private'];
+	// if we could not parse the object, parse try to parse the body bbcode
+	if (!$ev) {
+		$ev = bbtoevent($item['body']);
+	}
 
-		// is this an edit?
+	if (!$ev) {
+		return false;
+	}
 
-		if($item['resource_type'] === 'event' && (! $ev['event_hash'])) {
-			$ev['event_hash'] = $item['resource_id'];
+	$ev['event_xchan'] = $item['author_xchan'];
+	$ev['uid']         = $channel['channel_id'];
+	$ev['account']     = $channel['channel_account_id'];
+	$ev['edited']      = $item['edited'];
+	$ev['mid']         = $item['mid'];
+	$ev['private']     = $item['item_private'];
+
+	if($item['resource_type'] === 'event' && (! $ev['event_hash'])) {
+		$ev['event_hash'] = $item['resource_id'];
+	}
+
+	if($ev['private']) {
+		$ev['allow_cid'] = '<' . $channel['channel_hash'] . '>';
+		$ev['allow_gid'] = '';
+		$ev['deny_cid']  = '';
+		$ev['deny_gid']  = '';
+	}
+	else {
+		$acl = new AccessList($channel);
+		$x = $acl->get();
+		$ev['allow_cid'] = $x['allow_cid'];
+		$ev['allow_gid'] = $x['allow_gid'];
+		$ev['deny_cid']  = $x['deny_cid'];
+		$ev['deny_gid']  = $x['deny_gid'];
+	}
+
+	$event = event_store_event($ev);
+	if($event) {
+		$r = q("update item set resource_id = '%s', resource_type = 'event' where id = %d and uid = %d",
+			dbesc($event['event_hash']),
+			intval($item['id']),
+			intval($channel['channel_id'])
+		);
+
+		$item['resource_id'] = $event['event_hash'];
+		$item['resource_type'] = 'event';
+
+		$i = [$item];
+
+		xchan_query($i);
+		$sync_item = fetch_post_tags($i);
+
+		$z = q("select * from event where event_hash = '%s' and uid = %d limit 1",
+			dbesc($event['event_hash']),
+			intval($channel['channel_id'])
+		);
+
+		if($z) {
+			libsync::build_sync_packet($channel['channel_id'], ['event_item' => [encode_item($sync_item[0], true)], 'event' => $z]);
 		}
 
-		if($ev['private'])
-			$ev['allow_cid'] = '<' . $channel['channel_hash'] . '>';
-		else {
-			$acl = new Zotlabs\Access\AccessList($channel);
-			$x = $acl->get();
-			$ev['allow_cid'] = $x['allow_cid'];
-			$ev['allow_gid'] = $x['allow_gid'];
-			$ev['deny_cid']  = $x['deny_cid'];
-			$ev['deny_gid']  = $x['deny_gid'];
-		}
+		return true;
+	}
 
-		$event = event_store_event($ev);
-		if($event) {
-			$r = q("update item set resource_id = '%s', resource_type = 'event' where id = %d and uid = %d",
-				dbesc($event['event_hash']),
-				intval($item['id']),
-				intval($channel['channel_id'])
-			);
+}
 
-			$item['resource_id'] = $event['event_hash'];
-			$item['resource_type'] = 'event';
+function parse_event_object($event_object_json) {
 
-			$i = array($item);
-			xchan_query($i);
-			$sync_item = fetch_post_tags($i);
-			$z = q("select * from event where event_hash = '%s' and uid = %d limit 1",
-				dbesc($event['event_hash']),
-				intval($channel['channel_id'])
-			);
-			if($z) {
-				Libsync::build_sync_packet($channel['channel_id'],array('event_item' => array(encode_item($sync_item[0],true)),'event' => $z));
-			}
-			return true;
-		}
+	$object = json_decode($event_object_json, true);
+
+	$tz = $object['timezone'] ?? 'UTC';
+
+	$ev['summary'] = $object['summary'] ?? $object['name'] ?? '';
+	$ev['description'] = html2bbcode($content['content']) ?? '';
+	$ev['dtstart'] = $object['startTime'] ? datetime_convert('UTC', 'UTC', $object['startTime']) : '';
+	$ev['dtend'] = $object['endTime'] ? datetime_convert('UTC', 'UTC', $object['endTime']) : $ev['dtstart'];
+	$ev['location'] = $object['location']['name'] ?? '';
+	$ev['event_hash'] = $object['uuid'] ?? $object['diaspora:guid'] ?? uuid_from_url($object['id']);
+	$ev['timezone'] = $tz;
+	$ev['adjust'] = (strpos($object['startTime'], 'Z') !== false || !empty($object['dfrn:adjust']) || $tz !== 'UTC');
+
+	$ev['nofinish'] = 0;
+	if($ev['dtend'] === $ev['dtstart']) {
+		$ev['nofinish'] = 1;
+	}
+
+	if ($ev['summary'] && $ev['dtstart']) {
+		return $ev;
 	}
 
 	return false;

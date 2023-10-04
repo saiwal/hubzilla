@@ -2344,7 +2344,7 @@ class Activity {
 			$s['expires'] = datetime_convert('UTC', 'UTC', $act->obj['expires']);
 		}
 
-		if ($act->type === 'Invite' && $act->objprop('type') === 'Event') {
+		if (in_array($act->type, ['Invite', 'Create']) && $act->objprop('type') === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
@@ -2899,6 +2899,10 @@ class Activity {
 			set_iconfig($s, 'activitypub', 'recips', $act->raw_recips);
 		}
 
+		if ($act->objprop('type') === 'Event' && $act->objprop('timezone')) {
+			set_iconfig($s, 'event', 'timezone', $act->objprop('timezone'), true);
+		}
+
 		$hookinfo = [
 			'act' => $act,
 			's'   => $s
@@ -3257,7 +3261,12 @@ class Activity {
 			}
 		}
 
-		if (is_array($x) && $x['item_id']) {
+		if ($x['success']) {
+
+			if (check_item_source($channel['channel_id'], $x['item']) && in_array($x['item']['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) {
+				event_addtocal($x['item_id'], $channel['channel_id']);
+			}
+
 			if ($is_child_node) {
 				if ($item['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
