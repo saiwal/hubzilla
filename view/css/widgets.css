@@ -207,14 +207,11 @@ a.wikilist {
 }
 
 .fs {
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	padding: 4.5rem .5rem 1rem .5rem;
+	position: absolute;
+	padding: 0 .5rem 1rem .5rem;
 	background-color: var(--bs-body-bg);
-	width: 100%;
-	max-width: 100%;
-	height: 100%;
+	width: 100vw;
+	height: 100vh;
 	z-index: 1019;
 	overflow: auto;
 }

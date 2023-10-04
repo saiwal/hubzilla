@@ -55,6 +55,11 @@ $(document).ready(function() {
 	}
 	$('#css3-calc').remove(); // Remove the test element
 
+	if($(window).width() < 1200) {
+		$("#right_aside_wrapper").children().detach().appendTo('#left_aside_wrapper');
+		$('#notifications_wrapper').addClass('d-none');
+	}
+
 
 	if (document.querySelector('#region_1')) {
 		stickyScroll('.aside_spacer_left', '.aside_spacer_top_left', 'section', parseFloat(document.querySelector('main').getBoundingClientRect().top), 20);
