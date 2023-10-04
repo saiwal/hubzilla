@@ -30,18 +30,32 @@ class Owa extends Controller {
 			$sigblock = HTTPSig::parse_sigheader($_SERVER['HTTP_AUTHORIZATION']);
 			if ($sigblock) {
 				$keyId = $sigblock['keyId'];
+				$parsed = parse_url($keyId);
+				if (str_starts_with($parsed['scheme'],'http')) {
+				    unset($parsed['fragment']);
+				    unset($parsed['query']);
+				    $keyId = unparse_url($parsed);
+				}
+				else {
+				    $keyId = str_replace('acct:', '', $keyId);
+				}
 				if ($keyId) {
 					$r = q("SELECT * FROM hubloc LEFT JOIN xchan ON hubloc_hash = xchan_hash
-						WHERE (hubloc_addr = '%s' OR hubloc_id_url = '%s') AND hubloc_deleted = 0 AND xchan_pubkey != '' ORDER BY hubloc_id DESC",
-						dbesc(str_replace('acct:', '', $keyId)),
+						WHERE (hubloc_addr = '%s' OR hubloc_id_url = '%s' OR xchan_hash = '%s')
+						  AND hubloc_deleted = 0 AND xchan_pubkey != ''
+						ORDER BY hubloc_id DESC",
+						dbesc($keyId),
+						dbesc($keyId),
 						dbesc($keyId)
 					);
 					if (! $r) {
 						$found = discover_by_webbie($keyId);
+						logger('found = ' . print_r($found, true));
 						if ($found) {
 							$r = q("SELECT * FROM hubloc LEFT JOIN xchan ON hubloc_hash = xchan_hash
-								WHERE (hubloc_addr = '%s' OR hubloc_id_url = '%s') AND hubloc_deleted = 0 AND xchan_pubkey != '' ORDER BY hubloc_id DESC ",
-								dbesc(str_replace('acct:', '', $keyId)),
+								WHERE (hubloc_addr = '%s' OR hubloc_id_url = '%s' OR xchan_hash = '%s') AND hubloc_deleted = 0 AND xchan_pubkey != '' ORDER BY hubloc_id DESC ",
+								dbesc($keyId),
+								dbesc($keyId),
 								dbesc($keyId)
 							);
 						}
