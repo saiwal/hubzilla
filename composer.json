@@ -25,6 +25,7 @@
     "require": {
         "php": ">=8.0.2",
         "ext-curl": "*",
+        "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-xml": "*",
         "ext-openssl": "*",
