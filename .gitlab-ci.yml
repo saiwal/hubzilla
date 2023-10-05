@@ -41,7 +41,6 @@ before_script:
 - apt-get install zip unzip libjpeg-dev libpng-dev -yqq
 - docker-php-ext-enable xdebug
 - docker-php-ext-install gd
-- docker-php-ext-install ext-iconv
 
 # Install composer
 - curl -sS https://getcomposer.org/installer | php
