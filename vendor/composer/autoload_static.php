@@ -519,6 +519,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'ID3Parser\\getID3\\getid3_exception' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_exception.php',
         'ID3Parser\\getID3\\getid3_handler' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_handler.php',
         'ID3Parser\\getID3\\getid3_lib' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_lib.php',
+        'League\\HTMLToMarkdown\\Coerce' => __DIR__ . '/..' . '/league/html-to-markdown/src/Coerce.php',
         'League\\HTMLToMarkdown\\Configuration' => __DIR__ . '/..' . '/league/html-to-markdown/src/Configuration.php',
         'League\\HTMLToMarkdown\\ConfigurationAwareInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
         'League\\HTMLToMarkdown\\Converter\\BlockquoteConverter' => __DIR__ . '/..' . '/league/html-to-markdown/src/Converter/BlockquoteConverter.php',

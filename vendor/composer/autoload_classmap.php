@@ -282,6 +282,7 @@ return array(
     'ID3Parser\\getID3\\getid3_exception' => $vendorDir . '/lukasreschke/id3parser/src/getID3/getid3_exception.php',
     'ID3Parser\\getID3\\getid3_handler' => $vendorDir . '/lukasreschke/id3parser/src/getID3/getid3_handler.php',
     'ID3Parser\\getID3\\getid3_lib' => $vendorDir . '/lukasreschke/id3parser/src/getID3/getid3_lib.php',
+    'League\\HTMLToMarkdown\\Coerce' => $vendorDir . '/league/html-to-markdown/src/Coerce.php',
     'League\\HTMLToMarkdown\\Configuration' => $vendorDir . '/league/html-to-markdown/src/Configuration.php',
     'League\\HTMLToMarkdown\\ConfigurationAwareInterface' => $vendorDir . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
     'League\\HTMLToMarkdown\\Converter\\BlockquoteConverter' => $vendorDir . '/league/html-to-markdown/src/Converter/BlockquoteConverter.php',
