@@ -31,9 +31,8 @@
 		});
 
 		$(document).on('click', '.notification', function() {
-			$('#notifications_wrapper').addClass('d-none');
 			if($('#notifications_wrapper').hasClass('fs')) {
-				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs');
+				$('#notifications_wrapper').prependTo('#' + notifications_parent).removeClass('fs').addClass('d-none');
 			}
 		});
 
