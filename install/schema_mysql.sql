@@ -1201,18 +1201,19 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 CREATE TABLE IF NOT EXISTS `updates` (
   `ud_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ud_hash` char(191) NOT NULL DEFAULT '',
-  `ud_guid` char(191) NOT NULL DEFAULT '',
   `ud_date` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `ud_last` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `ud_flags` int(11) NOT NULL DEFAULT 0 ,
   `ud_addr` char(191) NOT NULL DEFAULT '',
+  `ud_update` numeric(1) NOT NULL DEFAULT 0,
+  `ud_host` char(191) NOT NULL DEFAULT '',
   PRIMARY KEY (`ud_id`),
   KEY `ud_date` (`ud_date`),
-  KEY `ud_guid` (`ud_guid`),
   KEY `ud_hash` (`ud_hash`),
   KEY `ud_flags` (`ud_flags`),
   KEY `ud_addr` (`ud_addr`),
-  KEY `ud_last` (`ud_last`)
+  KEY `ud_last` (`ud_last`),
+  KEY `ud_update` (`ud_update`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `verify` (
