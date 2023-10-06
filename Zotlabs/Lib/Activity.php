@@ -544,7 +544,7 @@ class Activity {
 			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['comments_closed'], ATOM_TIME);
 		}
 
-		$ret['attributedTo'] = $i['author']['xchan_url'];
+		$ret['attributedTo'] = self::encode_person($item['author'], false);
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = ((strpos($i['thr_parent'], 'http') === 0) ? $i['thr_parent'] : z_root() . '/item/' . urlencode($i['thr_parent']));
