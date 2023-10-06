@@ -1205,7 +1205,7 @@ CREATE TABLE IF NOT EXISTS `updates` (
   `ud_last` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `ud_flags` int(11) NOT NULL DEFAULT 0 ,
   `ud_addr` char(191) NOT NULL DEFAULT '',
-  `ud_update` numeric(1) NOT NULL DEFAULT 0,
+  `ud_update` tinyint(1) NOT NULL DEFAULT 0,
   `ud_host` char(191) NOT NULL DEFAULT '',
   PRIMARY KEY (`ud_id`),
   KEY `ud_date` (`ud_date`),
