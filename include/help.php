@@ -1,6 +1,7 @@
 <?php
 
 use \Michelf\MarkdownExtra;
+use CommerceGuys\Intl\Language\LanguageRepository;
 
 require_once('include/items.php');
 
@@ -183,11 +184,11 @@ function preg_callback_help_include($matches) {
  *  * \e boolean \b from_url - true if language from URL overrides browser default
  */
 function determine_help_language() {
-	$lang_detect = new Text_LanguageDetect();
-	// Set this mode to recognize language by the short code like "en", "ru", etc.
-	$lang_detect->setNameMode(2);
 
-	if($lang_detect->languageExists(argv(1))) {
+	$language_repository = new LanguageRepository;
+	$languages = $language_repository->getList();
+
+	if(array_key_exists(argv(1), $languages)) {
 		$lang = argv(1);
 		$from_url = true;
 	} else {

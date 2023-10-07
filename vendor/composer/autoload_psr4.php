@@ -29,6 +29,7 @@ return array(
     'OTPHP\\' => array($vendorDir . '/spomky-labs/otphp/src'),
     'Michelf\\' => array($vendorDir . '/michelf/php-markdown/Michelf'),
     'League\\HTMLToMarkdown\\' => array($vendorDir . '/league/html-to-markdown/src'),
+    'LanguageDetection\\' => array($vendorDir . '/patrickschur/language-detection/src/LanguageDetection'),
     'ID3Parser\\' => array($vendorDir . '/lukasreschke/id3parser/src'),
     'Hubzilla\\' => array($baseDir . '/include'),
     'CommerceGuys\\Intl\\' => array($vendorDir . '/commerceguys/intl/src'),

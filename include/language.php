@@ -9,6 +9,7 @@
  */
 
 use CommerceGuys\Intl\Language\LanguageRepository;
+use LanguageDetection\Language;
 
 /**
  * @brief Get the browser's submitted preferred languages.
@@ -299,14 +300,10 @@ function string_plural_select_default($n) {
 /**
  * @brief Takes a string and tries to identify the language.
  *
- * It uses the pear library Text_LanguageDetect and it can identify 52 human languages.
- * It returns the identified languges and a confidence score for each.
- *
  * Strings need to have a min length config['system']['language_detect_min_length']
  * and you can influence the confidence that must be met before a result will get
  * returned through config['system']['language_detect_min_confidence'].
  *
- * @see http://pear.php.net/package/Text_LanguageDetect
  * @param string $s A string to examine
  * @return string Language code in 2-letter ISO 639-1 (en, de, fr) format
  */
@@ -316,43 +313,35 @@ function detect_language($s) {
 		return EMPTY_STR;
 	}
 
-	$min_length = get_config('system', 'language_detect_min_length');
-	if ($min_length === false)
-		$min_length = LANGUAGE_DETECT_MIN_LENGTH;
-
-	$min_confidence = get_config('system', 'language_detect_min_confidence');
-	if ($min_confidence === false)
-		$min_confidence = LANGUAGE_DETECT_MIN_CONFIDENCE;
+	$min_length = get_config('system', 'language_detect_min_length', LANGUAGE_DETECT_MIN_LENGTH);
+	$min_confidence = get_config('system', 'language_detect_min_confidence', LANGUAGE_DETECT_MIN_CONFIDENCE);
 
 	// embedded apps have long base64 strings which will trip up the detector.
 	$naked_body = preg_replace('/\[app\](.*?)\[\/app\]/', '', $s);
+
 	// strip off bbcode
 	$naked_body = preg_replace('/\[(.+?)\]/', '', $naked_body);
+
+	// strip any links
+	$naked_body = preg_replace('/\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/i', '', $naked_body);
+
 	if (mb_strlen($naked_body) < intval($min_length)) {
 		logger('string length less than ' . intval($min_length), LOGGER_DATA);
-		return '';
+		return EMPTY_STR;
 	}
 
-	$l = new Text_LanguageDetect;
-	try {
-		// return 2-letter ISO 639-1 (en) language code
-		$l->setNameMode(2);
-		$lng = $l->detectConfidence($naked_body);
-		logger('detect language: ' . print_r($lng, true) . $naked_body, LOGGER_DATA);
-	} catch (Text_LanguageDetect_Exception $e) {
-		logger('detect language exception: ' . $e->getMessage(), LOGGER_DATA);
+	$lang = new Language;
+	$lang_arr = $lang->detect($naked_body)->limit(0, 1)->close();
+
+	$confidence = reset($lang_arr);
+	if ($confidence >= intval($min_confidence)) {
+		logger('detect language: ' . print_r($lang_arr, true) . $naked_body, LOGGER_DATA);
+		return key($lang_arr);
 	}
 
-	if ((! $lng) || (! (x($lng,'language')))) {
-		return '';
-	}
+	logger('detect language: confidence less than ' . $min_confidence, LOGGER_DATA);
 
-	if ($lng['confidence'] < (float) $min_confidence) {
-		logger('detect language: confidence less than ' . (float) $min_confidence, LOGGER_DATA);
-		return '';
-	}
-
-	return($lng['language']);
+	return EMPTY_STR;
 }
 
 /**

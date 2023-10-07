@@ -73,6 +73,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'L' => 
         array (
             'League\\HTMLToMarkdown\\' => 22,
+            'LanguageDetection\\' => 18,
         ),
         'I' => 
         array (
@@ -185,6 +186,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'League\\HTMLToMarkdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/html-to-markdown/src',
+        ),
+        'LanguageDetection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection',
         ),
         'ID3Parser\\' => 
         array (
@@ -519,6 +524,12 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'ID3Parser\\getID3\\getid3_exception' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_exception.php',
         'ID3Parser\\getID3\\getid3_handler' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_handler.php',
         'ID3Parser\\getID3\\getid3_lib' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_lib.php',
+        'LanguageDetection\\Language' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Language.php',
+        'LanguageDetection\\LanguageResult' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/LanguageResult.php',
+        'LanguageDetection\\NgramParser' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/NgramParser.php',
+        'LanguageDetection\\Tokenizer\\TokenizerInterface' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Tokenizer/TokenizerInterface.php',
+        'LanguageDetection\\Tokenizer\\WhitespaceTokenizer' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Tokenizer/WhitespaceTokenizer.php',
+        'LanguageDetection\\Trainer' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Trainer.php',
         'League\\HTMLToMarkdown\\Coerce' => __DIR__ . '/..' . '/league/html-to-markdown/src/Coerce.php',
         'League\\HTMLToMarkdown\\Configuration' => __DIR__ . '/..' . '/league/html-to-markdown/src/Configuration.php',
         'League\\HTMLToMarkdown\\ConfigurationAwareInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
