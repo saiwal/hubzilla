@@ -206,7 +206,8 @@ class Rpost extends \Zotlabs\Web\Controller {
 			'bbco_autocomplete'   => 'bbcode',
 			'editor_autocomplete' => true,
 			'bbcode'              => true,
-			'jotnets'             => true
+			'jotnets'             => true,
+			'reset'               => t('Reset form')
 		);
 
 		$a = '';
