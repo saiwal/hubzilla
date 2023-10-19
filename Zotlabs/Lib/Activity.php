@@ -120,7 +120,9 @@ class Activity {
 			}
 
 			$h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), false);
+			$start_timestamp = microtime(true);
 			$x = z_fetch_url($url, true, $redirects, ['headers' => $h]);
+			logger('queueworker_stats_process_duration: cmd:Activity_fetch' . ' start_timestamp:' . $start_timestamp . ' ' . 'end_timestamp:' . microtime(true) . ' meta:' . $url . '##' . random_string(16));
 		}
 
 		if ($x['success']) {
@@ -142,6 +144,9 @@ class Activity {
 			logger('returned: ' . json_encode($y, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOGGER_DEBUG);
 
 			if (isset($y['type']) && ActivityStreams::is_an_actor($y['type'])) {
+
+				logger('queueworker_stats_process_duration: cmd:Actor_fetch' . ' start_timestamp:' . $start_timestamp . ' ' . 'end_timestamp:' . microtime(true) . ' meta:' . $url . '##' . random_string(16));
+				btlogger('actor fetch');
 				$y['actor_cache_date'] = datetime_convert();
 				XConfig::Set($y['id'], 'system', 'actor_record', $y);
 			}
@@ -152,6 +157,8 @@ class Activity {
 			logger('fetch failed: ' . $url);
 			logger($x['body']);
 		}
+
+
 		return null;
 	}
 
@@ -1370,7 +1377,7 @@ class Activity {
 
 			// store their xchan and hubloc
 
-			self::actor_store($person_obj['id'], $person_obj);
+			self::actor_store($person_obj);
 
 			// Find any existing abook record
 
@@ -1601,15 +1608,7 @@ class Activity {
 	}
 
 
-	static function actor_store($url, $person_obj = null, $force = false) {
-
-		if ($person_obj === null) {
-			$tgt = self::fetch($url);
-			if (is_array($tgt) && ActivityStreams::is_an_actor($tgt['type'])) {
-				self::actor_store($tgt['id'], $tgt);
-			}
-			return;
-		}
+	static function actor_store($person_obj, $force = false) {
 
 		if (!is_array($person_obj)) {
 			return;
@@ -1619,13 +1618,14 @@ class Activity {
 		if (array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
 			$tgt = self::fetch($person_obj['movedTo']);
 			if (is_array($tgt)) {
-				self::actor_store($person_obj['movedTo'],$tgt);
+				self::actor_store($tgt);
 				ActivityPub::move($person_obj['id'],$tgt);
 			}
 			return;
 		}
 		*/
 
+		$url = null;
 		$ap_hubloc = null;
 
 		$hublocs = self::get_actor_hublocs($url);
@@ -1646,7 +1646,7 @@ class Activity {
 		if ($ap_hubloc) {
 			// we already have a stored record. Determine if it needs updating.
 			if ($ap_hubloc['hubloc_updated'] < datetime_convert('UTC', 'UTC', ' now - 3 days') || $force) {
-				$person_obj = self::fetch($url);
+				$person_obj = self::get_cached_actor($url);
 			}
 			else {
 				return;
@@ -2300,7 +2300,7 @@ class Activity {
 		}
 
 		// ensure we store the original actor
-		self::actor_store($act->actor['id'], $act->actor);
+		self::actor_store($act->actor);
 
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
@@ -2386,7 +2386,7 @@ class Activity {
 			}
 
 			// ensure we store the original actor
-			self::actor_store($obj_actor['id'], $obj_actor);
+			self::actor_store($obj_actor);
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
@@ -3387,7 +3387,7 @@ class Activity {
 				}
 
 				if (is_array($a->actor) && array_key_exists('id', $a->actor)) {
-					self::actor_store($a->actor['id'], $a->actor);
+					self::actor_store($a->actor);
 				}
 
 				$replies = null;
@@ -4052,6 +4052,22 @@ class Activity {
 		call_hooks('get_cached_actor_provider', $hookdata);
 
 		return $hookdata['actor'];
+	}
+
+	static function get_actor($actor_id) {
+		$actor = self::get_cached_actor($actor_id);
+
+		if ($actor) {
+			return $actor;
+		}
+
+		$actor = self::fetch($actor_id);
+
+		if ($actor) {
+			return $actor;
+		}
+
+		return null;
 	}
 
 	static function get_unknown_actor($act) {
