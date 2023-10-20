@@ -122,7 +122,6 @@ class Activity {
 			$h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), false);
 			$start_timestamp = microtime(true);
 			$x = z_fetch_url($url, true, $redirects, ['headers' => $h]);
-			logger('queueworker_stats_process_duration: cmd:Activity_fetch' . ' start_timestamp:' . $start_timestamp . ' ' . 'end_timestamp:' . microtime(true) . ' meta:' . $url . '##' . random_string(16));
 		}
 
 		if ($x['success']) {
@@ -144,11 +143,13 @@ class Activity {
 			logger('returned: ' . json_encode($y, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOGGER_DEBUG);
 
 			if (isset($y['type']) && ActivityStreams::is_an_actor($y['type'])) {
-
-				logger('queueworker_stats_process_duration: cmd:Actor_fetch' . ' start_timestamp:' . $start_timestamp . ' ' . 'end_timestamp:' . microtime(true) . ' meta:' . $url . '##' . random_string(16));
+				logger('logger_stats_data cmd:Actor_fetch' . ' start:' . $start_timestamp . ' ' . 'end:' . microtime(true) . ' meta:' . $url . '#' . random_string(16));
 				btlogger('actor fetch');
 				$y['actor_cache_date'] = datetime_convert();
 				XConfig::Set($y['id'], 'system', 'actor_record', $y);
+			}
+			else {
+				logger('logger_stats_data cmd:Activity_fetch' . ' start:' . $start_timestamp . ' ' . 'end:' . microtime(true) . ' meta:' . $url . '#' . random_string(16));
 			}
 
 			return json_decode($x['body'], true);

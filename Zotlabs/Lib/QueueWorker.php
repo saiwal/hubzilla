@@ -63,6 +63,8 @@ class QueueWorker {
 				return;
 			}
 
+			logger('queueworker_stats_summon: cmd:' . $argv[0] . ' ' . 'timestamp:' . time());
+
 			self::qstart();
 			$r = q("INSERT INTO workerq (workerq_priority, workerq_data, workerq_uuid, workerq_cmd) VALUES (%d, '%s', '%s', '%s')",
 				intval($priority),
@@ -299,11 +301,15 @@ class QueueWorker {
 				$cls  = '\\Zotlabs\\Daemon\\' . $argv[0];
 				$argv = flatten_array_recursive($argv);
 				$argc = count($argv);
-				$rnd = random_string();
+				$rnd = random_string(16);
 
 				logger('PROCESSING: ' . $rnd . ' ' . print_r($argv[0], true));
 
+				$start_timestamp = microtime(true);
+
 				$cls::run($argc, $argv);
+
+				logger('logger_stats_data cmd:' . $argv[0] . ' start:' . $start_timestamp . ' ' . 'end:' . microtime(true) . ' meta:' . $rnd);
 
 				logger('COMPLETED: ' . $rnd);
 
