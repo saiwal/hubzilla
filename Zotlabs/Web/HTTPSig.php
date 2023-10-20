@@ -324,7 +324,7 @@ class HTTPSig {
 		}
 
 		// The record wasn't in cache. Fetch it now.
-		$r = Activity::fetch($id);
+		$r = Activity::get_actor($id);
 		$signatureAlgorithm = EMPTY_STR;
 
 		if ($r) {
