@@ -2013,7 +2013,7 @@ class Libzot {
 			// logger($AS->debug());
 
 			if(empty($AS->actor['id'])) {
-				logger('No actor id!');
+				logger('No actor id: ' . print_r($AS, true));
 				continue;
 			}
 
