@@ -35,7 +35,11 @@ class Zotfinger {
 		$result = [];
 
 		$redirects = 0;
+
+		$start_timestamp = microtime(true);
 		$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
+		logger('logger_stats_data cmd:Zotfinger' . ' start:' . $start_timestamp . ' ' . 'end:' . microtime(true) . ' meta:' . $resource . '#' . random_string(16));
+		btlogger('Zotfinger');
 
 		logger('fetch: ' . print_r($x,true));
 
