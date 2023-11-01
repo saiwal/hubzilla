@@ -225,7 +225,7 @@ class Chat extends Controller {
 
 		$o = '';
 
-		$acl = new AccessList($channel);
+		$acl = new AccessList($channel ?? []);
 		$channel_acl = $acl->get();
 
 		$lockstate = (($channel_acl['allow_cid'] || $channel_acl['allow_gid'] || $channel_acl['deny_cid'] || $channel_acl['deny_gid']) ? 'lock' : 'unlock');
