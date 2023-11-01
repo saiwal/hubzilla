@@ -156,7 +156,7 @@
 				{{/if}}
 			</td>
 			<td class="cloud-index-tool">
-				{{if ($is_owner || $item.is_creator) && $item.attach_id}}
+				{{if ($is_owner || ($item.is_creator && $has_perms)) && $item.attach_id}}
 				<div class="dropdown">
 					<button class="btn btn-link btn-sm" id="dropdown-button-{{$item.attach_id}}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<i class="fa fa-fw fa-ellipsis-v"></i>
@@ -203,6 +203,7 @@
 			<td class="d-none d-md-table-cell p-2">{{$item.size_formatted}}</td>
 			<td class="d-none d-md-table-cell p-2">{{$item.last_modified}}</td>
 		</tr>
+		{{if ($is_owner || ($item.is_creator && $has_perms)) && $item.attach_id}}
 		<tr id="cloud-tools-{{$item.attach_id}}" class="cloud-tools">
 			<td id="attach-edit-panel-{{$item.attach_id}}" class="attach-edit-panel" colspan="8">
 				<form id="attach_edit_form_{{$item.attach_id}}" action="attach_edit" method="post" class="acl-form" data-form_id="attach_edit_form_{{$item.attach_id}}" data-allow_cid='{{$item.allow_cid}}' data-allow_gid='{{$item.allow_gid}}' data-deny_cid='{{$item.deny_cid}}' data-deny_gid='{{$item.deny_gid}}'>
@@ -266,6 +267,7 @@
 				</form>
 			</td>
 		</tr>
+		{{/if}}
 		{{/foreach}}
 	</table>
 {{/if}}

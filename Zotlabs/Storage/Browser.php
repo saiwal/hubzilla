@@ -209,7 +209,6 @@ class Browser extends DAV\Browser\Plugin {
 			// upload access. system.thumbnail_security should be set to 1 if you want to include these
 			// types
 
-			$is_creator = false;
 			$photo_icon = '';
 			$preview_style = intval(get_config('system','thumbnail_security',0));
 
@@ -369,6 +368,7 @@ class Browser extends DAV\Browser\Plugin {
 				'$upload' => t('Add Files'),
 				'$is_owner' => $is_owner,
 				'$is_admin' => is_site_admin(),
+				'$has_perms' => perm_is_allowed($channel_id, get_observer_hash(), 'write_storage'),
 				'$admin_delete_label' => t('Admin Delete'),
 				'$parentpath' => $parent_path,
 				'$folder_parent' => $folder_parent,
