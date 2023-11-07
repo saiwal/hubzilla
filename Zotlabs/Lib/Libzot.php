@@ -1223,7 +1223,6 @@ class Libzot {
 				$author_url = $AS->actor['id'];
 
 				if ($AS->type === 'Announce') {
-					hz_syslog(print_r($AS, true));
 					$author_url = Activity::get_attributed_to_actor_url($AS);
 				}
 
