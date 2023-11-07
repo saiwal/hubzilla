@@ -1455,7 +1455,7 @@ class Libzot {
 			if ($act && $act->obj) {
 				if (isset($act->obj['tag']) && is_array($act->obj['tag']) && $act->obj['tag']) {
 					foreach ($act->obj['tag'] as $tag) {
-						if ($tag['type'] === 'Mention' && (strpos($tag['href'], z_root()) !== false)) {
+						if (isset($tag['type'], $tag['href']) && $tag['type'] === 'Mention' && (strpos($tag['href'], z_root()) !== false)) {
 							$address = basename($tag['href']);
 							if ($address) {
 								$z = q("select channel_hash as hash from channel where channel_address = '%s' and channel_hash != '%s'
