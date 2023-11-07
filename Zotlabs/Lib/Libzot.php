@@ -1114,6 +1114,7 @@ class Libzot {
 	 */
 	static function import($arr) {
 
+
 		$env     = $arr;
 		$private = false;
 		$return  = [];
@@ -1219,13 +1220,20 @@ class Libzot {
 					return;
 				}
 
-				$r = Activity::get_actor_hublocs($AS->actor['id']);
+				$author_url = $AS->actor['id'];
 
-				if (! $r) {
+				if ($AS->type === 'Announce') {
+					hz_syslog(print_r($AS, true));
+					$author_url = Activity::get_attributed_to_actor_url($AS);
+				}
+
+				$r = Activity::get_actor_hublocs($author_url);
+
+				if (!$r) {
 					// Author is unknown to this site. Perform channel discovery and try again.
-					$z = discover_by_webbie($AS->actor['id']);
+					$z = discover_by_webbie($author_url);
 					if ($z) {
-						$r = Activity::get_actor_hublocs($AS->actor['id']);
+						$r = Activity::get_actor_hublocs($author_url);
 					}
 				}
 
@@ -1829,6 +1837,11 @@ class Libzot {
 
 			if ($r) {
 				// We already have this post.
+				// Dismiss its announce
+				if ($act->type === 'Announce') {
+					return;
+				}
+
 				$item_id = $r[0]['id'];
 
 				if (intval($r[0]['item_deleted'])) {
