@@ -1516,11 +1516,9 @@ class Libzot {
 	 */
 
 	static function process_delivery($sender, $act, $arr, $deliveries, $relay, $public = false, $request = false, $force = false) {
-
 		$result = [];
 
 		// We've validated the sender. Now make sure that the sender is the owner or author
-
 		if (!$public) {
 			if ($sender != $arr['owner_xchan'] && $sender != $arr['author_xchan']) {
 				logger("Sender $sender is not owner {$arr['owner_xchan']} or author {$arr['author_xchan']} - mid {$arr['mid']}");
@@ -1641,6 +1639,13 @@ class Libzot {
 							if (!$allowed && $permit_mentions) {
 								$allowed = true;
 							}
+
+							if (!$allowed) {
+								if (PConfig::Get($channel['channel_id'], 'system', 'moderate_unsolicited_comments') && $arr['obj_type'] !== 'Answer') {
+									$arr['item_blocked'] = ITEM_MODERATED;
+									$allowed = true;
+								}
+							}
 						}
 
 					} elseif ($permit_mentions) {
@@ -1649,7 +1654,6 @@ class Libzot {
 				}
 
 				if ($request) {
-
 					// Conversation fetches (e.g. $request == true) take place for
 					//   a) new comments on expired posts
 					//   b) hyperdrive (friend-of-friend) conversations
@@ -1838,7 +1842,9 @@ class Libzot {
 				// We already have this post.
 				// Dismiss its announce
 				if ($act->type === 'Announce') {
-					return;
+					$DR->update('update ignored');
+					$result[] = $DR->get();
+					continue;
 				}
 
 				$item_id = $r[0]['id'];
@@ -1847,7 +1853,6 @@ class Libzot {
 					// It was deleted locally.
 					$DR->update('update ignored');
 					$result[] = $DR->get();
-
 					continue;
 				}
 				// Maybe it has been edited?
@@ -1855,17 +1860,17 @@ class Libzot {
 					$arr['id']  = $r[0]['id'];
 					$arr['uid'] = $channel['channel_id'];
 
-                    if (post_is_importable($channel['channel_id'], $arr, $abook)) {
-                        $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
-                        $DR->update('updated');
-                        $result[] = $DR->get();
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
-                    } else {
-                        $DR->update('update ignored');
-                        $result[] = $DR->get();
-                    }
+					if (post_is_importable($channel['channel_id'], $arr, $abook)) {
+						$item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
+						$DR->update('updated');
+						$result[] = $DR->get();
+						if (!$relay) {
+							add_source_route($item_id, $sender);
+						}
+					} else {
+						$DR->update('update ignored');
+						$result[] = $DR->get();
+					}
 				}
 				else {
 					$DR->update('update ignored');
@@ -1940,7 +1945,8 @@ class Libzot {
 							add_source_route($item_id, $sender);
 						}
 					}
-					$DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
+
+					$DR->update(($item_id) ? (($item_result['item']['item_blocked'] === ITEM_MODERATED) ? 'accepted for moderation' : 'posted') : 'storage failed: ' . $item_result['message']);
 					$result[] = $DR->get();
 				} else {
 					$DR->update('post ignored');
@@ -1957,7 +1963,7 @@ class Libzot {
 				retain_item($stored['item']['parent']);
 			}
 
-			if ($relay && $item_id) {
+			if ($relay && $item_id && $stored['item_blocked'] !== ITEM_MODERATED) {
 				logger('Invoking relay');
 				Master::Summon(['Notifier', 'relay', intval($item_id)]);
 				$DR->addto_update('relayed');
