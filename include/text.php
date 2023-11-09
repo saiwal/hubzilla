@@ -894,6 +894,7 @@ function get_tags($s) {
 	// ignore anything in [style= ]
 	$s = preg_replace('/\[style=(.*?)\]/sm','',$s);
 
+
 	// ignore anything in [color= ], because it may contain color codes which are mistaken for tags
 	$s = preg_replace('/\[color=(.*?)\]/sm','',$s);
 
@@ -3061,7 +3062,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 				$bb_tag = (($xc['xchan_network'] === 'zot6') ? 'zrl' : 'url');
 
 				$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $bb_tag . '=' . $profile . ']' . $newname	. '[/' . $bb_tag . ']';
-				$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+
+				// Replace tag but make sure to not replace something in the middle of a word
+				$body = preg_replace('/(?<![a-zA-Z0-9=\/])' . preg_quote($tag, '/') . '/', $newtag, $body);
+				// $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 
 				// append tag to str_tags
 				if(! stristr($str_tags,$newtag)) {
@@ -3104,7 +3108,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 					$channel = App::get_channel();
 					if($channel) {
 						$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . z_root() . '/channel/' . $channel['channel_address'] . ']' . $newname . '[/zrl]';
-						$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+						// Replace tag but make sure to not replace something in the middle of a word
+						$body = preg_replace('/(?<![a-zA-Z0-9=\/])' . preg_quote($tag, '/') . '/', $newtag, $body);
+						// $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 					}
 				}
 			}
@@ -3125,7 +3131,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 */
 				if ($termtype === TERM_MENTION) {
 					$newtag = '@' . (($exclusive) ? '!' : '') . '[zrl=' . $profile . ']' . $newname	. '[/zrl]';
-					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+					// Replace tag but make sure to not replace something in the middle of a word
+					$body = preg_replace('/(?<![a-zA-Z0-9=\/])' . preg_quote($tag, '/') . '/', $newtag, $body);
+					// $body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
 				}
 
 				// append tag to str_tags
