@@ -1751,6 +1751,7 @@ return array(
     'Zotlabs\\Update\\_1256' => $baseDir . '/Zotlabs/Update/_1256.php',
     'Zotlabs\\Update\\_1257' => $baseDir . '/Zotlabs/Update/_1257.php',
     'Zotlabs\\Update\\_1258' => $baseDir . '/Zotlabs/Update/_1258.php',
+    'Zotlabs\\Update\\_1259' => $baseDir . '/Zotlabs/Update/_1259.php',
     'Zotlabs\\Web\\Controller' => $baseDir . '/Zotlabs/Web/Controller.php',
     'Zotlabs\\Web\\HTTPHeaders' => $baseDir . '/Zotlabs/Web/HTTPHeaders.php',
     'Zotlabs\\Web\\HTTPSig' => $baseDir . '/Zotlabs/Web/HTTPSig.php',
