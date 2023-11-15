@@ -1481,10 +1481,6 @@ dl.bb-dl > dd > li {
 	font-weight: normal;
 }
 
-.onoffswitch.checkbox:hover label {
-	color: var(--bs-link-color);
-}
-
 .onoffswitch.checkbox:hover > div label {
 	border-color: var(--bs-link-color);
 }
@@ -1502,21 +1498,21 @@ dl.bb-dl > dd > li {
 .onoffswitch-inner:before {
 	content: attr(data-on);
 	padding-right: 21px;
-	background-color: rgba(var(--bs-body-color-rgb), 0);
+	background-color: var(--bs-secondary-bg);
 	text-align: right;
 }
 
 .onoffswitch-inner:after {
 	content: attr(data-off);
 	padding-left: 21px;
-	background-color: rgba(var(--bs-body-color-rgb), 0);
-	color: var(--bs-border-color);
+	background-color: var(--bs-secondary-bg);
 	text-align: left;
 }
 
 .onoffswitch-switch {
 	display: block; width: 15px; margin:4px;
-	background: var(--bs-secondary-bg);
+	background: var(--bs-tertiary-color);
+	color: var(--bs-secondary-color);
 	border-radius: 10px;
 	position: absolute; top: 0; bottom: 0; right: 36px;
 	transition: right 0.2s ease-in-out;

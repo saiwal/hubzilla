@@ -33,6 +33,10 @@
 			<div class="position-absolute bottom-0 end-0 m-2">
 				<a class="profile-edit-side-link text-white" href="{{$editmenu.edit.0}}" ><i class="fa fa-pencil" title="{{$editmenu.edit.1}}"></i></a>
 			</div>
+			{{else}}
+			<div class="position-absolute bottom-0 end-0 m-2">
+				<a class="profile-edit-side-link text-white" href="profile/{{$profile.channel_address}}" ><i class="fa fa-external-link" title="{{$editmenu.edit.1}}"></i></a>
+			</div>
 			{{/if}}
 		</div>
 		<div class="d-flex">
