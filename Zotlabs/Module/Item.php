@@ -84,7 +84,7 @@ class Item extends Controller {
 				}
 				observer_auth($portable_id);
 
-				$i = q("select id as item_id, uid from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1",
+				$i = q("select id as item_id, uid, item_private from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1",
 					dbesc($r[0]['parent_mid']),
 					dbesc($portable_id)
 				);
@@ -99,7 +99,7 @@ class Item extends Controller {
 			$sql_extra = item_permissions_sql(0);
 
 			if (!$i) {
-				$i = q("select id as item_id, uid from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+				$i = q("select id as item_id, uid, item_private from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
 					dbesc($r[0]['parent_mid'])
 				);
 			}
@@ -119,9 +119,11 @@ class Item extends Controller {
 			}
 
 			$parents_str = ids_to_querystr($i, 'item_id');
+			$parent_item_private = $i[0]['item_private'];
 
-			$total = q("SELECT count(*) AS count FROM item WHERE parent = %d $item_normal",
-				intval($parents_str)
+			$total = q("SELECT count(*) AS count FROM item WHERE parent = %d and item_private = %d $item_normal",
+				intval($parents_str),
+				intval($parent_item_private)
 			);
 
 			App::set_pager_total($total[0]['count']);
@@ -134,8 +136,9 @@ class Item extends Controller {
 				as_return_and_die($i ,$chan);
 			}
 			else {
-				$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent = %d $item_normal ORDER BY item.id",
-					intval($parents_str)
+				$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent = %d and item_private = %d $item_normal ORDER BY item.id",
+					intval($parents_str),
+					intval($parent_item_private)
 				);
 
 				xchan_query($items, true);
