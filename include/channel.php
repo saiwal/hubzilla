@@ -2397,8 +2397,12 @@ function get_zcard($channel, $observer_hash = '', $args = array()) {
 //	$scale = (float) $maxwidth / $width;
 //	$translate = intval(($scale / 1.0) * 100);
 
-	$channel['channel_addr'] = channel_reddress($channel);
-	$zcard = array('chan' => $channel);
+	$zcard = [
+		'chan' => [
+			'xchan_name' => $channel['xchan_name'],
+			'channel_addr' => channel_reddress($channel)
+		]
+	];
 
 	$r = q("select height, width, resource_id, imgscale, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
 		intval($channel['channel_id']),
