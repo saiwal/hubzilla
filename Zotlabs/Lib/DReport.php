@@ -119,9 +119,8 @@ class DReport {
 		if((! $r) && ($dr['status'] === 'recipient_not_found'))
 			return false;
 
-		$r = q("select abook_id from abook where (abook_xchan = '%s' OR abook_xchan = '%s') and abook_channel = %d limit 1",
+		$r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
 			dbesc($dr['recipient']),
-			dbesc($dr['sender']),
 			intval($c[0]['channel_id'])
 		);
 		if($r)
