@@ -459,8 +459,6 @@ function insert_hook($hook, $fn, $version = 0, $priority = 0) {
  * @param[in,out] string|array &$data to transmit to the callback handler
  */
 function call_hooks($name, &$data = null) {
-	$a = 0;
-
 	if (isset(App::$hooks[$name])) {
 		foreach(App::$hooks[$name] as $hook) {
 
