@@ -2397,11 +2397,10 @@ function get_zcard($channel, $observer_hash = '', $args = array()) {
 //	$scale = (float) $maxwidth / $width;
 //	$translate = intval(($scale / 1.0) * 100);
 
-	$zcard = [
-		'chan' => [
-			'xchan_name' => $channel['xchan_name'],
-			'channel_addr' => channel_reddress($channel)
-		]
+	$zcard['chan'] = [
+		'xchan_name' => $channel['xchan_name'],
+		'xchan_url' => $channel['xchan_url'],
+		'xchan_addr' => $channel['xchan_addr']
 	];
 
 	$r = q("select height, width, resource_id, imgscale, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
@@ -2474,8 +2473,11 @@ function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
 		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'],  'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l']);
 	}
 
-	$channel['channel_addr'] = channel_reddress($channel);
-	$zcard = array('chan' => $channel);
+	$zcard['chan'] = [
+		'xchan_name' => $channel['xchan_name'],
+		'xchan_url' => $channel['xchan_url'],
+		'xchan_addr' => $channel['xchan_addr']
+	];
 
 	$r = q("select height, width, resource_id, imgscale, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
 		intval($channel['channel_id']),
