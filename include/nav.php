@@ -95,12 +95,12 @@ function nav($template = 'default') {
 	}
 
 	if ($channel) {
-		$userinfo['follow'] = sprintf($channel['xchan_follow'], urlencode(channel_reddress($channel)));
 		$userinfo['id'] = $channel['channel_id'];
 		$userinfo['nick'] = $channel['channel_address'];
 		$userinfo['location'] = $channel['channel_location'];
 		$userinfo['theme'] = $channel['channel_theme'];
 		$userinfo['timezone'] = $channel['channel_timezone'];
+		$userinfo['startpage'] = $channel['channel_startpage'];
 	}
 
 	elseif (empty($_SESSION['authenticated'])) {
