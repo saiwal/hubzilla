@@ -21,7 +21,7 @@ function nav($template = 'default') {
 	$is_owner = (((local_channel()) && ((App::$profile_uid == local_channel()) || (App::$profile_uid == 0))) ? true : false);
 	$observer = App::get_observer();
 	$chans = [];
-
+	$channel = [];
 
 	if (local_channel()) {
 		$channel = App::get_channel();
@@ -84,11 +84,23 @@ function nav($template = 'default') {
 	$userinfo         = [];
 
 	if ($observer) {
-		$userinfo = [
-			'icon' => $observer['xchan_photo_s'] . '?rev=' . strtotime($observer['xchan_photo_date']),
-			'addr' => $observer['xchan_addr'],
-			'name' => $observer['xchan_name'],
-		];
+		$userinfo['icon'] = $observer['xchan_photo_s'] . '?rev=' . strtotime($observer['xchan_photo_date']);
+		$userinfo['icon_m'] = $observer['xchan_photo_m'] . '?rev=' . strtotime($observer['xchan_photo_date']);
+		$userinfo['icon_l'] = $observer['xchan_photo_l'] . '?rev=' . strtotime($observer['xchan_photo_date']);
+		$userinfo['icon_mime_type'] = $observer['xchan_photo_mimetype'];
+		$userinfo['addr'] = $observer['xchan_addr'];
+		$userinfo['url'] = $observer['xchan_url'];
+		$userinfo['forum'] = $observer['xchan_pubforum'];
+		$userinfo['name'] = $observer['xchan_name'];
+	}
+
+	if ($channel) {
+		$userinfo['follow'] = sprintf($channel['xchan_follow'], urlencode(channel_reddress($channel)));
+		$userinfo['id'] = $channel['channel_id'];
+		$userinfo['nick'] = $channel['channel_address'];
+		$userinfo['location'] = $channel['channel_location'];
+		$userinfo['theme'] = $channel['channel_theme'];
+		$userinfo['timezone'] = $channel['channel_timezone'];
 	}
 
 	elseif (empty($_SESSION['authenticated'])) {
