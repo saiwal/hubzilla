@@ -212,7 +212,8 @@ class HTTPSig {
 
 		if (in_array('digest', $signed_headers)) {
 			$result['content_signed'] = true;
-			$digest                   = explode('=', $headers['digest'], 2);
+			$digest = explode('=', $headers['digest'], 2);
+			$digest[0] = strtoupper($digest[0]);
 			if ($digest[0] === 'SHA-256')
 				$hashalg = 'sha256';
 			if ($digest[0] === 'SHA-512')
