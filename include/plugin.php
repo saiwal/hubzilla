@@ -459,8 +459,6 @@ function insert_hook($hook, $fn, $version = 0, $priority = 0) {
  * @param[in,out] string|array &$data to transmit to the callback handler
  */
 function call_hooks($name, &$data = null) {
-	$a = 0;
-
 	if (isset(App::$hooks[$name])) {
 		foreach(App::$hooks[$name] as $hook) {
 
@@ -482,9 +480,13 @@ function call_hooks($name, &$data = null) {
  				}
 				$data = $checkhook['data'];
 			}
+
 			$origfn = $hook[1];
-			if($hook[0])
+
+			if($hook[0]) {
 				@include_once($hook[0]);
+			}
+
 			if(preg_match('|^a:[0-9]+:{.*}$|s', $hook[1])) {
 				$hook[1] = unserialize($hook[1]);
 			}
@@ -496,13 +498,12 @@ function call_hooks($name, &$data = null) {
 				$hook[1] = explode('::',$hook[1]);
 			}
 
+
 			if(is_callable($hook[1])) {
 				$func = $hook[1];
-				if($hook[3])
-					$func($data);
+				$func($data);
 			}
 			else {
-
 				// Don't do any DB write calls if we're currently logging a possibly failed DB call.
 				if(! DBA::$logging) {
 					// The hook should be removed so we don't process it.
