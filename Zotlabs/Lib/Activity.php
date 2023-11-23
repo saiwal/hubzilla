@@ -4056,6 +4056,9 @@ class Activity {
 	}
 
 	static function get_actor($actor_id) {
+		// remove fragment
+		$actor_id = ((strpos($actor_id, '#')) ? substr($actor_id, 0, strpos($actor_id, '#')) : $actor_id);
+
 		$actor = self::get_cached_actor($actor_id);
 
 		if ($actor) {
