@@ -1194,19 +1194,21 @@ create index "tokens_uid" on tokens ("uid");
 CREATE TABLE "updates" (
   "ud_id" serial  NOT NULL,
   "ud_hash" varchar(128) NOT NULL,
-  "ud_guid" text NOT NULL DEFAULT '',
   "ud_date" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "ud_last" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "ud_flags" bigint NOT NULL DEFAULT '0',
   "ud_addr" text NOT NULL DEFAULT '',
+  "ud_update" smallint NOT NULL DEFAULT '0',
+  "ud_host" text NOT NULL DEFAULT '',
   PRIMARY KEY ("ud_id")
 );
 create index "ud_date" on updates ("ud_date");
-create index "ud_guid" on updates ("ud_guid");
 create index "ud_hash" on updates ("ud_hash");
 create index "ud_flags" on updates ("ud_flags");
 create index "ud_addr" on updates ("ud_addr");
 create index "ud_last" on updates ("ud_last");
+create index "ud_update" on updates ("ud_update");
+
 CREATE TABLE "verify" (
   "id" serial  NOT NULL,
   "channel" bigint  NOT NULL DEFAULT '0',

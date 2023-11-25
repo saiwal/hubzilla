@@ -7,6 +7,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\XConfig;
+use Zotlabs\Lib\Cache;
 
 class Sse_bs extends Controller {
 
@@ -117,14 +118,29 @@ class Sse_bs extends Controller {
 
 	function mark_read($arr) {
 
-		if(! self::$uid)
-			return;
-
 		$mids = [];
 		$str = '';
 
+		$mids_all_json = Cache::get('sse_mids_all_' . session_id());
+
+		if (!$mids_all_json)
+			$mids_all_json = '[]';
+
+		$mids_all = json_decode($mids_all_json, true);
+
 		foreach($arr as $a) {
-			$mids[] = '\'' . dbesc(unpack_link_id($a)) . '\'';
+			$mid_str = '\'' . dbesc(unpack_link_id($a)) . '\'';
+			$mids[] = $mid_str;
+
+			if (!in_array($mid_str, $mids_all)) {
+				$mids_all[] = $mid_str;
+			}
+		}
+
+		Cache::set('sse_mids_all_' . session_id(), json_encode($mids_all));
+
+		if(! self::$uid) {
+			return;
 		}
 
 		$str = implode(',', $mids);
@@ -411,8 +427,9 @@ class Sse_bs extends Controller {
 			}
 		}
 
-		if(! isset($_SESSION['static_loadtime']))
+		if(!isset($_SESSION['static_loadtime'])) {
 			$_SESSION['static_loadtime'] = datetime_convert();
+		}
 
 		$limit = intval(self::$limit);
 		$offset = self::$offset;
@@ -429,6 +446,13 @@ class Sse_bs extends Controller {
 		$sql_extra2 = '';
 		if(self::$xchans)
 			$sql_extra2 = " AND CASE WHEN verb = '" . ACTIVITY_SHARE . "' THEN owner_xchan ELSE author_xchan END IN (" . self::$xchans . ") ";
+
+		$sql_extra3 = '';
+		$sse_mids_all_json = Cache::get('sse_mids_all_' . session_id());
+		if ($sse_mids_all_json) {
+			$sse_mids_all = json_decode($sse_mids_all_json, true);
+			$sql_extra3 = " AND mid NOT IN (" . protect_sprintf(implode(',', $sse_mids_all)) . ") ";
+		}
 
 		$uids = " AND uid IN ( " . $sys['channel_id'] . " ) ";
 
@@ -452,10 +476,11 @@ class Sse_bs extends Controller {
 				$item_normal
 				$sql_extra
 				$sql_extra2
+				$sql_extra3
 				ORDER BY created DESC LIMIT $limit OFFSET $offset",
 				dbescdate($_SESSION['sse_loadtime']),
 				dbesc(self::$ob_hash),
-				dbescdate($_SESSION['static_loadtime'])
+				dbescdate($_SESSION['last_login_date'] ?? $_SESSION['static_loadtime'])
 			);
 
 			if($items) {
@@ -478,8 +503,9 @@ class Sse_bs extends Controller {
 			AND created > '%s'
 			$item_normal
 			$sql_extra
+			$sql_extra3
 			AND author_xchan != '%s' LIMIT 100",
-			dbescdate($_SESSION['static_loadtime']),
+			dbescdate($_SESSION['last_login_date'] ?? $_SESSION['static_loadtime']),
 			dbesc(self::$ob_hash)
 		);
 

@@ -168,7 +168,7 @@ class Channels {
 			'$baseurl' => z_root(),
 			'$channels' => $channels,
 		));
-		$o .= paginate($a);
+		$o .= paginate();
 
 		return $o;
 	}

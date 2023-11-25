@@ -8,19 +8,14 @@ let redbasic_theme_color = localStorage.getItem('redbasic_theme_color');
 if (redbasic_dark_mode == 1) {
 	$('html').attr('data-bs-theme', 'dark');
 }
+
 if (redbasic_dark_mode == 0) {
 	$('html').attr('data-bs-theme', 'light');
 }
 
-
-
-
-
 if (redbasic_theme_color) {
 	$('meta[name=theme-color]').attr('content', redbasic_theme_color);
 }
-
-
 
 $(document).ready(function() {
 	// provide a fake progress bar for pwa standalone mode
@@ -60,23 +55,19 @@ $(document).ready(function() {
 	}
 	$('#css3-calc').remove(); // Remove the test element
 
+	if($(window).width() < 1200) {
+		$("#right_aside_wrapper").children().detach().appendTo('#left_aside_wrapper');
+		$('#notifications_wrapper').addClass('d-none');
+	}
+
 
 	if (document.querySelector('#region_1')) {
-		stickyScroll('.aside_spacer_left', '.aside_spacer_top_left', '.content', parseFloat(window.getComputedStyle(document.querySelector('#region_1')).getPropertyValue('padding-top')), 0);
+		stickyScroll('.aside_spacer_left', '.aside_spacer_top_left', 'section', parseFloat(document.querySelector('main').getBoundingClientRect().top), 20);
 	}
 
 	if (document.querySelector('#region_3')) {
-		stickyScroll('.aside_spacer_right', '.aside_spacer_top_right', '.content', parseFloat(window.getComputedStyle(document.querySelector('#region_3')).getPropertyValue('padding-top')), 20);
+		stickyScroll('.aside_spacer_right', '.aside_spacer_top_right', 'section', parseFloat(document.querySelector('main').getBoundingClientRect().top), 20);
 	}
-
-	$('#expand-aside').on('click', function() {
-		if($('main').hasClass('region_1-on')){
-			toggleAside('left');
-		}
-		else {
-			toggleAside('right');
-		}
-	});
 
 	$('.usermenu').click(function() {
 		if($('#navbar-collapse-1, #navbar-collapse-2').hasClass('show')){
@@ -148,7 +139,7 @@ $(document).ready(function() {
 			//just one finger touched
 			touch_start = e.touches.item(0).clientX;
 			if (touch_start < touch_max) {
-				$('html, body').css('overflow-y', 'hidden');
+				$('body').css('overflow-y', 'hidden');
 			}
 		}
 		else {
@@ -158,7 +149,7 @@ $(document).ready(function() {
 	});
 
 	window.addEventListener('touchend', function(e) {
-		$('html, body').css('overflow-y', '');
+		$('body').css('overflow-y', '');
 
 		let touch_offset = 30; //at least 30px are a swipe
 		if (touch_start) {
@@ -168,18 +159,13 @@ $(document).ready(function() {
 			if (touch_end > (touch_start + touch_offset)) {
 				//a left -> right swipe
 				if (touch_start < touch_max) {
-					toggleAside('right');
+					toggleAside();
 				}
 			}
 			if (touch_end < (touch_start - touch_offset)) {
 				//a right -> left swipe
-				//toggleAside('left');
 			}
 		}
-	});
-
-	$(document).on('hz:hqControlsClickAction', function(e) {
-		toggleAside('left');
 	});
 
 });
@@ -229,12 +215,12 @@ function stickyScroll(sticky, stickyTop, container, topOffset, bottomOffset) {
 				setStyle(sticky, { position: 'sticky', top: Math.round(diff) - bottomOffset + 'px', bottom: '' });
 			} else {
 				// upscroll code
-				h = sticky.getBoundingClientRect().top - content.getBoundingClientRect().top - topOffset;
+				h = sticky.getBoundingClientRect().top - content.getBoundingClientRect().top;
 				if(Math.round(stickyTop.getBoundingClientRect().height) === lasth) {
 					setStyle(stickyTop, { height: Math.round(h) + 'px' });
 				}
 				lasth = Math.round(h);
-				setStyle(sticky, { position: 'sticky', top: '', bottom: Math.round(diff - topOffset) + 'px' });
+				setStyle(sticky, { position: 'sticky', top: '', bottom: Math.round(diff) - topOffset + 'px' });
 			}
 			lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
 		}
@@ -255,18 +241,4 @@ function makeFullScreen(full) {
 	}
 }
 
-function toggleAside(swipe) {
 
-	if ($('main').hasClass('region_1-on') && swipe === 'left') {
-		$('#expand-aside-icon').addClass('fa-arrow-circle-right').removeClass('fa-arrow-circle-left');
-		$('html, body').css({ 'position': '', left: '' });
-		$('main').removeClass('region_1-on');
-		$('#overlay').remove();
-	}
-	if (!$('main').hasClass('region_1-on') && swipe === 'right') {
-		$('#expand-aside-icon').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
-		$('html, body').css({ 'position': 'sticky',  'left': '0px'});
-		$('main').addClass('region_1-on');
-		$('<div id="overlay"></div>').appendTo('body').one('click', function() { toggleAside('left'); });
-	}
-}

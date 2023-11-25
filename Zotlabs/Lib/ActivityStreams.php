@@ -351,7 +351,7 @@ class ActivityStreams {
 		$x = $this->get_property_obj($property, $base, $namespace);
 
 		if ($this->is_url($x)) {
-			$y = Activity::get_cached_actor($x);
+			$y = Activity::get_actor($x);
 			if ($y) {
 				return $y;
 			}

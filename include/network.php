@@ -456,13 +456,14 @@ function as_return_and_die($obj,$channel) {
  * @param string $msg
  *    optional message
  */
-function http_status($val, $msg = '') {
+function http_status($val, $msg = '',$skiplog = 0) {
 	if ($val >= 400)
 		$msg = (($msg) ? $msg : 'Error');
 	if ($val >= 200 && $val < 300)
 		$msg = (($msg) ? $msg : 'OK');
 
-	logger(\App::$query_string . ':' . $val . ' ' . $msg);
+	if (!$skiplog)
+		logger(\App::$query_string . ':' . $val . ' ' . $msg);
 	header($_SERVER['SERVER_PROTOCOL'] . ' ' . $val . ' ' . $msg);
 }
 
@@ -476,8 +477,8 @@ function http_status($val, $msg = '') {
  *    optional message
  * @return void does not return, process is terminated
  */
-function http_status_exit($val, $msg = '') {
-	http_status($val, $msg);
+function http_status_exit($val, $msg = '',$skiplog = 0) {
+	http_status($val, $msg, $skiplog);
 	killme();
 }
 
@@ -2083,7 +2084,7 @@ function jsonld_document_loader($url) {
 		}
 	}
 
-	$cachepath = 'store/[data]/ldcache';
+	$cachepath = 'store/[data]/[jsonld]';
 	if(!is_dir($cachepath)) {
 		os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
 	}
@@ -2092,7 +2093,7 @@ function jsonld_document_loader($url) {
 
 	if (file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
 		logger('loading ' . $filename . ' from recent cache');
-		return file_get_contents($filename);
+		return json_decode(file_get_contents($filename));
 	}
 
 	$r = jsonld_default_document_loader($url);
@@ -2109,7 +2110,7 @@ function jsonld_document_loader($url) {
 
 	if (file_exists($filename)) {
 		logger('loading ' . $filename . ' from longterm cache');
-		return file_get_contents($filename);
+		return json_decode(file_get_contents($filename));
 	}
 	else {
 		logger($filename . ' does not exist and cannot be loaded');

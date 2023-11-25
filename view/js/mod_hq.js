@@ -20,20 +20,17 @@ $(document).ready(function() {
 
 	$(document).on('click', '.channel-activities-toggle', function(e) {
 		$(window).scrollTop(0);
-		$(document).trigger('hz:hqControlsClickAction');
 		$('#channel-activities').toggleClass('d-none');
 		$(this).toggleClass('active');
 	});
 
 	$(document).on('click', '.jot-toggle', function(e) {
-		$(document).trigger('hz:hqControlsClickAction');
 		$('#jot-popup').toggle();
 		$('#profile-jot-text').focus().get(0).scrollIntoView({block: 'center'});
 		$(this).toggleClass('active');
 	});
 
 	$(document).on('click', '.notes-toggle', function(e) {
-		$(document).trigger('hz:hqControlsClickAction');
 		$('#personal-notes').toggleClass('d-none');
 		$('#note-text-html').get(0).scrollIntoView({block: 'center'});
 		$(this).toggleClass('active');

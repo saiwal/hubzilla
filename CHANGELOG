@@ -1,9 +1,74 @@
+Hubzilla 8.8 (2023-11-25)
+	- Add additional observer and channel info for nav templates
+	- Do not provide confidential channel info for templates
+	- Add link to profile to vcard
+	- Improved switch colors for better visibility
+	- Raise cache.v column from text to mediumtext for MYSQL
+	- Implement low level support for native repeats
+	- Color mode related code moved to theme_init.php in redbasic
+	- Do not overrule default list style when parsing bbcode
+	- Introduce Activity::get_actor() which will check for the cache record in xconfig before fetching
+	- Refactor Activity::actor_store()
+	- Use new language detect library which supports many more languages
+	- Use Activity::encode_person() instead of plain xchan_url to set attributedTo
+	- Update composer libraries
+	- Move right aside into bottom of left aside if screen width is < 1200px in redbasic
+	- When parsing events, use event object in first place and use the body bbcode as backup
+	- Make OWA compatible with mastodon style keyId
+	- Add sourced item events to the channel calendar
+	- Make activity filter widget portable to other modules
+	- Deprecate remains of the unused $a variable which has been replaced by the App class ages ago
+	- Return object instead of json string in the custom jsonld document loader
+	- Only show theme switch icon if switching is supported by the theme
+	- Store the actor cache date with the actor record so we can easily invalidate it after a period of time
+	- Allow themes to manipulate app icons (photos) via hook
+	- Also look for widgets in view/theme/themename/widget
+	- Cache seen pubstream item mids so that they can be hidden from notifications
+	- Theme fixes to make barebones bootstrap themes work slightly better
+	- Update Norwegian Bokmål strings
+	- Update Spanish strings
+	- Transparent background for colorbox controls icons
+	- Use body background color for colorboxes in redbasic
+
+
+	Bugfixes
+	- Remove fragment from actor urls
+	- HTTPsig case insensitive digest algorithm
+	- Fix possible privacy mismatch when processing zot requests
+	- Fix @someone in URL turned into mention in some situations - issue #1816
+	- Fix fatal error in simplepie with PHP8.2
+	- Fix tools visible allthough permission has been revoked for observer in files app
+	- Fix updates entry not removed if a channel was removed
+	- Fix form reset button not visible in mod rpost
+	- Fix missing columns for updates table in install script
+	- Fix for item widget not respecting ACL if added by title - issue #1799
+	- Fix sabre/dav caldav php warnings
+	- Fix public stream comments/reactions not allowed if item_fetched is set
+
+
+	Addons
+	- Superblock: fix php warnings
+	- Pubcrawl: restrict mod ap_probe to admin and add checkbox for signed requests
+	- Wiki: fix wiki_list widget not registered
+	- Deprecate remains of the unused $a variable which has been replaced by the App class ages ago
+	- Pubcrawl: reflect core delivery changes for repeated items
+	- Cart fix regression
+	- Logger_stats: new addon for admins to track hub activities
+	- Pubcrawl: check if we have the record in the short term cache before actually fetching it
+	- Pubcrawl: reflect core changes to Activity::actor_store()
+	- Gallery: update to photoswipe 5
+	- Pubcrawl: some platforms are sending activities without an object - return error 400
+	- HSSE: update sce-editor to latest version
+	- SSE: sse: do not process items that are older than last login date or in case we are not logged in older than 10 minutes
+	- Faces: new addon for face recognision in uploaded photos
+
+
 Hubzilla 8.6.3 (2023-09-16)
 	- Fix regression in jsonld_document_loader()
 	- Improve type checking for announce activities
 	- Improve query in drop_item() to prevent possible memory exhaustion
 	- Addon gallery: only add gallery code if the module is supported
-	- Adon hsse: port to bootstrap 5 namespaces - core issue #1793
+	- Addon hsse: port to bootstrap 5 namespaces - core issue #1793
 
 
 Hubzilla 8.6.2 (2023-08-27)

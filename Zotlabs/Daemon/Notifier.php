@@ -300,6 +300,11 @@ class Notifier {
 				return;
 			}
 
+			if ($target_item['verb'] === ACTIVITY_SHARE) {
+				// Provide correct representation across the wire. Internally this is treated as a comment.
+				$target_item['parent_mid'] = $target_item['thr_parent'] = $target_item['mid'];
+			}
+
 			if ($target_item['mid'] === $target_item['parent_mid']) {
 				$parent_item    = $target_item;
 				$top_level_post = true;
@@ -377,7 +382,7 @@ class Notifier {
 
 			if (($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
 				logger('notifier: followup relay', LOGGER_DEBUG);
-				$sendto            = (($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan']);
+				$sendto            = (($uplink) ? $parent_item['source_xchan'] : (($parent_item['verb'] === ACTIVITY_SHARE) ? $parent_item['author_xchan'] : $parent_item['owner_xchan']));
 				self::$recipients  = [$sendto];
 				self::$private     = true;
 				$upstream          = true;

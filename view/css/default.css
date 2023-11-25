@@ -19,19 +19,23 @@ main {
 #region_1 {
 	position: relative;
 	order: 1;
-	padding: 4.5rem 7px 0px 7px;
+	padding: 0 7px 0 7px;
+	width: 25%;
+	min-width: 300px;
 }
 
 #region_2 {
 	position: relative;
 	flex: 1;
 	order: 2;
-	padding: 4.5rem 7px 200px 7px;
+	padding: 0 7px 200px 7px;
 	min-width: 0;
 }
 
 #region_3 {
 	position: relative;
 	order: 3;
-	padding: 4.5rem 7px 0px 7px;
+	padding: 0 7px 0 7px;
+	width: 25%;
+	min-width: 300px;
 }

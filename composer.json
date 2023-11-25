@@ -25,6 +25,7 @@
     "require": {
         "php": ">=8.0.2",
         "ext-curl": "*",
+        "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-xml": "*",
         "ext-openssl": "*",
@@ -47,7 +48,8 @@
         "phpseclib/phpseclib": "~2.0",
         "jbroadway/urlify": "^1.2",
         "chillerlan/php-qrcode": "^4.3",
-        "spomky-labs/otphp": "^11.1"
+        "spomky-labs/otphp": "^11.1",
+        "patrickschur/language-detection": "^5.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.4",

@@ -214,7 +214,7 @@ class Network extends \Zotlabs\Web\Controller {
 			);
 
 			$a = '';
-			$status_editor = status_editor($a, $x, false, 'Network');
+			$status_editor = status_editor($x, false, 'Network');
 			$o .= $status_editor;
 
 		}

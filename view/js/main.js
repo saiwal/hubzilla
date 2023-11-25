@@ -86,6 +86,10 @@ $(document).ready(function() {
 	$(document).on('click', '.conversation-settings-link', getConversationSettings);
 	$(document).on('click', '#settings_module_ajax_submit', postConversationSettings);
 
+	$(document).on('click', '#expand-aside',  function() {
+		toggleAside();
+	});
+
 	$(document).on('click focus', '.comment-edit-form  textarea', function(e) {
 		if(! this.autocomplete_handled) {
 			/* autocomplete @nicknames */
@@ -1580,7 +1584,7 @@ function zFormError(elm,x) {
 $(window).scroll(function () {
 	if(typeof buildCmd == 'function') {
 		// This is a content page with items and/or conversations
-		if($(window).scrollTop() + $(window).height() > $('#conversation-end').position().top) {
+		if($('#conversation-end').length && ($(window).scrollTop() + $(window).height()) > $('#conversation-end').position().top) {
 			if((pageHasMoreContent) && (! loadingPage)) {
 				next_page++;
 				scroll_next = true;
@@ -1591,7 +1595,7 @@ $(window).scroll(function () {
 	}
 	else {
 		// This is some other kind of page - perhaps a directory
-		if($('#page-end').length && ($(window).scrollTop() + $(window).height() > $('#page-end').position().top)) {
+		if($('#page-end').length && ($(window).scrollTop() + $(window).height()) > $('#page-end').position().top) {
 			if((pageHasMoreContent) && (! loadingPage) && (! justifiedGalleryActive)) {
 				next_page++;
 				scroll_next = true;
@@ -1779,4 +1783,21 @@ function push_notification(title, body, b64mid) {
 	}
 }
 
-
+function toggleAside() {
+	if ($('main.region_1-on').length) {
+		$('#expand-aside-icon').addClass('fa-arrow-circle-right').removeClass('fa-arrow-circle-left');
+		$('html, body').css({ 'position': '', 'left': '' });
+		$('main').removeClass('region_1-on');
+		$('#region_1').addClass('d-none');
+		$('#region_2').css({ 'min-width': '' });
+		$('#overlay').remove();
+	}
+	else {
+		$('#expand-aside-icon').removeClass('fa-arrow-circle-right').addClass('fa-arrow-circle-left');
+		$('html, body').css({ 'position': 'sticky',  'left': '0px'});
+		$('main').addClass('region_1-on');
+		$('#region_1').removeClass('d-none');
+		$('#region_2').css({ 'min-width': window.outerWidth });
+		$('<div id="overlay"></div>').appendTo('body').one('click', function() { toggleAside(); });
+	}
+}

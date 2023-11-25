@@ -14,47 +14,53 @@ require_once('include/bbcode.php');
 class Share extends \Zotlabs\Web\Controller {
 
 	function init() {
-	
-		$post_id = ((argc() > 1) ? intval(argv(1)) : 0);
-	
-		if(! $post_id)
-			killme();
-	
-		if(! local_channel()) {
+
+		if (!intval(argv(1))) {
 			killme();
 		}
 
-		$observer = App::get_observer();	
+		if (! local_channel()) {
+			killme();
+		}
 
+		$observer = App::get_observer();
 		$channel = App::get_channel();
+		$sys_channel = get_sys_channel();
 
 		$r = q("SELECT * from item left join xchan on author_xchan = xchan_hash WHERE id = %d  LIMIT 1",
-			intval($post_id)
+			intval(argv(1))
 		);
-		if(! $r)
+
+		if ($r[0]['uid'] === $sys_channel['channel_id']) {
+			$r = [copy_of_pubitem($channel, $r[0]['mid'])];
+		}
+
+		if(! $r) {
 			killme();
+		}
 
-		
+		$item_id = $r[0]['id'];
 
-
-		if(($r[0]['item_private']) && ($r[0]['xchan_network'] !== 'rss'))
+		if ($r[0]['item_private']) {
 			killme();
-	
+		}
+
 		$sql_extra = item_permissions_sql($r[0]['uid']);
-	
+
 		$r = q("select * from item where id = %d $sql_extra",
-			intval($post_id)
+			intval($item_id)
 		);
+
 		if(! $r)
 			killme();
-	
+
 		/** @FIXME we only share bbcode */
-	
+
 		if($r[0]['mimetype'] !== 'text/bbcode')
 			killme();
-		
-		xchan_query($r);
-	
+
+		xchan_query($r,true);
+
 		$arr = [];
 
 		$item = $r[0];
@@ -81,7 +87,7 @@ class Share extends \Zotlabs\Web\Controller {
 			$thread_owner = $r[0];
 		else
 			killme();
-	
+
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($item['author_xchan'])
 		);
@@ -89,7 +95,7 @@ class Share extends \Zotlabs\Web\Controller {
 			$item_author = $r[0];
 		else
 			killme();
-	
+
 
 		$arr['aid'] = $owner_aid;
 		$arr['uid'] = $owner_uid;
@@ -109,12 +115,12 @@ class Share extends \Zotlabs\Web\Controller {
 		$arr['obj_type'] = $item['obj_type'];
 		$arr['verb'] = ACTIVITY_SHARE;
 
-		$post = item_store($arr);	
+		$post = item_store($arr);
 
 		$post_id = $post['item_id'];
 
 		$arr['id'] = $post_id;
-	
+
 		call_hooks('post_local_end', $arr);
 
 		info( t('Post repeated') . EOL);
@@ -128,10 +134,10 @@ class Share extends \Zotlabs\Web\Controller {
 			Libsync::build_sync_packet($channel['channel_id'], [ 'item' => [ encode_item($sync_item[0],true) ] ]);
 		}
 
-		Master::Summon([ 'Notifier','like',$post_id ]);
-	
+		Master::Summon([ 'Notifier', 'like', $post_id ]);
+
 		killme();
-	
+
 	}
-	
+
 }

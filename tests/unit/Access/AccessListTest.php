@@ -34,10 +34,9 @@ use Zotlabs\Access\AccessList;
 class AccessListTest extends UnitTestCase {
 
 	/**
-	 * @brief Expected result for most tests.
-	 * @var array
+	 * Expected result for most tests.
 	 */
-	protected $expectedResult = [
+	protected array $expectedResult = [
 			'allow_cid' => '<acid><acid2>',
 			'allow_gid' => '<agid>',
 			'deny_cid'  => '',
@@ -61,31 +60,42 @@ class AccessListTest extends UnitTestCase {
 	}
 
 	/**
-	 * @expectedException PHPUnit\Framework\Error\Error
+	 * AccessList constructor should throw an exception if input is not
+	 * an array.
 	 */
-/*
-	public function testPHPErrorOnInvalidConstructor() {
+	public function testConstructorThrowsOnInvalidInputType() {
+		$this->expectException("TypeError");
 		$accessList = new AccessList('invalid');
-		// Causes: "Illegal string offset 'channel_allow_cid'"
 	}
-*/
-	public function testDefaultGetExplicit() {
+
+	/**
+	 * AccessList constructor should throw an exception on
+	 * invalid input.
+	 */
+	public function testConstructorThrowsOnMissingKeysInArray() {
+		$this->expectException("Exception");
+		$this->expectExceptionMessage("Invalid AccessList object");
+		$accessList = new AccessList(['something_else' => 'should_this_fail?']);
+	}
+
+	/**
+	 * Test that the defaults are as expected when constructed with
+	 * an empty array.
+	 */
+	public function testDefaults() {
 		$accessList = new AccessList([]);
 
 		$this->assertFalse($accessList->get_explicit());
-	}
+		$this->assertFalse($accessList->is_private());
 
-	public function testDefaultGet() {
-		$arr = [
+		$expected = [
 				'allow_cid' => '',
 				'allow_gid' => '',
 				'deny_cid'  => '',
 				'deny_gid'  => ''
 		];
 
-		$accessList = new AccessList([]);
-
-		$this->assertEquals($arr, $accessList->get());
+		$this->assertEquals($expected, $accessList->get());
 	}
 
 	public function testSet() {
@@ -111,19 +121,27 @@ class AccessListTest extends UnitTestCase {
 	}
 
 	/**
-	 * @expectedException PHPUnit\Framework\Error\Error
+	 * The set method should throw an exception if input is not an array.
 	 */
-/*
-	public function testPHPErrorOnInvalidSet() {
+	public function testSetThrowsOnInvalidInputType() {
+		$this->expectException('TypeError');
 		$accessList = new AccessList([]);
 
 		$accessList->set('invalid');
-		// Causes: "Illegal string offset 'allow_cid'"
 	}
-*/
+
+	public function testSetThrowsOnMissingKeysInArray() {
+		$this->expectException('Exception');
+		$this->expectExceptionMessage('Invalid AccessList object');
+
+		$accessList = new AccessList([]);
+		$accessList->set(['something_else' => 'should_this_fail?']);
+	}
 
 	/**
-	 * set_from_array() calls some other functions, too which are not yet unit tested.
+	 * The set_from_array() function calls some other functions, too which are
+	 * not yet unit tested.
+	 *
 	 * @uses ::perms2str
 	 * @uses ::sanitise_acl
 	 * @uses ::notags
@@ -158,12 +176,11 @@ class AccessListTest extends UnitTestCase {
 	}
 
 	/**
+	 * The AccessList should be private if any of the fields are set,
+	 *
 	 * @dataProvider isprivateProvider
 	 */
 	public function testIsPrivate($channel) {
-		$accessListPublic = new AccessList([]);
-		$this->assertFalse($accessListPublic->is_private());
-
 		$accessListPrivate = new AccessList($channel);
 		$this->assertTrue($accessListPrivate->is_private());
 	}
@@ -176,11 +193,29 @@ class AccessListTest extends UnitTestCase {
 						'channel_deny_cid'  => '<dcid>',
 						'channel_deny_gid'  => '<dgid>'
 				]],
-				'only one set' => [[
+				'only allow_cid set' => [[
 						'channel_allow_cid' => '<acid>',
 						'channel_allow_gid' => '',
 						'channel_deny_cid'  => '',
 						'channel_deny_gid'  => ''
+				]],
+				'only allow_gid set' => [[
+						'channel_allow_cid' => '',
+						'channel_allow_gid' => '<agid>',
+						'channel_deny_cid'  => '',
+						'channel_deny_gid'  => ''
+				]],
+				'only deny_cid set' => [[
+						'channel_allow_cid' => '',
+						'channel_allow_gid' => '',
+						'channel_deny_cid'  => '<dcid>',
+						'channel_deny_gid'  => ''
+				]],
+				'only deny_gid set' => [[
+						'channel_allow_cid' => '',
+						'channel_allow_gid' => '',
+						'channel_deny_cid'  => '',
+						'channel_deny_gid'  => '<dgid>'
 				]],
 				'acid+null' => [[
 						'channel_allow_cid' => '<acid>',

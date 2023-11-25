@@ -353,12 +353,13 @@ function can_comment_on_post($observer_xchan, $item) {
 		case 'specific':
 		case 'contacts':
 		case '':
-			if(local_channel() && get_abconfig(local_channel(),$item['owner_xchan'],'their_perms','post_comments')) {
+			if(local_channel() && get_abconfig(local_channel(), (($item['verb'] === ACTIVITY_SHARE) ? $item['author_xchan'] : $item['owner_xchan']), 'their_perms', 'post_comments')) {
 				return true;
 			}
 			if(intval($item['item_wall']) && perm_is_allowed($item['uid'],$observer_xchan,'post_comments')) {
 				return true;
 			}
+
 			break;
 
 			default:

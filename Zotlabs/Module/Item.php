@@ -99,7 +99,7 @@ class Item extends Controller {
 			$sql_extra = item_permissions_sql(0);
 
 			if (!$i) {
-				$i = q("select id as item_id, uid from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+				$i = q("select id as item_id, uid, item_private from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
 					dbesc($r[0]['parent_mid'])
 				);
 			}
@@ -120,7 +120,10 @@ class Item extends Controller {
 
 			$parents_str = ids_to_querystr($i, 'item_id');
 
-			$total = q("SELECT count(*) AS count FROM item WHERE parent = %d $item_normal",
+			// We won't need to check for privacy mismatches if the verified observer is also owner
+			$parent_item_private = ((isset($i[0]['item_private'])) ? " and item_private = " . intval($i[0]['item_private']) . " " : '');
+
+			$total = q("SELECT count(*) AS count FROM item WHERE parent = %d $parent_item_private $item_normal ",
 				intval($parents_str)
 			);
 
@@ -134,7 +137,7 @@ class Item extends Controller {
 				as_return_and_die($i ,$chan);
 			}
 			else {
-				$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent = %d $item_normal ORDER BY item.id",
+				$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent = %d $parent_item_private $item_normal ORDER BY item.id",
 					intval($parents_str)
 				);
 

@@ -35,9 +35,13 @@ class Zotfinger {
 		$result = [];
 
 		$redirects = 0;
-		$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
 
-		logger('fetch: ' . print_r($x,true));
+		$start_timestamp = microtime(true);
+		$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
+		logger('logger_stats_data cmd:Zotfinger' . ' start:' . $start_timestamp . ' ' . 'end:' . microtime(true) . ' meta:' . $resource . '#' . random_string(16));
+		btlogger('Zotfinger');
+
+		logger('fetch: ' . print_r($x,true), LOGGER_DATA);
 
         if (in_array(intval($x['return_code']), [ 404, 410 ]) && $recurse) {
 
@@ -74,7 +78,7 @@ class Zotfinger {
 				$result['data'] = json_decode(Crypto::unencapsulate($result['data'],get_config('system','prvkey')),true);
 			}
 
-			logger('decrypted: ' . print_r($result,true));
+			logger('decrypted: ' . print_r($result,true), LOGGER_DATA);
 
 			return $result;
 		}

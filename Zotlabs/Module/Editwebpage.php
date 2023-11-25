@@ -75,7 +75,7 @@ class Editwebpage extends \Zotlabs\Web\Controller {
 
 		// Figure out which post we're editing
 		$post_id = ((argc() > 2) ? intval(argv(2)) : 0);
-	
+
 		if(! $post_id) {
 			notice( t('Item not found') . EOL);
 			return;
@@ -90,7 +90,7 @@ class Editwebpage extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		// We've already figured out which item we want and whose copy we need, 
+		// We've already figured out which item we want and whose copy we need,
 		// so we don't need anything fancy here
 
 		$sql_extra = item_permissions_sql($owner);
@@ -122,13 +122,13 @@ class Editwebpage extends \Zotlabs\Web\Controller {
 				return;
 			}
 		}
-	
+
 		$layout = $itm[0]['layout_mid'];
 
 		$content = $itm[0]['body'];
 		if($itm[0]['mimetype'] === 'text/markdown')
 			$content = \Zotlabs\Lib\MarkdownSoap::unescape($itm[0]['body']);
-	
+
 		$rp = 'webpages/' . $which;
 
 		$x = array(
@@ -160,7 +160,7 @@ class Editwebpage extends \Zotlabs\Web\Controller {
 			'bbcode' => (($mimetype  == 'text/bbcode') ? true : false)
 		);
 
-		$editor = status_editor($a, $x, false, 'Editwebpage');
+		$editor = status_editor($x, false, 'Editwebpage');
 
 		$o .= replace_macros(get_markup_template('edpost_head.tpl'), array(
 			'$title' => t('Edit Webpage'),

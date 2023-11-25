@@ -52,7 +52,7 @@ class JSalmon {
 			. base64url_encode($x['alg'],true);
 
 		$key = HTTPSig::get_key(EMPTY_STR,'zot6',base64url_decode($x['sigs']['key_id']));
-		 logger('key: ' . print_r($key,true));
+		logger('key: ' . print_r($key,true), LOGGER_DATA);
 		if($key['portable_id'] && $key['public_key']) {
 			if(Crypto::verify($signed_data,base64url_decode($x['sigs']['value']),$key['public_key'])) {
 				logger('verified');

@@ -157,9 +157,11 @@ class Notifications {
 					'url' => 'pubstream',
 					'label' => t('Public stream')
 				],
+				/*
 				'markall' => [
 					'label' => t('Mark all notifications seen')
 				],
+				*/
 				'filter' => [
 					'posts_label' => t('Show new posts only'),
 					'name_label' => t('Filter by name or address')

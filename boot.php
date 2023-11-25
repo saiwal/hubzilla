@@ -60,10 +60,10 @@ require_once('include/bbcode.php');
 require_once('include/items.php');
 
 define('PLATFORM_NAME', 'hubzilla');
-define('STD_VERSION', '8.6.3');
+define('STD_VERSION', '8.8');
 define('ZOT_REVISION', '6.0');
 
-define('DB_UPDATE_VERSION', 1258);
+define('DB_UPDATE_VERSION', 1259);
 
 define('PROJECT_BASE', __DIR__);
 
@@ -872,7 +872,8 @@ class App {
 		date_default_timezone_set('UTC');
 
 		self::$config = ['system' => []];
-		self::$page   = [];
+		self::$page['htmlhead'] = '';
+
 		self::$pager  = [];
 
 		self::$query_string = '';
@@ -942,14 +943,15 @@ class App {
 			'ttf'   => 'font/ttf',
 			'woff'  => 'font/woff',
 			'woff2' => 'font/woff2',
-			'svg'   => 'image/svg+xml'
+			'svg'   => 'image/svg+xml',
+			'jsonld' => 'application/ld+json'
 		];
 
 		if (array_key_exists($filext, $serve_rawfiles) && file_exists(self::$cmd)) {
 			$staticfilecwd      = getcwd();
 			$staticfilerealpath = realpath(self::$cmd);
 			if (strpos($staticfilerealpath, $staticfilecwd) !== 0) {
-				http_status_exit(404, 'not found');
+				http_status_exit(404, 'not found', 1);
 			}
 
 			$staticfileetag = '"' . md5($staticfilerealpath . filemtime(self::$cmd)) . '"';
@@ -959,7 +961,7 @@ class App {
 				// If HTTP_IF_NONE_MATCH is same as the generated ETag => content is the same as browser cache
 				// So send a 304 Not Modified response header and exit
 				if ($_SERVER['HTTP_IF_NONE_MATCH'] == $staticfileetag) {
-					http_status_exit(304, 'not modified');
+					http_status_exit(304, 'not modified', 1);
 				}
 			}
 			header("Content-type: " . $serve_rawfiles[$filext]);

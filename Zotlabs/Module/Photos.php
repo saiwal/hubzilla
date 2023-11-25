@@ -851,6 +851,10 @@ class Photos extends \Zotlabs\Web\Controller {
 				dbesc($datum)
 			);
 
+			$tags = [];
+			$likebuttons = [];
+			$comments = '';
+
 			if(! ($ph && $x)) {
 
 				/* Check again - this time without specifying permissions */
@@ -981,7 +985,6 @@ class Photos extends \Zotlabs\Web\Controller {
 					$r = conv_sort($r,'commented');
 				}
 
-				$tags = array();
 				if(x($link_item, 'term')) {
 					$cnt = 0;
 					foreach($link_item['term'] as $t) {
@@ -1075,7 +1078,6 @@ class Photos extends \Zotlabs\Web\Controller {
 					];
 				}
 
-				$comments = '';
 				if(! $r) {
 					if($observer && ($can_post || $can_comment)) {
 						$commentbox = replace_macros($cmnt_tpl,array(
@@ -1209,13 +1211,12 @@ class Photos extends \Zotlabs\Web\Controller {
 					}
 
 				}
-				$paginate = paginate($a);
 			}
 
 			$album_e = array($album_link,$ph[0]['album']);
 			$like_e = $like;
 			$dislike_e = $dislike;
-
+			$paginate = paginate();
 
 			$response_verbs = array('like');
 			if(feature_enabled($owner_uid,'dislike'))

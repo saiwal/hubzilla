@@ -73,6 +73,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'L' => 
         array (
             'League\\HTMLToMarkdown\\' => 22,
+            'LanguageDetection\\' => 18,
         ),
         'I' => 
         array (
@@ -185,6 +186,10 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'League\\HTMLToMarkdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/html-to-markdown/src',
+        ),
+        'LanguageDetection\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection',
         ),
         'ID3Parser\\' => 
         array (
@@ -519,6 +524,13 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'ID3Parser\\getID3\\getid3_exception' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_exception.php',
         'ID3Parser\\getID3\\getid3_handler' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_handler.php',
         'ID3Parser\\getID3\\getid3_lib' => __DIR__ . '/..' . '/lukasreschke/id3parser/src/getID3/getid3_lib.php',
+        'LanguageDetection\\Language' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Language.php',
+        'LanguageDetection\\LanguageResult' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/LanguageResult.php',
+        'LanguageDetection\\NgramParser' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/NgramParser.php',
+        'LanguageDetection\\Tokenizer\\TokenizerInterface' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Tokenizer/TokenizerInterface.php',
+        'LanguageDetection\\Tokenizer\\WhitespaceTokenizer' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Tokenizer/WhitespaceTokenizer.php',
+        'LanguageDetection\\Trainer' => __DIR__ . '/..' . '/patrickschur/language-detection/src/LanguageDetection/Trainer.php',
+        'League\\HTMLToMarkdown\\Coerce' => __DIR__ . '/..' . '/league/html-to-markdown/src/Coerce.php',
         'League\\HTMLToMarkdown\\Configuration' => __DIR__ . '/..' . '/league/html-to-markdown/src/Configuration.php',
         'League\\HTMLToMarkdown\\ConfigurationAwareInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
         'League\\HTMLToMarkdown\\Converter\\BlockquoteConverter' => __DIR__ . '/..' . '/league/html-to-markdown/src/Converter/BlockquoteConverter.php',
@@ -1422,6 +1434,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Daemon\\Poller' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Poller.php',
         'Zotlabs\\Daemon\\Queue' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Queue.php',
         'Zotlabs\\Daemon\\Thumbnail' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Thumbnail.php',
+        'Zotlabs\\Daemon\\Xchan_photo' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Xchan_photo.php',
         'Zotlabs\\Daemon\\Zotconvo' => __DIR__ . '/../..' . '/Zotlabs/Daemon/Zotconvo.php',
         'Zotlabs\\Extend\\Hook' => __DIR__ . '/../..' . '/Zotlabs/Extend/Hook.php',
         'Zotlabs\\Extend\\Route' => __DIR__ . '/../..' . '/Zotlabs/Extend/Route.php',
@@ -1572,7 +1585,6 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Module\\Layouts' => __DIR__ . '/../..' . '/Zotlabs/Module/Layouts.php',
         'Zotlabs\\Module\\Like' => __DIR__ . '/../..' . '/Zotlabs/Module/Like.php',
         'Zotlabs\\Module\\Linkinfo' => __DIR__ . '/../..' . '/Zotlabs/Module/Linkinfo.php',
-        'Zotlabs\\Module\\Lists' => __DIR__ . '/../..' . '/Zotlabs/Module/Lists.php',
         'Zotlabs\\Module\\Lockview' => __DIR__ . '/../..' . '/Zotlabs/Module/Lockview.php',
         'Zotlabs\\Module\\Locs' => __DIR__ . '/../..' . '/Zotlabs/Module/Locs.php',
         'Zotlabs\\Module\\Login' => __DIR__ . '/../..' . '/Zotlabs/Module/Login.php',
@@ -1981,6 +1993,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Zotlabs\\Update\\_1256' => __DIR__ . '/../..' . '/Zotlabs/Update/_1256.php',
         'Zotlabs\\Update\\_1257' => __DIR__ . '/../..' . '/Zotlabs/Update/_1257.php',
         'Zotlabs\\Update\\_1258' => __DIR__ . '/../..' . '/Zotlabs/Update/_1258.php',
+        'Zotlabs\\Update\\_1259' => __DIR__ . '/../..' . '/Zotlabs/Update/_1259.php',
         'Zotlabs\\Web\\Controller' => __DIR__ . '/../..' . '/Zotlabs/Web/Controller.php',
         'Zotlabs\\Web\\HTTPHeaders' => __DIR__ . '/../..' . '/Zotlabs/Web/HTTPHeaders.php',
         'Zotlabs\\Web\\HTTPSig' => __DIR__ . '/../..' . '/Zotlabs/Web/HTTPSig.php',

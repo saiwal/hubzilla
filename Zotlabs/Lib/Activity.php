@@ -120,6 +120,7 @@ class Activity {
 			}
 
 			$h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), false);
+			$start_timestamp = microtime(true);
 			$x = z_fetch_url($url, true, $redirects, ['headers' => $h]);
 		}
 
@@ -142,7 +143,13 @@ class Activity {
 			logger('returned: ' . json_encode($y, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOGGER_DEBUG);
 
 			if (isset($y['type']) && ActivityStreams::is_an_actor($y['type'])) {
+				logger('logger_stats_data cmd:Actor_fetch' . ' start:' . $start_timestamp . ' ' . 'end:' . microtime(true) . ' meta:' . $url . '#' . random_string(16));
+				btlogger('actor fetch');
+				$y['actor_cache_date'] = datetime_convert();
 				XConfig::Set($y['id'], 'system', 'actor_record', $y);
+			}
+			else {
+				logger('logger_stats_data cmd:Activity_fetch' . ' start:' . $start_timestamp . ' ' . 'end:' . microtime(true) . ' meta:' . $url . '#' . random_string(16));
 			}
 
 			return json_decode($x['body'], true);
@@ -151,6 +158,8 @@ class Activity {
 			logger('fetch failed: ' . $url);
 			logger($x['body']);
 		}
+
+
 		return null;
 	}
 
@@ -543,7 +552,7 @@ class Activity {
 			$ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['comments_closed'], ATOM_TIME);
 		}
 
-		$ret['attributedTo'] = $i['author']['xchan_url'];
+		$ret['attributedTo'] = self::encode_person($i['author'], false);
 
 		if ($i['mid'] !== $i['parent_mid']) {
 			$ret['inReplyTo'] = ((strpos($i['thr_parent'], 'http') === 0) ? $i['thr_parent'] : z_root() . '/item/' . urlencode($i['thr_parent']));
@@ -1369,7 +1378,7 @@ class Activity {
 
 			// store their xchan and hubloc
 
-			self::actor_store($person_obj['id'], $person_obj);
+			self::actor_store($person_obj);
 
 			// Find any existing abook record
 
@@ -1600,15 +1609,7 @@ class Activity {
 	}
 
 
-	static function actor_store($url, $person_obj = null, $force = false) {
-
-		if ($person_obj === null) {
-			$tgt = self::fetch($url);
-			if (is_array($tgt) && ActivityStreams::is_an_actor($tgt['type'])) {
-				self::actor_store($tgt['id'], $tgt);
-			}
-			return;
-		}
+	static function actor_store($person_obj, $force = false) {
 
 		if (!is_array($person_obj)) {
 			return;
@@ -1618,13 +1619,14 @@ class Activity {
 		if (array_key_exists('movedTo',$person_obj) && $person_obj['movedTo'] && ! is_array($person_obj['movedTo'])) {
 			$tgt = self::fetch($person_obj['movedTo']);
 			if (is_array($tgt)) {
-				self::actor_store($person_obj['movedTo'],$tgt);
+				self::actor_store($tgt);
 				ActivityPub::move($person_obj['id'],$tgt);
 			}
 			return;
 		}
 		*/
 
+		$url = null;
 		$ap_hubloc = null;
 
 		$hublocs = self::get_actor_hublocs($url);
@@ -1645,7 +1647,7 @@ class Activity {
 		if ($ap_hubloc) {
 			// we already have a stored record. Determine if it needs updating.
 			if ($ap_hubloc['hubloc_updated'] < datetime_convert('UTC', 'UTC', ' now - 3 days') || $force) {
-				$person_obj = self::fetch($url);
+				$person_obj = self::get_cached_actor($url);
 			}
 			else {
 				return;
@@ -1667,11 +1669,6 @@ class Activity {
 		if (!$inbox || strpos($inbox, z_root()) !== false) {
 			return;
 		}
-
-		// store the actor record in XConfig
-
-		// we already store this in Activity::fetch()
-		// XConfig::Set($url, 'system', 'actor_record', $person_obj);
 
 		$name = $person_obj['name'] ?? '';
 		if (!$name) {
@@ -1697,7 +1694,7 @@ class Activity {
 			$webfinger_addr = escape_tags($person_obj['preferredUsername']) . '@' . $hostname;
 		}
 
-		$icon = z_root() . '/' . get_default_profile_photo(300);
+		$icon = null;
 		if (isset($person_obj['icon'])) {
 			if (is_array($person_obj['icon'])) {
 				if (array_key_exists('url', $person_obj['icon'])) {
@@ -1807,6 +1804,9 @@ class Activity {
 					'xchan_addr'      => $webfinger_addr,
 					'xchan_url'       => $profile,
 					'xchan_name'      => escape_tags($name),
+					'xchan_photo_l' => z_root() . '/' . get_default_profile_photo(),
+					'xchan_photo_m' => z_root() . '/' . get_default_profile_photo(80),
+					'xchan_photo_s' => z_root() . '/' . get_default_profile_photo(48),
 					'xchan_name_date' => datetime_convert(),
 					'xchan_network'   => 'activitypub',
 					'xchan_pubforum'  => intval($group_actor)
@@ -1846,16 +1846,9 @@ class Activity {
 			}
 		}
 
-		$photos = import_xchan_photo($icon, $url);
-		q("update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
-			dbescdate(datetime_convert('UTC', 'UTC', $photos[5])),
-			dbesc($photos[0]),
-			dbesc($photos[1]),
-			dbesc($photos[2]),
-			dbesc($photos[3]),
-			dbesc($url)
-		);
-
+		if ($icon) {
+			Master::Summon(['Xchan_photo', bin2hex($icon), bin2hex($url)]);
+		}
 	}
 
 	static function create_action($channel, $observer_hash, $act) {
@@ -2308,7 +2301,7 @@ class Activity {
 		}
 
 		// ensure we store the original actor
-		self::actor_store($act->actor['id'], $act->actor);
+		self::actor_store($act->actor);
 
 		$s['owner_xchan']  = $act->actor['id'];
 		$s['author_xchan'] = $act->actor['id'];
@@ -2352,7 +2345,7 @@ class Activity {
 			$s['expires'] = datetime_convert('UTC', 'UTC', $act->obj['expires']);
 		}
 
-		if ($act->type === 'Invite' && $act->objprop('type') === 'Event') {
+		if (in_array($act->type, ['Invite', 'Create']) && $act->objprop('type') === 'Event') {
 			$s['mid'] = $s['parent_mid'] = $act->id;
 		}
 
@@ -2394,30 +2387,30 @@ class Activity {
 			}
 
 			// ensure we store the original actor
-			self::actor_store($obj_actor['id'], $obj_actor);
+			self::actor_store($obj_actor);
 
 			$mention = self::get_actor_bbmention($obj_actor['id']);
 
 			if ($act->type === 'Like') {
-				$content['content'] = sprintf(t('Likes %1$s\'s %2$s'), $mention, $act->obj['type']) . "\n\n" . $content['content'] ?? '';
+				$content['content'] = sprintf(t('Likes %1$s\'s %2$s'), $mention, $act->obj['type']) . EOL . EOL . ($content['content'] ?? '');
 			}
 			if ($act->type === 'Dislike') {
-				$content['content'] = sprintf(t('Doesn\'t like %1$s\'s %2$s'), $mention, $act->obj['type']) . "\n\n" . $content['content'] ?? '';
+				$content['content'] = sprintf(t('Doesn\'t like %1$s\'s %2$s'), $mention, $act->obj['type']) . EOL . EOL . ($content['content'] ?? '');
 			}
 
 			// handle event RSVPs
 			if (($act->objprop('type') === 'Event') || ($act->objprop('type') === 'Invite' && array_path_exists('object/type', $act->obj) && $act->obj['object']['type'] === 'Event')) {
 				if ($act->type === 'Accept') {
-					$content['content'] = sprintf(t('Will attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('Will attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 				if ($act->type === 'Reject') {
-					$content['content'] = sprintf(t('Will not attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('Will not attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 				if ($act->type === 'TentativeAccept') {
-					$content['content'] = sprintf(t('May attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('May attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 				if ($act->type === 'TentativeReject') {
-					$content['content'] = sprintf(t('May not attend %s\'s event'), $mention) . EOL . EOL . $content['content'];
+					$content['content'] = sprintf(t('May not attend %s\'s event'), $mention) . EOL . EOL . ($content['content'] ?? '');
 				}
 			}
 
@@ -2907,6 +2900,10 @@ class Activity {
 			set_iconfig($s, 'activitypub', 'recips', $act->raw_recips);
 		}
 
+		if ($act->objprop('type') === 'Event' && $act->objprop('timezone')) {
+			set_iconfig($s, 'event', 'timezone', $act->objprop('timezone'), true);
+		}
+
 		$hookinfo = [
 			'act' => $act,
 			's'   => $s
@@ -3265,7 +3262,12 @@ class Activity {
 			}
 		}
 
-		if (is_array($x) && $x['item_id']) {
+		if ($x['success']) {
+
+			if (check_item_source($channel['channel_id'], $x['item']) && in_array($x['item']['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) {
+				event_addtocal($x['item_id'], $channel['channel_id']);
+			}
+
 			if ($is_child_node) {
 				if ($item['owner_xchan'] === $channel['channel_hash']) {
 					// We are the owner of this conversation, so send all received comments back downstream
@@ -3386,7 +3388,7 @@ class Activity {
 				}
 
 				if (is_array($a->actor) && array_key_exists('id', $a->actor)) {
-					self::actor_store($a->actor['id'], $a->actor);
+					self::actor_store($a->actor);
 				}
 
 				$replies = null;
@@ -4037,7 +4039,8 @@ class Activity {
 		$cache_url = ((strpos($id, '#')) ? substr($id, 0, strpos($id, '#')) : $id);
 		$actor = XConfig::Get($cache_url, 'system', 'actor_record');
 
-		if ($actor) {
+		if ($actor && isset($actor['actor_cache_date']) && $actor['actor_cache_date'] > datetime_convert('UTC', 'UTC', ' now - 3 days')) {
+			unset($actor['actor_cache_date']);
 			return $actor;
 		}
 
@@ -4050,6 +4053,25 @@ class Activity {
 		call_hooks('get_cached_actor_provider', $hookdata);
 
 		return $hookdata['actor'];
+	}
+
+	static function get_actor($actor_id) {
+		// remove fragment
+		$actor_id = ((strpos($actor_id, '#')) ? substr($actor_id, 0, strpos($actor_id, '#')) : $actor_id);
+
+		$actor = self::get_cached_actor($actor_id);
+
+		if ($actor) {
+			return $actor;
+		}
+
+		$actor = self::fetch($actor_id);
+
+		if ($actor) {
+			return $actor;
+		}
+
+		return null;
 	}
 
 	static function get_unknown_actor($act) {

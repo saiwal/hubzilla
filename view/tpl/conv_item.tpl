@@ -4,10 +4,10 @@
 </div>
 <div id="collapsed-comments-{{$item.id}}" class="collapsed-comments" style="display: none;">
 {{/if}}
-	<div id="thread-wrapper-{{$item.id}}" class="thread-wrapper{{if $item.toplevel}} {{$item.toplevel}} generic-content-wrapper h-entry {{else}} u-comment h-cite{{/if}}" data-b64mids='{{$item.mids}}'>
+	<div id="thread-wrapper-{{$item.id}}" class="thread-wrapper{{if $item.toplevel}} {{$item.toplevel}} generic-content-wrapper h-entry {{else}} u-comment h-cite{{/if}} clearfix" data-b64mids='{{$item.mids}}'>
 		<a name="item_{{$item.id}}" ></a>
 		<div class="wall-item-outside-wrapper{{if $item.is_comment}} comment{{/if}}{{if $item.previewing}} preview{{/if}}" id="wall-item-outside-wrapper-{{$item.id}}" >
-			<div class="rounded clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
+			<div class="rounded wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
 				{{if $item.photo}}
 				<div class="wall-photo-item" id="wall-photo-item-{{$item.id}}">
 					{{$item.photo}}
@@ -26,7 +26,7 @@
 				<hr class="m-0">
 				{{/if}}
 				{{/if}}
-				<div class="p-2 wall-item-head{{if !$item.title && !$item.event && !$item.photo}} rounded-top{{/if}}{{if $item.is_new && !$item.event && !$item.is_comment}} wall-item-head-new{{/if}}" >
+				<div class="p-2 wall-item-head{{if !$item.title && !$item.event && !$item.photo}} rounded-top{{/if}}{{if $item.is_new && !$item.event && !$item.is_comment}} wall-item-head-new{{/if}} clearfix">
 					<div class="text-end float-end">
 						<div class="wall-item-ago opacity-75" id="wall-item-ago-{{$item.id}}">
 							{{if $item.editedtime}}
@@ -89,7 +89,7 @@
 				{{/if}}
 				{{if $item.body}}
 				<div class="p-2 wall-item-content clearfix" id="wall-item-content-{{$item.id}}">
-					<div class="wall-item-body e-content" id="wall-item-body-{{$item.id}}" >
+					<div class="wall-item-body e-content" id="wall-item-body-{{$item.id}}"{{if $item.rtl}} dir="rtl"{{/if}}>
 						{{$item.body}}
 					</div>
 				</div>

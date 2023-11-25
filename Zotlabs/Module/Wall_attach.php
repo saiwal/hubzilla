@@ -81,13 +81,22 @@ class Wall_attach extends \Zotlabs\Web\Controller {
 			}
 		}
 
-		$observer = \App::get_observer();
-
-
 		$def_album  = get_pconfig($channel['channel_id'],'system','photo_path');
 		$def_attach = get_pconfig($channel['channel_id'],'system','attach_path');
 
-		$r = attach_store($channel,(($observer) ? $observer['xchan_hash'] : ''),'', array('source' => 'editor', 'visible' => 0, 'album' => $def_album, 'directory' => $def_attach, 'flags' => 1, 'allow_cid' => '<' . $channel['channel_hash'] . '>'));
+		$data = [
+			'source' => 'editor',
+			'visible' => 0,
+			'album' => $def_album,
+			'directory' => $def_attach,
+			'flags' => 1,
+			'allow_cid' => '<' . $channel['channel_hash'] . '>',
+			'allow_gid' => '',
+			'deny_cid' => '',
+			'deny_gid' => ''
+		];
+
+		$r = attach_store($channel, get_observer_hash(), '', $data);
 
 		if(! $r['success']) {
 			notice( $r['message'] . EOL);

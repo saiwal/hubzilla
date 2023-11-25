@@ -608,7 +608,7 @@ nav .acpopup {
 	padding: 3px;
 	border: 0px solid var(--bs-border-color);
 	border-radius: var(--bs-border-radius);
-	background-color: #fff;
+	background-color: var(--bs-body-bg);
 	z-index: 1052;
 }
 
@@ -1378,38 +1378,6 @@ blockquote {
 	background-color: var(--bs-tertiary-bg);
 }
 
-.navbar {
-	z-index:1030;
-}
-
-
-
-@media screen and (max-width: 992px) {
-
-	main {
-		left: -$left_aside_widthrem;
-		width: calc( 100% + $left_aside_widthrem );
-	}
-
-	main.region_1-on {
-		left: 0px;
-	}
-
-	#nav-app-link-wrapper {
-		min-width: 0;
-	}
-
-	#nav-app-link-wrapper {
-		margin-right: 0.5rem;
-	}
-
-	#navbar-collapse-2 .navbar-app i {
-		font-size: 1rem;
-		margin-right: 0.5rem;
-	}
-
-}
-
 .shareable_element_text {
 	height: 300px;
 	width: 300px;
@@ -1513,10 +1481,6 @@ dl.bb-dl > dd > li {
 	font-weight: normal;
 }
 
-.onoffswitch.checkbox:hover label {
-	color: var(--bs-link-color);
-}
-
 .onoffswitch.checkbox:hover > div label {
 	border-color: var(--bs-link-color);
 }
@@ -1534,21 +1498,21 @@ dl.bb-dl > dd > li {
 .onoffswitch-inner:before {
 	content: attr(data-on);
 	padding-right: 21px;
-	background-color: rgba(var(--bs-body-color-rgb), 0);
+	background-color: var(--bs-secondary-bg);
 	text-align: right;
 }
 
 .onoffswitch-inner:after {
 	content: attr(data-off);
 	padding-left: 21px;
-	background-color: rgba(var(--bs-body-color-rgb), 0);
-	color: var(--bs-border-color);
+	background-color: var(--bs-secondary-bg);
 	text-align: left;
 }
 
 .onoffswitch-switch {
 	display: block; width: 15px; margin:4px;
-	background: var(--bs-secondary-bg);
+	background: var(--bs-tertiary-color);
+	color: var(--bs-secondary-color);
 	border-radius: 10px;
 	position: absolute; top: 0; bottom: 0; right: 36px;
 	transition: right 0.2s ease-in-out;

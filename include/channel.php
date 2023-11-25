@@ -1937,7 +1937,7 @@ function zid_init() {
 		call_hooks('zid_init', $arr);
 
 		if(! local_channel()) {
-			$r = q("select hubloc_url, hubloc_hash, hubloc_network from hubloc where hubloc_addr = '%s' order by hubloc_connected desc",
+			$r = q("select hubloc_url, hubloc_hash, hubloc_network from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
 				dbesc($tmp_str)
 			);
 			if(! $r) {
@@ -2397,8 +2397,11 @@ function get_zcard($channel, $observer_hash = '', $args = array()) {
 //	$scale = (float) $maxwidth / $width;
 //	$translate = intval(($scale / 1.0) * 100);
 
-	$channel['channel_addr'] = channel_reddress($channel);
-	$zcard = array('chan' => $channel);
+	$zcard['chan'] = [
+		'xchan_name' => $channel['xchan_name'],
+		'xchan_url' => $channel['xchan_url'],
+		'xchan_addr' => $channel['xchan_addr']
+	];
 
 	$r = q("select height, width, resource_id, imgscale, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
 		intval($channel['channel_id']),
@@ -2470,8 +2473,11 @@ function get_zcard_embed($channel, $observer_hash = '', $args = array()) {
 		$pphoto = array('mimetype' => $channel['xchan_photo_mimetype'],  'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l']);
 	}
 
-	$channel['channel_addr'] = channel_reddress($channel);
-	$zcard = array('chan' => $channel);
+	$zcard['chan'] = [
+		'xchan_name' => $channel['xchan_name'],
+		'xchan_url' => $channel['xchan_url'],
+		'xchan_addr' => $channel['xchan_addr']
+	];
 
 	$r = q("select height, width, resource_id, imgscale, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
 		intval($channel['channel_id']),

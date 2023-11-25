@@ -1,24 +1,21 @@
 <?php
 /**
- * this file contains tests for the autoname function
+ * This file contains tests for the autoname function
  *
  * @package test.util
  */
 
 use PHPUnit\Framework\TestCase;
 
-/** required, it is the file under test */
-require_once('include/text.php');
-
 /**
  * TestCase for the autoname function
  *
- * @author Alexander Kampmann
+ * @author  Alexander Kampmann
  * @package test.util
  */
 class AutonameTest extends TestCase {
 	/**
-	 *autonames should be random, even length
+	 * Autonames should be random, even length
 	 */
 	public function testAutonameEven() {
 		$autoname1=autoname(10);
@@ -28,7 +25,7 @@ class AutonameTest extends TestCase {
 	}
 
 	/**
-	 *autonames should be random, odd length
+	 * Autonames should be random, odd length
 	 */
 	public function testAutonameOdd() {
 		$autoname1=autoname(9);
@@ -38,7 +35,7 @@ class AutonameTest extends TestCase {
 	}
 
 	/**
-	 * try to fail autonames
+	 * Try to fail autonames
 	 */
 	public function testAutonameNoLength() {
 		$autoname1=autoname(0);
@@ -46,7 +43,7 @@ class AutonameTest extends TestCase {
 	}
 
 	/**
-	 * try to fail it with invalid input
+	 * Try to fail it with invalid input
 	 *
 	 * TODO: What's corect behaviour here? An exception?
 	 */
@@ -61,7 +58,7 @@ class AutonameTest extends TestCase {
 	// 	}
 
 	/**
-	 * test with a length, that may be too short
+	 * Test with a length, that may be too short
 	 * length is maximum - autoname can return something shorter.
 	 */
 	public function testAutonameLength1() {

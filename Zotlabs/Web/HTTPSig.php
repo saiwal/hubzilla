@@ -212,7 +212,8 @@ class HTTPSig {
 
 		if (in_array('digest', $signed_headers)) {
 			$result['content_signed'] = true;
-			$digest                   = explode('=', $headers['digest'], 2);
+			$digest = explode('=', $headers['digest'], 2);
+			$digest[0] = strtoupper($digest[0]);
 			if ($digest[0] === 'SHA-256')
 				$hashalg = 'sha256';
 			if ($digest[0] === 'SHA-512')
@@ -324,7 +325,7 @@ class HTTPSig {
 		}
 
 		// The record wasn't in cache. Fetch it now.
-		$r = Activity::fetch($id);
+		$r = Activity::get_actor($id);
 		$signatureAlgorithm = EMPTY_STR;
 
 		if ($r) {

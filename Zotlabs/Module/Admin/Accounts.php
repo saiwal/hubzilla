@@ -346,7 +346,7 @@ class Accounts {
 			'$users' 	=> $users,
 			'$msg'      => t('Message')
 		));
-		$o .= paginate($a);
+		$o .= paginate();
 
 		return $o;
 	}

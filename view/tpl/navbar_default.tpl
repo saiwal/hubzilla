@@ -1,10 +1,10 @@
-<nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" {{$navbar_color_mode}}>
+<nav id="navbar-top" class="navbar navbar-expand-lg sticky-top bg-body-tertiary mb-4" {{$navbar_color_mode}}>
 	<div class="container-fluid flex-nowrap">
 		{{if $userinfo}}
 		<div class="d-flex" style="max-width: 50%">
 			<div class="dropdown">
 				<div class="cursor-pointer usermenu" data-bs-toggle="dropdown">
-					<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}">
+					<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}" class="rounded">
 					<i class="navbar-text fa fa-caret-down"></i>
 				</div>
 				{{if $is_owner}}
@@ -195,7 +195,9 @@
 		<i id="app-bin-trash" class="fa fa-2x fa-fw fa-trash-o d-none"></i>
 		{{/if}}
 		<div class="hstack gap-1">
+			{{if $theme_switch_icon}}
 			<button id="theme-switch" type="button" class="btn btn-outline-secondary border-0"><i id="theme-switch-icon" class="fa fa-{{$theme_switch_icon}}-o"></i></button>
+			{{/if}}
 			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 

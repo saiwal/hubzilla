@@ -128,26 +128,25 @@
         },
         {
             "name": "bshaffer/oauth2-server-php",
-            "version": "v1.13.0",
-            "version_normalized": "1.13.0.0",
+            "version": "v1.14.1",
+            "version_normalized": "1.14.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bshaffer/oauth2-server-php.git",
-                "reference": "cd11527b29ceb340f24015b6df868c22908bcf12"
+                "reference": "096db2c86a7d67a2ba45e72be7d208c342694542"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/cd11527b29ceb340f24015b6df868c22908bcf12",
-                "reference": "cd11527b29ceb340f24015b6df868c22908bcf12",
+                "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/096db2c86a7d67a2ba45e72be7d208c342694542",
+                "reference": "096db2c86a7d67a2ba45e72be7d208c342694542",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.2"
             },
             "require-dev": {
                 "aws/aws-sdk-php": "^2.8",
-                "firebase/php-jwt": "^2.2",
-                "mongodb/mongodb": "^1.1",
+                "firebase/php-jwt": "^6.4",
                 "phpunit/phpunit": "^7.5||^8.0",
                 "predis/predis": "^1.1",
                 "thobbs/phpcassa": "dev-master",
@@ -155,12 +154,12 @@
             },
             "suggest": {
                 "aws/aws-sdk-php": "~2.8 is required to use DynamoDB storage",
-                "firebase/php-jwt": "~2.2 is required to use JWT features",
+                "firebase/php-jwt": "~v6.4 is required to use JWT features",
                 "mongodb/mongodb": "^1.1 is required to use MongoDB storage",
                 "predis/predis": "Required to use Redis storage",
                 "thobbs/phpcassa": "Required to use Cassandra storage"
             },
-            "time": "2022-10-12T17:33:08+00:00",
+            "time": "2023-07-07T17:53:54+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -188,7 +187,7 @@
             ],
             "support": {
                 "issues": "https://github.com/bshaffer/oauth2-server-php/issues",
-                "source": "https://github.com/bshaffer/oauth2-server-php/tree/v1.13.0"
+                "source": "https://github.com/bshaffer/oauth2-server-php/tree/v1.14.1"
             },
             "install-path": "../bshaffer/oauth2-server-php"
         },
@@ -576,17 +575,17 @@
         },
         {
             "name": "league/html-to-markdown",
-            "version": "5.1.0",
-            "version_normalized": "5.1.0.0",
+            "version": "5.1.1",
+            "version_normalized": "5.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/html-to-markdown.git",
-                "reference": "e0fc8cf07bdabbcd3765341ecb50c34c271d64e1"
+                "reference": "0b4066eede55c48f38bcee4fb8f0aa85654390fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/e0fc8cf07bdabbcd3765341ecb50c34c271d64e1",
-                "reference": "e0fc8cf07bdabbcd3765341ecb50c34c271d64e1",
+                "url": "https://api.github.com/repos/thephpleague/html-to-markdown/zipball/0b4066eede55c48f38bcee4fb8f0aa85654390fd",
+                "reference": "0b4066eede55c48f38bcee4fb8f0aa85654390fd",
                 "shasum": ""
             },
             "require": {
@@ -596,13 +595,13 @@
             },
             "require-dev": {
                 "mikehaertl/php-shellcommand": "^1.1.0",
-                "phpstan/phpstan": "^0.12.99",
+                "phpstan/phpstan": "^1.8.8",
                 "phpunit/phpunit": "^8.5 || ^9.2",
                 "scrutinizer/ocular": "^1.6",
-                "unleashedtech/php-coding-standard": "^2.7",
-                "vimeo/psalm": "^4.22"
+                "unleashedtech/php-coding-standard": "^2.7 || ^3.0",
+                "vimeo/psalm": "^4.22 || ^5.0"
             },
-            "time": "2022-03-02T17:24:08+00:00",
+            "time": "2023-07-12T21:21:09+00:00",
             "bin": [
                 "bin/html-to-markdown"
             ],
@@ -644,7 +643,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/html-to-markdown/issues",
-                "source": "https://github.com/thephpleague/html-to-markdown/tree/5.1.0"
+                "source": "https://github.com/thephpleague/html-to-markdown/tree/5.1.1"
             },
             "funding": [
                 {
@@ -833,6 +832,60 @@
                 "source": "https://github.com/paragonie/constant_time_encoding"
             },
             "install-path": "../paragonie/constant_time_encoding"
+        },
+        {
+            "name": "patrickschur/language-detection",
+            "version": "v5.3.0",
+            "version_normalized": "5.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/patrickschur/language-detection.git",
+                "reference": "b8da335336c09fa6814fe0ca0d6d506c357cd7b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/patrickschur/language-detection/zipball/b8da335336c09fa6814fe0ca0d6d506c357cd7b9",
+                "reference": "b8da335336c09fa6814fe0ca0d6d506c357cd7b9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5.0"
+            },
+            "time": "2023-08-18T22:46:39+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "LanguageDetection\\": "src/LanguageDetection"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Patrick Schur",
+                    "email": "patrick_schur@outlook.de"
+                }
+            ],
+            "description": "A language detection library for PHP. Detects the language from a given text string.",
+            "homepage": "https://github.com/patrickschur/language-detection",
+            "keywords": [
+                "detect",
+                "detection",
+                "language"
+            ],
+            "support": {
+                "issues": "https://github.com/patrickschur/language-detection/issues",
+                "source": "https://github.com/patrickschur/language-detection/tree/v5.3.0"
+            },
+            "install-path": "../patrickschur/language-detection"
         },
         {
             "name": "pear/text_languagedetect",
@@ -1781,17 +1834,17 @@
         },
         {
             "name": "smarty/smarty",
-            "version": "v4.3.1",
-            "version_normalized": "4.3.1.0",
+            "version": "v4.3.4",
+            "version_normalized": "4.3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smarty-php/smarty.git",
-                "reference": "e28cb0915b4e3749bf57d4ebae2984e25395cfe5"
+                "reference": "3931d8f54b8f7a4ffab538582d34d4397ba8daa5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smarty-php/smarty/zipball/e28cb0915b4e3749bf57d4ebae2984e25395cfe5",
-                "reference": "e28cb0915b4e3749bf57d4ebae2984e25395cfe5",
+                "url": "https://api.github.com/repos/smarty-php/smarty/zipball/3931d8f54b8f7a4ffab538582d34d4397ba8daa5",
+                "reference": "3931d8f54b8f7a4ffab538582d34d4397ba8daa5",
                 "shasum": ""
             },
             "require": {
@@ -1801,7 +1854,7 @@
                 "phpunit/phpunit": "^8.5 || ^7.5",
                 "smarty/smarty-lexer": "^3.1"
             },
-            "time": "2023-03-28T19:47:03+00:00",
+            "time": "2023-09-14T10:59:08+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1844,7 +1897,7 @@
             "support": {
                 "forum": "https://github.com/smarty-php/smarty/discussions",
                 "issues": "https://github.com/smarty-php/smarty/issues",
-                "source": "https://github.com/smarty-php/smarty/tree/v4.3.1"
+                "source": "https://github.com/smarty-php/smarty/tree/v4.3.4"
             },
             "install-path": "../smarty/smarty"
         },
@@ -2015,23 +2068,23 @@
         },
         {
             "name": "twbs/bootstrap",
-            "version": "v5.3.0",
-            "version_normalized": "5.3.0.0",
+            "version": "v5.3.2",
+            "version_normalized": "5.3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "60098ac499d30aa50575b0b7137391c06ef25429"
+                "reference": "344e912d04b5b6a04482113eff20ab416ff01048"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/60098ac499d30aa50575b0b7137391c06ef25429",
-                "reference": "60098ac499d30aa50575b0b7137391c06ef25429",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/344e912d04b5b6a04482113eff20ab416ff01048",
+                "reference": "344e912d04b5b6a04482113eff20ab416ff01048",
                 "shasum": ""
             },
             "replace": {
                 "twitter/bootstrap": "self.version"
             },
-            "time": "2023-05-30T15:15:55+00:00",
+            "time": "2023-09-14T14:19:27+00:00",
             "type": "library",
             "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
@@ -2062,7 +2115,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twbs/bootstrap/issues",
-                "source": "https://github.com/twbs/bootstrap/tree/v5.3.0"
+                "source": "https://github.com/twbs/bootstrap/tree/v5.3.2"
             },
             "install-path": "../twbs/bootstrap"
         },

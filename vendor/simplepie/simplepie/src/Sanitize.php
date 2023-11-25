@@ -316,6 +316,10 @@ class Sanitize implements RegistryAware
      */
     protected function is_https_domain($domain)
     {
+
+		// https://github.com/simplepie/simplepie/issues/852
+		$domain = (string) $domain;
+
         $domain = trim($domain, '. ');
         $segments = array_reverse(explode('.', $domain));
         $node =& $this->https_domains;

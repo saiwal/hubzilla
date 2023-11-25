@@ -1114,6 +1114,7 @@ class Libzot {
 	 */
 	static function import($arr) {
 
+
 		$env     = $arr;
 		$private = false;
 		$return  = [];
@@ -1219,13 +1220,19 @@ class Libzot {
 					return;
 				}
 
-				$r = Activity::get_actor_hublocs($AS->actor['id']);
+				$author_url = $AS->actor['id'];
 
-				if (! $r) {
+				if ($AS->type === 'Announce') {
+					$author_url = Activity::get_attributed_to_actor_url($AS);
+				}
+
+				$r = Activity::get_actor_hublocs($author_url);
+
+				if (!$r) {
 					// Author is unknown to this site. Perform channel discovery and try again.
-					$z = discover_by_webbie($AS->actor['id']);
+					$z = discover_by_webbie($author_url);
 					if ($z) {
-						$r = Activity::get_actor_hublocs($AS->actor['id']);
+						$r = Activity::get_actor_hublocs($author_url);
 					}
 				}
 
@@ -1448,7 +1455,7 @@ class Libzot {
 			if ($act && $act->obj) {
 				if (isset($act->obj['tag']) && is_array($act->obj['tag']) && $act->obj['tag']) {
 					foreach ($act->obj['tag'] as $tag) {
-						if ($tag['type'] === 'Mention' && (strpos($tag['href'], z_root()) !== false)) {
+						if (isset($tag['type'], $tag['href']) && $tag['type'] === 'Mention' && (strpos($tag['href'], z_root()) !== false)) {
 							$address = basename($tag['href']);
 							if ($address) {
 								$z = q("select channel_hash as hash from channel where channel_address = '%s' and channel_hash != '%s'
@@ -1509,11 +1516,9 @@ class Libzot {
 	 */
 
 	static function process_delivery($sender, $act, $arr, $deliveries, $relay, $public = false, $request = false, $force = false) {
-
 		$result = [];
 
 		// We've validated the sender. Now make sure that the sender is the owner or author
-
 		if (!$public) {
 			if ($sender != $arr['owner_xchan'] && $sender != $arr['author_xchan']) {
 				logger("Sender $sender is not owner {$arr['owner_xchan']} or author {$arr['author_xchan']} - mid {$arr['mid']}");
@@ -1634,6 +1639,13 @@ class Libzot {
 							if (!$allowed && $permit_mentions) {
 								$allowed = true;
 							}
+
+							if (!$allowed) {
+								if (PConfig::Get($channel['channel_id'], 'system', 'moderate_unsolicited_comments') && $arr['obj_type'] !== 'Answer') {
+									$arr['item_blocked'] = ITEM_MODERATED;
+									$allowed = true;
+								}
+							}
 						}
 
 					} elseif ($permit_mentions) {
@@ -1642,7 +1654,6 @@ class Libzot {
 				}
 
 				if ($request) {
-
 					// Conversation fetches (e.g. $request == true) take place for
 					//   a) new comments on expired posts
 					//   b) hyperdrive (friend-of-friend) conversations
@@ -1829,13 +1840,19 @@ class Libzot {
 
 			if ($r) {
 				// We already have this post.
+				// Dismiss its announce
+				if ($act->type === 'Announce') {
+					$DR->update('update ignored');
+					$result[] = $DR->get();
+					continue;
+				}
+
 				$item_id = $r[0]['id'];
 
 				if (intval($r[0]['item_deleted'])) {
 					// It was deleted locally.
 					$DR->update('update ignored');
 					$result[] = $DR->get();
-
 					continue;
 				}
 				// Maybe it has been edited?
@@ -1843,17 +1860,17 @@ class Libzot {
 					$arr['id']  = $r[0]['id'];
 					$arr['uid'] = $channel['channel_id'];
 
-                    if (post_is_importable($channel['channel_id'], $arr, $abook)) {
-                        $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
-                        $DR->update('updated');
-                        $result[] = $DR->get();
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
-                    } else {
-                        $DR->update('update ignored');
-                        $result[] = $DR->get();
-                    }
+					if (post_is_importable($channel['channel_id'], $arr, $abook)) {
+						$item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
+						$DR->update('updated');
+						$result[] = $DR->get();
+						if (!$relay) {
+							add_source_route($item_id, $sender);
+						}
+					} else {
+						$DR->update('update ignored');
+						$result[] = $DR->get();
+					}
 				}
 				else {
 					$DR->update('update ignored');
@@ -1871,8 +1888,9 @@ class Libzot {
 
 				// if it's a sourced post, call the post_local hooks as if it were
 				// posted locally so that crosspost connectors will be triggered.
+				$item_source = check_item_source($arr['uid'], $arr);
 
-				if (check_item_source($arr['uid'], $arr) || ($channel['xchan_pubforum'] == 1)) {
+				if ($item_source || ($channel['xchan_pubforum'] == 1)) {
 					/**
 					 * @hooks post_local
 					 *   Called when an item has been posted on this machine via mod/item.php (also via API).
@@ -1898,7 +1916,13 @@ class Libzot {
 				if (post_is_importable($arr['uid'], $arr, $abook)) {
 					$item_result = item_store($arr);
 					if ($item_result['success']) {
+
 						$item_id = $item_result['item_id'];
+
+						if ($item_source && in_array($item_result['item']['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) {
+							event_addtocal($item_id, $channel['channel_id']);
+						}
+
 						$parr = [
 							'item_id' => $item_id,
 							'item' => $arr,
@@ -1921,7 +1945,8 @@ class Libzot {
 							add_source_route($item_id, $sender);
 						}
 					}
-					$DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
+
+					$DR->update(($item_id) ? (($item_result['item']['item_blocked'] === ITEM_MODERATED) ? 'accepted for moderation' : 'posted') : 'storage failed: ' . $item_result['message']);
 					$result[] = $DR->get();
 				} else {
 					$DR->update('post ignored');
@@ -1938,7 +1963,7 @@ class Libzot {
 				retain_item($stored['item']['parent']);
 			}
 
-			if ($relay && $item_id) {
+			if ($relay && $item_id && $stored['item_blocked'] !== ITEM_MODERATED) {
 				logger('Invoking relay');
 				Master::Summon(['Notifier', 'relay', intval($item_id)]);
 				$DR->addto_update('relayed');
@@ -2006,7 +2031,7 @@ class Libzot {
 			// logger($AS->debug());
 
 			if(empty($AS->actor['id'])) {
-				logger('No actor id!');
+				logger('No actor id: ' . print_r($AS, true));
 				continue;
 			}
 
