@@ -1,4 +1,4 @@
-Hubzilla 8.8 (2023-xx-xx)
+Hubzilla 8.8 (2023-11-25)
 	- Add additional observer and channel info for nav templates
 	- Do not provide confidential channel info for templates
 	- Add link to profile to vcard
