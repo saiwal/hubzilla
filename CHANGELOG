@@ -1,3 +1,9 @@
+Hubzilla 8.8.1 (2023-11-27)
+	- Fix error in cards addon
+	- Fix error in articles addon
+	- Fix double left and right template css
+
+
 Hubzilla 8.8 (2023-11-25)
 	- Add additional observer and channel info for nav templates
 	- Do not provide confidential channel info for templates
@@ -30,7 +36,6 @@ Hubzilla 8.8 (2023-11-25)
 	- Transparent background for colorbox controls icons
 	- Use body background color for colorboxes in redbasic
 
-
 	Bugfixes
 	- Remove fragment from actor urls
 	- HTTPsig case insensitive digest algorithm
@@ -44,7 +49,6 @@ Hubzilla 8.8 (2023-11-25)
 	- Fix for item widget not respecting ACL if added by title - issue #1799
 	- Fix sabre/dav caldav php warnings
 	- Fix public stream comments/reactions not allowed if item_fetched is set
-
 
 	Addons
 	- Superblock: fix php warnings
