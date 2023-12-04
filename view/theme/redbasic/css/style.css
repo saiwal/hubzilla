@@ -1487,6 +1487,7 @@ dl.bb-dl > dd > li {
 
 .onoffswitch-inner {
 	display: block; width: 200%; margin-left: -100%;
+	color: var(--bs-secondary-color);
 	transition: margin 0.19s ease-in-out;
 }
 
@@ -1498,15 +1499,15 @@ dl.bb-dl > dd > li {
 .onoffswitch-inner:before {
 	content: attr(data-on);
 	padding-right: 21px;
-	background-color: var(--bs-secondary-bg);
 	text-align: right;
+	background-color: var(--bs-tertiary-bg);
 }
 
 .onoffswitch-inner:after {
 	content: attr(data-off);
 	padding-left: 21px;
-	background-color: var(--bs-secondary-bg);
 	text-align: left;
+	background-color: var(--bs-tertiary-bg);
 }
 
 .onoffswitch-switch {
