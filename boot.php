@@ -58,6 +58,8 @@ require_once('include/hubloc.php');
 require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/items.php');
+require_once('include/conversation.php');
+require_once('include/acl_selectors.php');
 
 define('PLATFORM_NAME', 'hubzilla');
 define('STD_VERSION', '8.8.1');
