@@ -122,7 +122,7 @@ function store_item_tag($uid,$iid,$otype,$type,$term,$url = '') {
 function get_terms_oftype($arr, $type) {
 	$ret = [];
 
-	if(!is_array($arr) && count($arr))
+	if(!is_array($arr))
 		return $ret;
 
 	if(! is_array($type))
