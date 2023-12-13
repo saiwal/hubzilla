@@ -1,6 +1,6 @@
 Hubzilla 8.8.2 (2023-12-06)
 	- Fix missing includes - issue #1820
-	- Addon logger_stats: mproved performance reading big log files
+	- Addon logger_stats: improved performance reading big log files
 
 
 Hubzilla 8.8.1 (2023-11-27)
