@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: 8.6RC1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-04 17:57+0000\n"
-"PO-Revision-Date: 2023-09-09 15:38+0200\n"
+"PO-Revision-Date: 2023-12-15 22:33+0100\n"
 "Last-Translator: Harald Eilertsen <haraldei@anduin.net>\n"
 "Language-Team: Norwegian Bokmal <l10n-no@lister.huftis.org>\n"
 "Language: nb_NO\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1 ? 1 : 0);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Lokalize 23.08.4\n"
 
 #: ../../view/theme/redbasic/php/config.php:15
 #: ../../addon/cart/submodules/orderoptions.php:335
@@ -7234,31 +7234,31 @@ msgstr "OpenWebAuth: %1$s ønsker %2$s velkommen"
 
 #: ../../Zotlabs/Widget/Activity_order.php:96
 msgid "Commented Date"
-msgstr ""
+msgstr "Sist kommentert"
 
 #: ../../Zotlabs/Widget/Activity_order.php:100
 msgid "Order by last commented date"
-msgstr ""
+msgstr "Sorter etter dato for siste kommentar"
 
 #: ../../Zotlabs/Widget/Activity_order.php:103
 msgid "Posted Date"
-msgstr ""
+msgstr "Innleggsdato"
 
 #: ../../Zotlabs/Widget/Activity_order.php:107
 msgid "Order by last posted date"
-msgstr ""
+msgstr "Sorter etter dato innlegg ble postet"
 
 #: ../../Zotlabs/Widget/Activity_order.php:110
 msgid "Date Unthreaded"
-msgstr ""
+msgstr "Utrådet"
 
 #: ../../Zotlabs/Widget/Activity_order.php:114
 msgid "Order unthreaded by date"
-msgstr ""
+msgstr "Sorter innlegg og kommentarer uavhengig av hverandre etter dato"
 
 #: ../../Zotlabs/Widget/Activity_order.php:129
 msgid "Stream Order"
-msgstr ""
+msgstr "Sortering av innlegg"
 
 #: ../../Zotlabs/Widget/Tokens.php:41
 msgid "Add new guest"
@@ -7534,7 +7534,7 @@ msgstr "Bokmerkede chatrom"
 
 #: ../../Zotlabs/Widget/Appcategories.php:49
 msgid "App Categories"
-msgstr ""
+msgstr "Appkategorier"
 
 #: ../../Zotlabs/Widget/Hq_controls.php:23
 msgid "Toggle post editor"
@@ -7710,15 +7710,15 @@ msgstr "Filtere for tidslinjen"
 
 #: ../../Zotlabs/Widget/Appstore.php:16
 msgid "App Collections"
-msgstr ""
+msgstr "Appsamlinger"
 
 #: ../../Zotlabs/Widget/Appstore.php:18
 msgid "Installed apps"
-msgstr ""
+msgstr "Installerte apper"
 
 #: ../../Zotlabs/Widget/Appstore.php:19 ../../Zotlabs/Module/Apps.php:51
 msgid "Available Apps"
-msgstr ""
+msgstr "Tilgjengelige apper"
 
 #: ../../Zotlabs/Widget/Privacygroups.php:45
 msgid "Add new group"
@@ -10610,7 +10610,7 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Admin/Site.php:427 ../../Zotlabs/Module/Siteinfo.php:24
 msgid "Site Information"
-msgstr ""
+msgstr "Nettstedsinformasjon"
 
 #: ../../Zotlabs/Module/Admin/Site.php:427
 msgid ""
@@ -11408,11 +11408,11 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Apps.php:51
 msgid "Installed Apps"
-msgstr ""
+msgstr "Installerte apper"
 
 #: ../../Zotlabs/Module/Apps.php:54
 msgid "Manage Apps"
-msgstr ""
+msgstr "Behandle apper"
 
 #: ../../Zotlabs/Module/Apps.php:55
 msgid "Create Custom App"
@@ -11925,7 +11925,7 @@ msgstr "Kanalnavn"
 #: ../../Zotlabs/Module/New_channel.php:178
 #: ../../Zotlabs/Module/Settings/Channel.php:233
 msgid "Channel role"
-msgstr ""
+msgstr "Kanalrolle"
 
 #: ../../Zotlabs/Module/New_channel.php:181
 msgid "Create a Channel"
@@ -11971,7 +11971,7 @@ msgstr "Angi ditt nåværende humør og fortell dine venner"
 
 #: ../../Zotlabs/Module/Siteinfo.php:21
 msgid "About this site"
-msgstr ""
+msgstr "Om dette nettstedet "
 
 #: ../../Zotlabs/Module/Siteinfo.php:22
 #, fuzzy
@@ -11984,20 +11984,20 @@ msgstr "Administrator"
 
 #: ../../Zotlabs/Module/Siteinfo.php:29
 msgid "Software and Project information"
-msgstr ""
+msgstr "Program- og prosjektinformasjon"
 
 #: ../../Zotlabs/Module/Siteinfo.php:30
 msgid "This site is powered by $Projectname"
-msgstr ""
+msgstr "Dette nettstedet drives av $Projectname"
 
 #: ../../Zotlabs/Module/Siteinfo.php:31
 msgid ""
 "Federated and decentralised networking and identity services provided by Zot"
-msgstr ""
+msgstr "Fødererte og desentraliserte nettverks- og identitetstjenester via Zot"
 
 #: ../../Zotlabs/Module/Siteinfo.php:34
 msgid "Additional federated transport protocols:"
-msgstr ""
+msgstr "Øvrige fødererte transportprotokoller:"
 
 #: ../../Zotlabs/Module/Siteinfo.php:36
 #, php-format
@@ -12006,11 +12006,11 @@ msgstr "Versjon %s"
 
 #: ../../Zotlabs/Module/Siteinfo.php:37
 msgid "Project homepage"
-msgstr ""
+msgstr "Prosjektets hjemmeside"
 
 #: ../../Zotlabs/Module/Siteinfo.php:38
 msgid "Developer homepage"
-msgstr ""
+msgstr "Utviklers hjemmeside"
 
 #: ../../Zotlabs/Module/Appman.php:39 ../../Zotlabs/Module/Appman.php:56
 msgid "App installed."
@@ -13601,7 +13601,7 @@ msgstr "Ekstra funksjoner"
 #: ../../Zotlabs/Module/Settings/Channel.php:105
 #: ../../Zotlabs/Module/Settings/Channel.php:217
 msgid "Please select a channel role"
-msgstr ""
+msgstr "Velg en kanalrolle"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:194
 msgid "Your channel address is"
@@ -13609,7 +13609,7 @@ msgstr "Din kanaladresse er"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:197
 msgid "Your files/photos are accessible via WebDAV at"
-msgstr ""
+msgstr "Dine filer og foto er tilgjengelig via WebDAV på"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:228
 msgid "Channel Settings"
@@ -13621,11 +13621,11 @@ msgstr "Grunninnstillinger"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:236
 msgid "Channel timezone:"
-msgstr ""
+msgstr "Tidssone for kanalen:"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:237
 msgid "Default post location:"
-msgstr ""
+msgstr "Standard plassering for innlegg:"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:237
 msgid "Geographical location to display on your posts"
@@ -13637,11 +13637,12 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:239
 msgid "Adult content"
-msgstr ""
+msgstr "Voksent innhold"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:239
 msgid "This channel frequently or regularly publishes adult content"
 msgstr ""
+"Denne kanalen vil ofte, eller regelmessig poste innlegg med voksent innhold"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:240
 msgid "Maximum Friend Requests/Day:"
@@ -13851,7 +13852,7 @@ msgstr "Annet kanal innhold utløper etter så mange dager"
 
 #: ../../Zotlabs/Module/Settings/Channel.php:284
 msgid "0 or blank to use the website limit."
-msgstr ""
+msgstr "0 eller la være tomt for å bruke grensen til nettstedet."
 
 #: ../../Zotlabs/Module/Settings/Channel.php:284
 #, php-format
@@ -13860,11 +13861,11 @@ msgstr ""
 
 #: ../../Zotlabs/Module/Settings/Channel.php:284
 msgid "This website does not expire imported content."
-msgstr ""
+msgstr "Dette nettstedet sletter ikke importert innhold."
 
 #: ../../Zotlabs/Module/Settings/Channel.php:284
 msgid "The website limit takes precedence if lower than your limit."
-msgstr ""
+msgstr "Nettstedets grense vil gjelde dersom den er lavere enn din grense."
 
 #: ../../Zotlabs/Module/Settings/Channel.php:285
 #: ../../Zotlabs/Module/Settings/Channel.php:286
@@ -13872,6 +13873,8 @@ msgid ""
 "Words one per line or #tags, $categories, /patterns/, lang=xx, lang!=xx - "
 "leave blank to import all posts"
 msgstr ""
+"Ett ord per linje eller #emneknagger, $kategorier, /mønster/, lang=xx,"
+" lang!=xx - la være tomt for å importere alle innlegg"
 
 #: ../../Zotlabs/Module/Settings/Account.php:21
 msgid "Not valid email."
@@ -15436,19 +15439,19 @@ msgstr ""
 
 #: ../../Zotlabs/Lib/Apps.php:611
 msgid "Add to app-tray"
-msgstr ""
+msgstr "Legg til i meny"
 
 #: ../../Zotlabs/Lib/Apps.php:612
 msgid "Remove from app-tray"
-msgstr ""
+msgstr "Fjern fra meny"
 
 #: ../../Zotlabs/Lib/Apps.php:613
 msgid "Pin to navbar"
-msgstr ""
+msgstr "Fest til navigasjonslinjen"
 
 #: ../../Zotlabs/Lib/Apps.php:614
 msgid "Unpin from navbar"
-msgstr ""
+msgstr "Fjern fra navigasjonslinjen"
 
 #: ../../Zotlabs/Lib/Techlevels.php:10
 msgid "0. Beginner/Basic"
@@ -16048,3 +16051,4 @@ msgstr "Cron/planlagte oppgaver kjører ikke."
 
 #~ msgid "Page owner information could not be retrieved."
 #~ msgstr "Informasjon om sideeier kunne ikke hentes."
+
