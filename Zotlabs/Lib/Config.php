@@ -121,6 +121,12 @@ class Config {
 	 * @return mixed Return value or false on error or if not set
 	 */
 	public static function Get($family, $key, $default = false) {
+
+		if (App::$install) {
+			// The DB is not initalized yet
+			return false;
+		}
+
 		if ((! array_key_exists($family, App::$config)) || (! array_key_exists('config_loaded', App::$config[$family]))) {
 			self::Load($family);
 		}
