@@ -1,6 +1,7 @@
 Hubzilla 8.8.3 (2023-12-17)
 	- Check return from Config::Load() and retry on failure
 	- Libzot::import() do not prozess items where we could not fetch the author
+	- Translation updates for Norwegian Bokmål (nb_NO)
 	- Add the app terms before syncing, otherwise the terms will be reset at the other end
 	- Addon statistics: deprecate nodeinfo 1.0 and implement nodeinfo 2.1
 	- Addon cards: fix PHP error
