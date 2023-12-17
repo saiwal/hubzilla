@@ -110,6 +110,11 @@ class Appman extends \Zotlabs\Web\Controller {
 				dbesc($papp['guid'])
 			);
 
+			$sync[0]['term'] = q("select * from term where otype = %d and oid = %d",
+				intval(TERM_OBJ_APP),
+				intval($sync[0]['id'])
+			);
+
 			if (intval($sync[0]['app_system'])) {
 				Libsync::build_sync_packet(local_channel(), ['sysapp' => $sync]);
 			}
@@ -124,6 +129,11 @@ class Appman extends \Zotlabs\Web\Controller {
 			$sync = q("SELECT * FROM app WHERE app_channel = %d AND app_id = '%s' LIMIT 1",
 				intval(local_channel()),
 				dbesc($papp['guid'])
+			);
+
+			$sync[0]['term'] = q("select * from term where otype = %d and oid = %d",
+				intval(TERM_OBJ_APP),
+				intval($sync[0]['id'])
 			);
 
 			if (intval($sync[0]['app_system'])) {

@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 
 class Config {
 
@@ -14,21 +15,44 @@ class Config {
 	 * @param string $family
 	 *  The category of the configuration value
 	 */
-	static public function Load($family) {
-		if(! array_key_exists($family, \App::$config))
-			\App::$config[$family] = array();
+	public static function Load($family, $recursionCounter = 0) {
+		if (! array_key_exists($family, App::$config)) {
+			App::$config[$family] = [];
+		}
 
-		if(! array_key_exists('config_loaded', \App::$config[$family])) {
+		// We typically continue when presented with minor DB issues,
+		// but loading the site configuration is more important.
+
+		// Check for query returning false and give it approx 30 seconds
+		// to recover if there's a problem. This is intended to fix a
+		// rare issue on Galera where temporary sync issues were causing
+		// the site encryption keys to be regenerated, which was causing
+		// communication issues for members.
+
+		// This code probably belongs at the database layer, but we don't
+		// necessarily want to shut the site down for problematic queries
+		// caused by bad data. That could be used in a denial of service
+		// attack. Those do need to be (and they are) logged.
+
+		if (! array_key_exists('config_loaded', App::$config[$family])) {
 			$r = q("SELECT * FROM config WHERE cat = '%s'", dbesc($family));
-			if($r !== false) {
-				if($r) {
-					foreach($r as $rr) {
-						$k = $rr['k'];
-						\App::$config[$family][$k] = $rr['v'];
-					}
+			if ($r === false) {
+				sleep(3);
+				$recursionCounter ++;
+				if ($recursionCounter > 10) {
+					system_unavailable();
 				}
-				\App::$config[$family]['config_loaded'] = true;
+				self::Load($family, $recursionCounter);
 			}
+			else {
+				foreach ($r as $rr) {
+					$k = $rr['k'];
+					App::$config[$family][$k] = $rr['v'];
+				}
+				App::$config[$family]['config_loaded'] = true;
+			}
+
+
 		}
 	}
 
@@ -46,19 +70,19 @@ class Config {
 	 * @return mixed
 	 *  Return the set value, or false if the database update failed
 	 */
-	static public function Set($family, $key, $value) {
+	public static function Set($family, $key, $value) {
 		// manage array value
-		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
+		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
-		if(self::Get($family, $key) === false || (! self::get_from_storage($family, $key))) {
+		if (self::Get($family, $key) === false || (! self::get_from_storage($family, $key))) {
 			$ret = q("INSERT INTO config ( cat, k, v ) VALUES ( '%s', '%s', '%s' ) ",
 				dbesc($family),
 				dbesc($key),
 				dbesc($dbvalue)
 			);
-			if($ret) {
-				\App::$config[$family][$key] = $value;
+			if ($ret) {
+				App::$config[$family][$key] = $value;
 				$ret = $value;
 			}
 			return $ret;
@@ -70,8 +94,8 @@ class Config {
 			dbesc($key)
 		);
 
-		if($ret) {
-			\App::$config[$family][$key] = $value;
+		if ($ret) {
+			App::$config[$family][$key] = $value;
 			$ret = $value;
 		}
 
@@ -96,18 +120,21 @@ class Config {
 	 * @param string $default (optional) default false
 	 * @return mixed Return value or false on error or if not set
 	 */
-	static public function Get($family, $key, $default = false) {
-		if((! array_key_exists($family, \App::$config)) || (! array_key_exists('config_loaded', \App::$config[$family])))
+	public static function Get($family, $key, $default = false) {
+		if ((! array_key_exists($family, App::$config)) || (! array_key_exists('config_loaded', App::$config[$family]))) {
 			self::Load($family);
+		}
 
-		if(array_key_exists('config_loaded', \App::$config[$family])) {
-			if(! array_key_exists($key, \App::$config[$family])) {
+		if (array_key_exists('config_loaded', App::$config[$family])) {
+			if (! array_key_exists($key, App::$config[$family])) {
 				return $default;
 			}
-			return ((! is_array(\App::$config[$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$family][$key]))
-				? unserialize(\App::$config[$family][$key])
-				: \App::$config[$family][$key]
+
+			return ((! is_array(App::$config[$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', App::$config[$family][$key]))
+				? unserialize(App::$config[$family][$key])
+				: App::$config[$family][$key]
 			);
+
 		}
 
 		return $default;
@@ -125,12 +152,13 @@ class Config {
 	 *  The configuration key to delete
 	 * @return mixed
 	 */
-	static public function Delete($family, $key) {
+	public static function Delete($family, $key) {
 
 		$ret = false;
 
-		if(array_key_exists($family, \App::$config) && array_key_exists($key, \App::$config[$family]))
-			unset(\App::$config[$family][$key]);
+		if (array_key_exists($family, App::$config) && array_key_exists($key, App::$config[$family])) {
+			unset(App::$config[$family][$key]);
+		}
 
 		$ret = q("DELETE FROM config WHERE cat = '%s' AND k = '%s'",
 			dbesc($family),
@@ -153,7 +181,7 @@ class Config {
 	 *  The configuration key to query
 	 * @return mixed
 	 */
-	static private function get_from_storage($family,$key) {
+	private static function get_from_storage($family, $key) {
 		$ret = q("SELECT * FROM config WHERE cat = '%s' AND k = '%s' LIMIT 1",
 			dbesc($family),
 			dbesc($key)
@@ -161,5 +189,4 @@ class Config {
 
 		return $ret;
 	}
-
 }

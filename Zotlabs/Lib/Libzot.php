@@ -1234,17 +1234,16 @@ class Libzot {
 					if ($z) {
 						$r = Activity::get_actor_hublocs($author_url);
 					}
+
+					if (!$r) {
+						logger('Could not fetch author');
+						return;
+					}
 				}
 
-				if ($r) {
-					$r = self::zot_record_preferred($r);
-					$item['author_xchan'] = $r['hubloc_hash'];
-				}
+				$r = self::zot_record_preferred($r);
 
-				if (! $item['author_xchan']) {
-					logger('No author!');
-					return;
-				}
+				$item['author_xchan'] = $r['hubloc_hash'];
 
 				$item['owner_xchan'] = $env['sender'];
 
