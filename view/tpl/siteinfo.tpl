@@ -12,6 +12,26 @@
 
 <div>{{if $admin_about}}{{$admin_about}}{{else}}--{{/if}}</div>
 
+{{if $addons.1}}
+<br>
+<h3>{{$addons.0}}</h3>
+<ul>
+	{{foreach $addons.1 as $addon}}
+	<li>{{$addon}}</li>
+	{{/foreach}}
+</ul>
+{{/if}}
+
+{{if $blocked_sites.1}}
+<br>
+<h3>{{$blocked_sites.0}}</h3>
+<ul>
+	{{foreach $blocked_sites.1 as $site}}
+	<li>{{$site}}</li>
+	{{/foreach}}
+</ul>
+{{/if}}
+
 
 <br><br>
 <div><a href="help/TermsOfService">{{$terms}}</a></div>
