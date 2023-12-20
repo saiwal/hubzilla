@@ -20,15 +20,23 @@ class Config {
 
 		if(! array_key_exists('config_loaded', \App::$config[$family])) {
 			$r = q("SELECT * FROM config WHERE cat = '%s'", dbesc($family));
-			if($r !== false) {
-				if($r) {
-					foreach($r as $rr) {
-						$k = $rr['k'];
-						\App::$config[$family][$k] = $rr['v'];
-					}
+			if ($r === false && !App::$install) {
+				sleep(3);
+				$recursionCounter ++;
+				if ($recursionCounter > 10) {
+					system_unavailable();
 				}
 				\App::$config[$family]['config_loaded'] = true;
 			}
+			elseif (is_array($r)) {
+				foreach ($r as $rr) {
+					$k = $rr['k'];
+					App::$config[$family][$k] = $rr['v'];
+				}
+				App::$config[$family]['config_loaded'] = true;
+			}
+
+
 		}
 	}
 
@@ -48,7 +56,7 @@ class Config {
 	 */
 	static public function Set($family, $key, $value) {
 		// manage array value
-		$dbvalue = ((is_array($value))  ? serialize($value) : $value);
+		$dbvalue = ((is_array($value))  ? 'json:' . json_encode($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if(self::Get($family, $key) === false || (! self::get_from_storage($family, $key))) {
@@ -96,18 +104,30 @@ class Config {
 	 * @param string $default (optional) default false
 	 * @return mixed Return value or false on error or if not set
 	 */
-	static public function Get($family, $key, $default = false) {
-		if((! array_key_exists($family, \App::$config)) || (! array_key_exists('config_loaded', \App::$config[$family])))
+	public static function Get($family, $key, $default = false) {
+
+		if ((! array_key_exists($family, App::$config)) || (! array_key_exists('config_loaded', App::$config[$family]))) {
 			self::Load($family);
 
 		if(array_key_exists('config_loaded', \App::$config[$family])) {
 			if(! array_key_exists($key, \App::$config[$family])) {
 				return $default;
 			}
-			return ((! is_array(\App::$config[$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', \App::$config[$family][$key]))
-				? unserialize(\App::$config[$family][$key])
-				: \App::$config[$family][$key]
-			);
+
+			$value = App::$config[$family][$key];
+
+			if (! is_array($value)) {
+				if (substr($value, 0, 5) == 'json:') {
+					return json_decode(substr($value, 5), true);
+				} else if (preg_match('|^a:[0-9]+:{.*}$|s', $value)) {
+					// Unserialize in inherently unsafe. Try to mitigate by not
+					// allowing unserializing objects. Only kept for backwards
+					// compatibility. JSON serialization should be prefered.
+					return unserialize($value, array('allowed_classes' => false));
+				} else {
+					return $value;
+				}
+			}
 		}
 
 		return $default;

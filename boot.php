@@ -1403,7 +1403,7 @@ function x($s, $k = null) {
  * @ref include/system_unavailable.php will handle everything further.
  */
 function system_unavailable() {
-	include('include/system_unavailable.php');
+	require_once('include/system_unavailable.php');
 	system_down();
 	killme();
 }
