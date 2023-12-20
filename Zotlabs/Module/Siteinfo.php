@@ -38,6 +38,8 @@ class Siteinfo extends \Zotlabs\Web\Controller {
 				'$prj_srctxt' => t('Developer homepage'),
 				'$prj_link' => \Zotlabs\Lib\System::get_project_link(),
 				'$prj_src' => \Zotlabs\Lib\System::get_project_srclink(),
+				'$addons' => array( t('Active addons'), \App::$plugins ),
+				'$blocked_sites' => array( t('Blocked sites'), \Zotlabs\Lib\Config::Get('system', 'blacklisted_sites') )
 			]
 		);
 
