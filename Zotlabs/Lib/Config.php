@@ -72,7 +72,7 @@ class Config {
 	 */
 	public static function Set($family, $key, $value) {
 		// manage array value
-		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
+		$dbvalue = ((is_array($value))  ? 'json:' . json_encode($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if (self::Get($family, $key) === false || (! self::get_from_storage($family, $key))) {
@@ -136,11 +136,20 @@ class Config {
 				return $default;
 			}
 
-			return ((! is_array(App::$config[$family][$key])) && (preg_match('|^a:[0-9]+:{.*}$|s', App::$config[$family][$key]))
-				? unserialize(App::$config[$family][$key])
-				: App::$config[$family][$key]
-			);
+			$value = App::$config[$family][$key];
 
+			if (! is_array($value)) {
+				if (substr($value, 0, 5) == 'json:') {
+					return json_decode(substr($value, 5), true);
+				} else if (preg_match('|^a:[0-9]+:{.*}$|s', $value)) {
+					// Unserialize in inherently unsafe. Try to mitigate by not
+					// allowing unserializing objects. Only kept for backwards
+					// compatibility. JSON serialization should be prefered.
+					return unserialize($value, array('allowed_classes' => false));
+				} else {
+					return $value;
+				}
+			}
 		}
 
 		return $default;
