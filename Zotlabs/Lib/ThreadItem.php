@@ -121,9 +121,7 @@ class ThreadItem {
 			$locktype = 0;
 		}
 
-		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && (intval($item['item_private']) === 0)) ? true : false);
-		$repeatable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && (intval($item['item_private']) === 0) && (in_array($item['author']['xchan_network'], ['zot6', 'activitypub']))) ? true : false);
-
+		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && ($item['item_private'] != 1)) ? true : false);
 
 		// allow an exemption for sharing stuff from your private feeds
 		if($item['author']['xchan_network'] === 'rss')
@@ -317,13 +315,13 @@ class ThreadItem {
 		$share = [];
 		$embed = [];
 		if ($shareable) {
-			$embed = [t('Reshare'), t('reshare')];
-		}
-
-		// This actually turns out not to be possible in some protocol stacks without opening up hundreds of new issues.
-		// Will allow it only for uri resolvable sources.
-		if($repeatable) {
-			$share = [t('Repeat'), t('repeat')];
+			// This actually turns out not to be possible in some protocol stacks without opening up hundreds of new issues.
+			// Will allow it only for uri resolvable sources.
+			if(strpos($item['mid'],'http') === 0) {
+				//Not yet ready for primetime
+				//$share = array( t('Repeat This'), t('repeat'));
+			}
+			$embed = [t('Share This'), t('share')];
 		}
 
 		$dreport = '';
