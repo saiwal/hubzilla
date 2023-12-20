@@ -36,7 +36,7 @@ class Config {
 
 		if (! array_key_exists('config_loaded', App::$config[$family])) {
 			$r = q("SELECT * FROM config WHERE cat = '%s'", dbesc($family));
-			if ($r === false) {
+			if ($r === false && !App::$install) {
 				sleep(3);
 				$recursionCounter ++;
 				if ($recursionCounter > 10) {
@@ -44,7 +44,7 @@ class Config {
 				}
 				self::Load($family, $recursionCounter);
 			}
-			else {
+			elseif (is_array($r)) {
 				foreach ($r as $rr) {
 					$k = $rr['k'];
 					App::$config[$family][$k] = $rr['v'];
@@ -121,11 +121,6 @@ class Config {
 	 * @return mixed Return value or false on error or if not set
 	 */
 	public static function Get($family, $key, $default = false) {
-
-		if (App::$install) {
-			// The DB is not initalized yet
-			return false;
-		}
 
 		if ((! array_key_exists($family, App::$config)) || (! array_key_exists('config_loaded', App::$config[$family]))) {
 			self::Load($family);
