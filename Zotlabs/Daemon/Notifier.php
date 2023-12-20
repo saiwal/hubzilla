@@ -300,7 +300,7 @@ class Notifier {
 				return;
 			}
 
-			if ($target_item['verb'] === ACTIVITY_SHARE) {
+			if ($target_item['verb'] === 'Announce') {
 				// Provide correct representation across the wire. Internally this is treated as a comment.
 				$target_item['parent_mid'] = $target_item['thr_parent'] = $target_item['mid'];
 			}

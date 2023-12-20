@@ -1194,7 +1194,7 @@ class Activity {
 
 		$acts = [
 			'http://activitystrea.ms/schema/1.0/post'           => 'Create',
-			'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
+		//	'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
 			'http://activitystrea.ms/schema/1.0/update'         => 'Update',
 			'http://activitystrea.ms/schema/1.0/like'           => 'Like',
 			'http://activitystrea.ms/schema/1.0/favorite'       => 'Like',
@@ -1208,7 +1208,8 @@ class Activity {
 			'http://purl.org/zot/activity/attendmaybe'          => 'TentativeAccept',
 			'Invite'                                            => 'Invite',
 			'Delete'                                            => 'Delete',
-			'Undo'                                              => 'Undo'
+			'Undo'                                              => 'Undo',
+			'Announce'                                          => 'Announce',
 		];
 
 		call_hooks('activity_mapper', $acts);
@@ -1242,7 +1243,7 @@ class Activity {
 
 		$acts = [
 			'http://activitystrea.ms/schema/1.0/post'           => 'Create',
-			'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
+		//	'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
 			'http://activitystrea.ms/schema/1.0/update'         => 'Update',
 			'http://activitystrea.ms/schema/1.0/like'           => 'Like',
 			'http://activitystrea.ms/schema/1.0/favorite'       => 'Like',
@@ -1256,7 +1257,8 @@ class Activity {
 			'http://purl.org/zot/activity/attendmaybe'          => 'TentativeAccept',
 			'Invite'                                            => 'Invite',
 			'Delete'                                            => 'Delete',
-			'Undo'                                              => 'Undo'
+			'Undo'                                              => 'Undo',
+			'Announce'                                          => 'Announce'
 		];
 
 		call_hooks('activity_decode_mapper', $acts);
@@ -1284,11 +1286,11 @@ class Activity {
 			'http://activitystrea.ms/schema/1.0/profile-photo' => 'Icon',
 			'http://activitystrea.ms/schema/1.0/event'         => 'Event',
 			'http://purl.org/zot/activity/location'            => 'Place',
-			'http://purl.org/zot/activity/chessgame'           => 'Game',
-			'http://purl.org/zot/activity/tagterm'             => 'zot:Tag',
-			'http://purl.org/zot/activity/thing'               => 'Object',
-			'http://purl.org/zot/activity/file'                => 'zot:File',
-			'http://purl.org/zot/activity/mood'                => 'zot:Mood',
+		//	'http://purl.org/zot/activity/chessgame'           => 'Game',
+		//	'http://purl.org/zot/activity/tagterm'             => 'zot:Tag',
+		//	'http://purl.org/zot/activity/thing'               => 'Object',
+		//	'http://purl.org/zot/activity/file'                => 'zot:File',
+		//	'http://purl.org/zot/activity/mood'                => 'zot:Mood',
 			'Invite'                                           => 'Invite',
 			'Question'                                         => 'Question',
 			'Document'                                         => 'Document',
@@ -1321,11 +1323,11 @@ class Activity {
 			'http://activitystrea.ms/schema/1.0/profile-photo' => 'Icon',
 			'http://activitystrea.ms/schema/1.0/event'         => 'Event',
 			'http://purl.org/zot/activity/location'            => 'Place',
-			'http://purl.org/zot/activity/chessgame'           => 'Game',
-			'http://purl.org/zot/activity/tagterm'             => 'zot:Tag',
-			'http://purl.org/zot/activity/thing'               => 'Object',
-			'http://purl.org/zot/activity/file'                => 'zot:File',
-			'http://purl.org/zot/activity/mood'                => 'zot:Mood',
+		//	'http://purl.org/zot/activity/chessgame'           => 'Game',
+		//	'http://purl.org/zot/activity/tagterm'             => 'zot:Tag',
+		//	'http://purl.org/zot/activity/thing'               => 'Object',
+		//	'http://purl.org/zot/activity/file'                => 'zot:File',
+		//	'http://purl.org/zot/activity/mood'                => 'zot:Mood',
 			'Invite'                                           => 'Invite',
 			'Question'                                         => 'Question',
 			'Audio'                                            => 'Audio',

@@ -68,6 +68,7 @@ class Share extends \Zotlabs\Web\Controller {
 		$owner_uid = $r[0]['uid'];
 		$owner_aid = $r[0]['aid'];
 
+/*
 		$can_comment = false;
 		if((array_key_exists('owner',$item)) && intval($item['owner']['abook_self']))
 			$can_comment = perm_is_allowed($item['uid'],$observer['xchan_hash'],'post_comments');
@@ -78,6 +79,7 @@ class Share extends \Zotlabs\Web\Controller {
 			notice( t('Permission denied') . EOL);
 			killme();
 		}
+*/
 
 		$r = q("select * from xchan where xchan_hash = '%s' limit 1",
 			dbesc($item['owner_xchan'])
@@ -113,7 +115,7 @@ class Share extends \Zotlabs\Web\Controller {
 		$arr['owner_xchan']  = $item['author_xchan'];
 		$arr['obj'] = Activity::encode_item($item);
 		$arr['obj_type'] = $item['obj_type'];
-		$arr['verb'] = ACTIVITY_SHARE;
+		$arr['verb'] = 'Announce'; //ACTIVITY_SHARE;
 
 		$post = item_store($arr);
 
