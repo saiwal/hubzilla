@@ -904,6 +904,8 @@ function get_tags($s) {
 			$ret[] = $mtch;
 		}
 	}
+
+
 	if(preg_match_all('/([@#\!]\".*?\")/',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			$ret[] = $mtch;
@@ -935,6 +937,8 @@ function get_tags($s) {
 				continue;
 			// or quote remnants from the quoted strings we already picked out earlier
 			if(strpos($mtch,'&quot'))
+				continue;
+			if(strpos($mtch,'"'))
 				continue;
 
 			$ret[] = $mtch;
@@ -1639,6 +1643,7 @@ function format_hashtags(&$item) {
 
 	$s = '';
 	$terms = isset($item['term']) ? get_terms_oftype($item['term'], array(TERM_HASHTAG, TERM_COMMUNITYTAG)) : [];
+
 	if($terms) {
 		foreach($terms as $t) {
 			$term = htmlspecialchars($t['term'], ENT_COMPAT, 'UTF-8', false) ;
