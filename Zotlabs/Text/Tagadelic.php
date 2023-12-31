@@ -24,7 +24,7 @@ class Tagadelic {
 			$x ++;
 		}
 
-		usort($tags,'self::tags_sort');
+		usort($tags, [self::class, 'tags_sort']);
 
 		$range = max(.01, $max - $min) * 1.0001;
 
