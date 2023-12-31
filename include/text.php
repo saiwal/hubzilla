@@ -3839,29 +3839,20 @@ function featured_sort($a,$b) {
 }
 
 
-// Be aware that punify will convert domain names and pathnames
+function unpunify($s) {
+	if (function_exists('idn_to_utf8') && isset($s)) {
+		return idn_to_utf8($s);
+	}
+	return $s;
+}
 
 
 function punify($s) {
-	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
-	$x = new idna_convert(['encoding' => 'utf8']);
-	return $x->encode($s);
-
+	if (function_exists('idn_to_ascii') && isset($s)) {
+		return idn_to_ascii($s);
+	}
+	return $s;
 }
-
-/**
- * Be aware that unpunify() will only convert domain names and not pathnames.
- *
- * @param string $s
- * @return string
- */
-function unpunify($s) {
-	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
-	$x = new idna_convert(['encoding' => 'utf8']);
-
-	return $x->decode($s);
-}
-
 
 function unique_multidim_array($array, $key) {
     $temp_array = array();
