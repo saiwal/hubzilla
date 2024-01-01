@@ -680,8 +680,8 @@ function sys_boot() {
 		 * Load configs from db. Overwrite configs from .htconfig.php
 		 */
 
-		load_config('system');
-		load_config('feature');
+		Config::Load('system');
+		Config::Load('feature');
 
 		App::$session = new Zotlabs\Web\Session();
 		App::$session->init();
