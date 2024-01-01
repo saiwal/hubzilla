@@ -1,3 +1,10 @@
+Hubzilla 8.8.5 (2024-01-01)
+	Fix possible loop if DB is not reachable (introduced in 8.8.3)
+	Fix some errors and deprecation warnings with PHP 8.2
+	Deprecate simplepie idna_convert in favor of PHP native function
+	Fix double processed quoted strings in get_tags()
+
+
 Hubzilla 8.8.4 (2023-12-20)
 	- Fix regression introduced in version 8.8.3
 	- Add test for Lib/Config

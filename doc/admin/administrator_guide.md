@@ -85,16 +85,16 @@ There are several ways to deploy a new hub.
   Example config scripts are available for these platforms in doc/install.
   Apache and nginx have the most support.
 
-* PHP 7.1 or later.
- * Note that on some shared hosting environments, the _command line_
-   version of PHP might differ from the _webserver_ version
+* PHP 8.1 or later.
+  Note that on some shared hosting environments, the _command line_
+  version of PHP might differ from the _webserver_ version
 
 * PHP *command line* access with register_argc_argv set to true in the
-  php.ini file * and with no hosting provider restrictions on the use of
+  php.ini file, and with no hosting provider restrictions on the use of
   exec() and proc_open().
 
-* curl, gd (with at least jpeg and png support), mysqli, mbstring, zip,
-  and openssl extensions. The imagick extension is not required but desirable.
+* curl, gd (with at least jpeg and png support), pdo-mysql (or pdo-postgres), mbstring, zip,
+  and openssl extensions. The imagick extension is not required, but recommended.
 
 * xml extension is required if you want webdav to work.
 
