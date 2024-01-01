@@ -190,7 +190,7 @@ function reload_plugins() {
 	$plugins = get_config('system', 'addon');
 	if(strlen($plugins)) {
 		$r = dbq("SELECT * FROM addon WHERE installed = 1");
-		if(count($r))
+		if($r)
 			$installed = $r;
 		else
 			$installed = array();

@@ -51,8 +51,6 @@ class Config {
 				}
 				App::$config[$family]['config_loaded'] = true;
 			}
-
-
 		}
 	}
 

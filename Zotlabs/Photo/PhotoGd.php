@@ -17,11 +17,11 @@ class PhotoGd extends PhotoDriver {
 		$t = [];
 
 		$t['image/jpeg'] = 'jpg';
-		if(imagetypes() & IMG_PNG)
+		if(\imagetypes() & IMG_PNG)
 			$t['image/png'] = 'png';
-		if(imagetypes() & IMG_GIF)
+		if(\imagetypes() & IMG_GIF)
 			$t['image/gif'] = 'gif';
-		if(imagetypes() & IMG_WEBP)
+		if(\imagetypes() & IMG_WEBP)
 			$t['image/webp'] = 'webp';
 
 		return $t;

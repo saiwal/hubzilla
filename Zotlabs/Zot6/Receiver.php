@@ -22,6 +22,7 @@ class Receiver {
 	protected $prvkey;
 	protected $rawdata;
 	protected $sigdata;
+	protected $hub;
 
 	function __construct($handler, $localdata = null) {
 

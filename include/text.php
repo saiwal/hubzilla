@@ -904,6 +904,8 @@ function get_tags($s) {
 			$ret[] = $mtch;
 		}
 	}
+
+
 	if(preg_match_all('/([@#\!]\".*?\")/',$s,$match)) {
 		foreach($match[1] as $mtch) {
 			$ret[] = $mtch;
@@ -935,6 +937,8 @@ function get_tags($s) {
 				continue;
 			// or quote remnants from the quoted strings we already picked out earlier
 			if(strpos($mtch,'&quot'))
+				continue;
+			if(strpos($mtch,'"'))
 				continue;
 
 			$ret[] = $mtch;
@@ -1639,6 +1643,7 @@ function format_hashtags(&$item) {
 
 	$s = '';
 	$terms = isset($item['term']) ? get_terms_oftype($item['term'], array(TERM_HASHTAG, TERM_COMMUNITYTAG)) : [];
+
 	if($terms) {
 		foreach($terms as $t) {
 			$term = htmlspecialchars($t['term'], ENT_COMPAT, 'UTF-8', false) ;
@@ -3834,29 +3839,20 @@ function featured_sort($a,$b) {
 }
 
 
-// Be aware that punify will convert domain names and pathnames
+function unpunify($s) {
+	if (function_exists('idn_to_utf8') && isset($s)) {
+		return idn_to_utf8($s);
+	}
+	return $s;
+}
 
 
 function punify($s) {
-	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
-	$x = new idna_convert(['encoding' => 'utf8']);
-	return $x->encode($s);
-
+	if (function_exists('idn_to_ascii') && isset($s)) {
+		return idn_to_ascii($s);
+	}
+	return $s;
 }
-
-/**
- * Be aware that unpunify() will only convert domain names and not pathnames.
- *
- * @param string $s
- * @return string
- */
-function unpunify($s) {
-	require_once('vendor/simplepie/simplepie/idn/idna_convert.class.php');
-	$x = new idna_convert(['encoding' => 'utf8']);
-
-	return $x->decode($s);
-}
-
 
 function unique_multidim_array($array, $key) {
     $temp_array = array();
