@@ -1194,7 +1194,7 @@ class Activity {
 
 		$acts = [
 			'http://activitystrea.ms/schema/1.0/post'           => 'Create',
-			'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
+			//'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
 			'http://activitystrea.ms/schema/1.0/update'         => 'Update',
 			'http://activitystrea.ms/schema/1.0/like'           => 'Like',
 			'http://activitystrea.ms/schema/1.0/favorite'       => 'Like',
@@ -1206,6 +1206,7 @@ class Activity {
 			'http://purl.org/zot/activity/attendyes'            => 'Accept',
 			'http://purl.org/zot/activity/attendno'             => 'Reject',
 			'http://purl.org/zot/activity/attendmaybe'          => 'TentativeAccept',
+			'Announce'                                          => 'Announce',
 			'Invite'                                            => 'Invite',
 			'Delete'                                            => 'Delete',
 			'Undo'                                              => 'Undo'
@@ -1242,7 +1243,7 @@ class Activity {
 
 		$acts = [
 			'http://activitystrea.ms/schema/1.0/post'           => 'Create',
-			'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
+		//	'http://activitystrea.ms/schema/1.0/share'          => 'Announce',
 			'http://activitystrea.ms/schema/1.0/update'         => 'Update',
 			'http://activitystrea.ms/schema/1.0/like'           => 'Like',
 			'http://activitystrea.ms/schema/1.0/favorite'       => 'Like',
@@ -1254,6 +1255,7 @@ class Activity {
 			'http://purl.org/zot/activity/attendyes'            => 'Accept',
 			'http://purl.org/zot/activity/attendno'             => 'Reject',
 			'http://purl.org/zot/activity/attendmaybe'          => 'TentativeAccept',
+			'Announce'                                          => 'Announce',
 			'Invite'                                            => 'Invite',
 			'Delete'                                            => 'Delete',
 			'Undo'                                              => 'Undo'

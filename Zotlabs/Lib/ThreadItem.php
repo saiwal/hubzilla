@@ -121,11 +121,13 @@ class ThreadItem {
 			$locktype = 0;
 		}
 
-		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && ($item['item_private'] != 1)) ? true : false);
+		$shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && (intval($item['item_private']) === 0)) ? true : false);
 
 		// allow an exemption for sharing stuff from your private feeds
 		if($item['author']['xchan_network'] === 'rss')
 			$shareable = true;
+
+		$repeatable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && (intval($item['item_private']) === 0) && (in_array($item['author']['xchan_network'], ['zot6', 'activitypub']))) ? true : false);
 
 		// @fixme
 		// Have recently added code to properly handle polls in group reshares by redirecting all of the poll responses to the group.
@@ -315,13 +317,11 @@ class ThreadItem {
 		$share = [];
 		$embed = [];
 		if ($shareable) {
-			// This actually turns out not to be possible in some protocol stacks without opening up hundreds of new issues.
-			// Will allow it only for uri resolvable sources.
-			if(strpos($item['mid'],'http') === 0) {
-				//Not yet ready for primetime
-				//$share = array( t('Repeat This'), t('repeat'));
-			}
-			$embed = [t('Share This'), t('share')];
+			$embed = [t('Share'), t('share')];
+		}
+
+		if ($repeatable) {
+			$share = [t('Repeat'), t('repeat')];
 		}
 
 		$dreport = '';
