@@ -62,7 +62,7 @@ require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
 define('PLATFORM_NAME', 'hubzilla');
-define('STD_VERSION', '8.9');
+define('STD_VERSION', '8.9.1');
 define('ZOT_REVISION', '6.0');
 
 define('DB_UPDATE_VERSION', 1259);
