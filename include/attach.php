@@ -2773,7 +2773,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '',
 			intval($channel_id)
 		);
 
-		q("update photo set content = CASE imgscale WHEN 0 THEN '%s' ELSE CONCAT('%s', '-', imgscale) END where resource_id = '%s' and uid = %d and os_storage = 1",
+		q("update photo set content = CASE imgscale WHEN 0 THEN %s ELSE CONCAT(%s, '-', imgscale) END where resource_id = '%s' and uid = %d and os_storage = 1",
 			dbescbin($newstorepath),
 			dbescbin($newstorepath),
 			dbesc($resource_id),
