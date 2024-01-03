@@ -21,6 +21,7 @@ return array(
     'Brick\\Math\\Internal\\Calculator\\GmpCalculator' => $vendorDir . '/brick/math/src/Internal/Calculator/GmpCalculator.php',
     'Brick\\Math\\Internal\\Calculator\\NativeCalculator' => $vendorDir . '/brick/math/src/Internal/Calculator/NativeCalculator.php',
     'Brick\\Math\\RoundingMode' => $vendorDir . '/brick/math/src/RoundingMode.php',
+    'CURLStringFile' => $vendorDir . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
     'CommerceGuys\\Intl\\Calculator' => $vendorDir . '/commerceguys/intl/src/Calculator.php',
     'CommerceGuys\\Intl\\Currency\\Currency' => $vendorDir . '/commerceguys/intl/src/Currency/Currency.php',
     'CommerceGuys\\Intl\\Currency\\CurrencyRepository' => $vendorDir . '/commerceguys/intl/src/Currency/CurrencyRepository.php',

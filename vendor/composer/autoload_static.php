@@ -248,6 +248,7 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Brick\\Math\\Internal\\Calculator\\GmpCalculator' => __DIR__ . '/..' . '/brick/math/src/Internal/Calculator/GmpCalculator.php',
         'Brick\\Math\\Internal\\Calculator\\NativeCalculator' => __DIR__ . '/..' . '/brick/math/src/Internal/Calculator/NativeCalculator.php',
         'Brick\\Math\\RoundingMode' => __DIR__ . '/..' . '/brick/math/src/RoundingMode.php',
+        'CURLStringFile' => __DIR__ . '/..' . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
         'CommerceGuys\\Intl\\Calculator' => __DIR__ . '/..' . '/commerceguys/intl/src/Calculator.php',
         'CommerceGuys\\Intl\\Currency\\Currency' => __DIR__ . '/..' . '/commerceguys/intl/src/Currency/Currency.php',
         'CommerceGuys\\Intl\\Currency\\CurrencyRepository' => __DIR__ . '/..' . '/commerceguys/intl/src/Currency/CurrencyRepository.php',
