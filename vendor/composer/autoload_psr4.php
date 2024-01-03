@@ -12,6 +12,8 @@ return array(
     'chillerlan\\QRCode\\' => array($vendorDir . '/chillerlan/php-qrcode/src'),
     'Zotlabs\\' => array($baseDir . '/Zotlabs'),
     'Symfony\\Polyfill\\Php81\\' => array($vendorDir . '/symfony/polyfill-php81'),
+    'StephenHill\\Benchmarks\\' => array($vendorDir . '/stephenhill/base58/benchmarks'),
+    'StephenHill\\' => array($vendorDir . '/stephenhill/base58/src'),
     'SimplePie\\' => array($vendorDir . '/simplepie/simplepie/src'),
     'Sabre\\Xml\\' => array($vendorDir . '/sabre/xml/lib'),
     'Sabre\\VObject\\' => array($vendorDir . '/sabre/vobject/lib'),

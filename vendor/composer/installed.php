@@ -3,7 +3,7 @@
         'name' => 'zotlabs/hubzilla',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '85001c034b1353e7602911f9fbdf017188ed8b07',
+        'reference' => 'cd0e50da249ba89252a6182b0ac239e003563f61',
         'type' => 'application',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -268,6 +268,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'stephenhill/base58' => array(
+            'pretty_version' => 'v1.1.5',
+            'version' => '1.1.5.0',
+            'reference' => 'bd9fc19c788160a2f85ba0a19cd800eaf5ba5e99',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../stephenhill/base58',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'symfony/polyfill-php81' => array(
             'pretty_version' => 'v1.28.0',
             'version' => '1.28.0.0',
@@ -313,7 +322,7 @@
         'zotlabs/hubzilla' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '85001c034b1353e7602911f9fbdf017188ed8b07',
+            'reference' => 'cd0e50da249ba89252a6182b0ac239e003563f61',
             'type' => 'application',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

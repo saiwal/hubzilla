@@ -41,6 +41,8 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'S' => 
         array (
             'Symfony\\Polyfill\\Php81\\' => 23,
+            'StephenHill\\Benchmarks\\' => 23,
+            'StephenHill\\' => 12,
             'SimplePie\\' => 10,
             'Sabre\\Xml\\' => 10,
             'Sabre\\VObject\\' => 14,
@@ -115,6 +117,14 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Symfony\\Polyfill\\Php81\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php81',
+        ),
+        'StephenHill\\Benchmarks\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stephenhill/base58/benchmarks',
+        ),
+        'StephenHill\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stephenhill/base58/src',
         ),
         'SimplePie\\' => 
         array (
@@ -1378,6 +1388,14 @@ class ComposerStaticInit7b34d7e50a62201ec5d5e526a5b8b35d
         'Smarty_Template_Source' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_template_source.php',
         'Smarty_Undefined_Variable' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_undefined_variable.php',
         'Smarty_Variable' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_variable.php',
+        'StephenHill\\BCMathService' => __DIR__ . '/..' . '/stephenhill/base58/src/BCMathService.php',
+        'StephenHill\\Base58' => __DIR__ . '/..' . '/stephenhill/base58/src/Base58.php',
+        'StephenHill\\Benchmarks\\Base16Event' => __DIR__ . '/..' . '/stephenhill/base58/benchmarks/Base16Event.php',
+        'StephenHill\\Benchmarks\\Base58BCMathEvent' => __DIR__ . '/..' . '/stephenhill/base58/benchmarks/Base58BCMathEvent.php',
+        'StephenHill\\Benchmarks\\Base58GMPEvent' => __DIR__ . '/..' . '/stephenhill/base58/benchmarks/Base58GMPEvent.php',
+        'StephenHill\\Benchmarks\\Base64Event' => __DIR__ . '/..' . '/stephenhill/base58/benchmarks/Base64Event.php',
+        'StephenHill\\GMPService' => __DIR__ . '/..' . '/stephenhill/base58/src/GMPService.php',
+        'StephenHill\\ServiceInterface' => __DIR__ . '/..' . '/stephenhill/base58/src/ServiceInterface.php',
         'Symfony\\Polyfill\\Php81\\Php81' => __DIR__ . '/..' . '/symfony/polyfill-php81/Php81.php',
         'TPC_yyStackEntry' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_internal_configfileparser.php',
         'TP_yyStackEntry' => __DIR__ . '/..' . '/smarty/smarty/libs/sysplugins/smarty_internal_templateparser.php',
