@@ -491,6 +491,12 @@ class Setup extends \Zotlabs\Web\Controller {
 		}
 
 		$this->check_add($checks, t('Generate encryption keys'), $res, true, $help);
+
+		$res = function_exists('sodium_crypto_sign_keypair');
+		if (!$res) {
+			$help = t('Error: the sodium encryption library is not installed.') . EOL;
+		}
+		$this->check_add($checks, t('Generate ed25519 encryption keys'), $res, true, $help);
 	}
 
 	/**
