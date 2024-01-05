@@ -848,12 +848,11 @@ function scrollToItem() {
 function collapseHeight() {
 	$(".wall-item-content:not('.divmore_checked'), .directory-collapse:not('.divmore_checked')").each(function(i) {
 		let orgHeight = $(this).outerHeight(true);
-		let id = $(this).attr('id');
+		let id = $(this).attr('id').split('wall-item-content-').pop();
 
 		if (bParam_mid) {
 			// Display the selected mid in an open state
-			let num_id = id.split('wall-item-content-').pop();
-			let b64mids = $('#thread-wrapper-' + num_id).data('b64mids');
+			let b64mids = $('#thread-wrapper-' + id).data('b64mids');
 
 			if (b64mids.indexOf(bParam_mid) !== -1) {;
 				expanded_items.push(id);
