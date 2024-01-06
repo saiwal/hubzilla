@@ -52,7 +52,9 @@ class Apschema extends \Zotlabs\Web\Controller {
 				'diaspora'     => 'https://diasporafoundation.org/ns/',
 				'guid'         => 'diaspora:guid',
 
-				'Hashtag'      => 'as:Hashtag'
+				'Hashtag'      => 'as:Hashtag',
+				'Bookmark'     => 'zot:Bookmark',
+				'Category'     => 'zot:Category'
 
 			]
 		];
