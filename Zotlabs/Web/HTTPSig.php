@@ -27,8 +27,11 @@ class HTTPSig {
 	 * @param string $alg hash algorithm (one of 'sha256','sha512')
 	 * @return string The generated digest header string for $body
 	 */
-
 	static function generate_digest_header($body, $alg = 'sha256') {
+
+		if ($body === null) {
+			$body = '';
+		}
 
 		$digest = base64_encode(hash($alg, $body, true));
 		switch ($alg) {

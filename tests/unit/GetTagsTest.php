@@ -26,6 +26,7 @@ class MockApp {
  *
  * @param string $sql
  */
+/*
 function q($sql) {
 	$result=array(array('id'=>15,
 			'attag'=>'', 'network'=>'dfrn',
@@ -55,7 +56,7 @@ function q($sql) {
 		return $result;
 	}
 }
-
+*/
 /**
  * Replacement for dbesc.
  * I don't want to test dbesc here, so
@@ -68,9 +69,11 @@ function q($sql) {
  *
  * @return input
  */
+/*
 function dbesc($str) {
 	return $str;
 }
+*/
 
 /**
  * TestCase for tag handling.

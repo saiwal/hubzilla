@@ -63,11 +63,52 @@ class PermissionDescriptionTest extends UnitTestCase {
 		$this->assertNotNull($permDescSelf);
 	}
 
+	/**
+	 * Test fetching permission descriptions for the current channel.
+	 */
 	public function testFromGlobalPermission() {
-		//$permDesc = PermissionDescription::fromGlobalPermission('view_profile');
+		// Initiate the global App with a channel_id
+		\App::$channel = array(
+			'channel_id' => 42,
+		);
 
-		$this->markTestIncomplete(
-			'The method fromGlobalPermission() is not yet testable ...'
+		// Make sure the requested permission is set for this channel.
+		\Zotlabs\Access\PermissionLimits::Set(
+			\App::$channel['channel_id'],
+			'view_profile',
+			PERMS_NETWORK
+		);
+
+		\Zotlabs\Access\PermissionLimits::Set(
+			\App::$channel['channel_id'],
+			'write_storage',
+			PERMS_SPECIFIC
+		);
+
+		// Set an invalid(?) permission
+		\Zotlabs\Access\PermissionLimits::Set(
+			\App::$channel['channel_id'],
+			'view_wiki',
+			1337
+		);
+
+		$permDesc = PermissionDescription::fromGlobalPermission('view_profile');
+		$this->assertEquals(
+			'Anybody in the Hubzilla network',
+			$permDesc->get_permission_description()
+		);
+
+		$permDesc = PermissionDescription::fromGlobalPermission('write_storage');
+		$this->assertEquals(
+			'Only connections I specifically allow',
+			$permDesc->get_permission_description()
+		);
+
+		// Permissions we don't know about will get the fallback description.
+		$permDesc = PermissionDescription::fromGlobalPermission('view_wiki');
+		$this->assertEquals(
+			'Visible to your default audience',
+			$permDesc->get_permission_description()
 		);
 	}
 
