@@ -31,7 +31,7 @@ before_script:
   - apt-get update
   - apt-get install -yqq libjpeg-dev libpng-dev libpq-dev libzip-dev mariadb-client postgresql-client unzip zip
   - docker-php-ext-enable xdebug
-  - docker-php-ext-install gd pdo_mysql pdo_pgsql zip
+  - docker-php-ext-install gd bcmath pdo_mysql pdo_pgsql zip
 
   # Install composer
   - curl -sS https://getcomposer.org/installer | php
