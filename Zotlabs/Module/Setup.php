@@ -497,6 +497,13 @@ class Setup extends \Zotlabs\Web\Controller {
 			$help = t('Error: the sodium encryption library is not installed.') . EOL;
 		}
 		$this->check_add($checks, t('Generate ed25519 encryption keys'), $res, true, $help);
+
+		$res1 = extension_loaded('bcmath');
+		$res2 = extension_loaded('gmp');
+		if (! ($res1 || $res2)) {
+			$help = t('Error: one of "bcmath" or "gmp" (bigmath library) extensions are required.') . EOL;
+		}
+		$this->check_add($checks, t('Bigmath library (either bcmath or gmp)'), $res1||$res2, $help);
 	}
 
 	/**

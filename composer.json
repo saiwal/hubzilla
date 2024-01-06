@@ -32,6 +32,7 @@
         "ext-json": "*",
         "ext-posix": "*",
         "ext-sodium": "*",
+        "ext-bcmath": "*",
         "sabre/dav": "^4.0",
         "michelf/php-markdown": "^2.0",
         "bshaffer/oauth2-server-php": "^1.9",
