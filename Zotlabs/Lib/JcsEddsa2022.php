@@ -17,7 +17,7 @@ class JcsEddsa2022 {
 		$options = [
 			'type' => 'DataIntegrityProof',
 			'cryptosuite' => 'eddsa-jcs-2022',
-			'created' => datetime_convert(format: ATOM_TIME),
+			'created' => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
 			'verificationMethod' => channel_url($channel) . '#' . $pubkey,
 			'proofPurpose' => 'assertionMethod',
 		];
