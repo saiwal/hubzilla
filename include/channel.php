@@ -2649,6 +2649,8 @@ function channel_store_lowlevel($arr) {
 		'channel_startpage'       => ((array_key_exists('channel_startpage',$arr))       ? $arr['channel_startpage']       : ''),
 		'channel_pubkey'          => ((array_key_exists('channel_pubkey',$arr))          ? $arr['channel_pubkey']          : ''),
 		'channel_prvkey'          => ((array_key_exists('channel_prvkey',$arr))          ? $arr['channel_prvkey']          : ''),
+		'channel_epubkey'         => ((array_key_exists('channel_epubkey',$arr))         ? $arr['channel_epubkey']         : ''),
+		'channel_eprvkey'         => ((array_key_exists('channel_eprvkey',$arr))         ? $arr['channel_eprvkey']         : ''),
 		'channel_notifyflags'     => ((array_key_exists('channel_notifyflags',$arr))     ? $arr['channel_notifyflags']     : '65535'),
 		'channel_pageflags'       => ((array_key_exists('channel_pageflags',$arr))       ? $arr['channel_pageflags']       : '0'),
 		'channel_dirdate'         => ((array_key_exists('channel_dirdate',$arr))         ? $arr['channel_dirdate']         : NULL_DATE),
