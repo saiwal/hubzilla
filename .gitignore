@@ -82,20 +82,16 @@ vendor/**/Test/
 vendor/sabre/*/examples/
 
 # Exclude dev dependencies
-vendor/behat/
-vendor/bin/behat
 vendor/bin/pdepend
 vendor/bin/php-parse
 vendor/bin/phpcbf
 vendor/bin/phpcs
 vendor/bin/phpmd
 vendor/bin/phpunit
-vendor/bin/yaml-lint
 vendor/composer/pcre/
 vendor/composer/xdebug-handler/
 vendor/dms/
 vendor/doctrine/
-vendor/fabpot/
 vendor/myclabs/
 vendor/nikic/
 vendor/pdepend/
@@ -104,35 +100,16 @@ vendor/php-mock/
 vendor/phpmd/
 vendor/phpunit/
 vendor/psr/container/
-vendor/psr/event-dispatcher/
 vendor/sebastian/
 vendor/squizlabs/
-vendor/symfony/browser-kit/
 vendor/symfony/config/
-vendor/symfony/console/
-vendor/symfony/css-selector/
 vendor/symfony/dependency-injection/
 vendor/symfony/deprecation-contracts/
-vendor/symfony/dom-crawler/
-vendor/symfony/event-dispatcher-contracts/
-vendor/symfony/event-dispatcher/
 vendor/symfony/filesystem/
-vendor/symfony/http-client-contracts/
-vendor/symfony/http-client/
-vendor/symfony/mime/
 vendor/symfony/polyfill-ctype/
-vendor/symfony/polyfill-intl-grapheme/
-vendor/symfony/polyfill-intl-idn/
-vendor/symfony/polyfill-intl-normalizer/
 vendor/symfony/polyfill-mbstring/
-vendor/symfony/polyfill-php72/
-vendor/symfony/polyfill-php73/
 vendor/symfony/polyfill-php80/
 vendor/symfony/service-contracts/
-vendor/symfony/string/
-vendor/symfony/translation-contracts/
-vendor/symfony/translation/
-vendor/symfony/yaml/
 vendor/theseer/
 # /info is a directory containing site-specific HTML documents
 /info/

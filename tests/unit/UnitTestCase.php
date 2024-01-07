@@ -23,7 +23,6 @@
 namespace Zotlabs\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Yaml\Yaml;
 
 /*
  * Make sure global constants and the global App object is available to the
@@ -115,7 +114,7 @@ class UnitTestCase extends TestCase {
 
 	private function loadFixture($file) : void {
 		$table_name = basename($file, '.yml');
-		$this->fixtures[$table_name] = Yaml::parseFile($file)[$table_name];
+		$this->fixtures[$table_name] = yaml_parse_file($file)[$table_name];
 
 		//echo "\n[*] Loaded fixture '{$table_name}':\n";
 		//	. print_r($this->fixtures[$table_name], true)
