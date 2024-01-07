@@ -848,13 +848,14 @@ function scrollToItem() {
 function collapseHeight() {
 	$(".wall-item-content:not('.divmore_checked'), .directory-collapse:not('.divmore_checked')").each(function(i) {
 		let orgHeight = $(this).outerHeight(true);
-		let id = $(this).attr('id').split('wall-item-content-').pop();
+		let id = (($(this).attr('id')) ? $(this).attr('id').split('wall-item-content-').pop() : 0);
+		let b64mid = ((typeof bParam_mid !== 'undefined') ? bParam_mid : '');
 
-		if (bParam_mid) {
+		if (b64mid) {
 			// Display the selected mid in an open state
 			let b64mids = $('#thread-wrapper-' + id).data('b64mids');
 
-			if (b64mids.indexOf(bParam_mid) !== -1) {;
+			if (b64mids.length && b64mids.indexOf(b64mid) !== -1) {;
 				expanded_items.push(id);
 			}
 		}
