@@ -80,6 +80,12 @@ function import_channel($channel, $account_id, $seize, $newname = '') {
 		}
 	}
 
+	if (empty($channel['channel_epubkey']) && empty($channel['channel_eprvkey'])) {
+		$eckey = sodium_crypto_sign_keypair();
+		$channel['channel_epubkey'] = sodium_bin2base64(sodium_crypto_sign_publickey($eckey), SODIUM_BASE64_VARIANT_ORIGINAL_NO_PADDING);
+		$channel['channel_eprvkey'] = sodium_bin2base64(sodium_crypto_sign_secretkey($eckey), SODIUM_BASE64_VARIANT_ORIGINAL_NO_PADDING);
+	}
+
 	unset($channel['channel_id']);
 	$channel['channel_account_id'] = $account_id;
 	$channel['channel_primary'] = (($seize) ? 1 : 0);

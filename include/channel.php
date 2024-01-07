@@ -236,6 +236,10 @@ function create_identity($arr) {
 	$guid = Libzot::new_uid($nick);
 	$key = Crypto::new_keypair(4096);
 
+	$eckey = sodium_crypto_sign_keypair();
+	$ekey['pubkey'] = sodium_bin2base64(sodium_crypto_sign_publickey($eckey), SODIUM_BASE64_VARIANT_ORIGINAL_NO_PADDING);
+	$ekey['prvkey'] = sodium_bin2base64(sodium_crypto_sign_secretkey($eckey), SODIUM_BASE64_VARIANT_ORIGINAL_NO_PADDING);
+
 	// zot6
 	$sig = Libzot::sign($guid,$key['prvkey']);
 	$hash = Libzot::make_xchan_hash($guid,$key['pubkey']);
@@ -275,6 +279,8 @@ function create_identity($arr) {
 			'channel_portable_id' => '',
 			'channel_prvkey'      => $key['prvkey'],
 			'channel_pubkey'      => $key['pubkey'],
+			'channel_eprvkey'     => $ekey['prvkey'],
+			'channel_epubkey'     => $ekey['pubkey'],
 			'channel_pageflags'   => intval($pageflags),
 			'channel_system'      => intval($system),
 			'channel_expire_days' => intval($expire),
@@ -370,6 +376,7 @@ function create_identity($arr) {
 			'xchan_guid'        => $guid,
 			'xchan_guid_sig'    => $sig,
 			'xchan_pubkey'      => $key['pubkey'],
+			'xchan_epubkey'     => (new Multibase())->publicKey($ekey['pubkey']),
 			'xchan_photo_mimetype' => (($photo_type) ? $photo_type : 'image/png'),
 			'xchan_photo_l'     => z_root() . "/photo/profile/l/{$newuid}",
 			'xchan_photo_m'     => z_root() . "/photo/profile/m/{$newuid}",

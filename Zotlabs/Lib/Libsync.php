@@ -325,9 +325,6 @@ class Libsync {
 
 			if (array_key_exists('channel', $arr) && is_array($arr['channel']) && count($arr['channel'])) {
 
-				$remote_channel               = $arr['channel'];
-				$remote_channel['channel_id'] = $channel['channel_id'];
-
 				if (array_key_exists('channel_pageflags', $arr['channel'])) {
 
 					// Several pageflags are site-specific and cannot be sync'd.
@@ -339,6 +336,8 @@ class Libsync {
 
 				}
 
+				$columns = db_columns('channel');
+
 				$disallowed = [
 					'channel_id', 'channel_account_id', 'channel_primary', 'channel_prvkey',
 					'channel_address', 'channel_notifyflags', 'channel_removed', 'channel_deleted',
@@ -349,16 +348,21 @@ class Libsync {
 					'channel_a_delegate'
 				];
 
-				$clean = [];
-				foreach ($arr['channel'] as $k => $v) {
-					if (in_array($k, $disallowed))
-						continue;
-					$clean[$k] = $v;
+				if (empty($channel['channel_epubkey']) && empty($channel['channel_eprvkey'])) {
+					$eckey = sodium_crypto_sign_keypair();
+					$channel['channel_epubkey'] = sodium_bin2base64(sodium_crypto_sign_publickey($eckey), SODIUM_BASE64_VARIANT_ORIGINAL_NO_PADDING);
+					$channel['channel_eprvkey'] = sodium_bin2base64(sodium_crypto_sign_secretkey($eckey), SODIUM_BASE64_VARIANT_ORIGINAL_NO_PADDING);
 				}
-				if (count($clean)) {
-					foreach ($clean as $k => $v) {
-						dbq("UPDATE channel set " . dbesc($k) . " = '" . dbesc($v) . "' where channel_id = " . intval($channel['channel_id']));
+
+				foreach ($arr['channel'] as $k => $v) {
+					if (in_array($k, $disallowed)) {
+						continue;
 					}
+					if (!in_array($k, $columns)) {
+						continue;
+					}
+					$r = dbq("UPDATE channel set " . dbesc($k) . " = '" . dbesc($v)
+						. "' where channel_id = " . intval($channel['channel_id']));
 				}
 			}
 
