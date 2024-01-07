@@ -15,8 +15,6 @@ class _1261 {
 		}
 
 		if (!($has_gmp || $has_bcmath)) {
-			hz_syslog('gothere');
-
 			return UPDATE_FAILED;
 		}
 
