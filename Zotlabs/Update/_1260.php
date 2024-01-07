@@ -18,8 +18,8 @@ class _1260 {
 
 		dbq("START TRANSACTION");
 
-		$r1 = dbq("ALTER TABLE channel ADD channel_epubkey text NOT NULL");
-		$r2 = dbq("ALTER TABLE channel ADD channel_eprvkey text NOT NULL");
+		$r1 = dbq("ALTER TABLE channel ADD channel_epubkey text NOT NULL DEFAULT ''");
+		$r2 = dbq("ALTER TABLE channel ADD channel_eprvkey text NOT NULL DEFAULT ''");
 
 		$channels = dbq("select channel_id from channel where true");
 		if ($channels) {

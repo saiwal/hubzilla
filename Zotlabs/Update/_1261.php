@@ -20,7 +20,7 @@ class _1261 {
 
 		dbq("START TRANSACTION");
 
-		$r1 = dbq("ALTER TABLE xchan ADD xchan_epubkey text NOT NULL");
+		$r1 = dbq("ALTER TABLE xchan ADD xchan_epubkey text NOT NULL DEFAULT ''");
 
 		if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
 			$r2 = dbq("ALTER TABLE xchan ADD xchan_updated timestamp NOT NULL DEFAULT '0001-01-01 00:00:00'");
