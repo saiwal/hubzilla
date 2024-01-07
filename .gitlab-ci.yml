@@ -27,10 +27,10 @@ variables:
 
 before_script:
   # Install & enable Xdebug for code coverage reports
-  - pecl install xdebug
   - apt-get update
-  - apt-get install -yqq libjpeg-dev libpng-dev libpq-dev libzip-dev mariadb-client postgresql-client unzip zip
-  - docker-php-ext-enable xdebug
+  - apt-get install -yqq libjpeg-dev libpng-dev libpq-dev libyaml-dev libzip-dev mariadb-client postgresql-client unzip zip
+  - pecl install xdebug yaml
+  - docker-php-ext-enable xdebug yaml
   - docker-php-ext-install gd bcmath pdo_mysql pdo_pgsql zip
 
   # Install composer
