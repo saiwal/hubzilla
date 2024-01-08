@@ -78,8 +78,11 @@ class UnitTestCase extends TestCase {
 			$this->in_transaction = \DBA::$dba->db->beginTransaction();
 
 			$this->loadFixtures();
-
 		}
+
+		// Make sure app config is reset and loaded from fixtures
+		\App::$config = array();
+		\Zotlabs\Lib\Config::Load('system');
 	}
 
 	protected function tearDown() : void {
