@@ -116,10 +116,6 @@ class UnitTestCase extends TestCase {
 		$table_name = basename($file, '.yml');
 		$this->fixtures[$table_name] = yaml_parse_file($file)[$table_name];
 
-		//echo "\n[*] Loaded fixture '{$table_name}':\n";
-		//	. print_r($this->fixtures[$table_name], true)
-		//	. PHP_EOL;
-
 		foreach ($this->fixtures[$table_name] as $entry) {
 			$query = 'INSERT INTO ' . dbesc($table_name) . '('
 				. implode(',', array_keys($entry))
@@ -127,7 +123,6 @@ class UnitTestCase extends TestCase {
 				. implode(',', array_map(fn($val) => "'{$val}'", array_values($entry)))
 				. ')';
 
-			//print_r($query);
 			q($query);
 		}
 	}
