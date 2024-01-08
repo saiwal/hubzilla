@@ -591,23 +591,30 @@ function validate_url(&$url) {
 }
 
 /**
- * @brief Checks that email is an actual resolvable internet address.
+ * @brief Checks that email is valid, and that the domain resolves.
  *
- * @param string $addr
- * @return boolean
+ * Note: This does not try to check that the actual email address will resolve,
+ * only the domain!
+ *
+ * @param string $addr	The email address to validate.
+ * @return boolean		True if email is valid, false otherwise.
  */
-function validate_email($addr) {
+function validate_email(string $addr): bool {
 
 	if(get_config('system', 'disable_email_validation'))
 		return true;
 
-	if(! strpos($addr, '@'))
-		return false;
+	$matches = array();
+	$result = preg_match(
+		'/^[A-Z0-9._%-]+@([A-Z0-9.-]+\.[A-Z0-9-]{2,})$/i',
+	   	punify($addr),
+	   	$matches);
 
-	$h = substr($addr, strpos($addr, '@') + 1);
-
-	if(($h) && z_dns_check($h, true)) {
-		return true;
+	if($result) {
+		$domain = $matches[1];
+		if(($domain) && z_dns_check($domain, true)) {
+			return true;
+		}
 	}
 
 	return false;
