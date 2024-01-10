@@ -4211,4 +4211,80 @@ class Activity {
 
 	}
 
+	public static function ap_context($contextType = null): array {
+		return ['@context' => [
+			ACTIVITYSTREAMS_JSONLD_REV,
+			'https://w3id.org/security/v1',
+		//	'https://www.w3.org/ns/did/v1',
+		//	'https://w3id.org/security/multikey/v1',
+		//	'https://w3id.org/security/data-integrity/v1',
+			'https://purl.archive.org/socialweb/webfinger',
+			self::ap_schema($contextType)
+		]];
+	}
+
+	public static function ap_schema($contextType = null): array {
+		// $contextType is reserved for future use so that the caller can specify
+		// a limited subset of the entire schema definition for particular activities.
+
+		return [
+			'zot'              => z_root() . '/apschema#',
+			'schema'           => 'http://schema.org#',
+			'ostatus'          => 'http://ostatus.org#',
+			'diaspora'         => 'https://diasporafoundation.org/ns/',
+
+			'commentPolicy'    => 'zot:commentPolicy',
+			'locationAddress'  => 'zot:locationAddress',
+			'locationPrimary'  => 'zot:locationPrimary',
+			'locationDeleted'  => 'zot:locationDeleted',
+			'nomadicLocation'  => 'zot:nomadicLocation',
+			'nomadicHubs'      => 'zot:nomadicHubs',
+			'emojiReaction'    => 'zot:emojiReaction',
+			'expires'          => 'zot:expires',
+			'directMessage'    => 'zot:directMessage',
+			'Bookmark'         => 'zot:Bookmark',
+			'Category'         => 'zot:Category',
+
+			'PropertyValue'    => 'schema:PropertyValue',
+			'value'            => 'schema:value',
+
+			'conversation'     => 'ostatus:conversation',
+
+			'guid'             => 'diaspora:guid',
+
+			'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
+			'Hashtag'          => 'as:Hashtag'
+
+		];
+
+	}
+
+	/**
+	 * @brief Builds the activity packet and signs it if $channel is provided.
+	 *
+	 * @param array $obj
+	 * @param array $channel (optional) default []
+	 * @param bool $json_encode (optional) default true
+	 * @return string|array
+	 */
+
+	public static function build_packet(array $obj, array $channel = [], bool $json_encode = true): string|array {
+		$arr = array_merge(Activity::ap_context(), $obj);
+
+		if ($channel) {
+		//	$proof = (new JcsEddsa2022)->sign($arr, $channel);
+		//	$arr['proof'] = $proof;
+
+			$signature = LDSignatures::sign($arr, $channel);
+			$arr['signature'] = $signature;
+		}
+
+		if ($json_encode) {
+			return json_encode($arr, JSON_UNESCAPED_SLASHES);
+		}
+
+		return $arr;
+	}
+
+
 }

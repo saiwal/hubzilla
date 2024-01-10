@@ -28,6 +28,7 @@ class ActivityStreams {
 	public $sigok = false;
 	public $recips = null;
 	public $raw_recips = null;
+	public $saved_recips = null;
 
 	/**
 	 * @brief Constructor for ActivityStreams.
