@@ -2054,6 +2054,10 @@ function jsonld_document_loader($url) {
 		'https://www.w3.org/ns/activitystreams' => 'library/w3org/activitystreams.jsonld',
 		'https://w3id.org/identity/v1' => 'library/w3org/identity-v1.jsonld',
 		'https://w3id.org/security/v1' => 'library/w3org/security-v1.jsonld',
+		'https://www.w3.org/ns/did/v1' => 'library/w3org/did-v1.jsonld',
+		'https://w3id.org/security/multikey/v1' => 'library/w3org/security-multikey-v1.jsonld',
+		'https://w3id.org/security/data-integrity/v1' => 'library/w3org/security-data-integrity-v1.jsonld',
+		'https://purl.archive.org/socialweb/webfinger' => 'library/w3org/socialweb-webfinger.jsonld'
 	];
 
 	$x = debug_backtrace();
