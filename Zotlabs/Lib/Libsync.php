@@ -339,6 +339,8 @@ class Libsync {
 
 				}
 
+				$columns = db_columns('channel');
+
 				$disallowed = [
 					'channel_id', 'channel_account_id', 'channel_primary', 'channel_prvkey',
 					'channel_address', 'channel_notifyflags', 'channel_removed', 'channel_deleted',
@@ -349,16 +351,16 @@ class Libsync {
 					'channel_a_delegate'
 				];
 
-				$clean = [];
 				foreach ($arr['channel'] as $k => $v) {
-					if (in_array($k, $disallowed))
+					if (in_array($k, $disallowed)) {
 						continue;
-					$clean[$k] = $v;
-				}
-				if (count($clean)) {
-					foreach ($clean as $k => $v) {
-						dbq("UPDATE channel set " . dbesc($k) . " = '" . dbesc($v) . "' where channel_id = " . intval($channel['channel_id']));
 					}
+
+					if (!in_array($k, $columns)) {
+						continue;
+					}
+
+					dbq("UPDATE channel set " . dbesc($k) . " = '" . dbesc($v) . "' where channel_id = " . intval($channel['channel_id']));
 				}
 			}
 
