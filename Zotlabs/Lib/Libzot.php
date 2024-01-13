@@ -2814,6 +2814,7 @@ class Libzot {
 		];
 
 		$ret['public_key']   = $e['channel_pubkey'];
+		$ret['ed25519_key']  = $e['xchan_epubkey'];
 		$ret['signing_algorithm'] = 'rsa-sha256';
 		$ret['username']     = $e['channel_address'];
 		$ret['name']         = $e['channel_name'];
