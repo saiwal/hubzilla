@@ -1757,12 +1757,14 @@ class Activity {
 		}
 
 		$epubkey = '';
-		foreach($person_obj['assertionMethod'] as $am) {
-			if ($person_obj['id'] === $am['controller'] &&
-				$am['type'] === 'Multikey' &&
-				str_starts_with($am['publicKeyMultibase'], 'z6Mk')
-			) {
-				$epubkey = $person_obj['assertionMethod']['publicKeyMultibase'];
+		if (isset($person_obj['assertionMethod'])) {
+			foreach($person_obj['assertionMethod'] as $am) {
+				if ($person_obj['id'] === $am['controller'] &&
+					$am['type'] === 'Multikey' &&
+					str_starts_with($am['publicKeyMultibase'], 'z6Mk')
+				) {
+					$epubkey = $person_obj['assertionMethod']['publicKeyMultibase'];
+				}
 			}
 		}
 
