@@ -4229,7 +4229,7 @@ class Activity {
 
 		return [
 			'zot'              => z_root() . '/apschema#',
-			'schema'           => 'http://schema.org/',
+			'schema'           => 'http://schema.org#',
 			'ostatus'          => 'http://ostatus.org#',
 			'diaspora'         => 'https://diasporafoundation.org/ns/',
 
