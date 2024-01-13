@@ -5846,10 +5846,10 @@ class UniqueNamer {
    * @param prefix the prefix to use ('<prefix><counter>').
    */
 
-  private $prefix;
-  private $counter;
-  private $existing;
-  private $order;
+  public $prefix;
+  public $counter;
+  public $existing;
+  public $order;
 
   public function __construct($prefix) {
     $this->prefix = $prefix;
