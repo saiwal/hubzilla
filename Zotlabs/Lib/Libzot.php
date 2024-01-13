@@ -759,12 +759,13 @@ class Libzot {
 				|| ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
 				|| ($r[0]['xchan_addr'] != $arr['primary_location']['address'])
 				|| ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
+				|| (isset($arr['ed25519_key']) && $r[0]['xchan_epubkey'] != $arr['ed25519_key'])
 				|| ($r[0]['xchan_connpage'] != $arr['connect_url'])
 				|| ($r[0]['xchan_url'] != $arr['primary_location']['url'])
 				|| $hidden_changed || $adult_changed || $deleted_changed || $pubforum_changed) {
 				$rup = q("update xchan set xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
 					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_pubforum = %d,
-					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
+					xchan_addr = '%s', xchan_url = '%s', xchan_epubkey = '%s' where xchan_hash = '%s'",
 					dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
 					dbesc($arr['name_updated']),
 					dbesc($arr['primary_location']['connections_url']),
@@ -776,6 +777,7 @@ class Libzot {
 					intval($arr['public_forum']),
 					dbesc(escape_tags($arr['primary_location']['address'])),
 					dbesc(escape_tags($arr['primary_location']['url'])),
+					dbesc($arr['xchan_epubkey'] ?? ''),
 					dbesc($xchan_hash)
 				);
 
@@ -799,6 +801,7 @@ class Libzot {
 					'xchan_guid'           => $arr['id'],
 					'xchan_guid_sig'       => $arr['id_sig'],
 					'xchan_pubkey'         => $arr['public_key'],
+					'xchan_epubkey'        => $arr['xchan_epubkey'] ?? '',
 					'xchan_photo_mimetype' => $arr['photo']['type'],
 					'xchan_photo_l'        => $arr['photo']['url'],
 					'xchan_addr'           => escape_tags($arr['primary_location']['address']),
