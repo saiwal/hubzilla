@@ -6,6 +6,7 @@ class DReport {
 	private $location;
 	private $sender;
 	private $recipient;
+	private $name;
 	private $message_id;
 	private $status;
 	private $date;
