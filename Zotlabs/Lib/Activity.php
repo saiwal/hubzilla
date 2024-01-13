@@ -4229,7 +4229,7 @@ class Activity {
 
 		return [
 			'zot'              => z_root() . '/apschema#',
-			'schema'           => 'http://schema.org#',
+			'schema'           => 'http://schema.org/',
 			'ostatus'          => 'http://ostatus.org#',
 			'diaspora'         => 'https://diasporafoundation.org/ns/',
 
@@ -4272,8 +4272,8 @@ class Activity {
 		$arr = array_merge(Activity::ap_context(), $obj);
 
 		if ($channel) {
-		//	$proof = (new JcsEddsa2022)->sign($arr, $channel);
-		//	$arr['proof'] = $proof;
+			$proof = (new JcsEddsa2022)->sign($arr, $channel);
+			$arr['proof'] = $proof;
 
 			$signature = LDSignatures::sign($arr, $channel);
 			$arr['signature'] = $signature;
