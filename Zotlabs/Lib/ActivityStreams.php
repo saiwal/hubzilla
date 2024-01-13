@@ -24,7 +24,7 @@ class ActivityStreams {
 	public $origin = null;
 	public $owner = null;
 	public $signer = null;
-	public $ldsig = null;
+	public $sig = null;
 	public $sigok = false;
 	public $recips = null;
 	public $raw_recips = null;
@@ -97,11 +97,19 @@ class ActivityStreams {
 			$this->origin = $this->get_compound_property('origin');
 			$this->recips = $this->collect_recips();
 
-			$this->ldsig = $this->get_compound_property('signature');
-			if ($this->ldsig) {
-				$this->signer = $this->get_actor('creator', $this->ldsig);
-				if ($this->signer && is_array($this->signer) && array_key_exists('publicKey', $this->signer) && is_array($this->signer['publicKey']) && $this->signer['publicKey']['publicKeyPem']) {
-					$this->sigok = LDSignatures::verify($this->data, $this->signer['publicKey']['publicKeyPem']);
+			$this->sig = $this->get_compound_property('proof');
+			if ($this->sig) {
+				$this->checkEddsaSignature(); // will set signer and sigok if everything works out
+			}
+
+			// Try LDSignatures if edsig failed
+			if (!$this->sigok) {
+				$this->sig = $this->get_compound_property('signature');
+				if ($this->sig) {
+					$this->signer = $this->get_actor('creator', $this->sig);
+					if ($this->signer && is_array($this->signer) && array_key_exists('publicKey', $this->signer) && is_array($this->signer['publicKey']) && $this->signer['publicKey']['publicKeyPem']) {
+						$this->sigok = LDSignatures::verify($this->data, $this->signer['publicKey']['publicKeyPem']);
+					}
 				}
 			}
 
@@ -488,6 +496,42 @@ class ActivityStreams {
 
 		return $ret;
 
+	}
+
+	public function checkEddsaSignature() {
+		$signer = $this->get_property_obj('verificationMethod', $this->sig);
+
+		$parseUrl = parse_url($signer);
+		if (!empty($parseUrl['fragment']) && str_starts_with($parseUrl['fragment'],'z6Mk')) {
+			$publicKey = $parseUrl['fragment'];
+			unset($parseUrl['fragment']);
+			unset($parseUrl['query']);
+		}
+
+		$url = unparse_url($parseUrl);
+		//$this->signer = [ 'id' => $url ];
+
+		$hublocs = Activity::get_actor_hublocs($url);
+		$hasStoredKey = false;
+		if ($hublocs) {
+			foreach ($hublocs as $hubloc) {
+				if ($publicKey && $hubloc['xchan_epubkey'] === $publicKey) {
+					$hasStoredKey = true;
+					break;
+				}
+			}
+		}
+		if (!$hasStoredKey) {
+			$this->signer = Activity::get_actor($url);
+			if ($this->signer
+				&& !empty($this->signer['assertionMethod'])
+				&& !empty($this->signer['assertionMethod']['publicKeyMultibase'])) {
+				$publicKey = $this->signer['assertionMethod']['publicKeyMultibase'];
+			}
+		}
+		if ($publicKey) {
+			$this->sigok = (new JcsEddsa2022)->verify($this->data, $publicKey);
+		}
 	}
 
 }

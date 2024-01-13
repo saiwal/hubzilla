@@ -37,6 +37,7 @@ class JcsEddsa2022 {
 		if (!str_starts_with($encodedSignature,'z')) {
 			return false;
 		}
+
 		$encodedSignature = substr($encodedSignature, 1);
 		$optionsHash = $this->hash($this->signableOptions($data['proof']), true);
 		$dataHash = $this->hash($this->signableData($data),true);
@@ -58,7 +59,7 @@ class JcsEddsa2022 {
 		$signableData = [];
 		if ($data) {
 			foreach ($data as $k => $v) {
-				if ($k != 'proof') {
+				if (!in_array($k, ['proof', 'signature'])) {
 					$signableData[$k] = $v;
 				}
 			}

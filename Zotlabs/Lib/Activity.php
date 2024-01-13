@@ -1757,14 +1757,12 @@ class Activity {
 		}
 
 		$epubkey = '';
-		// TODO: We should probably also deal with arrays here.
-		// It is not clear yet which key we want to store if we got more than one though.
-		if (isset($person_obj['assertionMethod']['publicKeyMultibase'])) {
-			if ($person_obj['id'] === $person_obj['assertionMethod']['controller']) {
+		foreach($person_obj['assertionMethod'] as $am) {
+			if ($person_obj['id'] === $am['controller'] &&
+				$am['type'] === 'Multikey' &&
+				str_starts_with($am['publicKeyMultibase'], 'z6Mk')
+			) {
 				$epubkey = $person_obj['assertionMethod']['publicKeyMultibase'];
-				if ($person_obj['assertionMethod']['type'] === 'Multikey') {
-					$epubkey = $person_obj['assertionMethod']['publicKeyMultibase'];
-				}
 			}
 		}
 
