@@ -1680,7 +1680,7 @@ class Activity {
 			$name = t('Unknown');
 		}
 
-		$webfinger_addr = '';
+		$webfinger_addr = $person_obj['webfinger'] ?? '';
 		$hostname = '';
 		$baseurl  = '';
 		$site_url = '';
@@ -1692,7 +1692,7 @@ class Activity {
 			$site_url = $m['scheme'] . '://' . $m['host'];
 		}
 
-		if (!empty($person_obj['preferredUsername']) && $hostname) {
+		if (!$webfinger_addr && !empty($person_obj['preferredUsername']) && $hostname) {
 			$webfinger_addr = escape_tags($person_obj['preferredUsername']) . '@' . $hostname;
 		}
 
@@ -1746,11 +1746,24 @@ class Activity {
 			$profile = $url;
 		}
 
+		$pubkey = '';
 		if (array_key_exists('publicKey', $person_obj) && array_key_exists('publicKeyPem', $person_obj['publicKey'])) {
 			if ($person_obj['id'] === $person_obj['publicKey']['owner']) {
 				$pubkey = $person_obj['publicKey']['publicKeyPem'];
 				if (strstr($pubkey, 'RSA ')) {
 					$pubkey = Keyutils::rsaToPem($pubkey);
+				}
+			}
+		}
+
+		$epubkey = '';
+		// TODO: We should probably also deal with arrays here.
+		// It is not clear yet which key we want to store if we got more than one though.
+		if (isset($person_obj['assertionMethod']['publicKeyMultibase'])) {
+			if ($person_obj['id'] === $person_obj['assertionMethod']['controller']) {
+				$epubkey = $person_obj['assertionMethod']['publicKeyMultibase'];
+				if ($person_obj['assertionMethod']['type'] === 'Multikey') {
+					$epubkey = $person_obj['assertionMethod']['publicKeyMultibase'];
 				}
 			}
 		}
@@ -1775,10 +1788,11 @@ class Activity {
 			);
 
 			// update existing xchan record
-			q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_addr = '%s', xchan_network = 'activitypub', xchan_name_date = '%s', xchan_pubforum = %d where xchan_hash = '%s'",
-				dbesc(escape_tags($name)),
-				dbesc(escape_tags($pubkey)),
-				dbesc(escape_tags($webfinger_addr)),
+			q("update xchan set xchan_name = '%s', xchan_pubkey = '%s', xchan_epubkey = '%s', xchan_addr = '%s', xchan_network = 'activitypub', xchan_name_date = '%s', xchan_pubforum = %d where xchan_hash = '%s'",
+				dbesc($name),
+				dbesc($pubkey),
+				dbesc($epubkey),
+				dbesc($webfinger_addr),
 				dbescdate(datetime_convert()),
 				intval($group_actor),
 				dbesc($url)
@@ -1786,7 +1800,7 @@ class Activity {
 
 			// update existing hubloc record
 			q("update hubloc set hubloc_addr = '%s', hubloc_network = 'activitypub', hubloc_url = '%s', hubloc_host = '%s', hubloc_callback = '%s', hubloc_updated = '%s', hubloc_id_url = '%s' where hubloc_hash = '%s'",
-				dbesc(escape_tags($webfinger_addr)),
+				dbesc($webfinger_addr),
 				dbesc($baseurl),
 				dbesc($hostname),
 				dbesc($inbox),
@@ -1802,13 +1816,14 @@ class Activity {
 				[
 					'xchan_hash'      => $url,
 					'xchan_guid'      => $url,
-					'xchan_pubkey'    => escape_tags($pubkey),
+					'xchan_pubkey'    => $pubkey,
+					'xchan_epubkey'   => $epubkey,
 					'xchan_addr'      => $webfinger_addr,
 					'xchan_url'       => $profile,
-					'xchan_name'      => escape_tags($name),
-					'xchan_photo_l' => z_root() . '/' . get_default_profile_photo(),
-					'xchan_photo_m' => z_root() . '/' . get_default_profile_photo(80),
-					'xchan_photo_s' => z_root() . '/' . get_default_profile_photo(48),
+					'xchan_name'      => $name,
+					'xchan_photo_l'   => z_root() . '/' . get_default_profile_photo(),
+					'xchan_photo_m'   => z_root() . '/' . get_default_profile_photo(80),
+					'xchan_photo_s'   => z_root() . '/' . get_default_profile_photo(48),
 					'xchan_name_date' => datetime_convert(),
 					'xchan_network'   => 'activitypub',
 					'xchan_pubforum'  => intval($group_actor)
