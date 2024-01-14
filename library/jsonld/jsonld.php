@@ -5914,6 +5914,11 @@ class Permutator {
    *
    * @param array $list the array of elements to iterate over.
    */
+
+  public $list;
+  public $done;
+  public $left;
+
   public function __construct($list) {
     // original array
     $this->list = $list;
