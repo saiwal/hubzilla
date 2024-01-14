@@ -1767,7 +1767,7 @@ class Activity {
 					$am['type'] === 'Multikey' &&
 					str_starts_with($am['publicKeyMultibase'], 'z6Mk')
 				) {
-					$epubkey = $person_obj['assertionMethod']['publicKeyMultibase'];
+					$epubkey = $am['publicKeyMultibase'];
 				}
 			}
 		}

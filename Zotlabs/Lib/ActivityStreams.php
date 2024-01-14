@@ -327,9 +327,10 @@ class ActivityStreams {
 			if ($x === null && strpos($url, '/channel/')) {
 				// look for other nomadic channels which might be alive
 				$zf = Zotfinger::exec($url, $channel);
-
-				$url = $zf['signature']['signer'];
-				$x = Activity::fetch($url, $channel);
+				if ($zf) {
+					$url = $zf['signature']['signer'];
+					$x = Activity::fetch($url, $channel);
+				}
 			}
 		}
 
