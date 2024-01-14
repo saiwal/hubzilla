@@ -1680,7 +1680,7 @@ class Activity {
 			$name = t('Unknown');
 		}
 
-		$webfinger_addr = $person_obj['webfinger'] ?? '';
+		$webfinger_addr = ((isset($person_obj['webfinger'])) ? str_replace('acct:', '', $person_obj['webfinger']) : '');
 		$hostname = '';
 		$baseurl  = '';
 		$site_url = '';
