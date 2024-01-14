@@ -2888,6 +2888,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 	$replaced = false;
 	$r = null;
 	$match = array();
+	$newtag = '';
 
 	$termtype = ((strpos($tag,'#') === 0)   ? TERM_HASHTAG  : TERM_UNKNOWN);
 	$termtype = ((strpos($tag,'@') === 0)   ? TERM_MENTION  : $termtype);
@@ -2937,10 +2938,11 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) 
 		}
 
 		// is the link already in str_tags?
-		if(! stristr($str_tags,$newtag)) {
+		if (!stristr($str_tags, $newtag)) {
 			// append or set str_tags
-			if(strlen($str_tags))
+			if (strlen($str_tags)) {
 				$str_tags .= ',';
+			}
 
 			$str_tags .= $newtag;
 		}
