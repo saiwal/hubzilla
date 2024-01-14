@@ -34,6 +34,14 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 	 * @var int $channel_id
 	 */
 	public $channel_id = 0;
+
+	/**
+	 * @brief channel_account_id of the current channel of the logged-in account.
+	 *
+	 * @var int $channel_account_id
+	 */
+	public $channel_account_id = 0;
+
 	/**
 	 * @brief channel_hash of the current channel of the logged-in account.
 	 *
@@ -127,6 +135,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 	 */
 	protected function setAuthenticated($channel) {
 		$this->channel_name = $channel['channel_address'];
+		$this->channel_account_id = $channel['channel_account_id'];
 		$this->channel_id = $channel['channel_id'];
 		$this->channel_hash = $this->observer = $channel['channel_hash'];
 
@@ -139,8 +148,8 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 			}
 		}
 
-		$_SESSION['uid'] = $channel['channel_id'];
-		$_SESSION['account_id'] = $channel['channel_account_id'];
+		$_SESSION['uid'] = $this->channel_id;
+		$_SESSION['account_id'] = $this->channel_account_id;
 		$_SESSION['authenticated'] = true;
 		return true;
 	}

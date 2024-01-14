@@ -38,6 +38,8 @@ class File extends DAV\Node implements DAV\IFile {
 	 */
 	private $name;
 
+	public $os_path;
+	public $folder_hash;
 
 	/**
 	 * Sets up the node, expects a full path name.

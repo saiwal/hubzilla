@@ -54,9 +54,9 @@ class Cloud extends Controller {
 			if (local_channel()) {
 				$channel = \App::get_channel();
 				$auth->setCurrentUser($channel['channel_address']);
+				$auth->channel_account_id = $channel['channel_account_id'];
 				$auth->channel_id = $channel['channel_id'];
 				$auth->channel_hash = $channel['channel_hash'];
-				$auth->channel_account_id = $channel['channel_account_id'];
 				if($channel['channel_timezone'])
 					$auth->setTimezone($channel['channel_timezone']);
 			}
