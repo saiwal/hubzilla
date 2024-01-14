@@ -121,7 +121,10 @@ function html2plain($html, $wraplength = 75, $compact = false)
 {
 
 	$message = str_replace("\r", "", $html);
-	$message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
+
+	// mb_convert_encoding() is deprecated
+	//$message = mb_convert_encoding($message, 'HTML-ENTITIES', "UTF-8");
+	$message = mb_encode_numericentity($message, [0x80, 0x10FFFF, 0, ~0], 'UTF-8');
 
 	if(!$message)
 		return;

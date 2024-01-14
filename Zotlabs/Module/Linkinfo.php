@@ -294,8 +294,11 @@ class Linkinfo extends \Zotlabs\Web\Controller {
 		if(empty($cp))
 		    $cp = (preg_match('/meta.+content=["\']text\/html; charset=([^"\']+)/i', $body, $o) ? $o[1] : 'AUTO');
 
-		$body   = mb_convert_encoding($body, 'UTF-8', $cp);
-		$body   = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
+		// mb_convert_encoding() is deprecated
+		//$body   = mb_convert_encoding($body, 'UTF-8', $cp);
+		//$body   = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
+
+		$body = mb_encode_numericentity($cp, [0x80, 0x10FFFF, 0, ~0], 'UTF-8');
 
 		$doc    = new \DOMDocument();
 		@$doc->loadHTML($body);

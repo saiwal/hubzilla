@@ -395,7 +395,11 @@ function oembed_format_object($j){
 		$ret .= "<br /><a href='$embedurl' rel='oembed'>$embedurl</a>";
 	}
 	$ret.="<br style='clear:left'></span>";
-	return  mb_convert_encoding($ret, 'HTML-ENTITIES', mb_detect_encoding($ret));
+
+	// mb_convert_encoding() is deprecated
+	// return  mb_convert_encoding($ret, 'HTML-ENTITIES', mb_detect_encoding($ret));
+	return mb_encode_numericentity($ret, [0x80, 0x10FFFF, 0, ~0], 'UTF-8');
+
 }
 
 function oembed_iframe($src,$width,$height) {
@@ -456,7 +460,10 @@ function oembed_html2bbcode($text) {
 	if (strpos($text, "oembed")){
 
 		// convert non ascii chars to html entities
-		$html_text = mb_convert_encoding($text, 'HTML-ENTITIES', mb_detect_encoding($text));
+
+		// mb_convert_encoding() is deprecated
+		// $html_text = mb_convert_encoding($text, 'HTML-ENTITIES', mb_detect_encoding($text));
+		$html_text = mb_encode_numericentity($text, [0x80, 0x10FFFF, 0, ~0], 'UTF-8');
 
 		// If it doesn't parse at all, just return the text.
 
