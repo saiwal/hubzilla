@@ -1758,6 +1758,10 @@ class Activity {
 
 		$epubkey = '';
 		if (isset($person_obj['assertionMethod'])) {
+			if (!isset($person_obj['assertionMethod'][0])) {
+				$person_obj['assertionMethod'] = [$person_obj['assertionMethod']];
+			}
+
 			foreach($person_obj['assertionMethod'] as $am) {
 				if ($person_obj['id'] === $am['controller'] &&
 					$am['type'] === 'Multikey' &&
