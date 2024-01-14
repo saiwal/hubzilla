@@ -777,7 +777,7 @@ class Libzot {
 					intval($arr['public_forum']),
 					dbesc(escape_tags($arr['primary_location']['address'])),
 					dbesc(escape_tags($arr['primary_location']['url'])),
-					dbesc($arr['xchan_epubkey'] ?? ''),
+					dbesc($arr['ed25519_key'] ?? ''),
 					dbesc($xchan_hash)
 				);
 
