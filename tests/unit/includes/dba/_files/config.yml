@@ -1,12 +1,10 @@
 ---
 config:
   -
-    id: 1
     cat: system
     k: do_not_check_dns
     v: true
   -
-    id: 2
     cat: system
     k: not_allowed_email
     v: 'baduser@example.com,baddomain.com,*.evil.org'
