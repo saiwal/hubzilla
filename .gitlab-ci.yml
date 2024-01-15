@@ -28,10 +28,10 @@ variables:
 before_script:
   # Install & enable Xdebug for code coverage reports
   - apt-get update
-  - apt-get install -yqq libjpeg-dev libpng-dev libpq-dev libyaml-dev libzip-dev mariadb-client postgresql-client unzip zip
+  - apt-get install -yqq libicu-dev libjpeg-dev libpng-dev libpq-dev libyaml-dev libzip-dev mariadb-client postgresql-client unzip zip
   - pecl install xdebug yaml
   - docker-php-ext-enable xdebug yaml
-  - docker-php-ext-install gd bcmath pdo_mysql pdo_pgsql zip
+  - docker-php-ext-install gd bcmath intl pdo_mysql pdo_pgsql zip
 
   # Install composer
   - curl -sS https://getcomposer.org/installer | php
@@ -50,11 +50,15 @@ before_script:
     HZ_TEST_DB_PASS: $MYSQL_ROOT_PASSWORD
     HZ_TEST_DB_DATABASE: $MYSQL_DATABASE
   script:
+    # Import hubzilla's DB schema
     - echo "USE $MYSQL_DATABASE; $(cat ./install/schema_mysql.sql)" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
+    # Show databases and relations/tables of hubzilla's database
     - echo "SHOW DATABASES;" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
     - echo "USE $MYSQL_DATABASE; SHOW TABLES;" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
+    # Run the actual tests
     - touch dbfail.out
-    - vendor/bin/phpunit --configuration tests/phpunit.xml --verbose --stop-on-error --coverage-text --colors=never --log-junit tests/results/junit.xml
+    - vendor/bin/phpunit --configuration tests/phpunit.xml --verbose --stop-on-error --coverage-text --colors=never --log-junit tests/results/junit.xml || exit_code=$?
+    - if [ $exit_code -ne 0 ]; then echo "Test barfed!"; cat dbfail.out; exit $exit_code; fi
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
 
 
@@ -74,11 +78,12 @@ before_script:
     # Import hubzilla's DB schema
     - psql -h "postgres" -U "$POSTGRES_USER" -v ON_ERROR_STOP=1 --quiet "$POSTGRES_DB" < ./install/schema_postgres.sql
     # Show databases and relations/tables of hubzilla's database
-    #- psql -h "postgres" -U "$POSTGRES_USER" -l
-    #- psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "\dt;"
+    - psql -h "postgres" -U "$POSTGRES_USER" -l
+    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "\dt;"
     # Run the actual tests
     - touch dbfail.out
-    - vendor/bin/phpunit --configuration tests/phpunit.xml --verbose --stop-on-error --coverage-text --colors=never --log-junit tests/results/junit.xml
+    - vendor/bin/phpunit --configuration tests/phpunit.xml --verbose --stop-on-error --coverage-text --colors=never --log-junit tests/results/junit.xml || exit_code=$?
+    - if [ $exit_code -ne 0 ]; then echo "Test barfed!"; cat dbfail.out; exit $exit_code; fi
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
 
 # hidden job definition with artifacts config template
