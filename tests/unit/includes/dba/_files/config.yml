@@ -8,4 +8,16 @@ config:
     cat: system
     k: not_allowed_email
     v: 'baduser@example.com,baddomain.com,*.evil.org'
+  -
+    cat: system
+    k: debugging
+    v: true
+  -
+    cat: system
+    k: loglevel
+    v: 2
+  -
+    cat: system
+    k: logfile
+    v: tests/results/unit_test.log
 
