@@ -32,5 +32,8 @@
       <directory suffix=".php">../Zotlabs/</directory>
       <directory suffix=".php">../include/</directory>
     </include>
+    <exclude>
+      <directory suffix=".php">../Zotlabs/Update/</directory>
+    </exclude>
   </coverage>
 </phpunit>
