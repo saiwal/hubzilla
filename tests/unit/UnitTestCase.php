@@ -72,6 +72,8 @@ class UnitTestCase extends TestCase {
 	}
 
 	protected function setUp() : void {
+		$myclass = get_class($this);
+		logger("[*] Running test: {$myclass}::{$this->getName(true)}", LOGGER_DEBUG);
 		if ( \DBA::$dba->connected ) {
 			// Create a transaction, so that any actions taken by the
 			// tests does not change the actual contents of the database.
