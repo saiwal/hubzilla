@@ -1628,11 +1628,15 @@ class Activity {
 		}
 		*/
 
-		$url = null;
-		$ap_hubloc = null;
+		$url = $person_obj['id'] ?? '';
+
+		if (!$url) {
+			return;
+		}
 
 		$hublocs = self::get_actor_hublocs($url);
 		$has_zot_hubloc = false;
+		$ap_hubloc = null;
 
 		if ($hublocs) {
 			foreach ($hublocs as $hub) {
@@ -1654,14 +1658,6 @@ class Activity {
 			else {
 				return;
 			}
-		}
-
-		if (isset($person_obj['id'])) {
-			$url = $person_obj['id'];
-		}
-
-		if (!$url) {
-			return;
 		}
 
 		$inbox = $person_obj['inbox'] ?? null;
