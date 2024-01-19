@@ -1204,7 +1204,6 @@ class Libzot {
 			// @fixme;
 
 			$deliveries = self::public_recips($env, $AS);
-
 		}
 
 		$deliveries = array_unique($deliveries);
@@ -1224,10 +1223,6 @@ class Libzot {
 				}
 
 				$author_url = $AS->actor['id'];
-
-				if ($AS->type === 'Announce') {
-					$author_url = Activity::get_attributed_to_actor_url($AS);
-				}
 
 				$r = Activity::get_actor_hublocs($author_url);
 
@@ -1650,9 +1645,12 @@ class Libzot {
 							}
 						}
 
-					} elseif ($permit_mentions) {
+					}
+					elseif ($permit_mentions) {
 						$allowed = true;
 					}
+
+
 				}
 
 				if ($request) {
@@ -1731,11 +1729,15 @@ class Libzot {
 					// the top level post is unlikely to be imported and
 					// this is just an exercise in futility.
 
-					if (perm_is_allowed($channel['channel_id'], $sender, 'send_stream')) {
-						Master::Summon(['Zotconvo', $channel['channel_id'], $arr['parent_mid']]);
+					if ($arr['verb'] === 'Announce') {
+						Activity::fetch_and_store_parents($channel, $sender, $arr, true);
 					}
-
-					continue;
+					else {
+						if (perm_is_allowed($channel['channel_id'], $sender, 'send_stream')) {
+							Master::Summon(['Zotconvo', $channel['channel_id'], $arr['parent_mid']]);
+						}
+						continue;
+					}
 				}
 
 				if ($r[0]['obj_type'] === 'Question') {
@@ -1758,6 +1760,8 @@ class Libzot {
 					// so just set the owner and route accordingly.
 					$arr['route']       = $r[0]['route'];
 					$arr['owner_xchan'] = $r[0]['owner_xchan'];
+
+
 				}
 				else {
 
@@ -1841,13 +1845,6 @@ class Libzot {
 			);
 
 			if ($r) {
-				// We already have this post.
-				// Dismiss its announce
-				if ($act->type === 'Announce') {
-					$DR->update('update ignored');
-					$result[] = $DR->get();
-					continue;
-				}
 
 				$item_id = $r[0]['id'];
 

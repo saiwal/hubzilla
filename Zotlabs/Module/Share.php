@@ -123,7 +123,7 @@ class Share extends \Zotlabs\Web\Controller {
 
 		call_hooks('post_local_end', $arr);
 
-		info( t('Post repeated') . EOL);
+	//	info( t('Post repeated') . EOL);
 
 		$r = q("select * from item where id = %d",
 			intval($post_id)

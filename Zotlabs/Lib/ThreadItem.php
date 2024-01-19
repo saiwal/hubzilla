@@ -196,9 +196,14 @@ class ThreadItem {
 		$attend = null;
 
 		// process action responses - e.g. like/dislike/attend/agree/whatever
-		$response_verbs = array('like');
-		if(feature_enabled($conv->get_profile_owner(),'dislike'))
+		$response_verbs[] = 'like';
+
+		if(feature_enabled($conv->get_profile_owner(),'dislike')) {
 			$response_verbs[] = 'dislike';
+		}
+
+		$response_verbs[] = 'announce';
+
 		if(in_array($item['obj_type'], ['Event', ACTIVITY_OBJ_EVENT])) {
 			$response_verbs[] = 'attendyes';
 			$response_verbs[] = 'attendno';
@@ -224,6 +229,8 @@ class ThreadItem {
 			$my_responses[$v] = ((isset($conv_responses[$v][$item['mid'] . '-m'])) ? 1 : 0);
 		}
 
+/*
+
 		$like_count = ((x($conv_responses['like'],$item['mid'])) ? $conv_responses['like'][$item['mid']] : '');
 		$like_list = ((x($conv_responses['like'],$item['mid'])) ? $conv_responses['like'][$item['mid'] . '-l'] : '');
 		if (($like_list) && (count($like_list) > MAX_LIKERS)) {
@@ -233,6 +240,16 @@ class ThreadItem {
 			$like_list_part = '';
 		}
 		$like_button_label = tt('Like','Likes',$like_count,'noun');
+
+		$repeat_count = ((x($conv_responses['announce'],$item['mid'])) ? $conv_responses['announce'][$item['mid']] : '');
+		$repeat_list = ((x($conv_responses['announce'],$item['mid'])) ? $conv_responses['announce'][$item['mid'] . '-l'] : '');
+		if (($repeat_list) && (count($repeat_list) > MAX_LIKERS)) {
+			$repeat_list_part = array_slice($repeat_list, 0, MAX_LIKERS);
+			array_push($repeat_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#repeatModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
+		} else {
+			$repeat_list_part = '';
+		}
+		$repeat_button_label = tt('Repeat','Repeats',$repeat_count,'noun');
 
 		$showdislike = '';
 		if (feature_enabled($conv->get_profile_owner(),'dislike')) {
@@ -250,6 +267,7 @@ class ThreadItem {
 		}
 
 		$showlike    = ((x($conv_responses['like'],$item['mid'])) ? format_like($conv_responses['like'][$item['mid']],$conv_responses['like'][$item['mid'] . '-l'],'like',$item['mid']) : '');
+*/
 
 		/*
 		 * We should avoid doing this all the time, but it depends on the conversation mode
@@ -483,19 +501,29 @@ class ThreadItem {
 			'markseen' => t('Mark all seen'),
 			'responses' => $responses,
 			'my_responses' => $my_responses,
+			/*
 			'like_count' => $like_count,
 			'like_list' => $like_list,
 			'like_list_part' => $like_list_part,
 			'like_button_label' => $like_button_label,
 			'like_modal_title' => t('Likes','noun'),
+
+			'repeat_count' => $repeat_count,
+			'repeat_list' => $repeat_list,
+			'repeat_list_part' => $repeat_list_part,
+			'repeat_button_label' => $repeat_button_label,
+			'repeat_modal_title' => t('Repeats','noun'),
+
+
 			'dislike_modal_title' => t('Dislikes','noun'),
 			'dislike_count' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_count : ''),
 			'dislike_list' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_list : ''),
 			'dislike_list_part' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_list_part : ''),
 			'dislike_button_label' => ((feature_enabled($conv->get_profile_owner(),'dislike')) ? $dislike_button_label : ''),
+*/
 			'modal_dismiss' => t('Close'),
-			'showlike' => $showlike,
-			'showdislike' => $showdislike,
+		//	'showlike' => $showlike,
+		//	'showdislike' => $showdislike,
 			'comment' => ($item['item_delayed'] ? '' : $this->get_comment_box()),
 			'previewing' => ($conv->is_preview() ? true : false ),
 			'preview_lbl' => t('This is an unsaved preview'),
@@ -507,7 +535,8 @@ class ThreadItem {
 			'moderate' => ($item['item_blocked'] == ITEM_MODERATED),
 			'moderate_approve' => t('Approve'),
 			'moderate_delete' => t('Delete'),
-			'rtl' => in_array($item['lang'], rtl_languages())
+			'rtl' => in_array($item['lang'], rtl_languages()),
+
 
 		);
 

@@ -238,22 +238,22 @@
 					</div>
 
 					{{if $item.responses || $item.attachments}}
-					<div class="wall-item-tools-left btn-group" id="wall-item-tools-left-{{$item.id}}">
+					<div class="wall-item-tools-left hstack gap-1" id="wall-item-tools-left-{{$item.id}}">
 						{{if $item.star && $item.star.isstarred}}
-						<div class="btn-group" id="star-button-{{$item.id}}">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar({{$item.id}});"><i class="fa fa-star"></i></button>
+						<div class="" id="star-button-{{$item.id}}">
+							<button type="button" class="btn btn-outline-secondary border-0 btn-sm wall-item-star" onclick="dostar({{$item.id}});"><i class="fa fa-star"></i></button>
 						</div>
 						{{/if}}
 						{{if $item.attachments}}
-						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-bs-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-paperclip"></i></button>
+						<div class="">
+							<button type="button" class="btn btn-outline-secondary border-0 btn-sm wall-item-attach" data-bs-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-paperclip"></i></button>
 							<div class="dropdown-menu">{{$item.attachments}}</div>
 						</div>
 						{{/if}}
 						{{foreach $item.responses as $verb=>$response}}
 						{{if $response.count}}
-						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle"{{if $response.modal}} data-bs-toggle="modal" data-bs-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-bs-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}">{{$response.count}} {{$response.button}}</button>
+						<div class="">
+							<button type="button" title="{{$response.count}} {{$response.button.label}}" class="btn btn-outline-secondary border-0 btn-sm wall-item-{{$response.button.class}}"{{if $response.modal}} data-bs-toggle="modal" data-bs-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-bs-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}"><i class="fa fa-{{$response.button.icon}}"></i> {{$response.count}}</button>
 							{{if $response.modal}}
 							<div class="modal" id="{{$verb}}Modal-{{$item.id}}">
 								<div class="modal-dialog">

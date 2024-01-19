@@ -149,7 +149,7 @@ class Enotify {
 
 		if(array_key_exists('item',$params)) {
 
-			if(in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
+			if(in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE, ACTIVITY_SHARE])) {
 
 				if(! $always_show_in_notices || !($vnotify & VNOTIFY_LIKE)) {
 					logger('notification: not a visible activity. Ignoring.');
@@ -162,6 +162,9 @@ class Enotify {
 
 				if(activity_match($params['verb'], ACTIVITY_DISLIKE))
 					$action = (($moderated) ? t('requested to dislike') : t('disliked'));
+
+				if(activity_match($params['verb'], ACTIVITY_SHARE))
+					$action = t('repeated');
 
 			}
 
@@ -835,18 +838,6 @@ class Enotify {
 				: (($item['obj_type'] === 'Answer') ? sprintf( t('voted on %s\'s poll'), '[bdi]' . $item['owner']['xchan_name'] . '[/bdi]') : sprintf( t('commented on %s\'s post'), '[bdi]' . $item['owner']['xchan_name'] . '[/bdi]'))
 			);
 
-			if($item['verb'] === ACTIVITY_SHARE && empty($item['owner']['xchan_pubforum'])) {
-				$itemem_text = sprintf( t('repeated %s\'s post'), '[bdi]' . $item['author']['xchan_name'] . '[/bdi]');
-			}
-
-			if($item['verb'] === ACTIVITY_LIKE) {
-				$itemem_text = sprintf( t('liked %s\'s post'), '[bdi]' . $item['author']['xchan_name'] . '[/bdi]');
-			}
-
-			if($item['verb'] === ACTIVITY_DISLIKE) {
-				$itemem_text = sprintf( t('disliked %s\'s post'), '[bdi]' . $item['author']['xchan_name'] . '[/bdi]');
-			}
-
 			if(in_array($item['obj_type'], ['Document', 'Video', 'Audio', 'Image'])) {
 				$itemem_text = t('shared a file with you');
 			}
@@ -867,7 +858,6 @@ class Enotify {
 
 		// convert this logic into a json array just like the system notifications
 
-		$who = (($item['verb'] === ACTIVITY_SHARE && empty($item['owner']['xchan_pubforum'])) ? 'owner' : 'author');
 		$body = html2plain(bbcode($item['body'], ['drop_media' => true, 'tryoembed' => false]), 75, true);
 		if ($body) {
 			$body = htmlentities($body, ENT_QUOTES, 'UTF-8', false);
@@ -875,10 +865,10 @@ class Enotify {
 
 		$x = array(
 			'notify_link' => $item['llink'],
-			'name' => $item[$who]['xchan_name'],
-			'addr' => $item[$who]['xchan_addr'] ? $item[$who]['xchan_addr'] : $item[$who]['xchan_url'],
-			'url' => $item[$who]['xchan_url'],
-			'photo' => $item[$who]['xchan_photo_s'],
+			'name' => $item['author']['xchan_name'],
+			'addr' => $item['author']['xchan_addr'] ? $item['author']['xchan_addr'] : $item['author']['xchan_url'],
+			'url' => $item['author']['xchan_url'],
+			'photo' => $item['author']['xchan_photo_s'],
 			'when' => (($edit) ? datetime_convert('UTC', date_default_timezone_get(), $item['edited']) : datetime_convert('UTC', date_default_timezone_get(), $item['created'])),
 			'class' => (intval($item['item_unseen']) ? 'notify-unseen' : 'notify-seen'),
 			'b64mid' => (($item['mid']) ? gen_link_id($item['mid']) : ''),
@@ -887,7 +877,7 @@ class Enotify {
 			'message' => bbcode(escape_tags($itemem_text)),
 			'body' => $body,
 			// these are for the superblock addon
-			'hash' => $item[$who]['xchan_hash'],
+			'hash' => $item['author']['xchan_hash'],
 			'uid' => $item['uid'],
 			'display' => true
 		);

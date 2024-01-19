@@ -90,7 +90,7 @@ function item_redir_and_replace_images($body, $images, $cid) {
 
 function localize_item(&$item){
 
-	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE)){
+	if (activity_match($item['verb'],ACTIVITY_LIKE) || activity_match($item['verb'],ACTIVITY_DISLIKE) || activity_match($item['verb'],ACTIVITY_SHARE)){
 		if(! $item['obj'])
 			return;
 
@@ -195,6 +195,10 @@ function localize_item(&$item){
 			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
 				$bodyverb = t('%1$s doesn\'t like %2$s\'s %3$s');
 			}
+			elseif(activity_match($item['verb'],ACTIVITY_SHARE)) {
+				$bodyverb = t('%1$s repeated %2$s\'s %3$s');
+			}
+
 
 			// short version, in notification strings the author will be displayed separately
 
@@ -203,6 +207,9 @@ function localize_item(&$item){
 			}
 			elseif(activity_match($item['verb'],ACTIVITY_DISLIKE)) {
 				$shortbodyverb = t('doesn\'t like %1$s\'s %2$s');
+			}
+			elseif(activity_match($item['verb'],ACTIVITY_SHARE)) {
+				$shortbodyverb = t('repeated %1$s\'s %2$s');
 			}
 
 			$item['shortlocalize'] = sprintf($shortbodyverb, '[bdi]' . $author_name . '[/bdi]', $post_type);
@@ -441,7 +448,7 @@ function count_descendants($item) {
  * @return boolean
  */
 function visible_activity($item) {
-	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, ACTIVITY_AGREE, ACTIVITY_DISAGREE, ACTIVITY_ABSTAIN, ACTIVITY_ATTEND, ACTIVITY_ATTENDNO, ACTIVITY_ATTENDMAYBE, ACTIVITY_POLLRESPONSE ];
+	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, ACTIVITY_SHARE, ACTIVITY_AGREE, ACTIVITY_DISAGREE, ACTIVITY_ABSTAIN, ACTIVITY_ATTEND, ACTIVITY_ATTENDNO, ACTIVITY_ATTENDMAYBE, ACTIVITY_POLLRESPONSE ];
 
 	if(intval($item['item_notshown']))
 		return false;
@@ -672,7 +679,8 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 		'attendyes' => ['title' => t('Attending','title')],
 		'attendno' => ['title' => t('Not attending','title')],
 		'attendmaybe' => ['title' => t('Might attend','title')],
-		'answer' => []
+		'answer' => [],
+		'announce' => ['title' => t('Repeats','title')],
 	];
 
 
@@ -909,8 +917,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 				if(! visible_activity($item)) {
 					continue;
 				}
-
-
 
 				$item['pagedrop'] = $page_dropping;
 
@@ -1216,6 +1222,9 @@ function builtin_activity_puller($item, &$conv_responses) {
 				break;
 			case 'answer':
 				$verb = ACTIVITY_POST;
+				break;
+			case 'announce':
+				$verb = 'Announce';
 				break;
 			default:
 				return;
@@ -1774,28 +1783,31 @@ function get_responses($conv_responses,$response_verbs,$ob,$item) {
 function get_response_button_text($v,$count) {
 	switch($v) {
 		case 'like':
-			return tt('Like','Likes',$count,'noun');
+			return ['label' => tt('Like','Likes',$count,'noun'), 'icon' => 'thumbs-o-up', 'class' => 'like'];
+			break;
+		case 'announce':
+			return ['label' => tt('Repeat','Repeats',$count,'noun'), 'icon' => 'retweet', 'class' => 'announce'];
 			break;
 		case 'dislike':
-			return tt('Dislike','Dislikes',$count,'noun');
+			return ['label' => tt('Dislike','Dislikes',$count,'noun'), 'icon' => 'thumbs-o-down', 'class' => 'dislike'];
 			break;
 		case 'attendyes':
-			return tt('Attending','Attending',$count,'noun');
+			return ['label' => tt('Attending','Attending',$count,'noun'), 'icon' => 'calendar-check-o', 'class' => 'attendyes'];
 			break;
 		case 'attendno':
-			return tt('Not Attending','Not Attending',$count,'noun');
+			return ['label' => tt('Not Attending','Not Attending',$count,'noun'), 'icon' => 'calendar-times-o', 'class' => 'attendno'];
 			break;
 		case 'attendmaybe':
-			return tt('Undecided','Undecided',$count,'noun');
+			return ['label' => tt('Undecided','Undecided',$count,'noun'), 'icon' => 'calendar-o', 'class' => 'attendmaybe'];
 			break;
 		case 'agree':
-			return tt('Agree','Agrees',$count,'noun');
+			return ['label' => tt('Agree','Agrees',$count,'noun'), 'icon' => '', 'class' => ''];
 			break;
 		case 'disagree':
-			return tt('Disagree','Disagrees',$count,'noun');
+			return ['label' => tt('Disagree','Disagrees',$count,'noun'), 'icon' => '', 'class' => ''];
 			break;
 		case 'abstain':
-			return tt('Abstain','Abstains',$count,'noun');
+			return ['label' => tt('Abstain','Abstains',$count,'noun'), 'icon' => '', 'class' => ''];
 			break;
 		default:
 			return '';

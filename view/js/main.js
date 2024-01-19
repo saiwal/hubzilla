@@ -1358,7 +1358,7 @@ function dostar(ident) {
 			$('#starred-' + ident).removeClass('fa-star-o');
 			$('#star-' + ident).addClass('hidden');
 			$('#unstar-' + ident).removeClass('hidden');
-			var btn_tpl = '<div class="btn-group" id="star-button-' + ident + '"><button type="button" class="btn btn-outline-secondary btn-sm wall-item-like" onclick="dostar(' + ident + ');"><i class="fa fa-star"></i></button></div>'
+			var btn_tpl = '<div class="btn-group" id="star-button-' + ident + '"><button type="button" class="btn btn-outline-secondary border-0 btn-sm wall-item-star" onclick="dostar(' + ident + ');"><i class="fa fa-star"></i></button></div>'
 			$('#wall-item-tools-left-' + ident).prepend(btn_tpl);
 		}
 		else {

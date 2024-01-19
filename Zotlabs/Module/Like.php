@@ -21,6 +21,7 @@ class Like extends Controller {
 		$acts = [
 			'like'        => ACTIVITY_LIKE,
 			'dislike'     => ACTIVITY_DISLIKE,
+			'announce'    => ACTIVITY_SHARE,
 			'agree'       => ACTIVITY_AGREE,
 			'disagree'    => ACTIVITY_DISAGREE,
 			'abstain'     => ACTIVITY_ABSTAIN,
@@ -71,11 +72,12 @@ class Like extends Controller {
 			$activities = q("SELECT item.*, item.id AS item_id FROM item
 				WHERE uid = %d $item_normal
 				AND thr_parent = '%s'
-				AND verb IN ('%s', '%s', '%s', '%s', '%s')",
+				AND verb IN ('%s', '%s', '%s', '%s', '%s', '%s')",
 				intval($arr['item']['uid']),
 				dbesc($arr['item']['mid']),
 				dbesc(ACTIVITY_LIKE),
 				dbesc(ACTIVITY_DISLIKE),
+				dbesc(ACTIVITY_SHARE),
 				dbesc(ACTIVITY_ATTEND),
 				dbesc(ACTIVITY_ATTENDNO),
 				dbesc(ACTIVITY_ATTENDMAYBE)

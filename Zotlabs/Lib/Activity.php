@@ -59,13 +59,16 @@ class Activity {
 			"select *, id as item_id from item where mid = '%s' and item_wall = 1 $item_normal $sql_extra",
 			dbesc($url)
 		);
+
 		if ($j) {
 			xchan_query($j, true);
 			$items = fetch_post_tags($j);
 		}
+
 		if ($items) {
 			return self::encode_item(array_shift($items), true);
 		}
+
 		return null;
 	}
 
@@ -537,7 +540,7 @@ class Activity {
 			}
 		}
 
-		if (intval($i['item_wall']) && $i['mid'] === $i['parent_mid']) {
+		if (intval($i['item_wall'])) {
 			$ret['commentPolicy'] = map_scope(PermissionLimits::Get($i['uid'], 'post_comments'));
 		}
 
@@ -1586,8 +1589,7 @@ class Activity {
 	}
 
 	public static function drop($channel, $observer, $act) {
-		$r = q(
-			"select * from item where mid = '%s' and uid = %d limit 1",
+		$r = q("select * from item where mid = '%s' and uid = %d limit 1",
 			dbesc((is_array($act->obj)) ? $act->obj['id'] : $act->obj),
 			intval($channel['channel_id'])
 		);
@@ -1607,7 +1609,6 @@ class Activity {
 		if ($r[0]['item_wall']) {
 			Master::Summon(['Notifier', 'drop', $r[0]['id']]);
 		}
-
 	}
 
 
@@ -2431,6 +2432,10 @@ class Activity {
 				}
 			}
 
+			if ($act->type === 'Announce') {
+				$content['content'] = sprintf(t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $act->obj['type']);
+			}
+
 			if ($act->type === 'emojiReaction') {
 				$content['content'] = (($act->tgt && $act->tgt['type'] === 'Image') ? '[img=32x32]' . $act->tgt['url'] . '[/img]' : '&#x' . $act->tgt['name'] . ';');
 			}
@@ -3034,7 +3039,7 @@ class Activity {
 
 			// The $item['item_fetched'] flag is set in fetch_and_store_parents().
 			// In this case we should check against author permissions because sender is not owner.
-			if (perm_is_allowed($channel['channel_id'], ((!empty($item['item_fetched'])) ? $item['author_xchan'] : $observer_hash), 'send_stream') || $is_sys_channel) {
+			if (perm_is_allowed($channel['channel_id'], ((empty($item['item_fetched'])) ? $observer_hash : $item['author_xchan']), 'send_stream') || $is_sys_channel) {
 				$allowed = true;
 			}
 
@@ -3162,6 +3167,10 @@ class Activity {
 				$fetch = false;
 
 				if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || $is_sys_channel) {
+					if ($item['verb'] === 'Announce') {
+						$force = true;
+					}
+
 					$fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel, $observer_hash, $item, $force) : false);
 				}
 
@@ -3178,6 +3187,7 @@ class Activity {
 				return;
 			}
 
+			$item['owner_xchan'] = (($item['verb'] === 'Announce') ? $parent[0]['author_xchan'] : $parent[0]['owner_xchan']);
 
 			if ($parent[0]['parent_mid'] !== $item['parent_mid']) {
 				$item['thr_parent'] = $item['parent_mid'];
@@ -3236,12 +3246,6 @@ class Activity {
 			intval($item['uid'])
 		);
 		if ($r) {
-
-			// If we already have the item, dismiss its announce
-			if ($act->type === 'Announce') {
-				return;
-			}
-
 			if ($item['edited'] > $r[0]['edited']) {
 				$item['id'] = $r[0]['id'];
 				$x          = item_store_update($item);
@@ -3307,6 +3311,8 @@ class Activity {
 
 		$p = [];
 
+		$announce_init = $item['verb'] === 'Announce';
+
 		$current_item = $item;
 
 		while ($current_item['parent_mid'] !== $current_item['mid']) {
@@ -3348,6 +3354,7 @@ class Activity {
 			$item = $hookinfo['item'];
 
 			if ($item) {
+
 				$item['item_fetched'] = true;
 
 				if (intval($channel['channel_system']) && intval($item['item_private'])) {
@@ -3360,15 +3367,26 @@ class Activity {
 					break;
 				}
 
+				if ($announce_init) {
+					// If the fetch was initiated by an announce activity
+					// do not set item fetched. This way the owner will be set to the
+					// observer -> the announce actor
+					unset($item['item_fetched']);
+					$item['verb'] = 'Announce';
+					$item['parent_mid'] = $item['mid'];
+					$item['item_thread_top'] = 1;
+				}
+
 				array_unshift($p, [$a, $item]);
 
-				if ($item['parent_mid'] === $item['mid']) {
+				if ($announce_init || $item['parent_mid'] === $item['mid']) {
 					break;
 				}
 			}
 
 			$current_item = $item;
 		}
+
 
 		if ($p) {
 			foreach ($p as $pv) {
