@@ -16,6 +16,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib\Multibase;
 
 require_once('include/crypto.php');
 require_once('include/menu.php');
