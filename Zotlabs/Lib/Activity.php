@@ -3370,6 +3370,8 @@ class Activity {
 				if ($announce_init) {
 					// Store the sender of the initial announce
 					$item['source_xchan'] = $observer_hash;
+					// WARNING: the presence of both source_xchan and non-zero item_uplink here will cause a delivery loop
+					$item['item_uplink']  = 0;
 					$item['verb'] = 'Announce';
 					$item['parent_mid'] = $item['thr_parent'] = $item['mid'];
 					$item['item_thread_top'] = 1;
