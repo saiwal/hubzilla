@@ -907,6 +907,12 @@ class ThreadItem {
 			$this->owner_name = $this->data['owner']['xchan_name'];
 			$this->wall_to_wall = true;
 		}
+		elseif($this->is_toplevel() && $this->get_data_value('verb') === 'Announce' && isset($this->data['source'])) {
+			$this->owner_url = chanlink_hash($this->data['source']['xchan_hash']);
+			$this->owner_photo = $this->data['source']['xchan_photo_s'];
+			$this->owner_name = $this->data['source']['xchan_name'];
+			$this->wall_to_wall = true;
+		}
 	}
 
 	private function is_wall_to_wall() {

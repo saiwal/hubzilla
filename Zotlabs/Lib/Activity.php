@@ -3368,12 +3368,10 @@ class Activity {
 				}
 
 				if ($announce_init) {
-					// If the fetch was initiated by an announce activity
-					// do not set item fetched. This way the owner will be set to the
-					// observer -> the announce actor
-					unset($item['item_fetched']);
+					// Store the sender of the initial announce
+					$item['source_xchan'] = $observer_hash;
 					$item['verb'] = 'Announce';
-					$item['parent_mid'] = $item['mid'];
+					$item['parent_mid'] = $item['thr_parent'] = $item['mid'];
 					$item['item_thread_top'] = 1;
 				}
 

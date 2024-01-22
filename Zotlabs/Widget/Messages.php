@@ -147,6 +147,9 @@ class Messages {
 			if($item['owner_xchan'] !== $item['author_xchan']) {
 				$info .= t('via') . ' ' . $item['owner']['xchan_name'];
 			}
+			elseif($item['verb'] === 'Announce' && isset($item['source'])) {
+				$info .= t('via') . ' ' . $item['source']['xchan_name'];
+			}
 
 			$summary = $item['title'];
 			if (!$summary) {

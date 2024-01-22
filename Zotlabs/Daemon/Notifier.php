@@ -374,7 +374,8 @@ class Notifier {
 
 			if (($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
 				logger('notifier: followup relay', LOGGER_DEBUG);
-				$sendto            = (($uplink) ? $parent_item['source_xchan'] : (($parent_item['verb'] === ACTIVITY_SHARE) ? $parent_item['author_xchan'] : $parent_item['owner_xchan']));
+				// If the Parent item is an Announce the real owner is the parent author
+				$sendto            = (($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan']);
 				self::$recipients  = [$sendto];
 				self::$private     = true;
 				$upstream          = true;

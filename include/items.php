@@ -1837,7 +1837,7 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 					dbesc($r[0]['parent_mid']),
 					intval($arr['uid'])
 				);
-				if($z && count($z))
+				if($z)
 					$r = $z;
 			}
 
