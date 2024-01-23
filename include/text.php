@@ -2616,7 +2616,7 @@ function trim_and_unpunify($s) {
  * @param number $effective_uid
  */
 function xchan_query(&$items, $abook = true, $effective_uid = 0) {
-	$arr = array();
+	$arr = [];
 	if($items && count($items)) {
 
 		if($effective_uid) {
@@ -2631,6 +2631,8 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 				$arr[] = "'" . dbesc($item['owner_xchan']) . "'";
 			if($item['author_xchan'] && (! in_array("'" . dbesc($item['author_xchan']) . "'",$arr)))
 				$arr[] = "'" . dbesc($item['author_xchan']) . "'";
+			if($item['source_xchan'] && (! in_array("'" . dbesc($item['source_xchan']) . "'",$arr)))
+				$arr[] = "'" . dbesc($item['source_xchan']) . "'";
 		}
 	}
 	if(count($arr)) {
@@ -2654,6 +2656,7 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0) {
 		for($x = 0; $x < count($items); $x ++) {
 			$items[$x]['owner'] = find_xchan_in_array($items[$x]['owner_xchan'],$chans);
 			$items[$x]['author'] = find_xchan_in_array($items[$x]['author_xchan'],$chans);
+			$items[$x]['source'] = find_xchan_in_array($items[$x]['source_xchan'],$chans);
 		}
 	}
 }
